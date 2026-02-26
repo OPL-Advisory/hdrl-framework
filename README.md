@@ -18,11 +18,6 @@ The site includes:
 - Indicator classification system (B0/Cx/O/Y)
 - Hard controls reference
 - Interactive business value map and strategic presentation
-- Link to the companion assessment app
-
-## Related
-
-- [UK Health Data Assistant](https://github.com/Seymo98/uk-health-data-assistant) — Interactive Streamlit app for conducting HDRL assessments
 
 ## Development
 
