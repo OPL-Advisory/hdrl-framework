@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDRL Strategic Presentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/white.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom overrides for Reveal.js + Tailwind */
+        .reveal .slides { text-align: left; }
+        .reveal h1, .reveal h2, .reveal h3 { text-transform: none; font-family: 'Inter', sans-serif; }
+        .reveal p, .reveal li { font-family: 'Inter', sans-serif; font-size: 0.8em; line-height: 1.4; color: #475569; }
+        .reveal strong { color: #1e293b; font-weight: 700; }
+        .domain-card { transition: transform 0.2s; }
+        .domain-card:hover { transform: translateY(-5px); }
+        .step-active { background-color: #3b82f6 !important; color: white !important; }
+        
+        /* Graphics */
+        .node { width: 20px; height: 20px; background: #cbd5e1; border-radius: 50%; display: inline-block; }
+        .node.active { background: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- Slide 1: Title -->
+            <section data-background-gradient="linear-gradient(to bottom right, #f8fafc, #e2e8f0)">
+                <div class="flex flex-col items-center justify-center h-full text-center">
+                    <div class="bg-blue-600 text-white p-4 rounded-full mb-6">
+                        <i data-lucide="network" class="w-12 h-12"></i>
+                    </div>
+                    <h1 class="text-5xl font-bold text-slate-800 mb-4">Moving from Fragmentation to Federation</h1>
+                    <h2 class="text-2xl text-blue-600 font-semibold mb-8">The Health Data Readiness Level (HDRL) Framework</h2>
+                    <p class="text-slate-500">Strategic Briefing for National Health Data Research Services</p>
+                    <div class="mt-12 text-sm text-slate-400">Press Space to Navigate</div>
+                </div>
+            </section>
+
+            <!-- Slide 2: The Challenge -->
+            <section>
+                <h3 class="text-3xl font-bold text-slate-800 mb-8 flex items-center gap-3">
+                    <i data-lucide="alert-triangle" class="text-amber-500"></i> The Challenge
+                </h3>
+                <div class="grid grid-cols-2 gap-12">
+                    <div>
+                        <p class="text-xl mb-6">Current health data infrastructure is <strong>inconsistent</strong> across nations and nodes.</p>
+                        <ul class="space-y-4">
+                            <li class="flex items-start gap-2"><i data-lucide="x-circle" class="text-red-400 mt-1"></i> Industry partners face a "postcode lottery" of governance speed.</li>
+                            <li class="flex items-start gap-2"><i data-lucide="x-circle" class="text-red-400 mt-1"></i> Investments are reactive, fixing symptoms rather than systems.</li>
+                            <li class="flex items-start gap-2"><i data-lucide="x-circle" class="text-red-400 mt-1"></i> "Federation" is impossible without a common standard of capability.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col items-center justify-center">
+                        <!-- Simple visual of fragmented nodes -->
+                        <div class="relative w-64 h-64">
+                            <div class="absolute top-10 left-10 node"></div>
+                            <div class="absolute top-10 right-10 node"></div>
+                            <div class="absolute bottom-10 left-20 node"></div>
+                            <div class="absolute bottom-20 right-10 node"></div>
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">No Connection</div>
+                        </div>
+                        <p class="text-center text-sm font-semibold mt-4">Current State: Fragmented</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: The Solution (HDRL) -->
+            <section>
+                <div class="flex items-center gap-4 mb-6">
+                    <h3 class="text-3xl font-bold text-slate-800">The Solution: HDRL Framework</h3>
+                </div>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+                    <p class="text-xl text-blue-900 italic">"A scientifically derived roadmap to assess the maturity of health data systems."</p>
+                </div>
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="p-4 border rounded-lg shadow-sm">
+                        <div class="text-blue-500 mb-2"><i data-lucide="book-open" class="w-8 h-8"></i></div>
+                        <h4 class="font-bold text-lg mb-2">Rigorous</h4>
+                        <p class="text-sm">Synthesised from 56 global frameworks (WHO, OECD, FAIR).</p>
+                    </div>
+                    <div class="p-4 border rounded-lg shadow-sm">
+                        <div class="text-blue-500 mb-2"><i data-lucide="map" class="w-8 h-8"></i></div>
+                        <h4 class="font-bold text-lg mb-2">Roadmap-based</h4>
+                        <p class="text-sm">Not a pass/fail audit. A guide for investment and growth.</p>
+                    </div>
+                    <div class="p-4 border rounded-lg shadow-sm">
+                        <div class="text-blue-500 mb-2"><i data-lucide="check-circle" class="w-8 h-8"></i></div>
+                        <h4 class="font-bold text-lg mb-2">Outcome-focused</h4>
+                        <p class="text-sm">Measures if you can <em>deliver</em>, not just if you have a policy.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 4: The Missing Middle -->
+            <section>
+                <h3 class="text-3xl font-bold text-slate-800 mb-10">Bridging the Gap</h3>
+                <div class="flex flex-col gap-4 items-center justify-center w-full max-w-4xl mx-auto">
+                    
+                    <!-- Top Layer -->
+                    <div class="w-full bg-slate-100 p-4 rounded-lg border border-dashed border-slate-300 text-center opacity-60">
+                        <h4 class="font-bold text-slate-500">High Level Principles</h4>
+                        <p class="text-xs">Five Safes, Alliance Principles (Abstract)</p>
+                    </div>
+
+                    <!-- The Gap Filler -->
+                    <div class="w-full bg-blue-600 p-6 rounded-lg shadow-lg text-center text-white transform scale-105 z-10">
+                        <h4 class="font-bold text-xl mb-1">HDRL Framework</h4>
+                        <p class="text-sm opacity-90">Organisational Readiness & Investment Roadmap</p>
+                        <p class="text-xs mt-2 italic">"Are we organizationally ready to deliver?"</p>
+                    </div>
+
+                    <!-- Bottom Layer -->
+                    <div class="w-full bg-slate-100 p-4 rounded-lg border border-dashed border-slate-300 text-center opacity-60">
+                        <h4 class="font-bold text-slate-500">Technical Specifications</h4>
+                        <p class="text-xs">SATRE, NHS SDE Specs, ISO 27001 (Detailed)</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Slide 5: The 8 Domains (Grid 1) -->
+            <section>
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">Anatomy of Readiness (1/2)</h3>
+                <p class="text-sm text-slate-500 mb-6">Translating technical capability into business value.</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- A -->
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-blue-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-blue-600">A. Data Coverage</span>
+                            <i data-lucide="database" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="font-bold text-slate-800 mb-1">The Asset Inventory</div>
+                        <p class="text-xs text-slate-500">Do we have the data researchers want? Without this, the shop shelves are empty.</p>
+                    </div>
+                    <!-- B -->
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-cyan-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-cyan-600">B. Semantics</span>
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="font-bold text-slate-800 mb-1">Product Usability</div>
+                        <p class="text-xs text-slate-500">Is the data messy or ready-to-use? Reduces cleaning time.</p>
+                    </div>
+                    <!-- C -->
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-indigo-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-indigo-600">C. Governance</span>
+                            <i data-lucide="shield-check" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="font-bold text-slate-800 mb-1">Speed to Market</div>
+                        <p class="text-xs text-slate-500">How fast can we approve? The #1 friction point for industry.</p>
+                    </div>
+                    <!-- D -->
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-violet-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-violet-600">D. Research Integration</span>
+                            <i data-lucide="line-chart" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="font-bold text-slate-800 mb-1">Customer Success</div>
+                        <p class="text-xs text-slate-500">Are people using the service? Measures output, not capacity.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6: The 8 Domains (Grid 2) -->
+            <section>
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">Anatomy of Readiness (2/2)</h3>
+                <p class="text-sm text-slate-500 mb-6">Foundations for sustainable delivery.</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- E -->
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-emerald-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-emerald-600">E. Public Trust</span>
+                            <i data-lucide="heart-handshake" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="font-bold text-slate-800 mb-1">Social License</div>
+                        <p class="text-xs text-slate-500">Will the public let us operate? Preventing transparency failures.</p>
+                    </div>
+                    <!-- F -->
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-amber-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-amber-600">F. Sustainability</span>
+                            <i data-lucide="coins" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="font-bold text-slate-800 mb-1">Business Model</div>
+                        <p class="text-xs text-slate-500">Can we pay the bills? Moving from grants to cost recovery.</p>
+                    </div>
+                    <!-- G -->
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-rose-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-rose-600">G. Workforce</span>
+                            <i data-lucide="users" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="font-bold text-slate-800 mb-1">Talent Pipeline</div>
+                        <p class="text-xs text-slate-500">Do we have the people? Identifying critical skill gaps.</p>
+                    </div>
+                    <!-- H -->
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-slate-500">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold text-slate-600">H. Infrastructure</span>
+                            <i data-lucide="server" class="w-4 h-4 text-slate-400"></i>
+                        </div>
+                        <div class="font-bold text-slate-800 mb-1">The Engine Room</div>
+                        <p class="text-xs text-slate-500">Is our tech safe? Secure environments and AI scalability.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: The Maturity Ladder -->
+            <section>
+                <h3 class="text-3xl font-bold text-slate-800 mb-8">Measuring Success</h3>
+                <div class="flex flex-col gap-2 w-3/4 mx-auto">
+                    <div class="bg-slate-100 p-3 rounded flex justify-between items-center">
+                        <span class="font-bold text-slate-400">Level 1: Initial</span>
+                        <span class="text-xs text-slate-400">Ad-hoc processes</span>
+                    </div>
+                    <div class="bg-slate-200 p-3 rounded flex justify-between items-center">
+                        <span class="font-bold text-slate-500">Level 2: Developing</span>
+                        <span class="text-xs text-slate-500">Basic structures in place</span>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded flex justify-between items-center border border-blue-200">
+                        <span class="font-bold text-blue-700">Level 3: Defined</span>
+                        <span class="text-xs text-blue-700">We know what we are doing (Documented)</span>
+                    </div>
+                    <div class="bg-blue-600 p-4 rounded flex justify-between items-center shadow-lg transform scale-105">
+                        <span class="font-bold text-white text-lg">Level 4: Managed</span>
+                        <div class="text-right">
+                            <span class="text-xs text-blue-100 block">The Goal for Collaboration</span>
+                            <span class="text-xs text-white font-bold">"We can prove we do it well" (Measured Performance)</span>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 p-3 rounded flex justify-between items-center opacity-70">
+                        <span class="font-bold text-slate-400">Level 5: Optimising</span>
+                        <span class="text-xs text-slate-400">World-leading continuous improvement</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: Strategic Value -->
+            <section>
+                <h3 class="text-3xl font-bold text-slate-800 mb-8">Why Adopt HDRL?</h3>
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
+                            <i data-lucide="landmark" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">For Policy Makers</h4>
+                        <p class="text-sm">Pinpoints exactly where investment is needed (e.g., Legislation vs Compute).</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
+                            <i data-lucide="microscope" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">For Research Services</h4>
+                        <p class="text-sm">Provides a clear "License to Operate" checklist and improvement roadmap.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
+                            <i data-lucide="building-2" class="w-8 h-8"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">For Industry</h4>
+                        <p class="text-sm">Guarantees that a "Level 4" partner delivers predictability and speed.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: The Ask -->
+            <section data-background-color="#1e293b">
+                <div class="text-center">
+                    <div class="bg-blue-600 text-white w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <i data-lucide="rocket" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-4xl font-bold text-white mb-6">Recommendation</h3>
+                    <p class="text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+                        Adopt HDRL as the primary tool for baseline assessment and investment planning for the next 3-year cycle.
+                    </p>
+                    <div class="bg-slate-800 p-6 rounded-lg inline-block text-left">
+                        <h4 class="text-blue-400 font-bold mb-2 uppercase text-xs tracking-wider">Next Steps</h4>
+                        <ul class="text-white space-y-2 text-sm">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="text-green-400 w-4 h-4"></i> Mandate self-assessment for Q2.</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="text-green-400 w-4 h-4"></i> Review funding allocations based on readiness gaps.</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="text-green-400 w-4 h-4"></i> Establish Level 4 as the target for the UK Network.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+        // Initialize Reveal.js
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: false, // Changed to false to prevent SecurityError
+            history: false, // Explicitly disable history to prevent SecurityError
+            transition: 'slide', // none/fade/slide/convex/concave/zoom
+        });
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

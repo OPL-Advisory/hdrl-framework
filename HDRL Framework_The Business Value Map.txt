@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDRL Domain Map Visualisation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-8 flex flex-col items-center justify-center">
+
+    <!-- Header Section -->
+    <div class="text-center mb-10 max-w-4xl">
+        <h1 class="text-4xl font-bold text-slate-900 mb-3">HDRL Framework: The Business Value Map</h1>
+        <p class="text-lg text-slate-600">Translating the 8 technical domains of Health Data Readiness into strategic value for decision makers.</p>
+    </div>
+
+    <!-- Grid Container -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl w-full">
+
+        <!-- Domain A -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">Domain A</span>
+                <i data-lucide="database" class="text-slate-400 group-hover:text-blue-500 transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">The Asset Inventory</h3>
+            <p class="text-sm text-slate-500 font-medium mb-4">Data Coverage & Federation</p>
+            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                <p class="text-sm text-blue-900 leading-snug">
+                    <span class="font-bold">The "So What?":</span> <br>
+                    Do we actually have the data researchers want? Without this, the shop shelves are empty.
+                </p>
+            </div>
+        </div>
+
+        <!-- Domain B -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-2 h-full bg-cyan-500"></div>
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-cyan-600 uppercase tracking-wider">Domain B</span>
+                <i data-lucide="check-circle-2" class="text-slate-400 group-hover:text-cyan-500 transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Product Usability</h3>
+            <p class="text-sm text-slate-500 font-medium mb-4">Semantics & Quality</p>
+            <div class="bg-cyan-50 p-3 rounded-lg border border-cyan-100">
+                <p class="text-sm text-cyan-900 leading-snug">
+                    <span class="font-bold">The "So What?":</span> <br>
+                    Is the data messy or ready-to-use? High maturity slashes the time spent cleaning data.
+                </p>
+            </div>
+        </div>
+
+        <!-- Domain C -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Domain C</span>
+                <i data-lucide="shield-check" class="text-slate-400 group-hover:text-indigo-500 transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Speed to Market</h3>
+            <p class="text-sm text-slate-500 font-medium mb-4">Governance & Access</p>
+            <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                <p class="text-sm text-indigo-900 leading-snug">
+                    <span class="font-bold">The "So What?":</span> <br>
+                    How fast can we approve safe research? This is the primary friction point for industry.
+                </p>
+            </div>
+        </div>
+
+        <!-- Domain D -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-2 h-full bg-violet-500"></div>
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-violet-600 uppercase tracking-wider">Domain D</span>
+                <i data-lucide="line-chart" class="text-slate-400 group-hover:text-violet-500 transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Customer Success</h3>
+            <p class="text-sm text-slate-500 font-medium mb-4">Research Integration</p>
+            <div class="bg-violet-50 p-3 rounded-lg border border-violet-100">
+                <p class="text-sm text-violet-900 leading-snug">
+                    <span class="font-bold">The "So What?":</span> <br>
+                    Are people actually using the service? This measures real-world output, not theoretical capacity.
+                </p>
+            </div>
+        </div>
+
+        <!-- Domain E -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Domain E</span>
+                <i data-lucide="heart-handshake" class="text-slate-400 group-hover:text-emerald-500 transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Social License</h3>
+            <p class="text-sm text-slate-500 font-medium mb-4">Public Trust</p>
+            <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100">
+                <p class="text-sm text-emerald-900 leading-snug">
+                    <span class="font-bold">The "So What?":</span> <br>
+                    Will the public let us operate? Ensures we don't lose support through transparency gaps.
+                </p>
+            </div>
+        </div>
+
+        <!-- Domain F -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Domain F</span>
+                <i data-lucide="coins" class="text-slate-400 group-hover:text-amber-500 transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Business Model</h3>
+            <p class="text-sm text-slate-500 font-medium mb-4">Sustainability</p>
+            <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                <p class="text-sm text-amber-900 leading-snug">
+                    <span class="font-bold">The "So What?":</span> <br>
+                    Can we pay the bills? Moves us from short-term grant dependency to sustainable cost recovery.
+                </p>
+            </div>
+        </div>
+
+        <!-- Domain G -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-2 h-full bg-rose-500"></div>
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-rose-600 uppercase tracking-wider">Domain G</span>
+                <i data-lucide="users" class="text-slate-400 group-hover:text-rose-500 transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Talent Pipeline</h3>
+            <p class="text-sm text-slate-500 font-medium mb-4">Workforce & Culture</p>
+            <div class="bg-rose-50 p-3 rounded-lg border border-rose-100">
+                <p class="text-sm text-rose-900 leading-snug">
+                    <span class="font-bold">The "So What?":</span> <br>
+                    Do we have the people to run this? Identifies critical skill gaps in engineering and AI.
+                </p>
+            </div>
+        </div>
+
+        <!-- Domain H -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md transition-shadow duration-300 relative overflow-hidden group">
+            <div class="absolute top-0 left-0 w-2 h-full bg-slate-500"></div>
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-slate-600 uppercase tracking-wider">Domain H</span>
+                <i data-lucide="server" class="text-slate-400 group-hover:text-slate-600 transition-colors"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-1">The Engine Room</h3>
+            <p class="text-sm text-slate-500 font-medium mb-4">Infrastructure</p>
+            <div class="bg-slate-100 p-3 rounded-lg border border-slate-200">
+                <p class="text-sm text-slate-900 leading-snug">
+                    <span class="font-bold">The "So What?":</span> <br>
+                    Is our tech safe and scalable? Ensures we can handle AI workloads and cyber threats.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer for Screenshot Context -->
+    <div class="mt-10 text-slate-400 text-sm">
+        <p>Source: Health Data Readiness Level (HDRL) Assessment Framework v1.0</p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
