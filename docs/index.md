@@ -16,7 +16,6 @@ The HDRL Framework provides a scientifically derived roadmap to assess the matur
 
 [Explore the Domains :material-compass-outline:](domains/index.md){ .md-button .md-button--primary }
 [Framework Overview :material-book-open-variant:](framework/overview.md){ .md-button }
-[Assessment App :material-open-in-new:](https://uk-health-data-assistant-8u35smuwsck8podxzu7qfb.streamlit.app/){ .md-button target="_blank" }
 
 </div>
 
