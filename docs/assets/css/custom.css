@@ -1,0 +1,142 @@
+/* HDRL Framework Custom Styles */
+
+/* Hero section on landing page */
+.hdrl-hero {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.hdrl-hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.hdrl-hero .subtitle {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+/* Stats grid */
+.hdrl-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.hdrl-stat {
+  text-align: center;
+  padding: 1.2rem 0.5rem;
+  border-radius: 8px;
+  background: var(--md-code-bg-color);
+}
+
+.hdrl-stat .number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--md-primary-fg-color);
+  display: block;
+  line-height: 1.2;
+}
+
+.hdrl-stat .label {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Domain cards grid */
+.hdrl-domains {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.hdrl-domain-card {
+  padding: 1.2rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--md-primary-fg-color);
+  background: var(--md-code-bg-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hdrl-domain-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hdrl-domain-card h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.hdrl-domain-card .domain-ref {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--md-primary-fg-color);
+}
+
+.hdrl-domain-card p {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Colour variants for domain cards */
+.hdrl-domain-card.domain-a { border-left-color: #3b82f6; }
+.hdrl-domain-card.domain-a .domain-ref { color: #3b82f6; }
+.hdrl-domain-card.domain-b { border-left-color: #06b6d4; }
+.hdrl-domain-card.domain-b .domain-ref { color: #06b6d4; }
+.hdrl-domain-card.domain-c { border-left-color: #6366f1; }
+.hdrl-domain-card.domain-c .domain-ref { color: #6366f1; }
+.hdrl-domain-card.domain-d { border-left-color: #8b5cf6; }
+.hdrl-domain-card.domain-d .domain-ref { color: #8b5cf6; }
+.hdrl-domain-card.domain-e { border-left-color: #10b981; }
+.hdrl-domain-card.domain-e .domain-ref { color: #10b981; }
+.hdrl-domain-card.domain-f { border-left-color: #f59e0b; }
+.hdrl-domain-card.domain-f .domain-ref { color: #f59e0b; }
+.hdrl-domain-card.domain-g { border-left-color: #f43f5e; }
+.hdrl-domain-card.domain-g .domain-ref { color: #f43f5e; }
+.hdrl-domain-card.domain-h { border-left-color: #64748b; }
+.hdrl-domain-card.domain-h .domain-ref { color: #64748b; }
+
+/* Iframe container for embedded HTML */
+.hdrl-iframe-container {
+  position: relative;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  margin: 1rem 0;
+}
+
+.hdrl-iframe-container iframe {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+/* CTA buttons */
+.hdrl-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  justify-content: center;
+}
+
+.hdrl-cta .md-button {
+  min-width: 180px;
+  text-align: center;
+}
+
+/* Hard control warning style */
+.hard-control {
+  border-left-color: #ef4444 !important;
+}
