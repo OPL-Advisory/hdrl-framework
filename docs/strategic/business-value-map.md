@@ -7,11 +7,11 @@ The Business Value Map translates the 8 technical domains of the HDRL Framework 
 ## Interactive Visualisation
 
 <div class="hdrl-iframe-container">
-  <iframe src="../assets/html/business-value-map.html" height="700" loading="lazy"></iframe>
+  <iframe src="../../assets/html/business-value-map.html" height="700" loading="lazy"></iframe>
 </div>
 
 !!! tip "Full screen"
-    [Open the Business Value Map in a new tab](../assets/html/business-value-map.html){ target="_blank" } for the full interactive experience.
+    <a href="../../assets/html/business-value-map.html" target="_blank">Open the Business Value Map in a new tab</a> for the full interactive experience.
 
 ---
 

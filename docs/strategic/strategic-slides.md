@@ -7,11 +7,11 @@ An interactive slide deck providing a strategic overview of the HDRL Framework, 
 ## Interactive Presentation
 
 <div class="hdrl-iframe-container">
-  <iframe src="../assets/html/strategic-slides.html" height="600" loading="lazy"></iframe>
+  <iframe src="../../assets/html/strategic-slides.html" height="600" loading="lazy"></iframe>
 </div>
 
 !!! tip "Navigation"
-    Use **arrow keys** or **Space** to navigate between slides. [Open full screen in a new tab](../assets/html/strategic-slides.html){ target="_blank" } for the best experience.
+    Use **arrow keys** or **Space** to navigate between slides. <a href="../../assets/html/strategic-slides.html" target="_blank">Open full screen in a new tab</a> for the best experience.
 
 ---
 
