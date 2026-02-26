@@ -1,0 +1,92 @@
+site_name: HDRL Framework
+site_description: Health Data Readiness Level Assessment Framework — A maturity model for health data systems across the UK's devolved nations
+site_url: https://seymo98.github.io/hdrl-framework/
+repo_url: https://github.com/Seymo98/hdrl-framework
+repo_name: Seymo98/hdrl-framework
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/images/logo.svg
+  favicon: assets/images/favicon.svg
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - tables
+  - attr_list
+  - md_in_html
+  - def_list
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Seymo98/hdrl-framework
+  generator: false
+
+extra_css:
+  - assets/css/custom.css
+
+copyright: HDRL Framework v1.0 &mdash; January 2026
+
+nav:
+  - Home: index.md
+  - Framework:
+    - Overview: framework/overview.md
+    - Maturity Levels: framework/maturity-levels.md
+    - Indicator Classification: framework/classification.md
+    - Hard Controls: framework/hard-controls.md
+    - Quick Reference: framework/quick-reference.md
+  - Domains:
+    - domains/index.md
+    - "A: Data Coverage & Federation": domains/a-data-coverage.md
+    - "B: Data Semantics & Quality": domains/b-data-semantics.md
+    - "C: Governance & Access": domains/c-governance-access.md
+    - "D: Research Integration": domains/d-research-integration.md
+    - "E: Public Trust": domains/e-public-trust.md
+    - "F: Sustainability": domains/f-sustainability.md
+    - "G: Workforce & Culture": domains/g-workforce-culture.md
+    - "H: Infrastructure & Compute": domains/h-infrastructure.md
+  - Strategic:
+    - Business Value Map: strategic/business-value-map.md
+    - Strategic Presentation: strategic/strategic-slides.md
+  - Tools:
+    - Assessment App: tools/assessment-app.md
