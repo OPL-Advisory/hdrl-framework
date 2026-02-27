@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  <meta property="og:title" content="{{ page.title }} — HDRL Framework" />
+  <meta property="og:description" content="{{ config.site_description }}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ page.canonical_url }}" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="keywords" content="HDRL, health data, readiness level, maturity model, UK health data research, TRE, SDE, HDRS, data governance, Five Safes" />
+{% endblock %}

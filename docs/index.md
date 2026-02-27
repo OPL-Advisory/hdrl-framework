@@ -40,7 +40,7 @@ The HDRL Framework provides a scientifically derived roadmap to assess the matur
   </div>
   <div class="hdrl-stat">
     <span class="number">5</span>
-    <span class="label">Hard Controls</span>
+    <span class="label">Foundational Req's</span>
   </div>
 </div>
 
@@ -203,7 +203,7 @@ HDRL serves different needs for different audiences
   </div>
   <div class="hdrl-feature">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="feature-icon"><path d="m10 17-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9m-6-8L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5z"/></svg>
-    <h3>Hard Controls</h3>
+    <h3>Foundational Requirements</h3>
     <p>Five non-negotiable indicators that gate baseline participation</p>
   </div>
 </div>

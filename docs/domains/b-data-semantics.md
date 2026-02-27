@@ -9,6 +9,8 @@
 !!! quote "The business question"
     Is the data messy or ready-to-use? High maturity slashes the time spent cleaning data.
 
+Researchers consistently report that data preparation consumes 60–80% of project time. Organisations that invest in common data models, terminology mapping, and curated research-ready datasets dramatically reduce time-to-insight and improve reproducibility. This domain measures whether data is merely available or genuinely usable at scale.
+
 ---
 
 ## Indicator Summary

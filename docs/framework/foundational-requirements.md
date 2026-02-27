@@ -1,13 +1,13 @@
-# Hard Controls
+# Foundational Requirements
 
-**Hard Controls** are the five indicators that require a **minimum of Level 3** for any system or service claiming baseline HDRS participation. These represent non-negotiable safety and governance requirements.
+**Foundational Requirements** are the five indicators that require a **minimum of Level 3** for any system or service claiming baseline HDRS participation. These represent non-negotiable safety and governance requirements.
 
 !!! danger "Minimum Level 3 Required"
-    A system or service **cannot** claim baseline readiness if any Hard Control is below Level 3, regardless of performance on other indicators.
+    A system or service **cannot** claim baseline readiness if any Foundational Requirement is below Level 3, regardless of performance on other indicators.
 
 ---
 
-## The Five Hard Controls
+## The Five Foundational Requirements
 
 | ID | Indicator | Domain |
 |:---|:----------|:-------|
@@ -46,8 +46,8 @@ These indicators represent the foundational safety and trust requirements withou
 
 ## What Level 3 Means for Each
 
-| Hard Control | Level 3 Requirement |
-|:-------------|:-------------------|
+| Requirement | Level 3 Requirement |
+|:------------|:-------------------|
 | **C.1.1** | Primary legal basis established. Controller/processor defined. Review process exists. |
 | **C.2.2** | Operational DAC meeting monthly. Published criteria including NDG public benefit. Decisions documented. |
 | **C.4.1** | Policy operational. Trained checkers. Manual review of outputs. |

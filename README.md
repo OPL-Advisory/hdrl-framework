@@ -6,7 +6,7 @@
 
 The HDRL Framework provides a scientifically derived roadmap to assess the maturity of health data systems, enabling federated UK-wide infrastructure for health data research. It was developed through systematic evidence synthesis of 56 global frameworks (WHO, OECD, FAIR, CMMI, HIMSS).
 
-**Key numbers:** 8 domains · 64 indicators · 5 maturity levels · 5 hard controls
+**Key numbers:** 8 domains · 64 indicators · 5 maturity levels · 5 foundational requirements
 
 ## Documentation Site
 
@@ -16,7 +16,7 @@ The site includes:
 - Detailed descriptions of all 8 domains and 64 indicators
 - Maturity level definitions (L1-L5)
 - Indicator classification system (B0/Cx/O/Y)
-- Hard controls reference
+- Foundational requirements reference
 - Interactive business value map and strategic presentation
 
 ## Development

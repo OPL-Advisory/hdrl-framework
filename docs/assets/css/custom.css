@@ -13,7 +13,7 @@
 .hdrl-hero h1 {
   font-size: 2.8rem !important;
   font-weight: 800 !important;
-  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 50%, #06b6d4 100%);
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 40%, #3b82f6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -22,7 +22,7 @@
 }
 
 [data-md-color-scheme="slate"] .hdrl-hero h1 {
-  background: linear-gradient(135deg, #818cf8 0%, #60a5fa 50%, #22d3ee 100%);
+  background: linear-gradient(135deg, #2dd4bf 0%, #5eead4 40%, #93c5fd 100%);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -294,15 +294,15 @@ svg.feature-icon {
 .hdrl-bridge-layer.faded strong { font-size: 0.9rem; }
 
 .hdrl-bridge-layer.highlight {
-  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  background: linear-gradient(135deg, #0f766e, #0d9488);
   color: white;
   padding: 1.1rem 1.4rem;
   transform: scale(1.03);
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 16px rgba(15, 118, 110, 0.3);
 }
 
 [data-md-color-scheme="slate"] .hdrl-bridge-layer.highlight {
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.5);
+  box-shadow: 0 4px 16px rgba(15, 118, 110, 0.5);
 }
 
 .hdrl-bridge-layer.highlight strong { font-size: 1.05rem; }
@@ -324,8 +324,8 @@ svg.feature-icon {
   margin: 0;
 }
 
-/* ---------- Hard control badge ---------- */
-.hard-control {
+/* ---------- Foundational requirement badge ---------- */
+.foundational-req {
   border-left-color: #ef4444 !important;
 }
 

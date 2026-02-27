@@ -8,14 +8,14 @@ theme:
   name: material
   palette:
     - scheme: default
-      primary: indigo
-      accent: blue
+      primary: teal
+      accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - scheme: slate
-      primary: indigo
-      accent: blue
+      primary: teal
+      accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -32,6 +32,7 @@ theme:
     - search.highlight
     - content.tabs.link
     - toc.follow
+  custom_dir: overrides
   icon:
     repo: fontawesome/brands/github
   logo: assets/images/logo.svg
@@ -71,9 +72,10 @@ nav:
   - Home: index.md
   - Framework:
     - Overview: framework/overview.md
+    - Methodology: framework/methodology.md
     - Maturity Levels: framework/maturity-levels.md
     - Indicator Classification: framework/classification.md
-    - Hard Controls: framework/hard-controls.md
+    - Foundational Requirements: framework/foundational-requirements.md
     - Quick Reference: framework/quick-reference.md
   - Domains:
     - domains/index.md

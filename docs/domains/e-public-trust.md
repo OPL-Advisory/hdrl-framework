@@ -9,6 +9,8 @@
 !!! quote "The business question"
     Will the public let us operate? Ensures we don't lose support through transparency gaps.
 
+The care.data programme collapse in 2014 demonstrated that technical capability means nothing without public trust. Social licence for health data research is fragile and must be actively maintained through transparency, meaningful public involvement in governance, and clear demonstration of public benefit. This domain assesses whether an organisation has earned — and is sustaining — the right to operate.
+
 ---
 
 ## Indicator Summary

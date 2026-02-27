@@ -9,14 +9,16 @@
 !!! quote "The business question"
     Is our tech safe and scalable? Ensures we can handle AI workloads and cyber threats.
 
-!!! warning "Contains 2 Hard Controls"
-    Indicators H.3.1 and H.3.2 are **Hard Controls** requiring a minimum of **Level 3** for baseline participation.
+Secure Data Environments (SDEs/TREs) are the technical backbone of health data research. As workloads shift toward machine learning and large-scale genomics, compute demands are growing exponentially while cyber threats intensify. This domain assesses whether infrastructure meets current standards (NHS SDE specs, SATRE, ISO 27001), can scale for emerging use cases, and maintains the security posture that underpins all other domains. Two of the five Foundational Requirements sit here.
+
+!!! warning "Contains 2 Foundational Requirements"
+    Indicators H.3.1 and H.3.2 are **Foundational Requirements** requiring a minimum of **Level 3** for baseline participation.
 
 ---
 
 ## Indicator Summary
 
-| ID | Indicator | Type | Class | Unit | Hard Control |
+| ID | Indicator | Type | Class | Unit | Foundational |
 |:---|:----------|:-----|:------|:-----|:-------------|
 | H.1.1 | SDE Architecture & Standards | Core | B0 | Service | |
 | H.1.2 | User Environment & Experience | Core | B0 | Service | |
@@ -84,8 +86,8 @@
 
 ## H.3 — Security
 
-### H.3.1 Security Certification & Audit { .hard-control }
-**CORE** · **B0** · **Service** · :warning: **HARD CONTROL** (minimum L3)
+### H.3.1 Security Certification & Audit { .foundational-req }
+**CORE** · **B0** · **Service** · :warning: **FOUNDATIONAL REQUIREMENT** (minimum L3)
 
 | Level | Description |
 |:------|:------------|
@@ -95,8 +97,8 @@
 | **L4** | ISO 27001 certified (full scope). Annual penetration with remediation. Incident management. DEA accredited. |
 | **L5** | Continuous assurance and independent testing. Demonstrable security outcomes; additional certifications as appropriate. |
 
-### H.3.2 Security Operations { .hard-control }
-**CORE** · **B0** · **Service** · :warning: **HARD CONTROL** (minimum L3)
+### H.3.2 Security Operations { .foundational-req }
+**CORE** · **B0** · **Service** · :warning: **FOUNDATIONAL REQUIREMENT** (minimum L3)
 
 | Level | Description |
 |:------|:------------|

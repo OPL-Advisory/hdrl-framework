@@ -9,6 +9,8 @@
 !!! quote "The business question"
     Can we pay the bills? Moves us from short-term grant dependency to sustainable cost recovery.
 
+Most health data services in the UK operate on short-term grant funding, creating a cycle of uncertainty that undermines staffing, infrastructure investment, and strategic planning. This domain assesses whether an organisation has moved beyond grant dependency toward sustainable cost recovery, commercial partnerships, and demonstrable economic impact — the evidence base funders need to commit to long-term investment.
+
 ---
 
 ## Indicator Summary

@@ -6,7 +6,7 @@ Complete summary of all 64 indicators across 8 domains.
 
 ## All Indicators
 
-| ID | Indicator | Type | Class | Unit | Hard Control |
+| ID | Indicator | Type | Class | Unit | Foundational |
 |:---|:----------|:-----|:------|:-----|:-------------|
 | **Domain A: Data Coverage & Federation** |||||
 | A.1.1 | Core Dataset Availability | Core | B0 | S | |
@@ -88,7 +88,7 @@ Complete summary of all 64 indicators across 8 domains.
 - **Type:** Core (essential) / Enh (Enhancement — good practice)
 - **Class:** B0 (Baseline Core — mandatory), Cx (Capability x), O (Optional), Y (Outcome/Context — excluded from readiness scoring)
 - **Unit:** S (System), V (Service), B (Both)
-- **:warning: Hard Control:** These 5 indicators require minimum L3 for baseline participation
+- **:warning: Foundational Requirement:** These 5 indicators require minimum L3 for baseline participation
 
 ---
 
@@ -103,7 +103,7 @@ Complete summary of all 64 indicators across 8 domains.
 | Capability Core (Cx) | 7 |
 | Optional (O) | 16 |
 | Outcome/Context (Y) | 4 |
-| Hard Controls | 5 |
+| Foundational Requirements | 5 |
 
 ---
 

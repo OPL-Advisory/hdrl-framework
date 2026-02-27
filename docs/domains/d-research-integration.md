@@ -9,6 +9,8 @@
 !!! quote "The business question"
     Are people actually using the service? This measures real-world output, not theoretical capacity.
 
+A health data service exists to enable research that improves health outcomes. This domain measures whether that is actually happening — active user counts, research publications, commercial partnerships, and clinical trial support. It shifts the assessment from "could we deliver?" to "are we delivering?" and captures the support infrastructure (helpdesks, training, reproducibility tools) that determines researcher experience.
+
 ---
 
 ## Indicator Summary

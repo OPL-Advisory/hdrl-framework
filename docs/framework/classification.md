@@ -42,7 +42,7 @@ HDRL uses a dual classification system: the original **Core/Enhancement** distin
 | **Capability Core (Cx)** | 7 |
 | **Optional (O)** | 16 |
 | **Outcome/Context (Y)** | 4 |
-| **Hard Controls** | 5 |
+| **Foundational Requirements** | 5 |
 
 ## Scoring Rules
 

@@ -9,6 +9,8 @@
 !!! quote "The business question"
     Do we actually have the data researchers want? Without this, the shop shelves are empty.
 
+Data coverage is the foundation of any health data research service. If core datasets — primary care, hospital episodes, mortality, prescribing — are unavailable or incomplete, no amount of governance or infrastructure investment can compensate. This domain also assesses whether data can be linked across sources and federated across organisational boundaries, which is critical for the UK's multi-nation architecture.
+
 ---
 
 ## Indicator Summary

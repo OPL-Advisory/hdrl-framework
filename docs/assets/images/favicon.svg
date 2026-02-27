@@ -1,4 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
-  <rect width="48" height="48" rx="8" fill="#4F46E5"/>
-  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="white">HDRL</text>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="48" y2="48">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square with gradient -->
+  <rect width="48" height="48" rx="10" fill="url(#g)"/>
+  <!-- Octagonal shape -->
+  <path d="M24 4 L37 11 L44 24 L37 37 L24 44 L11 37 L4 24 L11 11 Z" fill="white" fill-opacity="0.12"/>
+  <!-- Inner ring -->
+  <circle cx="24" cy="24" r="10" stroke="white" stroke-opacity="0.25" stroke-width="1.5" fill="none"/>
+  <!-- HDRL text -->
+  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="800" letter-spacing="0.5" fill="white">HDRL</text>
 </svg>

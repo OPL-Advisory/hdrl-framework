@@ -9,14 +9,16 @@
 !!! quote "The business question"
     How fast can we approve safe research? This is the primary friction point for industry.
 
-!!! warning "Contains 3 Hard Controls"
-    Indicators C.1.1, C.2.2, and C.4.1 are **Hard Controls** requiring a minimum of **Level 3** for baseline participation.
+Governance is the largest single determinant of whether a health data service can attract and retain users. Time-to-data metrics vary from weeks to years across the UK. This domain assesses the legal foundations, access committee efficiency, and UK-wide interoperability that determine whether researchers experience a streamlined pathway or an opaque bureaucracy. Three of the five Foundational Requirements sit in this domain.
+
+!!! warning "Contains 3 Foundational Requirements"
+    Indicators C.1.1, C.2.2, and C.4.1 are **Foundational Requirements** requiring a minimum of **Level 3** for baseline participation.
 
 ---
 
 ## Indicator Summary
 
-| ID | Indicator | Type | Class | Unit | Hard Control |
+| ID | Indicator | Type | Class | Unit | Foundational |
 |:---|:----------|:-----|:------|:-----|:-------------|
 | C.1.1 | Legal Basis for Processing | Core | B0 | System | :warning: |
 | C.1.2 | Legislative Environment | Enhancement | O | System | |
@@ -34,8 +36,8 @@
 
 ## C.1 — Legal Framework
 
-### C.1.1 Legal Basis for Research Processing { .hard-control }
-**CORE** · **B0** · **System** · :warning: **HARD CONTROL** (minimum L3)
+### C.1.1 Legal Basis for Research Processing { .foundational-req }
+**CORE** · **B0** · **System** · :warning: **FOUNDATIONAL REQUIREMENT** (minimum L3)
 
 | Level | Description |
 |:------|:------------|
@@ -71,8 +73,8 @@
 | **L4** | Single-gateway. Median <90 days. SLAs met >= 80%. Applicant support. |
 | **L5** | Median <45 days. Tiered/fast-track approvals. Automated workflows. Top-quartile UK. |
 
-### C.2.2 Data Access Committee { .hard-control }
-**CORE** · **B0** · **Both** · :warning: **HARD CONTROL** (minimum L3)
+### C.2.2 Data Access Committee { .foundational-req }
+**CORE** · **B0** · **Both** · :warning: **FOUNDATIONAL REQUIREMENT** (minimum L3)
 
 | Level | Description |
 |:------|:------------|
@@ -137,8 +139,8 @@
 
 ## C.4 — Governance Assurance
 
-### C.4.1 Statistical Disclosure Control { .hard-control }
-**CORE** · **B0** · **Service** · :warning: **HARD CONTROL** (minimum L3)
+### C.4.1 Statistical Disclosure Control { .foundational-req }
+**CORE** · **B0** · **Service** · :warning: **FOUNDATIONAL REQUIREMENT** (minimum L3)
 
 | Level | Description |
 |:------|:------------|

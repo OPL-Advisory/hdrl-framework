@@ -1,4 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
-  <rect width="48" height="48" rx="8" fill="#4F46E5"/>
-  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="white">HDRL</text>
+  <!-- Octagonal background representing 8 domains -->
+  <path d="M24 2 L38.5 9.5 L46 24 L38.5 38.5 L24 46 L9.5 38.5 L2 24 L9.5 9.5 Z" fill="white" fill-opacity="0.15"/>
+  <!-- Inner maturity rings (5 levels) -->
+  <circle cx="24" cy="24" r="18" stroke="white" stroke-opacity="0.12" stroke-width="1" fill="none"/>
+  <circle cx="24" cy="24" r="14" stroke="white" stroke-opacity="0.15" stroke-width="1" fill="none"/>
+  <circle cx="24" cy="24" r="10" stroke="white" stroke-opacity="0.2" stroke-width="1" fill="none"/>
+  <circle cx="24" cy="24" r="6" stroke="white" stroke-opacity="0.25" stroke-width="1.5" fill="none"/>
+  <!-- 8 domain spokes -->
+  <line x1="24" y1="6" x2="24" y2="42" stroke="white" stroke-opacity="0.1" stroke-width="0.5"/>
+  <line x1="6" y1="24" x2="42" y2="24" stroke="white" stroke-opacity="0.1" stroke-width="0.5"/>
+  <line x1="11.3" y1="11.3" x2="36.7" y2="36.7" stroke="white" stroke-opacity="0.1" stroke-width="0.5"/>
+  <line x1="36.7" y1="11.3" x2="11.3" y2="36.7" stroke="white" stroke-opacity="0.1" stroke-width="0.5"/>
+  <!-- HDRL text -->
+  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="13" font-weight="800" letter-spacing="1" fill="white">HDRL</text>
 </svg>
