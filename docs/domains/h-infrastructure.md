@@ -1,7 +1,5 @@
 # Domain H: Infrastructure & Compute Capacity
 
-<span class="domain-ref" style="color: #64748b;">THE ENGINE ROOM</span>
-
 **Focus:** Technical infrastructure including SDEs, compute, security, AI capability
 
 **Indicators:** 9 (6 Core, 3 Enhancement)
