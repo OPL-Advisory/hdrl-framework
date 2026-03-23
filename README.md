@@ -10,14 +10,13 @@ The HDRL Framework provides a scientifically derived roadmap to assess the matur
 
 ## Documentation Site
 
-The full framework documentation is available at: **https://seymo98.github.io/hdrl-framework/**
+The full framework documentation is available at: **https://opl-advisory.github.io/hdrl-framework/**
 
 The site includes:
 - Detailed descriptions of all 8 domains and 64 indicators
 - Maturity level definitions (L1-L5)
 - Indicator classification system (B0/Cx/O/Y)
 - Foundational requirements reference
-- Interactive business value map and strategic presentation
 
 ## Development
 
