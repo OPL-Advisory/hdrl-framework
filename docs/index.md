@@ -40,7 +40,7 @@ The HDRL Framework provides a scientifically derived roadmap to assess the matur
   </div>
   <div class="hdrl-stat">
     <span class="number">5</span>
-    <span class="label">Foundational Req's</span>
+    <span class="label">Foundational Requirements</span>
   </div>
 </div>
 
@@ -69,7 +69,7 @@ Developed through systematic evidence synthesis of **56 global frameworks** — 
   </div>
   <div class="hdrl-bridge-layer faded">
     <strong>Technical Specifications</strong>
-    <p>SATRE, NHS SDE Specs, ISO 27001</p>
+    <p>SATRE, NHS DSPT, ISO 27001</p>
   </div>
 </div>
 
