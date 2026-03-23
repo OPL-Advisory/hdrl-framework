@@ -1,7 +1,5 @@
 # Domain C: Governance & Access
 
-<span class="domain-ref" style="color: #6366f1;">SPEED TO MARKET</span>
-
 **Focus:** Legal, regulatory, and procedural frameworks; UK-wide coordination
 
 **Indicators:** 11 (9 Core, 2 Enhancement)
