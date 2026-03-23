@@ -1,5 +1,7 @@
 # Domain D: Research Integration & Market Use
+
 **Focus:** Integration with research community; demonstrated use across sectors
+
 **Indicators:** 8 (6 Core, 2 Enhancement)
 
 !!! quote "The business question"
