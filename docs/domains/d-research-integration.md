@@ -1,7 +1,5 @@
 # Domain D: Research Integration & Market Use
 
-<span class="domain-ref" style="color: #8b5cf6;">CUSTOMER SUCCESS</span>
-
 **Focus:** Integration with research community; demonstrated use across sectors
 
 **Indicators:** 8 (6 Core, 2 Enhancement)
