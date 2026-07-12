@@ -1,9 +1,12 @@
 # Foundational Requirements
 
-**Foundational Requirements** are the five indicators that require a **minimum of Level 3** for any system or service claiming baseline HDRS participation. These represent non-negotiable safety and governance requirements.
+**Foundational Indicators** are the five indicators that HDRL designates as requiring a **minimum of Level 3** when assessing potential baseline participation within the framework. They represent proposed safety and governance conditions in HDRL's assessment logic.
 
-!!! danger "Minimum Level 3 Required"
-    A system or service **cannot** claim baseline readiness if any Foundational Requirement is below Level 3, regardless of performance on other indicators.
+!!! important "Proposed by HDRL"
+    These indicators and the Level 3 threshold are offered as a contribution to the HDRS design conversation. They are not established or official HDRS participation requirements, and the framework does not itself confer or deny participation.
+
+!!! warning "Minimum Level 3 within HDRL"
+    Under HDRL's scoring logic, a system or service does not meet the framework's proposed baseline readiness profile if any Foundational Indicator is below Level 3, regardless of performance on other indicators.
 
 ---
 

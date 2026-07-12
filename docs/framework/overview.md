@@ -2,9 +2,12 @@
 
 ## Purpose and Scope
 
-The **Health Data Readiness Level (HDRL)** Assessment Framework provides a common language for understanding capabilities, identifying gaps, and planning investments across the UK's health data infrastructure.
+The **Health Data Readiness Level (HDRL)** Assessment Framework provides a common language for understanding capabilities, identifying gaps, and planning investments across health data research infrastructure.
 
-HDRS aims to create federated UK-wide infrastructure for health data research. HDRL provides a standardised way to assess how ready organisations and systems are to participate in this vision.
+HDRS aims to create federated UK-wide infrastructure for health data research. HDRL provides a structured way to assess the potential readiness of organisations and systems to participate in this vision. It may also be adapted to comparable settings beyond the UK where governance and terminology are made explicit.
+
+!!! important "Positioning"
+    HDRL is an independently developed planning and assessment instrument. It complements existing principles, standards and assurance processes; it does not replace them and is not an official HDRS accreditation or participation standard.
 
 **Designed for:**
 
@@ -12,6 +15,7 @@ HDRS aims to create federated UK-wide infrastructure for health data research. H
 - Health data organisations
 - Policy makers and funders
 - UK Health Data Research Alliance members
+- Researchers, public contributors and industry partners
 
 ## Development Approach
 
@@ -84,4 +88,4 @@ HDRL supports roadmap development rather than pass/fail judgements.
 | **Optimising** | Majority of Baseline Core at Level 4-5. Exceeds baseline. Potential exemplar. |
 
 !!! important
-    These profiles support planning, not accreditation. HDRS participation decisions are made through separate governance.
+    These profiles support planning, not accreditation. A maturity level does not guarantee delivery performance, and HDRS participation decisions are made through separate governance.

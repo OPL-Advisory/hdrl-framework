@@ -2,6 +2,9 @@
 
 HDRL uses a dual classification system: the original **Core/Enhancement** distinction for continuity, plus an explicit **Applicability Class** for role-based assessment.
 
+!!! important "How to read 'mandatory'"
+    The classification terms below describe the internal logic of HDRL assessments. They do not create official HDRS participation requirements or replace decisions made through legal, governance, assurance or programme processes.
+
 ---
 
 ## Indicator Type

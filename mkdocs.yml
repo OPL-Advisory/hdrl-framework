@@ -1,8 +1,14 @@
 site_name: HDRL Framework
-site_description: Health Data Readiness Level Assessment Framework — A maturity model for health data systems across the UK's devolved nations
+site_description: A practical, evidence-led maturity framework for assessing organisational and system readiness for trusted, federated health data research.
 site_url: https://opl-advisory.github.io/hdrl-framework/
+site_author: OPL Advisory Ltd
 repo_url: https://github.com/OPL-Advisory/hdrl-framework
 repo_name: OPL-Advisory/hdrl-framework
+
+# Retain legacy briefing assets in the repository without publishing their
+# superseded marketing language as part of the launch site.
+exclude_docs: |
+  assets/html/
 
 theme:
   name: material
@@ -26,11 +32,13 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.expand
+    - navigation.footer
     - navigation.top
     - navigation.indexes
     - search.suggest
     - search.highlight
     - content.tabs.link
+    - content.tooltips
     - toc.follow
   custom_dir: overrides
   icon:
@@ -60,23 +68,25 @@ plugins:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/Seymo98/hdrl-framework
+      link: https://github.com/OPL-Advisory/hdrl-framework
+      name: HDRL Framework on GitHub
   generator: false
 
 extra_css:
   - assets/css/custom.css
 
-copyright: HDRL Framework v1.0 — Developed by OPL Advisory Ltd - 2026
+copyright: HDRL Framework v1.0 · OPL Advisory Ltd · Licensed under CC BY 4.0
 
 nav:
   - Home: index.md
   - Framework:
     - Overview: framework/overview.md
+    - Using the Framework: framework/using-the-framework.md
+    - Quick Reference: framework/quick-reference.md
     - Methodology: framework/methodology.md
     - Maturity Levels: framework/maturity-levels.md
     - Indicator Classification: framework/classification.md
-    - Foundational Requirements: framework/foundational-requirements.md
-    - Quick Reference: framework/quick-reference.md
+    - Proposed Foundational Indicators: framework/foundational-requirements.md
   - Domains:
     - domains/index.md
     - "A: Data Coverage & Federation": domains/a-data-coverage.md
@@ -87,3 +97,5 @@ nav:
     - "F: Sustainability": domains/f-sustainability.md
     - "G: Workforce & Culture": domains/g-workforce-culture.md
     - "H: Infrastructure & Compute": domains/h-infrastructure.md
+  - 3 Nations Application: three-nations-assessment.md
+  - About & Reuse: about.md

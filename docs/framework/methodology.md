@@ -2,7 +2,7 @@
 
 ## How the Framework Was Developed
 
-The HDRL Framework was developed through a combination of **systematic evidence synthesis**, **first-principles analysis**, and **multi-stakeholder validation**. This page documents the approach, evidence base, and key design decisions.
+The HDRL Framework was developed through a combination of **systematic evidence synthesis**, **first-principles analysis**, and **stakeholder calibration**. This page documents the approach, evidence base, and key design decisions.
 
 ---
 
@@ -16,7 +16,7 @@ A novel methodology was employed in which **three frontier AI models** (Claude, 
 | **Medium (partial consensus)** | Identified by two models | 18 frameworks |
 | **Verified unique** | From single model, verified against primary sources | 14 frameworks |
 
-This approach enabled comprehensive coverage whilst providing explicit confidence assessment and reducing the risk of any single model's biases shaping the framework.
+This approach widened coverage and made areas of agreement and disagreement visible. AI outputs were used as synthesis aids, not as sources of authority: retained claims were checked by a human reviewer against primary or authoritative sources, and framework-design decisions remained human decisions.
 
 !!! success "Central finding"
     No existing framework comprehensively addresses health data research readiness. While mature frameworks exist for general data management, health information systems, and FAIR data practices, none integrates these dimensions for assessing readiness to participate in multi-site health data research infrastructure.
@@ -85,7 +85,7 @@ Adapted from the RDA FAIR Data Maturity Model's priority tiers (essential, impor
 
 ### Foundational Requirements
 
-Five indicators that represent non-negotiable safety and governance prerequisites. These are drawn from the first-principles "necessary conditions" analysis and prevent the median-based scoring from hiding critical gaps.
+Five indicators designated by HDRL as proposed safety and governance prerequisites within the framework's assessment logic. These are drawn from the first-principles "necessary conditions" analysis and prevent median-based scoring from hiding critical gaps. Their proposed minimum of Level 3 is not an established HDRS requirement.
 
 ---
 
@@ -102,3 +102,11 @@ Five indicators that represent non-negotiable safety and governance prerequisite
 | **Building Trusted Research Environments** (UK HDRA, 2021) | TRE operational requirements informing Domain H |
 | **SATRE Specification** (DARE UK, 2023) | TRE capability tiers informing H.1.1 |
 | **CMMI** | Maturity level nomenclature and progression logic |
+
+---
+
+## Field application and further validation
+
+Version 1.0 was applied across three distinct UK jurisdictions using documentary evidence, stakeholder interviews, national workshops, structured Right of Reply, cross-nation calibration and two research use-case stress tests. This demonstrated practical feasibility across heterogeneous institutional models.
+
+Further validation is still required. Priorities include independent scoring by multiple assessors, formal inter-rater reliability testing, sensitivity analysis, international application and refinement of Level 4 and Level 5 thresholds using benchmark data. The framework and any assessment results should therefore be presented as evidence-led and field-tested, not as a fully validated accreditation instrument.

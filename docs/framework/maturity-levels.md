@@ -2,6 +2,9 @@
 
 The HDRL Framework uses **five levels** to describe the current state of maturity of a health data organisation or system. These levels indicate potential readiness to participate in the Health Data Research Service (HDRS).
 
+!!! info "Maturity is evidence-dependent"
+    Levels describe the evidence available at the assessment date. They are not grades, accreditation decisions or guarantees of delivery. An organisation may have operational capability that is not yet supported by the documentation or measured performance required for a higher level.
+
 ---
 
 ## Level 1: Initial — Ad-hoc Processes
