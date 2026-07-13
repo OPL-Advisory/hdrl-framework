@@ -19,10 +19,10 @@ HDRS aims to create federated UK-wide infrastructure for health data research. H
 
 ## Development Approach
 
-The HDRL Framework was developed through systematic evidence synthesis and first-principles analysis. **Three frontier AI models independently reviewed 56 existing frameworks** across data governance, health information systems, research infrastructure, and workforce capacity domains. Outputs were triangulated to identify areas of consensus and disagreement, with all findings verified against primary sources.
+The HDRL Framework was developed through a structured landscape review and first-principles analysis. **Three AI models independently reviewed 56 existing frameworks** across data governance, health information systems, research infrastructure, and workforce capacity domains. Outputs were triangulated to identify areas of consensus and disagreement, with retained claims checked by a human reviewer against primary or authoritative sources.
 
-!!! success "Key finding"
-    No existing framework comprehensively addresses health data research readiness. While mature frameworks exist for general data management (DCAM, DAMA-DMBOK), health information systems (HIMSS EMRAM, WHO SCORE), and FAIR data practices (RDA FAIR DMM), none integrates these dimensions for assessing readiness to participate in multi-site health data research infrastructure.
+!!! success "Design rationale"
+    Relevant conditions were distributed across multiple instruments rather than operationalised in one assessment at the system-and-service scope required for this project. HDRL brings those conditions together for the specific challenge of trusted, federated health data research.
 
 The framework architecture reflects strong consensus across source frameworks:
 
@@ -39,6 +39,12 @@ HDRL fills the "missing middle" between abstract principles and detailed technic
 | **High-Level Principles** | Five Safes, Alliance Principles | Abstract guidance |
 | **HDRL Framework** | Organisational Readiness & Investment Roadmap | *"Are we organisationally ready to deliver?"* |
 | **Technical Specifications** | SATRE, NHS SDE Specs, ISO 27001 | Detailed requirements |
+
+## Relationship to Federated TRE Maturity Work
+
+[Luong and colleagues' 2026 maturity-model framework](https://doi.org/10.3389/fdgth.2026.1699125){ target="_blank" rel="noopener" } addresses the related problem of preparing networks of Trusted Research Environments for federation. It proposes six high-level domains and maps them to SATRE and the DARE UK Federated Architecture Blueprint, while identifying indicators and maturity descriptors as areas for further development and validation.
+
+HDRL does not claim exclusivity in this field. Its distinct contribution is a broader system-and-service readiness lens, operationalised through 64 indicators across eight domains and formatively applied across three heterogeneous national settings. It includes data coverage and semantics, research delivery, public trust, sustainability and workforce alongside governance and technical infrastructure. The two approaches are complementary rather than interchangeable.
 
 ## Unit of Assessment
 

@@ -1,6 +1,6 @@
 ---
 title: Health Data Readiness Level Framework
-description: A practical, evidence-led maturity framework for assessing organisational and system readiness for trusted, federated health data research.
+description: A practical, evidence-informed maturity framework for assessing organisational and system readiness for trusted, federated health data research.
 hide:
   - navigation
   - toc
@@ -12,7 +12,7 @@ hide:
 
 # Make readiness for health data research visible
 
-**Health Data Readiness Level (HDRL)** is a practical, evidence-led maturity framework for assessing organisational and system readiness for trusted, federated health data research.
+**Health Data Readiness Level (HDRL)** is a practical, evidence-informed maturity framework for assessing organisational and system readiness for trusted, federated health data research.
 
 Its 64 indicators turn broad principles into a structured view of capability, evidence gaps and investment priorities across the whole operating environment.
 
@@ -62,7 +62,7 @@ From principles and specifications to a usable readiness roadmap
 
 </div>
 
-Health data research depends on more than secure technology. Data coverage, semantics, governance, research delivery, public trust, long-term sustainability and skilled people all have to work together. HDRL provides a common measurement instrument across those interdependent conditions, regardless of governance model, organisational structure or scale.
+Federated health data research is a sociotechnical undertaking, not simply a technology deployment. Data coverage, semantics, governance, research delivery, public trust, long-term sustainability and skilled people all have to work together. HDRL provides a common assessment structure across those interdependent conditions, regardless of governance model, organisational structure or scale.
 
 <div class="hdrl-bridge" role="img" aria-label="HDRL connects high-level principles with detailed technical specifications">
   <div class="hdrl-bridge-layer faded">
@@ -202,7 +202,7 @@ A common language for people making different decisions
 
 ## Developed for a real cross-nation challenge
 
-HDRL was developed for the **3 Nations Readiness Assessment** commissioned by Research Data Scotland on behalf of Scotland, Wales and Northern Ireland. The assessment combined documentary evidence, stakeholder engagement, national workshops, structured Right of Reply and two research use-case stress tests.
+HDRL was developed for the **3 Nations Readiness Assessment** commissioned by Research Data Scotland on behalf of Scotland, Wales and Northern Ireland. Its formative application combined documentary evidence, stakeholder engagement, national workshops, structured Right of Reply and two research use-case stress tests.
 
 That field application tested whether one framework could create a consistent, decision-useful view across different health data systems without assuming a single institutional model. This site publishes the framework, not the underlying detailed country assessments.
 

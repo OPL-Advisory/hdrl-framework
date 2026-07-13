@@ -103,7 +103,7 @@ Complete summary of all 64 indicators across 8 domains.
 | Capability Core (Cx) | 7 |
 | Optional (O) | 16 |
 | Outcome/Context (Y) | 4 |
-| Foundational Requirements | 5 |
+| Proposed Foundational Indicators | 5 |
 
 ---
 

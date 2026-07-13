@@ -5,7 +5,7 @@ description: A practical guide to scoping, evidencing, scoring and interpreting 
 
 # Using the Framework
 
-HDRL is designed to turn a complex operating environment into a structured evidence review and improvement roadmap. It can be applied at **system**, **service** or **dual** level, but the scope and evidence standard should be explicit before scoring begins.
+HDRL is designed to turn a complex sociotechnical operating environment into a structured evidence review and improvement roadmap. It can be applied at **system**, **service** or **dual** level, but the scope and evidence standard should be explicit before scoring begins.
 
 !!! important "What an HDRL assessment is — and is not"
     An HDRL assessment is a structured maturity assessment. It is not accreditation, certification, a compliance audit or an official decision on participation in HDRS. Scores describe the evidence available at the time of assessment and should be interpreted alongside context, capacity and the needs of the intended research use case.
@@ -61,6 +61,9 @@ This evidence hierarchy helps surface an important distinction:
 - **Evidence gap:** capability may exist, but documentation, metrics, audit evidence or published performance do not yet demonstrate it.
 - **Capacity gap:** capability exists, but staffing, funding or operating headroom limit the volume or pace that can be delivered.
 
+!!! note "Capability and evidence visibility"
+    HDRL v1.0 scores the capability demonstrated by the available evidence, so a result can reflect both operational maturity and the strength or visibility of its evidence. This protects against unsupported self-assessment, but the two concepts should be interpreted separately. A future validation phase should test whether capability maturity and evidence confidence are better recorded as distinct dimensions.
+
 ## Choose the right unit of assessment
 
 | Approach | Use when | Key consideration |
@@ -95,7 +98,7 @@ HDRL designates five indicators as Foundational Indicators and assumes a minimum
 
 ## Current validation status
 
-HDRL has been field-tested through one multi-jurisdiction application across three distinct UK health data systems. That application demonstrates practical feasibility, but it is not the end of validation. Priorities for further work include independent scoring by multiple assessors, formal inter-rater reliability testing, sensitivity analysis and refinement of Level 4 and Level 5 thresholds using UK and international benchmark data.
+HDRL has been applied formatively through one multi-jurisdiction assessment across three distinct UK health data systems. That application demonstrates practical feasibility, but it does not establish reliability, validity or accreditation fitness. Priorities for further work include independent expert and public content-validity review, scoring by multiple assessors, formal inter-rater reliability testing, sensitivity analysis, prospective application and refinement of Level 4 and Level 5 thresholds using UK and international benchmark data.
 
 !!! tip "Good assessment discipline"
     Preserve an auditable record of the evidence, rationale, assessor judgement, uncertainty, Right of Reply and any score change. Readiness is dynamic, so always state the assessment date.

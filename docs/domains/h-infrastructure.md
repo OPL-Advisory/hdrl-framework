@@ -7,10 +7,10 @@
 !!! quote "The business question"
     Is our tech safe and scalable? Ensures we can handle AI workloads and cyber threats.
 
-Secure Data Environments (SDEs/TREs) are the technical backbone of health data research. As workloads shift toward machine learning and large-scale genomics, compute demands are growing exponentially while cyber threats intensify. This domain assesses whether infrastructure meets current standards (NHS SDE specs, SATRE, ISO 27001), can scale for emerging use cases, and maintains the security posture that underpins all other domains. Two of the five Foundational Requirements sit here.
+Secure Data Environments (SDEs/TREs) are the technical backbone of health data research. As workloads shift toward machine learning and large-scale genomics, compute demands are growing exponentially while cyber threats intensify. This domain assesses whether infrastructure meets current standards (NHS SDE specs, SATRE, ISO 27001), can scale for emerging use cases, and maintains the security posture that underpins all other domains. Two of the five proposed Foundational Indicators sit here.
 
-!!! warning "Contains 2 Foundational Requirements"
-    Indicators H.3.1 and H.3.2 are **Foundational Requirements** requiring a minimum of **Level 3** for baseline participation.
+!!! warning "Contains 2 proposed Foundational Indicators"
+    HDRL v1.0 treats indicators H.3.1 and H.3.2 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official HDRS participation requirements.
 
 ---
 

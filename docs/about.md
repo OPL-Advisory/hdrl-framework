@@ -12,11 +12,15 @@ description: Version, attribution, licence, citation and responsible reuse infor
 | **Full name** | Health Data Readiness Level (HDRL) Assessment Framework |
 | **Version** | 1.0 |
 | **Framework date** | January 2026 |
+| **Validation status** | Evidence-informed and formatively applied; further independent validation is required |
 | **Developed by** | OPL Advisory Ltd |
 | **Original application** | 3 Nations Readiness Assessment for Scotland, Wales and Northern Ireland |
 | **Commissioner** | Research Data Scotland, on behalf of the devolved nations |
 
 The website is a navigable presentation of the framework used in the 3 Nations Readiness Assessment. The eight-domain structure, 64 indicators, classifications and five maturity levels remain those of HDRL Framework v1.0.
+
+!!! info "Version 1.0 terminology"
+    This site uses the framework's maturity-level names: Initial, Developing, Defined, Managed and Optimising. The indicator structure, descriptors and scoring logic are unchanged from HDRL v1.0.
 
 ## Suggested citation
 

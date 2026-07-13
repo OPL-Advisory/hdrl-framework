@@ -1,4 +1,4 @@
-# Foundational Requirements
+# Proposed Foundational Indicators
 
 **Foundational Indicators** are the five indicators that HDRL designates as requiring a **minimum of Level 3** when assessing potential baseline participation within the framework. They represent proposed safety and governance conditions in HDRL's assessment logic.
 
@@ -10,7 +10,7 @@
 
 ---
 
-## The Five Foundational Requirements
+## The Five Proposed Foundational Indicators
 
 | ID | Indicator | Domain |
 |:---|:----------|:-------|
@@ -49,7 +49,7 @@ These indicators represent the foundational safety and trust requirements withou
 
 ## What Level 3 Means for Each
 
-| Requirement | Level 3 Requirement |
+| Indicator | Level 3 descriptor |
 |:------------|:-------------------|
 | **C.1.1** | Primary legal basis established. Controller/processor defined. Review process exists. |
 | **C.2.2** | Operational DAC meeting monthly. Published criteria including NDG public benefit. Decisions documented. |

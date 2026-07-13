@@ -2,13 +2,13 @@
 
 ## How the Framework Was Developed
 
-The HDRL Framework was developed through a combination of **systematic evidence synthesis**, **first-principles analysis**, and **stakeholder calibration**. This page documents the approach, evidence base, and key design decisions.
+The HDRL Framework was developed through a combination of **structured evidence synthesis**, **first-principles analysis**, and **stakeholder calibration**. This page documents the approach, evidence base, and key design decisions.
 
 ---
 
 ## Multi-Model AI Synthesis
 
-A novel methodology was employed in which **three frontier AI models** (Claude, Gemini, and ChatGPT) independently conducted systematic reviews against identical research specifications. Outputs were then triangulated to assess confidence:
+**Three AI models** (Claude, Gemini, and ChatGPT) independently reviewed the framework landscape against identical research specifications. Outputs were then triangulated to assess confidence:
 
 | Confidence Level | Definition | Count |
 |:-----------------|:-----------|------:|
@@ -18,14 +18,14 @@ A novel methodology was employed in which **three frontier AI models** (Claude, 
 
 This approach widened coverage and made areas of agreement and disagreement visible. AI outputs were used as synthesis aids, not as sources of authority: retained claims were checked by a human reviewer against primary or authoritative sources, and framework-design decisions remained human decisions.
 
-!!! success "Central finding"
-    No existing framework comprehensively addresses health data research readiness. While mature frameworks exist for general data management, health information systems, and FAIR data practices, none integrates these dimensions for assessing readiness to participate in multi-site health data research infrastructure.
+!!! success "Design rationale"
+    The review found that relevant readiness conditions were distributed across multiple instruments. HDRL integrates them at system and service level for the specific purpose of trusted, federated health data research.
 
 ---
 
 ## 56-Framework Evidence Base
 
-The systematic review identified **56 frameworks** across seven domains:
+The structured landscape review identified **56 frameworks** across seven domains:
 
 | Domain | Frameworks | Key Exemplars |
 |:-------|:---------:|:--------------|
@@ -43,7 +43,7 @@ Each framework was analysed across eleven extraction elements including purpose,
 
 ## Three Research Tasks
 
-### Task 1: Systematic Framework Review
+### Task 1: Structured Framework Review
 
 Identification and comparative analysis of existing maturity and readiness frameworks. This established the evidence base for domain selection, indicator design, and level architecture.
 
@@ -83,7 +83,7 @@ High-relevance frameworks operate with 6–11 domains. HDRL's eight domains fall
 
 Adapted from the RDA FAIR Data Maturity Model's priority tiers (essential, important, useful). HDRL uses **Core** (essential for baseline participation) and **Enhancement** (good practice for mature organisations).
 
-### Foundational Requirements
+### Proposed Foundational Indicators
 
 Five indicators designated by HDRL as proposed safety and governance prerequisites within the framework's assessment logic. These are drawn from the first-principles "necessary conditions" analysis and prevent median-based scoring from hiding critical gaps. Their proposed minimum of Level 3 is not an established HDRS requirement.
 
@@ -101,12 +101,13 @@ Five indicators designated by HDRL as proposed safety and governance prerequisit
 | **Five Safes Framework** (Ritchie, ONS) | Governance model operationalised across Domains C and H |
 | **Building Trusted Research Environments** (UK HDRA, 2021) | TRE operational requirements informing Domain H |
 | **SATRE Specification** (DARE UK, 2023) | TRE capability tiers informing H.1.1 |
+| [**Federated TRE maturity-model framework**](https://doi.org/10.3389/fdgth.2026.1699125) (Luong et al., 2026) | Related six-domain model for federated TRE networks; published after HDRL v1.0 was developed |
 | **CMMI** | Maturity level nomenclature and progression logic |
 
 ---
 
 ## Field application and further validation
 
-Version 1.0 was applied across three distinct UK jurisdictions using documentary evidence, stakeholder interviews, national workshops, structured Right of Reply, cross-nation calibration and two research use-case stress tests. This demonstrated practical feasibility across heterogeneous institutional models.
+Version 1.0 was applied formatively across three distinct UK jurisdictions using documentary evidence, stakeholder interviews, national workshops, structured Right of Reply, cross-nation calibration and two research use-case stress tests. This demonstrated practical feasibility across heterogeneous institutional models; it was not designed as psychometric validation or a national league table.
 
-Further validation is still required. Priorities include independent scoring by multiple assessors, formal inter-rater reliability testing, sensitivity analysis, international application and refinement of Level 4 and Level 5 thresholds using benchmark data. The framework and any assessment results should therefore be presented as evidence-led and field-tested, not as a fully validated accreditation instrument.
+Further validation is still required. Priorities include independent expert and public content-validity review, scoring by multiple assessors, formal inter-rater reliability testing, sensitivity analysis, prospective application and refinement of Level 4 and Level 5 thresholds using benchmark data. The framework and any assessment results should therefore be presented as evidence-informed and formatively applied, not as a fully validated accreditation instrument.

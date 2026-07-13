@@ -18,7 +18,7 @@ HDRL uses a dual classification system: the original **Core/Enhancement** distin
 
 | Class | Name | Description |
 |:------|:-----|:------------|
-| **B0** | Baseline Core | Mandatory for *any* system/service claiming HDRS participation (the "licence to operate" set) |
+| **B0** | Baseline Core | Treated as mandatory for baseline participation within HDRL v1.0's internal assessment logic |
 | **Cx** | Capability Core | Mandatory **only if** a system/service claims the relevant HDRS capability x (1-6) |
 | **O** | Optional / Enhancement | Good practice; informs roadmaps but not required for baseline or capability readiness |
 | **Y** | Outcome / Context | Reported for awareness and benefit tracking but **excluded from readiness scoring** |
@@ -45,7 +45,7 @@ HDRL uses a dual classification system: the original **Core/Enhancement** distin
 | **Capability Core (Cx)** | 7 |
 | **Optional (O)** | 16 |
 | **Outcome/Context (Y)** | 4 |
-| **Foundational Requirements** | 5 |
+| **Proposed Foundational Indicators** | 5 |
 
 ## Scoring Rules
 

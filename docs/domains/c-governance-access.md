@@ -7,10 +7,10 @@
 !!! quote "The business question"
     How fast can we approve safe research? This is the primary friction point for industry.
 
-Governance is the largest single determinant of whether a health data service can attract and retain users. Time-to-data metrics vary from weeks to years across the UK. This domain assesses the legal foundations, access committee efficiency, and UK-wide interoperability that determine whether researchers experience a streamlined pathway or an opaque bureaucracy. Three of the five Foundational Requirements sit in this domain.
+Governance is the largest single determinant of whether a health data service can attract and retain users. Time-to-data metrics vary from weeks to years across the UK. This domain assesses the legal foundations, access committee efficiency, and UK-wide interoperability that determine whether researchers experience a streamlined pathway or an opaque bureaucracy. Three of the five proposed Foundational Indicators sit in this domain.
 
-!!! warning "Contains 3 Foundational Requirements"
-    Indicators C.1.1, C.2.2, and C.4.1 are **Foundational Requirements** requiring a minimum of **Level 3** for baseline participation.
+!!! warning "Contains 3 proposed Foundational Indicators"
+    HDRL v1.0 treats indicators C.1.1, C.2.2, and C.4.1 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official HDRS participation requirements.
 
 ---
 
