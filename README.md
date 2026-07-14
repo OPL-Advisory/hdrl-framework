@@ -44,7 +44,9 @@ GitHub Actions builds and deploys the site to GitHub Pages on every push to `mai
 
 The public site contains the framework and approved high-level context only. Do not add detailed country assessment records, unpublished evidence or country/indicator-specific findings that have not been authorised for release through the 3 Nations Final Report.
 
-The public Final Report URL is not yet available. When it is released, update `docs/three-nations-assessment.md` to replace the launch-dependency notice with the authorised publication link.
+The authorised Final Report was published by Research Data Scotland on 14 July 2026: [New independent assessment highlights devolved nations’ leading role in health data research](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/).
+
+The site links to the public report but does not reproduce the detailed country-level assessment records, indicator-level scores, submitted evidence or right-of-reply material.
 
 ## Version and licence
 

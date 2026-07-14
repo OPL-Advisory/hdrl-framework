@@ -28,6 +28,14 @@ The website is a navigable presentation of the framework used in the 3 Nations R
 
 When citing an assessment, also identify the system or service assessed, the assessment date, scope, evidence standard and assessor.
 
+## Published assessment
+
+> Seymour D. *Health Data Research Service: Three Nations Readiness Assessment—Final Report*. Version 1.0. OPL Advisory; July 2026. Published by Research Data Scotland, 14 July 2026.
+
+[Read the RDS publication page](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ target="_blank" rel="noopener" } or [download the Final Report (PDF)](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ target="_blank" rel="noopener" }.
+
+The Final Report is the authorised source for findings from the 3 Nations Readiness Assessment. The framework website does not reproduce the underlying detailed country assessment records.
+
 ## Licence
 
 The HDRL Framework is published under the [Creative Commons Attribution 4.0 International licence](https://creativecommons.org/licenses/by/4.0/){ target="_blank" rel="noopener" } (**CC BY 4.0**).

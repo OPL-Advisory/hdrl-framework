@@ -57,16 +57,19 @@ It also reinforced that an overall score is not enough: domain patterns, evidenc
 ## Publication boundary
 
 !!! warning "What this website publishes"
-    This website publishes the HDRL Framework and general information about its development and use. It does **not** publish the detailed country-level assessment records, indicator-level scores, submitted evidence or evaluation material. Findings about individual nations should be taken only from the authorised Final Report when it is publicly released.
+    This website publishes the HDRL Framework and general information about its development and use. It does **not** publish the detailed country-level assessment records, indicator-level scores, submitted evidence or evaluation material. Findings about individual nations should be taken only from the authorised Final Report published by Research Data Scotland.
 
 The website has intentionally not reproduced country-level findings or scores. This keeps the framework reusable while respecting the confidentiality and publication status of the underlying assessments.
 
 ## Final Report
 
-The Final Report presents the authorised findings from the 3 Nations Readiness Assessment and the roadmap arising from them. It is being prepared for public release; the publication link will be added here when it is issued by the commissioner.
+Research Data Scotland published the Final Report on **14 July 2026**. It presents the authorised findings from the 3 Nations Readiness Assessment and the roadmap arising from them.
 
-!!! note "Launch dependency"
-    The website is ready to point to the public report, but the final destination URL is not yet available. No source DOCX or unpublished country assessment material has been uploaded to this repository.
+[Read the RDS publication page :material-open-in-new:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Download the Final Report (PDF) :material-file-pdf-box:](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ .md-button target="_blank" rel="noopener" }
+
+!!! info "Public reporting boundary"
+    The public report is the authoritative source for the assessment findings. This website links to it but does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material. No source DOCX or unpublished country assessment material is stored in this repository.
 
 ## Academic paper
 

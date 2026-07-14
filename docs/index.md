@@ -204,9 +204,10 @@ A common language for people making different decisions
 
 HDRL was developed for the **3 Nations Readiness Assessment** commissioned by Research Data Scotland on behalf of Scotland, Wales and Northern Ireland. Its formative application combined documentary evidence, stakeholder engagement, national workshops, structured Right of Reply and two research use-case stress tests.
 
-That field application tested whether one framework could create a consistent, decision-useful view across different health data systems without assuming a single institutional model. This site publishes the framework, not the underlying detailed country assessments.
+That field application tested whether one framework could create a consistent, decision-useful view across different health data systems without assuming a single institutional model. Research Data Scotland published the authorised Final Report on 14 July 2026. This site publishes the framework, not the underlying detailed country assessments.
 
-[About the 3 Nations application :material-arrow-right:](three-nations-assessment.md){ .md-button .md-button--primary }
+[Read the published Final Report :material-file-document-outline:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[About the 3 Nations application :material-arrow-right:](three-nations-assessment.md){ .md-button }
 [Review the methodology](framework/methodology.md){ .md-button }
 
 </div>
