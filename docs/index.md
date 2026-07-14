@@ -202,7 +202,7 @@ A common language for people making different decisions
 
 ## Developed for a real cross-nation challenge
 
-HDRL was developed for the **3 Nations Readiness Assessment** commissioned by Research Data Scotland on behalf of Scotland, Wales and Northern Ireland. Its formative application combined documentary evidence, stakeholder engagement, national workshops, structured Right of Reply and two research use-case stress tests.
+HDRL originated in the **3 Nations Readiness Assessment**, commissioned by Research Data Scotland on behalf of Scotland, Wales and Northern Ireland and delivered by OPL Advisory. Its formative application combined documentary evidence, stakeholder engagement, national workshops, structured Right of Reply and two research use-case stress tests.
 
 That field application tested whether one framework could create a consistent, decision-useful view across different health data systems without assuming a single institutional model. Research Data Scotland published the authorised Final Report on 14 July 2026. This site publishes the framework, not the underlying detailed country assessments.
 
@@ -237,5 +237,5 @@ That field application tested whether one framework could create a consistent, d
 </div>
 
 <div class="hdrl-footer">
-  <p><strong>HDRL Framework v1.0</strong> · January 2026 · Openly licensed under CC BY 4.0</p>
+  <p><strong>HDRL Framework v1.0</strong> · Research Data Scotland: commissioner and IPR owner · OPL Advisory Ltd: originator and developer · CC BY 4.0</p>
 </div>

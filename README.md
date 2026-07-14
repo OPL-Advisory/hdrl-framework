@@ -4,6 +4,8 @@ The **Health Data Readiness Level (HDRL) Assessment Framework** is a practical, 
 
 HDRL brings data coverage, semantics, governance, research integration, public trust, sustainability, workforce and infrastructure into one assessment instrument. It was developed from a review of 56 source frameworks and first applied across Scotland, Wales and Northern Ireland.
 
+The framework was commissioned by and its intellectual property rights are owned by **Research Data Scotland**. It was originated and developed by **OPL Advisory Ltd**.
+
 **Framework at a glance:** 8 domains · 64 indicators · 5 maturity levels · 5 proposed Foundational Indicators
 
 ## Public website
@@ -52,4 +54,4 @@ The site links to the public report but does not reproduce the detailed country-
 
 **HDRL Framework v1.0** — January 2026.
 
-Framework content is licensed under [Creative Commons Attribution 4.0 International](LICENSE.md). Code and third-party dependencies remain subject to their own licences.
+The framework methodology and public framework materials are licensed under [Creative Commons Attribution 4.0 International](LICENSE.md). This licence does not publish or license unpublished assessment evidence, detailed country-level assessment records or other controlled project materials. Code and third-party dependencies remain subject to their own licences.

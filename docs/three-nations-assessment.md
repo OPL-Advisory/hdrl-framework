@@ -9,7 +9,7 @@ description: How the HDRL Framework was applied across Scotland, Wales and North
 
 The HDRL Framework was developed for an independent assessment of the potential readiness of health data research services in **Scotland, Wales and Northern Ireland** to participate in the emerging UK Health Data Research Service (HDRS).
 
-The project was commissioned by **Research Data Scotland** on behalf of the devolved nations and conducted by **OPL Advisory** between December 2025 and April 2026.
+The project was commissioned by **Research Data Scotland** on behalf of the devolved nations and conducted by **OPL Advisory** between December 2025 and April 2026. Research Data Scotland owns the intellectual property rights in the commissioned project outputs; OPL Advisory originated and developed the framework and delivered the assessment.
 
 <div class="hdrl-stats hdrl-stats--compact" aria-label="Assessment method at a glance">
   <div class="hdrl-stat">
@@ -59,7 +59,7 @@ It also reinforced that an overall score is not enough: domain patterns, evidenc
 !!! warning "What this website publishes"
     This website publishes the HDRL Framework and general information about its development and use. It does **not** publish the detailed country-level assessment records, indicator-level scores, submitted evidence or evaluation material. Findings about individual nations should be taken only from the authorised Final Report published by Research Data Scotland.
 
-The website has intentionally not reproduced country-level findings or scores. This keeps the framework reusable while respecting the confidentiality and publication status of the underlying assessments.
+The website has intentionally not reproduced country-level findings or scores. Open licensing of the framework methodology does not place the underlying detailed assessment records into the public domain. Research Data Scotland and the respective nations control decisions about release of those materials.
 
 ## Final Report
 

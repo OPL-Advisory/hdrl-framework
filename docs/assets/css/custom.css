@@ -287,11 +287,23 @@ svg.feature-icon {
 }
 
 .hdrl-audience--wide {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .hdrl-audience--wide .hdrl-audience-card {
   text-align: left;
+}
+
+@media (max-width: 900px) {
+  .hdrl-audience--wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .hdrl-audience--wide {
+    grid-template-columns: 1fr;
+  }
 }
 
 .hdrl-audience-card p {
