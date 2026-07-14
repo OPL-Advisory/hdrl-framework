@@ -237,5 +237,5 @@ That field application tested whether one framework could create a consistent, d
 </div>
 
 <div class="hdrl-footer">
-  <p><strong>HDRL Framework v1.0</strong> · Research Data Scotland: commissioner and IPR owner · OPL Advisory Ltd: originator and developer · CC BY 4.0</p>
+  <p><strong>HDRL Framework v1.0</strong> · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · CC BY 4.0</p>
 </div>

@@ -75,7 +75,7 @@ extra:
 extra_css:
   - assets/css/custom.css
 
-copyright: "HDRL Framework v1.0 · RDS: commissioner and IPR owner · OPL Advisory Ltd: originator and developer · CC BY 4.0"
+copyright: "HDRL Framework v1.0 · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · CC BY 4.0"
 
 nav:
   - Home: index.md
