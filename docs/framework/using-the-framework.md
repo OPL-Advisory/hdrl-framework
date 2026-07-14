@@ -5,10 +5,10 @@ description: A practical guide to scoping, evidencing, scoring and interpreting 
 
 # Using the Framework
 
-HDRL is designed to turn a complex sociotechnical operating environment into a structured evidence review and improvement roadmap. It can be applied at **system**, **service** or **dual** level, but the scope and evidence standard should be explicit before scoring begins.
+The **Health Data Readiness Level (HDRL)** Framework is designed to turn a complex sociotechnical operating environment into a structured evidence review and improvement roadmap. It can be applied at **system**, **service** or **dual** level, but the scope and evidence standard should be explicit before scoring begins.
 
 !!! important "What an HDRL assessment is — and is not"
-    An HDRL assessment is a structured maturity assessment. It is not accreditation, certification, a compliance audit or an official decision on participation in HDRS. Scores describe the evidence available at the time of assessment and should be interpreted alongside context, capacity and the needs of the intended research use case.
+    An HDRL assessment is a structured maturity assessment. It is not accreditation, certification, a compliance audit or an official decision on participation in the UK Health Data Research Service (HDRS) or any other programme. Scores describe the evidence available at the time of assessment and should be interpreted alongside context, capacity and the needs of the intended research use case.
 
 ## A four-stage assessment
 
@@ -69,7 +69,7 @@ This evidence hierarchy helps surface an important distinction:
 | Approach | Use when | Key consideration |
 |:--|:--|:--|
 | **System-level** | Assessing a nation or health system as a potential node. | Service-level indicators need a defined primary service or a transparent aggregation method. |
-| **Service-level** | Assessing an individual SDE, TRE or data service. | System indicators should be inherited from the relevant national context or marked not applicable. |
+| **Service-level** | Assessing an individual secure data environment (SDE), trusted research environment (TRE) or data service. | System indicators should be inherited from the relevant national context or marked not applicable. |
 | **Dual-level** | Distinguishing systemic constraints from operational service gaps. | Keep the two evidence records explicit; a shared context does not mean identical scores. |
 
 ## Interpret the result responsibly
@@ -92,7 +92,7 @@ This evidence hierarchy helps surface an important distinction:
 
 ## Proposed Foundational Indicators
 
-HDRL designates five indicators as Foundational Indicators and assumes a minimum of Level 3 for baseline participation **within the framework's own assessment logic**. The 3 Nations Final Report explicitly presents these as proposed conditions and a contribution to the HDRS design conversation, not as established HDRS requirements.
+HDRL designates five indicators as Foundational Indicators and assumes a minimum of Level 3 for baseline participation **within the framework's own assessment logic**. The 3 Nations Final Report explicitly presents these as proposed conditions and a contribution to the initial HDRS design conversation, not as established or current HDRS requirements. Other programmes and international users should determine their own governance requirements rather than treating the five indicators as an externally mandated threshold.
 
 [Review the five proposed Foundational Indicators](foundational-requirements.md){ .md-button }
 

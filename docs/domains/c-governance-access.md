@@ -10,7 +10,7 @@
 Governance is the largest single determinant of whether a health data service can attract and retain users. Time-to-data metrics vary from weeks to years across the UK. This domain assesses the legal foundations, access committee efficiency, and UK-wide interoperability that determine whether researchers experience a streamlined pathway or an opaque bureaucracy. Three of the five proposed Foundational Indicators sit in this domain.
 
 !!! warning "Contains 3 proposed Foundational Indicators"
-    HDRL v1.0 treats indicators C.1.1, C.2.2, and C.4.1 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official HDRS participation requirements.
+    HDRL v1.0 treats indicators C.1.1, C.2.2, and C.4.1 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official UK Health Data Research Service (HDRS) participation requirements.
 
 ---
 
@@ -123,7 +123,7 @@ Governance is the largest single determinant of whether a health data service ca
 **CORE** · **C6** · **System**
 
 !!! note "Capability module"
-    This indicator is mandatory only if claiming HDRS Capability 6 (Cross-sector linkage).
+    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 6 (Cross-sector linkage). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|

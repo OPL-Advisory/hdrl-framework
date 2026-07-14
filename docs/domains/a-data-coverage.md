@@ -134,7 +134,7 @@ Data coverage is the foundation of any health data research service. If core dat
 **ENHANCEMENT** · **C2** · **System**
 
 !!! note "Capability module"
-    This indicator is mandatory only if claiming HDRS Capability 2 (Consented cohort data).
+    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 2 (Consented cohort data). The mapping preserves the initial 2025 UK Health Data Research Service (HDRS) proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|
@@ -148,7 +148,7 @@ Data coverage is the foundation of any health data research service. If core dat
 **ENHANCEMENT** · **C3** · **System**
 
 !!! note "Capability module"
-    This indicator is mandatory only if claiming HDRS Capability 3 (Multi-modal data).
+    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 3 (Multi-modal data). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|

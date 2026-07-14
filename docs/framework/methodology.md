@@ -2,13 +2,13 @@
 
 ## How the Framework Was Developed
 
-The HDRL Framework was developed through a combination of **structured evidence synthesis**, **first-principles analysis**, and **stakeholder calibration**. This page documents the approach, evidence base, and key design decisions.
+The **Health Data Readiness Level (HDRL)** Framework was developed through a combination of **structured evidence synthesis**, **first-principles analysis**, and **stakeholder calibration**. This page documents the approach, evidence base, and key design decisions.
 
 ---
 
 ## Multi-Model AI Synthesis
 
-**Three AI models** (Claude, Gemini, and ChatGPT) independently reviewed the framework landscape against identical research specifications. Outputs were then triangulated to assess confidence:
+**Three artificial intelligence (AI) models**—Claude, Gemini and ChatGPT—independently reviewed the framework landscape against identical research specifications. Outputs were then triangulated to assess confidence:
 
 | Confidence Level | Definition | Count |
 |:-----------------|:-----------|------:|
@@ -73,7 +73,7 @@ The framework architecture reflects strong consensus across source frameworks:
 
 ### Five Maturity Levels
 
-Level descriptors align with CMMI nomenclature: **Initial** (L1), **Developing** (L2), **Defined** (L3), **Managed** (L4), **Optimising** (L5). The use of "Optimising" rather than "Optimised" reflects maturity as a continuous process.
+Level descriptors align with Capability Maturity Model Integration (CMMI) nomenclature: **Initial** (L1), **Developing** (L2), **Defined** (L3), **Managed** (L4), **Optimising** (L5). The use of "Optimising" rather than "Optimised" reflects maturity as a continuous process.
 
 ### Eight Domains
 
@@ -81,11 +81,11 @@ High-relevance frameworks operate with 6–11 domains. HDRL's eight domains fall
 
 ### Core/Enhancement Classification
 
-Adapted from the RDA FAIR Data Maturity Model's priority tiers (essential, important, useful). HDRL uses **Core** (essential for baseline participation) and **Enhancement** (good practice for mature organisations).
+Adapted from the Research Data Alliance (RDA) FAIR Data Maturity Model's priority tiers (essential, important, useful). HDRL uses **Core** (essential for baseline participation) and **Enhancement** (good practice for mature organisations).
 
 ### Proposed Foundational Indicators
 
-Five indicators designated by HDRL as proposed safety and governance prerequisites within the framework's assessment logic. These are drawn from the first-principles "necessary conditions" analysis and prevent median-based scoring from hiding critical gaps. Their proposed minimum of Level 3 is not an established HDRS requirement.
+Five indicators designated by HDRL as proposed safety and governance prerequisites within the framework's assessment logic. These are drawn from the first-principles "necessary conditions" analysis and prevent median-based scoring from hiding critical gaps. Their proposed minimum of Level 3 is not an established or current UK Health Data Research Service (HDRS) requirement, or a requirement for any other programme.
 
 ---
 

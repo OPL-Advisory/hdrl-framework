@@ -1,9 +1,9 @@
 # Proposed Foundational Indicators
 
-**Foundational Indicators** are the five indicators that HDRL designates as requiring a **minimum of Level 3** when assessing potential baseline participation within the framework. They represent proposed safety and governance conditions in HDRL's assessment logic.
+**Foundational Indicators** are the five indicators that the **Health Data Readiness Level (HDRL)** Framework designates as requiring a **minimum of Level 3** when assessing potential baseline participation within the framework. They represent proposed safety and governance conditions in HDRL's assessment logic.
 
 !!! important "Proposed by HDRL"
-    These indicators and the Level 3 threshold are offered as a contribution to the HDRS design conversation. They are not established or official HDRS participation requirements, and the framework does not itself confer or deny participation.
+    These indicators and the Level 3 threshold were offered as a contribution to the initial UK Health Data Research Service (HDRS) design conversation. They are not established or current HDRS participation requirements—or requirements for any other programme—and the framework does not itself confer or deny participation.
 
 !!! warning "Minimum Level 3 within HDRL"
     Under HDRL's scoring logic, a system or service does not meet the framework's proposed baseline readiness profile if any Foundational Indicator is below Level 3, regardless of performance on other indicators.

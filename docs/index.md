@@ -49,8 +49,8 @@ Its 64 indicators turn broad principles into a structured view of capability, ev
   </div>
 </div>
 
-!!! important "Independent framework, not an accreditation standard"
-    HDRL supports assessment, comparison and improvement planning. It is not an official HDRS standard, accreditation scheme or participation decision. The five Foundational Indicators are proposed by this framework as assumed minimum conditions; they are offered as a contribution to the HDRS design conversation, not as established HDRS requirements.
+!!! important "Independent framework, relevant beyond one programme"
+    HDRL supports assessment, comparison and improvement planning for health data research services, networks and systems in the UK and internationally. Its first application informed discussion about the emerging UK Health Data Research Service (HDRS), but it is not an official HDRS standard, accreditation scheme or participation decision. The five Foundational Indicators are proposals within HDRL's own assessment logic, not established programme requirements.
 
 ---
 
@@ -75,7 +75,7 @@ Federated health data research is a sociotechnical undertaking, not simply a tec
   </div>
   <div class="hdrl-bridge-layer faded">
     <strong>Technical and assurance specifications</strong>
-    <p>SATRE, NHS SDE specifications and ISO 27001</p>
+    <p>Trusted research environment architecture, secure data environment specifications and information-security standards</p>
   </div>
 </div>
 
@@ -209,6 +209,7 @@ That field application tested whether one framework could create a consistent, d
 [Read the published Final Report :material-file-document-outline:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button .md-button--primary target="_blank" rel="noopener" }
 [About the 3 Nations application :material-arrow-right:](three-nations-assessment.md){ .md-button }
 [Review the methodology](framework/methodology.md){ .md-button }
+[Plain-language glossary](framework/glossary.md){ .md-button }
 
 </div>
 

@@ -19,7 +19,7 @@ The site includes:
 - context on the 3 Nations Readiness Assessment; and
 - citation, licensing and responsible-reuse guidance.
 
-HDRL supports planning and improvement. It is not an official HDRS standard, accreditation scheme or participation decision.
+HDRL supports planning and improvement in the UK and internationally. Its first application informed discussion about the emerging UK Health Data Research Service (HDRS), but it is not an official HDRS standard, accreditation scheme or participation decision.
 
 ## Local development
 

@@ -40,7 +40,7 @@ The Final Report is the authorised source for findings from the 3 Nations Readin
 
 The HDRL Framework is published under the [Creative Commons Attribution 4.0 International licence](https://creativecommons.org/licenses/by/4.0/){ target="_blank" rel="noopener" } (**CC BY 4.0**).
 
-You may share and adapt the material, including for international use, provided appropriate credit is given, a link to the licence is supplied and changes are indicated. The licence does not imply endorsement of an adapted framework, assessment or score by OPL Advisory, Research Data Scotland, the assessed nations or HDRS.
+You may share and adapt the material, including for international use, provided appropriate credit is given, a link to the licence is supplied and changes are indicated. The licence does not imply endorsement of an adapted framework, assessment or score by OPL Advisory, Research Data Scotland, the assessed nations or the UK Health Data Research Service (HDRS).
 
 ## Responsible reuse
 

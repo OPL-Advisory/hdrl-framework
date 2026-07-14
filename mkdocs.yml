@@ -87,6 +87,7 @@ nav:
     - Maturity Levels: framework/maturity-levels.md
     - Indicator Classification: framework/classification.md
     - Proposed Foundational Indicators: framework/foundational-requirements.md
+    - Glossary: framework/glossary.md
   - Domains:
     - domains/index.md
     - "A: Data Coverage & Federation": domains/a-data-coverage.md
