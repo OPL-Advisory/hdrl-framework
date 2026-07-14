@@ -8,7 +8,7 @@ HDRL brings data coverage, semantics, governance, research integration, public t
 
 ## Public website
 
-The framework is published at <https://opl-advisory.github.io/hdrl-framework/>.
+The framework is published at <https://hdrlframework.org/>. The original GitHub Pages address remains available as a redirect.
 
 The site includes:
 

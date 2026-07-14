@@ -24,7 +24,7 @@ The website is a navigable presentation of the framework used in the 3 Nations R
 
 ## Suggested citation
 
-> OPL Advisory Ltd. *Health Data Readiness Level (HDRL) Assessment Framework*. Version 1.0. January 2026. <https://opl-advisory.github.io/hdrl-framework/>.
+> OPL Advisory Ltd. *Health Data Readiness Level (HDRL) Assessment Framework*. Version 1.0. January 2026. <https://hdrlframework.org/>.
 
 When citing an assessment, also identify the system or service assessed, the assessment date, scope, evidence standard and assessor.
 

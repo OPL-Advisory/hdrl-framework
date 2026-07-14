@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://opl-advisory.github.io/hdrl-framework/sitemap.xml
+Sitemap: https://hdrlframework.org/sitemap.xml
