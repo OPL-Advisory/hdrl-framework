@@ -64,7 +64,7 @@ To preserve comparability and avoid misleading claims:
 
 ## Source and corrections
 
-The website source and framework reference files are available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
+The frozen Markdown files used for the applied framework are available from the [Applied v1 Source Files](framework/applied-v1-reference-files.md) page. The website source and version history remain available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
 
 For factual corrections or proposed improvements to the website presentation, please [open a GitHub issue](https://github.com/OPL-Advisory/hdrl-framework/issues/new){ target="_blank" rel="noopener" }. Changes to the framework itself should be versioned explicitly so that HDRL v1.0 remains reproducible.
 

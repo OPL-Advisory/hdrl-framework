@@ -25,7 +25,7 @@ HDRL supports planning and improvement in the UK and internationally. Its first 
 
 ## Applied v1 reference files
 
-The two reference files at the repository root preserve the framework and domain reference tables used for the 3 Nations field application, including their original development-stage terminology. They are retained for reproducibility rather than presented as current validation claims. The website's [methodology and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
+The two files in [`reference/frozen-applied-v1/`](reference/frozen-applied-v1/) preserve the framework and domain reference tables used for the 3 Nations field application, including their original development-stage terminology. They are retained for reproducibility rather than presented as current validation claims. Their SHA-256 checksums are recorded alongside them. The website's [methodology and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
 
 These files contain framework definitions and descriptors. They do not contain country-level evidence, detailed assessment records or unpublished scores.
 
@@ -60,4 +60,6 @@ The site links to the public report but does not reproduce the detailed country-
 
 **HDRL Framework v1.0** — January 2026.
 
-The framework methodology and public framework materials are licensed under [Creative Commons Attribution 4.0 International](LICENSE.md). This licence does not publish or license unpublished assessment evidence, detailed country-level assessment records or other controlled project materials. Code and third-party dependencies remain subject to their own licences.
+The framework methodology and public framework materials—including the frozen applied-v1 Markdown source files—are licensed under [Creative Commons Attribution 4.0 International](LICENSE.md). This licence does not publish or license unpublished assessment evidence, detailed country-level assessment records or other controlled project materials.
+
+The website's software and theme customisations are not included in the CC BY 4.0 licence. No separate software licence is granted; third-party dependencies remain subject to their own licences.

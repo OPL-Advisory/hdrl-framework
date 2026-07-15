@@ -23,7 +23,15 @@ The **Health Data Readiness Level (HDRL)** Framework uses a dual classification 
 | **O** | Optional / Enhancement | Good practice; informs roadmaps but not required for baseline or capability readiness |
 | **Y** | Outcome / Context | Reported for awareness and benefit tracking but **excluded from readiness scoring** |
 
-The C1–C6 codes refer back to the six goals described in the [initial HDRS capability mapping](overview.md#initial-hdrs-capability-mapping). The table below shows the **capability-defining indicators whose Applicability Class contains a C code** in HDRL v1.0. It is not a list of every B0, O or Y indicator that also supported assessment of each original goal.
+The C1–C6 codes refer back to the six goals described in the [initial HDRS capability mapping](overview.md#initial-hdrs-capability-mapping). Three related but distinct mappings need to be kept separate:
+
+1. **Applicability Class (`Cx`)** identifies the seven capability-defining indicators in HDRL v1.0.
+2. **Annex 3 of the applied framework** provides a broader conceptual map, including cross-cutting and other indicators relevant to each capability.
+3. **The 3 Nations country-report summaries** used consistent, selected subsets of mapped indicators to calculate the six capability-summary means.
+
+### Capability-defining `Cx` indicators
+
+The table below shows the indicators whose **Applicability Class contains a C code**. It is not the complete Annex 3 map or the indicator subset used to calculate each capability summary in the country reports.
 
 | Code | Original capability or goal | Capability-defining indicators in HDRL v1.0 |
 |:-----|:----------------------------|:---------------------------------------------|
@@ -33,6 +41,24 @@ The C1–C6 codes refer back to the six goals described in the [initial HDRS cap
 | **C4** | Trial acceleration | D.4.1 Trial Data & Recruitment; H.4.2 Responsible AI Practices (shared C3/4) |
 | **C5** | Single-entry point with secure environments | No separate C5-class indicator. In HDRL v1.0 this goal was represented primarily through B0 indicators and their original capability mapping. |
 | **C6** | Cross-sector linkage | C.3.3 Cross-sector Linkage Governance |
+
+### Capability-summary subsets used in the 3 Nations application
+
+The detailed country reports for Scotland, Wales and Northern Ireland used the **same application-specific indicator subsets** below to calculate the mean score for each capability summary. Publishing the mapping documents the method used without publishing any nation's scores, status, priority actions or supporting evidence.
+
+| Code | Original capability or goal | Indicators included in the country-report capability summary |
+|:-----|:----------------------------|:-------------------------------------------------------------|
+| **C1** | Linked national-scale data | A.1.1 Core Dataset Availability; A.2.1 Patient Identifier Infrastructure; A.2.2 Linkage Services; B.1.1 Common Data Model Adoption; B.1.2 Terminology Standards; B.2.1 Quality Framework & Monitoring; E.3.1 Opt-Out Management |
+| **C2** | Consented cohort data | A.2.2 Linkage Services; A.4.1 Consented Cohort Integration; C.4.3 Consent, Permissions & Restrictions |
+| **C3** | Multi-modal data | A.4.2 Multi-Modal Data Access; H.2.1 Compute Scalability; H.4.1 ML/AI Platform Capability; H.4.2 Responsible AI Practices |
+| **C4** | Trial acceleration | A.1.2 Data Currency & Timeliness; D.4.1 Trial Data & Recruitment; H.4.2 Responsible AI Practices |
+| **C5** | Single-entry point with secure environments | C.2.1 Time-to-Data; C.2.2 Data Access Committee; C.3.1 Mutual Recognition & Standards; H.1.1 SDE Architecture & Standards; H.3.1 Security Certification & Audit; H.3.2 Security Operations |
+| **C6** | Cross-sector linkage | A.2.1 Patient Identifier Infrastructure; C.3.3 Cross-sector Linkage Governance |
+
+!!! note "Why C5 appears differently in the two tables"
+    C5 has no indicator with a `C5` Applicability Class, so it has no capability-defining row in the first sense. The 3 Nations application nevertheless used six mapped B0 indicators for its C5 capability summary. That application rule did not convert those indicators into `C5` indicators or alter their classifications.
+
+The broader Annex 3 map remains available in the [complete applied-v1 framework source](applied-v1-reference-files.md#complete-framework-source). The country-report subsets above should be treated as part of the first field application's aggregation method, not as a current HDRS requirement or a universal rule for future HDRL use.
 
 !!! note "Important"
     Some indicators labelled as *Enhancement* are **capability-defining** (e.g., multi-modal data access, trial acceleration) and are treated as **Cx** when assessing that capability.
