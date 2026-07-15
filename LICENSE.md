@@ -12,7 +12,7 @@ You are free to share and adapt the framework for any purpose, including commerc
 
 No additional restrictions may be applied that legally prevent others from doing anything the licence permits. No warranties are given. The licence does not imply endorsement of an adaptation, assessment or score by OPL Advisory Ltd, Research Data Scotland, the assessed nations or the UK Health Data Research Service.
 
-This licence applies to the framework methodology and public framework materials, including the frozen applied-v1 Markdown source files. It does not publish or license unpublished assessment evidence, detailed country-level assessment records or other controlled project materials.
+This licence applies to the framework methodology and public framework materials, including the frozen applied-v1 Markdown method source. It does not publish or license unpublished assessment evidence, detailed country-level assessment records or other controlled project materials.
 
 The licence does not apply to the website's software, theme customisations or third-party dependencies. No separate permission to reuse the website code is granted unless a file or component states otherwise.
 

@@ -26,12 +26,12 @@ The **Health Data Readiness Level (HDRL)** Framework uses a dual classification 
 The C1–C6 codes refer back to the six goals described in the [initial HDRS capability mapping](overview.md#initial-hdrs-capability-mapping). Three related but distinct mappings need to be kept separate:
 
 1. **Applicability Class (`Cx`)** identifies the seven capability-defining indicators in HDRL v1.0.
-2. **Annex 3 of the applied framework** provides a broader conceptual map, including cross-cutting and other indicators relevant to each capability.
-3. **The 3 Nations country-report summaries** used consistent, selected subsets of mapped indicators to calculate the six capability-summary means.
+2. **Section 7 of the final method paper** provides the broader indicator-to-capability map, including cross-cutting and other indicators relevant to each capability. This is the material labelled Annex 3 in the preceding working structure.
+3. **The 3 Nations assessment** used a selected subset of the broader mapping.
 
 ### Capability-defining `Cx` indicators
 
-The table below shows the indicators whose **Applicability Class contains a C code**. It is not the complete Annex 3 map or the indicator subset used to calculate each capability summary in the country reports.
+The table below shows the indicators whose **Applicability Class contains a C code**.
 
 | Code | Original capability or goal | Capability-defining indicators in HDRL v1.0 |
 |:-----|:----------------------------|:---------------------------------------------|
@@ -42,11 +42,11 @@ The table below shows the indicators whose **Applicability Class contains a C co
 | **C5** | Single-entry point with secure environments | No separate C5-class indicator. In HDRL v1.0 this goal was represented primarily through B0 indicators and their original capability mapping. |
 | **C6** | Cross-sector linkage | C.3.3 Cross-sector Linkage Governance |
 
-### Capability-summary subsets used in the 3 Nations application
+### Capability subsets used in the 3 Nations assessment
 
-The detailed country reports for Scotland, Wales and Northern Ireland used the **same application-specific indicator subsets** below to calculate the mean score for each capability summary. Publishing the mapping documents the method used without publishing any nation's scores, status, priority actions or supporting evidence.
+The subset of indicators used to assess readiness for the six HDRS capabilities as part of the 3 Nations assessment is shown in the table below.
 
-| Code | Original capability or goal | Indicators included in the country-report capability summary |
+| Code | Original capability or goal | Indicators included in the 3 Nations capability assessment |
 |:-----|:----------------------------|:-------------------------------------------------------------|
 | **C1** | Linked national-scale data | A.1.1 Core Dataset Availability; A.2.1 Patient Identifier Infrastructure; A.2.2 Linkage Services; B.1.1 Common Data Model Adoption; B.1.2 Terminology Standards; B.2.1 Quality Framework & Monitoring; E.3.1 Opt-Out Management |
 | **C2** | Consented cohort data | A.2.2 Linkage Services; A.4.1 Consented Cohort Integration; C.4.3 Consent, Permissions & Restrictions |
@@ -56,9 +56,9 @@ The detailed country reports for Scotland, Wales and Northern Ireland used the *
 | **C6** | Cross-sector linkage | A.2.1 Patient Identifier Infrastructure; C.3.3 Cross-sector Linkage Governance |
 
 !!! note "Why C5 appears differently in the two tables"
-    C5 has no indicator with a `C5` Applicability Class, so it has no capability-defining row in the first sense. The 3 Nations application nevertheless used six mapped B0 indicators for its C5 capability summary. That application rule did not convert those indicators into `C5` indicators or alter their classifications.
+    C5 has no indicator with a `C5` Applicability Class, so it has no capability-defining row in the first sense. The 3 Nations assessment nevertheless used six mapped B0 indicators for its C5 capability assessment. That assessment rule did not convert those indicators into `C5` indicators or alter their classifications.
 
-The broader Annex 3 map remains available in the [complete applied-v1 framework source](applied-v1-reference-files.md#complete-framework-source). The country-report subsets above should be treated as part of the first field application's aggregation method, not as a current HDRS requirement or a universal rule for future HDRL use.
+The broader map is available in [Section 7 of the complete applied-v1 method paper](applied-v1-reference-files.md#complete-framework-and-method-source). The subsets above form part of the 3 Nations assessment method, not a current HDRS requirement or a universal rule for future HDRL use.
 
 !!! note "Important"
     Some indicators labelled as *Enhancement* are **capability-defining** (e.g., multi-modal data access, trial acceleration) and are treated as **Cx** when assessing that capability.

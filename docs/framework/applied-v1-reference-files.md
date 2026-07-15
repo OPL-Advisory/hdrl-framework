@@ -1,20 +1,24 @@
 ---
-title: Applied v1 Source Files
-description: Download the frozen Markdown source files used for the HDRL Framework v1.0 and its first field application.
+title: Applied v1 Method Source
+description: Download the final HDRL Framework v1.0 method paper as a faithful Markdown transcription.
 ---
 
-# Applied v1 Source Files
+# Applied v1 Method Source
 
-These two Markdown files preserve the framework materials used during the **3 Nations Readiness Assessment**. They are published to make HDRL v1.0 inspectable, downloadable and reproducible.
+This Markdown file is a faithful transcription of **Annex A: HDRL Framework v1.0 and Methodology**, the final method paper used for the **3 Nations Readiness Assessment**. It replaces the earlier working Markdown framework and its redundant domain-reference-table subset.
 
-!!! important "Frozen source and current interpretation"
-    The files retain their original wording and development-stage terminology. They have **not** been rewritten to match the website's later explanatory language. Use the website's [methodology and validation status](methodology.md#field-application-and-further-validation), [positioning](overview.md#purpose-and-scope) and [reuse guidance](../about.md) when interpreting or reusing them.
+!!! important "Source-locked transcription"
+    The source is the final Annex A DOCX, classified there as **Unrestricted — open access**. Formatting has been adapted for Markdown, but the framework wording, classifications, 64 indicators, maturity descriptors and method have not been modernised or revised. Use the website's [methodology and validation status](methodology.md#field-application-and-further-validation), [positioning](overview.md#purpose-and-scope) and [reuse guidance](../about.md) when interpreting or reusing it.
 
-## Complete framework source
+## Complete framework and method source
 
-**Health Data Readiness Level Framework V1.md** contains the complete applied framework: purpose and scope, classifications, all 64 indicators and maturity descriptors, implementation guidance, the original HDRS capability map and methodology annexes.
+**Health Data Readiness Level Framework V1.md** contains the complete applied framework and method: purpose and scope, classifications, all 64 indicators and maturity descriptors, evidence and assessor guidance, the broader HDRS capability map and methodology and evidence base.
 
-SHA-256: `ad3af513a4251fd28ac9e586492d26381e3c38d90a7d78d611c13ba8a597a197`
+The broader indicator-to-capability mapping is in **Section 7: HDRS capability map**. It corresponds to the material called **Annex 3** in the preceding working structure.
+
+Markdown SHA-256: `06fad6b396fa38dab45b22feeefb36b94344beba498d9fe1a7f12cecae43bd75`
+
+Source DOCX SHA-256: `fa4a6b1df45fff7b856d9a5b8667f97d366e5c3371f503950d12a5207748851c`
 
 <div class="hdrl-button-grid hdrl-button-grid--two" markdown>
 
@@ -23,22 +27,9 @@ SHA-256: `ad3af513a4251fd28ac9e586492d26381e3c38d90a7d78d611c13ba8a597a197`
 
 </div>
 
-## Domain reference tables
-
-**260123_HDRL_Domain_Reference_Tables.md** is the companion reference containing the indicator classifications and maturity descriptors organised for consistent assessment use.
-
-SHA-256: `19312175d8c714c460638e3c4f8d9893b94c886e9a03a82fbce0b576db5d0a15`
-
-<div class="hdrl-button-grid hdrl-button-grid--two" markdown>
-
-[Download the domain tables as Markdown :material-download:](https://raw.githubusercontent.com/OPL-Advisory/hdrl-framework/main/reference/frozen-applied-v1/260123_HDRL_Domain_Reference_Tables.md){ .md-button .md-button--primary target="_blank" rel="noopener" }
-[View the file on GitHub](https://github.com/OPL-Advisory/hdrl-framework/blob/main/reference/frozen-applied-v1/260123_HDRL_Domain_Reference_Tables.md){ .md-button target="_blank" rel="noopener" }
-
-</div>
-
 ## Publication boundary
 
-The files contain the framework methodology and descriptors. They do **not** contain country-level evidence, detailed assessment records, indicator scores, Right of Reply material or unpublished findings.
+The file contains the framework methodology and descriptors. It does **not** contain country-level evidence, detailed assessment records, indicator scores, Right of Reply material or unpublished findings.
 
 The framework methodology and these public reference materials are available under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/){ target="_blank" rel="noopener" }, subject to the attribution and responsible-reuse guidance on this site.
 
