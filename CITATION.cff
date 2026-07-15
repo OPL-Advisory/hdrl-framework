@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use the HDRL Framework, please cite the preferred citation below."
+title: "HDRL Framework website implementation"
+type: software
+authors:
+  - name: "OPL Advisory Ltd"
+abstract: "Source code for the public website implementation of the Health Data Readiness Level (HDRL) Assessment Framework."
+repository-code: "https://github.com/OPL-Advisory/hdrl-framework"
+url: "https://hdrlframework.org/"
+preferred-citation:
+  type: generic
+  title: "Health Data Readiness Level (HDRL) Assessment Framework"
+  authors:
+    - name: "OPL Advisory Ltd"
+  version: "1.0"
+  year: 2026
+  url: "https://hdrlframework.org/"
+  notes: "Commissioned by and intellectual property rights owned by Research Data Scotland."

@@ -1,6 +1,7 @@
 ---
 title: Health Data Readiness Level Framework
 description: A practical, evidence-informed maturity framework for assessing organisational and system readiness for trusted, federated health data research.
+schema_type: framework
 hide:
   - navigation
   - toc
