@@ -26,7 +26,7 @@ The **Health Data Readiness Level (HDRL)** Framework uses a dual classification 
 The C1–C6 codes refer back to the six goals described in the [initial HDRS capability mapping](overview.md#initial-hdrs-capability-mapping). Three related but distinct mappings need to be kept separate:
 
 1. **Applicability Class (`Cx`)** identifies the seven capability-defining indicators in HDRL v1.0.
-2. **Section 7 of the final method paper** provides the broader indicator-to-capability map, including cross-cutting and other indicators relevant to each capability. This is the material labelled Annex 3 in the preceding working structure.
+2. **Section 7 of the canonical applied-v1 method source** provides the broader indicator-to-capability map, including cross-cutting and other indicators relevant to each capability.
 3. **The 3 Nations assessment** used a selected subset of the broader mapping.
 
 ### Capability-defining `Cx` indicators
@@ -58,7 +58,7 @@ The subset of indicators used to assess readiness for the six HDRS capabilities 
 !!! note "Why C5 appears differently in the two tables"
     C5 has no indicator with a `C5` Applicability Class, so it has no capability-defining row in the first sense. The 3 Nations assessment nevertheless used six mapped B0 indicators for its C5 capability assessment. That assessment rule did not convert those indicators into `C5` indicators or alter their classifications.
 
-The broader map is available in [Section 7 of the complete applied-v1 method paper](applied-v1-reference-files.md#complete-framework-and-method-source). The subsets above form part of the 3 Nations assessment method, not a current HDRS requirement or a universal rule for future HDRL use.
+The broader map is available in [Section 7 of the canonical applied-v1 method source](applied-v1-reference-files.md). The subsets above form part of the 3 Nations assessment method, not a current HDRS requirement or a universal rule for future HDRL use.
 
 !!! note "Important"
     Some indicators labelled as *Enhancement* are **capability-defining** (e.g., multi-modal data access, trial acceleration) and are treated as **Cx** when assessing that capability.

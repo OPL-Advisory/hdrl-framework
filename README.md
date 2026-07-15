@@ -25,7 +25,7 @@ HDRL supports planning and improvement in the UK and internationally. Its first 
 
 ## Applied v1 method source
 
-The file in [`reference/frozen-applied-v1/`](reference/frozen-applied-v1/) is a faithful Markdown transcription of the final Annex A method paper used for the 3 Nations assessment. It supersedes the earlier working Markdown and redundant domain-reference-table subset. The source and Markdown SHA-256 checksums are recorded alongside it. The website's [methodology and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
+[`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the canonical applied-v1 framework and method reference. Its SHA-256 checksum is recorded alongside it. The website's [methodology and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
 
 This file contains framework definitions and descriptors. It does not contain country-level evidence, detailed assessment records or unpublished scores.
 
