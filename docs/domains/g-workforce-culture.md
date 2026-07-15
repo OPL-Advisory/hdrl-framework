@@ -5,7 +5,7 @@
 **Indicators:** 7 (4 Core, 3 Enhancement)
 
 !!! quote "The business question"
-    Do we have the people to run this? Identifies critical skill gaps in engineering and AI.
+    Do we have the people to run this? Identifies critical skill gaps in engineering and artificial intelligence (AI).
 
 The UK faces an acute shortage of data engineers, research software engineers, and information governance specialists. Many health data services depend on a small number of key individuals with no succession planning. This domain assesses workforce capacity, retention, professionalisation, and whether the organisational culture supports service delivery and cross-boundary collaboration.
 
@@ -111,3 +111,16 @@ The UK faces an acute shortage of data engineers, research software engineers, a
 | **L3** | Regular cross-team. Knowledge documented. Some external collaboration. |
 | **L4** | Strong collaborative culture. Communities of practice. Knowledge accessible. UK/international networks. |
 | **L5** | Collaborative leadership. Anchors networks. Knowledge flows. Attracts opportunities. |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Next: Domain H](h-infrastructure.md){ .md-button .md-button--primary }
+[All eight domains](index.md){ .md-button }
+[Quick reference](../framework/quick-reference.md){ .md-button }
+
+</div>
+</div>

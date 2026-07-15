@@ -111,3 +111,16 @@ The care.data programme collapse in 2014 demonstrated that technical capability 
 | **L3** | Periodic internal assurance. Learning after incidents; limited visibility. |
 | **L4** | Regular independent review. Systematic learning with published actions. |
 | **L5** | Trusted model. Routine independent assurance; confidence measures tracked; good practice shared. |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Next: Domain F](f-sustainability.md){ .md-button .md-button--primary }
+[All eight domains](index.md){ .md-button }
+[Quick reference](../framework/quick-reference.md){ .md-button }
+
+</div>
+</div>

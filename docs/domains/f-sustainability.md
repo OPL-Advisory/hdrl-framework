@@ -105,3 +105,16 @@ Most health data services in the UK operate on short-term grant funding, creatin
 | **L3** | Portfolio of case studies. Metrics tracked. Communicated. |
 | **L4** | Comprehensive framework with multiple dimensions. Regular reporting. Supports funding case. |
 | **L5** | Sophisticated with attribution. ROI quantified. Influences policy. Framework shared. |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Next: Domain G](g-workforce-culture.md){ .md-button .md-button--primary }
+[All eight domains](index.md){ .md-button }
+[Quick reference](../framework/quick-reference.md){ .md-button }
+
+</div>
+</div>

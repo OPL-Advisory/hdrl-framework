@@ -6,14 +6,14 @@ The HDRL Framework organises health data readiness into **eight domains**, each 
 
 | Ref | Domain | Business Value | Indicators |
 |:----|:-------|:---------------|:----------:|
-| **[A](a-data-coverage.md)** | Data Coverage & Federation | Do we have the data researchers want? | 10 |
-| **[B](b-data-semantics.md)** | Data Semantics & Quality | Is the data messy or ready-to-use? | 6 |
-| **[C](c-governance-access.md)** | Governance & Access | How fast can we approve safe research? | 11 |
-| **[D](d-research-integration.md)** | Research Integration & Market | Are people actually using the service? | 8 |
-| **[E](e-public-trust.md)** | Public Trust & Transparency | Will the public let us operate? | 7 |
-| **[F](f-sustainability.md)** | Sustainability | Can we pay the bills? | 6 |
-| **[G](g-workforce-culture.md)** | Workforce & Culture | Do we have the people to run this? | 7 |
-| **[H](h-infrastructure.md)** | Infrastructure & Compute | Is our tech safe and scalable? | 9 |
+| **[A](a-data-coverage.md)** | Data Coverage & Federation | Are the required data available, linkable and usable across settings? | 10 |
+| **[B](b-data-semantics.md)** | Data Semantics & Quality | Can data be understood, assessed and reused consistently? | 6 |
+| **[C](c-governance-access.md)** | Governance & Access | Can safe, lawful research be approved and delivered efficiently? | 11 |
+| **[D](d-research-integration.md)** | Research Integration & Market | Does the service support real research use, collaboration and impact? | 8 |
+| **[E](e-public-trust.md)** | Public Trust & Transparency | Are transparency, public benefit and meaningful engagement built in? | 7 |
+| **[F](f-sustainability.md)** | Sustainability | Can capability, funding and service continuity be sustained over time? | 6 |
+| **[G](g-workforce-culture.md)** | Workforce & Culture | Are the people, skills and service culture in place to deliver? | 7 |
+| **[H](h-infrastructure.md)** | Infrastructure & Compute | Is the technical environment secure, resilient and scalable? | 9 |
 
 **Total: 64 indicators** (43 Core, 21 Enhancement)
 
@@ -24,7 +24,7 @@ The eight domains are not independent silos — they form an interconnected syst
 - **Domains A & B** (Data) provide the raw material
 - **Domain C** (Governance) controls the flow
 - **Domain D** (Research) measures the output
-- **Domain E** (Trust) maintains the social licence to operate
+- **Domain E** (Trust) makes public benefit, transparency and engagement visible
 - **Domains F & G** (Sustainability & Workforce) ensure long-term capacity
 - **Domain H** (Infrastructure) provides the technical foundation
 
@@ -40,3 +40,16 @@ Each indicator is classified by:
 - **Unit of Assessment**: System (S), Service (V), or Both (B)
 
 See [Indicator Classification](../framework/classification.md) for full details.
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Start with Domain A](a-data-coverage.md){ .md-button .md-button--primary }
+[Open the quick reference](../framework/quick-reference.md){ .md-button }
+[Use the framework](../framework/using-the-framework.md){ .md-button }
+
+</div>
+</div>

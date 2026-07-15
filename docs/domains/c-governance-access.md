@@ -7,10 +7,10 @@
 !!! quote "The business question"
     How fast can we approve safe research? This is the primary friction point for industry.
 
-Governance is the largest single determinant of whether a health data service can attract and retain users. Time-to-data metrics vary from weeks to years across the UK. This domain assesses the legal foundations, access committee efficiency, and UK-wide interoperability that determine whether researchers experience a streamlined pathway or an opaque bureaucracy. Three of the five Foundational Requirements sit in this domain.
+Governance is the largest single determinant of whether a health data service can attract and retain users. Time-to-data metrics vary from weeks to years across the UK. This domain assesses the legal foundations, access committee efficiency, and UK-wide interoperability that determine whether researchers experience a streamlined pathway or an opaque bureaucracy. Three of the five proposed Foundational Indicators sit in this domain.
 
-!!! warning "Contains 3 Foundational Requirements"
-    Indicators C.1.1, C.2.2, and C.4.1 are **Foundational Requirements** requiring a minimum of **Level 3** for baseline participation.
+!!! warning "Contains 3 proposed Foundational Indicators"
+    HDRL v1.0 treats indicators C.1.1, C.2.2, and C.4.1 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official UK Health Data Research Service (HDRS) participation requirements.
 
 ---
 
@@ -123,7 +123,7 @@ Governance is the largest single determinant of whether a health data service ca
 **CORE** · **C6** · **System**
 
 !!! note "Capability module"
-    This indicator is mandatory only if claiming HDRS Capability 6 (Cross-sector linkage).
+    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 6 (Cross-sector linkage). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|
@@ -169,3 +169,16 @@ Governance is the largest single determinant of whether a health data service ca
 | **L3** | Most restrictions documented and used in decisions. Manual checks common. |
 | **L4** | Restrictions captured and enforced end-to-end. Audit trail and change control in place. |
 | **L5** | Automated policy enforcement. Routine audits; scalable reuse (e.g., standard models where applicable). |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Next: Domain D](d-research-integration.md){ .md-button .md-button--primary }
+[All eight domains](index.md){ .md-button }
+[Quick reference](../framework/quick-reference.md){ .md-button }
+
+</div>
+</div>

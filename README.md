@@ -1,36 +1,65 @@
 # HDRL Framework
 
-**Health Data Readiness Level Assessment Framework** — A maturity model for assessing health data systems across the UK's devolved nations.
+The **Health Data Readiness Level (HDRL) Assessment Framework** is a practical, evidence-led maturity framework for assessing organisational and system readiness for trusted, federated health data research.
 
-## About
+HDRL brings data coverage, semantics, governance, research integration, public trust, sustainability, workforce and infrastructure into one assessment instrument. It was developed from a review of 56 source frameworks and first applied across Scotland, Wales and Northern Ireland.
 
-The HDRL Framework provides a scientifically derived roadmap to assess the maturity of health data systems, enabling federated UK-wide infrastructure for health data research. It was developed through systematic evidence synthesis of 56 global frameworks (WHO, OECD, FAIR, CMMI, HIMSS).
+The framework was commissioned by and its intellectual property rights are owned by **Research Data Scotland**. It was originated and developed by **OPL Advisory Ltd**.
 
-**Key numbers:** 8 domains · 64 indicators · 5 maturity levels · 5 foundational requirements
+**Framework at a glance:** 8 domains · 64 indicators · 5 maturity levels · 5 proposed Foundational Indicators
 
-## Documentation Site
+## Public website
 
-The full framework documentation is available at: **https://opl-advisory.github.io/hdrl-framework/**
+The framework is published at <https://hdrlframework.org/>. The original GitHub Pages address remains available as a redirect.
 
 The site includes:
-- Detailed descriptions of all 8 domains and 64 indicators
-- Maturity level definitions (L1-L5)
-- Indicator classification system (B0/Cx/O/Y)
-- Foundational requirements reference
 
-## Development
+- the complete 8-domain, 64-indicator reference;
+- maturity levels and indicator classifications;
+- guidance for scoping, evidencing and interpreting an assessment;
+- methodology, current validation status and limitations;
+- context on the 3 Nations Readiness Assessment; and
+- citation, licensing and responsible-reuse guidance.
 
-This site is built with [MkDocs Material](https://squidfunnel.github.io/mkdocs-material/). To run locally:
+HDRL supports planning and improvement in the UK and internationally. Its first application informed discussion about the emerging UK Health Data Research Service (HDRS), but it is not an official HDRS standard, accreditation scheme or participation decision.
+
+## Applied v1 method source
+
+[`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the canonical applied-v1 framework and method reference. Its SHA-256 checksum is recorded alongside it. The website's [methodology and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
+
+This file contains framework definitions and descriptors. It does not contain country-level evidence, detailed assessment records or unpublished scores.
+
+## Local development
 
 ```bash
-pip install mkdocs-material
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 mkdocs serve
+```
+
+Run a production-equivalent build before opening a pull request:
+
+```bash
+mkdocs build --strict
 ```
 
 ## Deployment
 
-The site deploys automatically to GitHub Pages via GitHub Actions on push to `master`.
+GitHub Actions builds and deploys the site to GitHub Pages on every push to `main`. The workflow can also be run manually.
 
-## Framework Version
+## Publication boundary
 
-**v1.0** — January 2026
+The public site contains the framework and approved high-level context only. Do not add detailed country assessment records, unpublished evidence or country/indicator-specific findings that have not been authorised for release through the 3 Nations Final Report.
+
+The authorised Final Report was published by Research Data Scotland on 14 July 2026: [New independent assessment highlights devolved nations’ leading role in health data research](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/).
+
+The site links to the public report but does not reproduce the detailed country-level assessment records, indicator-level scores, submitted evidence or right-of-reply material.
+
+## Version and licence
+
+**HDRL Framework v1.0** — January 2026.
+
+The framework methodology and public framework materials—including the frozen applied-v1 Markdown method source—are licensed under [Creative Commons Attribution 4.0 International](LICENSE.md). This licence does not publish or license unpublished assessment evidence, detailed country-level assessment records or other controlled project materials.
+
+The website's software and theme customisations are not included in the CC BY 4.0 licence. No separate software licence is granted; third-party dependencies remain subject to their own licences.

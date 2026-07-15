@@ -1,13 +1,16 @@
-# Foundational Requirements
+# Proposed Foundational Indicators
 
-**Foundational Requirements** are the five indicators that require a **minimum of Level 3** for any system or service claiming baseline HDRS participation. These represent non-negotiable safety and governance requirements.
+**Foundational Indicators** are the five indicators that the **Health Data Readiness Level (HDRL)** Framework designates as requiring a **minimum of Level 3** when assessing potential baseline participation within the framework. They represent proposed safety and governance conditions in HDRL's assessment logic.
 
-!!! danger "Minimum Level 3 Required"
-    A system or service **cannot** claim baseline readiness if any Foundational Requirement is below Level 3, regardless of performance on other indicators.
+!!! important "Proposed by HDRL"
+    These indicators and the Level 3 threshold were offered as a contribution to the initial UK Health Data Research Service (HDRS) design conversation. They are not established or current HDRS participation requirements—or requirements for any other programme—and the framework does not itself confer or deny participation.
+
+!!! warning "Minimum Level 3 within HDRL"
+    Under HDRL's scoring logic, a system or service does not meet the framework's proposed baseline readiness profile if any Foundational Indicator is below Level 3, regardless of performance on other indicators.
 
 ---
 
-## The Five Foundational Requirements
+## The Five Proposed Foundational Indicators
 
 | ID | Indicator | Domain |
 |:---|:----------|:-------|
@@ -46,10 +49,23 @@ These indicators represent the foundational safety and trust requirements withou
 
 ## What Level 3 Means for Each
 
-| Requirement | Level 3 Requirement |
+| Indicator | Level 3 descriptor |
 |:------------|:-------------------|
 | **C.1.1** | Primary legal basis established. Controller/processor defined. Review process exists. |
 | **C.2.2** | Operational DAC meeting monthly. Published criteria including NDG public benefit. Decisions documented. |
 | **C.4.1** | Policy operational. Trained checkers. Manual review of outputs. |
 | **H.3.1** | Controls implemented. ISO 27001 in progress. Penetration testing conducted. |
 | **H.3.2** | Basic ops monitoring key systems. Incident plan documented and tested. |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Understand indicator classifications](classification.md){ .md-button .md-button--primary }
+[Use the framework](using-the-framework.md){ .md-button }
+[Open the quick reference](quick-reference.md){ .md-button }
+
+</div>
+</div>
