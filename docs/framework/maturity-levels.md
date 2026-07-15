@@ -38,30 +38,24 @@ The **Health Data Readiness Level (HDRL)** Framework uses **five levels** to des
 
 ---
 
-## Visual Summary
-
-```
-L5  ████████████████████████████  Optimising
-    Continuous improvement. World-leading.
-
-L4  ██████████████████████████    Managed          ◄── Target
-    Measured performance. SLAs met.
-
-L3  ████████████████████████      Defined
-    Documented processes. Targets set.
-
-L2  ██████████████████████        Developing
-    Basic structures. Strategy in place.
-
-L1  ████████████████████          Initial
-    Ad-hoc. Fragmented. Major gaps.
-```
-
----
-
 ## Design Principles
 
+- Levels can be considered at the aggregate, domain and individual-indicator levels. The pattern across indicators matters: an aggregate result should not conceal a material weakness or evidence gap.
+- Organisations may decide to prioritise some elements of the framework over others according to their role, strategy and operating context, provided the assessment scope and any exclusions remain explicit.
+- The maturity levels an organisation can realistically reach will also be affected by the investment funding available to build and sustain capability.
 - **Level 4 thresholds** are designed to be ambitious but achievable. They will require validation by comparing with UK and international benchmarks.
 - Levels reflect the **current state of capability**, from basic to advanced.
 - HDRL is a **roadmap tool**, not a pass/fail audit. An organisation at Level 2 has a clear path to Level 3 and beyond.
 - The five-level structure is aligned with **CMMI nomenclature** used across many international maturity frameworks.
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+[Understand indicator classification](classification.md){ .md-button .md-button--primary }
+[Use the framework](using-the-framework.md){ .md-button }
+[Open the quick reference](quick-reference.md){ .md-button }
+</div>
+
+</div>

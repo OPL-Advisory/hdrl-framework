@@ -6,80 +6,87 @@ Complete summary of all 64 indicators across 8 domains.
 
 ## All Indicators
 
-| ID | Indicator | Type | Class | Unit | Foundational |
-|:---|:----------|:-----|:------|:-----|:-------------|
-| **Domain A: Data Coverage & Federation** |||||
-| A.1.1 | Core Dataset Availability | Core | B0 | S | |
-| A.1.2 | Data Currency & Timeliness | Core | B0 | S | |
-| A.1.3 | Data Equity & Representativeness | Core | B0 | S | |
-| A.2.1 | Patient Identifier Infrastructure | Core | B0 | S | |
-| A.2.2 | Linkage Services | Core | B0 | B | |
-| A.3.1 | Federated Query Capability | Enh | O | B | |
-| A.3.2 | UK Gateway Connectivity | Core | B0 | B | |
-| A.3.3 | Federation Operating Model & Assurance | Core | B0 | B | |
-| A.4.1 | Consented Cohort Integration | Enh | C2 | S | |
-| A.4.2 | Multi-Modal Data Access | Enh | C3 | S | |
-| **Domain B: Data Semantics & Quality** |||||
-| B.1.1 | Common Data Model Adoption | Core | C1 | B | |
-| B.1.2 | Terminology Standards | Core | C1 | B | |
-| B.2.1 | Quality Framework & Monitoring | Core | B0 | B | |
-| B.2.2 | Data Documentation & Metadata | Core | B0 | B | |
-| B.3.1 | Curated Dataset Availability | Enh | O | B | |
-| B.3.2 | Phenotype Library & Validation | Enh | O | B | |
-| **Domain C: Governance & Access** |||||
-| C.1.1 | Legal Basis for Processing | Core | B0 | S | :warning: |
-| C.1.2 | Legislative Environment | Enh | O | S | |
-| C.2.1 | Time-to-Data | Core | B0 | B | |
-| C.2.2 | Data Access Committee | Core | B0 | B | :warning: |
-| C.2.3 | Ethics Pathway Integration | Core | B0 | B | |
-| C.3.1 | Mutual Recognition & Standards | Core | B0 | B | |
-| C.3.2 | Cross-Border Legal Alignment | Enh | O | S | |
-| C.3.3 | Cross-sector Linkage Governance | Core | C6 | S | |
-| C.4.1 | Statistical Disclosure Control | Core | B0 | V | :warning: |
-| C.4.2 | Researcher Accreditation | Core | B0 | B | |
-| C.4.3 | Consent, Permissions & Restrictions | Core | B0 | B | |
-| **Domain D: Research Integration & Market** |||||
-| D.1.1 | Active User Base | Core | Y | B | |
-| D.1.2 | Research Output & Impact | Core | Y | B | |
-| D.2.1 | Researcher Support & Helpdesk | Core | B0 | V | |
-| D.2.2 | Training & Capability Building | Enh | O | V | |
-| D.2.3 | Reproducibility & Provenance Support | Core | B0 | V | |
-| D.3.1 | Multi-Site Research Capability | Core | B0 | B | |
-| D.3.2 | Commercial Access Framework | Enh | O | B | |
-| D.4.1 | Trial Data & Recruitment | Enh | C4 | B | |
-| **Domain E: Public Trust & Transparency** |||||
-| E.1.1 | Public Register of Data Uses | Core | B0 | B | |
-| E.1.2 | Annual Transparency Reporting | Core | B0 | B | |
-| E.2.1 | Lay Involvement in Governance | Core | B0 | B | |
-| E.2.2 | Public Engagement Capacity | Enh | O | B | |
-| E.3.1 | Opt-Out Management | Core | B0 | S | |
-| E.3.2 | Public Benefit & Value | Core | B0 | B | |
-| E.3.3 | Legitimacy, Assurance & Learning | Core | B0 | B | |
-| **Domain F: Sustainability** |||||
-| F.1.1 | Funding Horizon | Core | B0 | B | |
-| F.1.2 | Financial Risk Management | Enh | O | B | |
-| F.2.1 | Cost Recovery & Pricing | Core | B0 | B | |
-| F.2.2 | Commercial Revenue & Partnerships | Enh | O | B | |
-| F.3.1 | Economic Impact Assessment | Enh | Y | B | |
-| F.3.2 | Value Demonstration | Enh | Y | B | |
-| **Domain G: Workforce & Culture** |||||
-| G.1.1 | Staff Capacity | Core | B0 | B | |
-| G.1.2 | Staff Retention & Development | Enh | O | B | |
-| G.1.3 | Strategic Workforce Planning | Enh | O | B | |
-| G.2.1 | Role Definition & Professionalization | Core | B0 | B | |
-| G.2.2 | Technical Skills | Core | B0 | B | |
-| G.3.1 | Service Orientation | Core | B0 | V | |
-| G.3.2 | Collaboration & Knowledge Sharing | Enh | O | B | |
-| **Domain H: Infrastructure & Compute** |||||
-| H.1.1 | SDE Architecture & Standards | Core | B0 | V | |
-| H.1.2 | User Environment & Experience | Core | B0 | V | |
-| H.2.1 | Compute Scalability | Core | B0 | V | |
-| H.2.2 | Storage & Data Management | Enh | O | V | |
-| H.3.1 | Security Certification & Audit | Core | B0 | V | :warning: |
-| H.3.2 | Security Operations | Core | B0 | V | :warning: |
-| H.3.3 | Privacy-Enhancing Technologies | Enh | O | V | |
-| H.4.1 | ML/AI Platform Capability | Enh | O | V | |
-| H.4.2 | Responsible AI Practices | Core | C3/4 | V | |
+<div class="hdrl-table-scroll">
+<table class="hdrl-indicator-table">
+  <thead>
+    <tr><th scope="col">ID</th><th scope="col">Indicator</th><th scope="col">Type</th><th scope="col">Class</th><th scope="col">Unit</th><th scope="col">Foundational</th></tr>
+  </thead>
+  <tbody>
+    <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain A: Data Coverage &amp; Federation</th></tr>
+    <tr><th scope="row">A.1.1</th><td>Core Dataset Availability</td><td>Core</td><td>B0</td><td>S</td><td></td></tr>
+    <tr><th scope="row">A.1.2</th><td>Data Currency &amp; Timeliness</td><td>Core</td><td>B0</td><td>S</td><td></td></tr>
+    <tr><th scope="row">A.1.3</th><td>Data Equity &amp; Representativeness</td><td>Core</td><td>B0</td><td>S</td><td></td></tr>
+    <tr><th scope="row">A.2.1</th><td>Patient Identifier Infrastructure</td><td>Core</td><td>B0</td><td>S</td><td></td></tr>
+    <tr><th scope="row">A.2.2</th><td>Linkage Services</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">A.3.1</th><td>Federated Query Capability</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr><th scope="row">A.3.2</th><td>UK Gateway Connectivity</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">A.3.3</th><td>Federation Operating Model &amp; Assurance</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">A.4.1</th><td>Consented Cohort Integration</td><td>Enh</td><td>C2</td><td>S</td><td></td></tr>
+    <tr><th scope="row">A.4.2</th><td>Multi-Modal Data Access</td><td>Enh</td><td>C3</td><td>S</td><td></td></tr>
+    <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain B: Data Semantics &amp; Quality</th></tr>
+    <tr><th scope="row">B.1.1</th><td>Common Data Model Adoption</td><td>Core</td><td>C1</td><td>B</td><td></td></tr>
+    <tr><th scope="row">B.1.2</th><td>Terminology Standards</td><td>Core</td><td>C1</td><td>B</td><td></td></tr>
+    <tr><th scope="row">B.2.1</th><td>Quality Framework &amp; Monitoring</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">B.2.2</th><td>Data Documentation &amp; Metadata</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">B.3.1</th><td>Curated Dataset Availability</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr><th scope="row">B.3.2</th><td>Phenotype Library &amp; Validation</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain C: Governance &amp; Access</th></tr>
+    <tr><th scope="row">C.1.1</th><td>Legal Basis for Processing</td><td>Core</td><td>B0</td><td>S</td><td>Yes</td></tr>
+    <tr><th scope="row">C.1.2</th><td>Legislative Environment</td><td>Enh</td><td>O</td><td>S</td><td></td></tr>
+    <tr><th scope="row">C.2.1</th><td>Time-to-Data</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">C.2.2</th><td>Data Access Committee</td><td>Core</td><td>B0</td><td>B</td><td>Yes</td></tr>
+    <tr><th scope="row">C.2.3</th><td>Ethics Pathway Integration</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">C.3.1</th><td>Mutual Recognition &amp; Standards</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">C.3.2</th><td>Cross-Border Legal Alignment</td><td>Enh</td><td>O</td><td>S</td><td></td></tr>
+    <tr><th scope="row">C.3.3</th><td>Cross-sector Linkage Governance</td><td>Core</td><td>C6</td><td>S</td><td></td></tr>
+    <tr><th scope="row">C.4.1</th><td>Statistical Disclosure Control</td><td>Core</td><td>B0</td><td>V</td><td>Yes</td></tr>
+    <tr><th scope="row">C.4.2</th><td>Researcher Accreditation</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">C.4.3</th><td>Consent, Permissions &amp; Restrictions</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain D: Research Integration &amp; Market</th></tr>
+    <tr><th scope="row">D.1.1</th><td>Active User Base</td><td>Core</td><td>Y</td><td>B</td><td></td></tr>
+    <tr><th scope="row">D.1.2</th><td>Research Output &amp; Impact</td><td>Core</td><td>Y</td><td>B</td><td></td></tr>
+    <tr><th scope="row">D.2.1</th><td>Researcher Support &amp; Helpdesk</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>
+    <tr><th scope="row">D.2.2</th><td>Training &amp; Capability Building</td><td>Enh</td><td>O</td><td>V</td><td></td></tr>
+    <tr><th scope="row">D.2.3</th><td>Reproducibility &amp; Provenance Support</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>
+    <tr><th scope="row">D.3.1</th><td>Multi-Site Research Capability</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">D.3.2</th><td>Commercial Access Framework</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr><th scope="row">D.4.1</th><td>Trial Data &amp; Recruitment</td><td>Enh</td><td>C4</td><td>B</td><td></td></tr>
+    <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain E: Public Trust &amp; Transparency</th></tr>
+    <tr><th scope="row">E.1.1</th><td>Public Register of Data Uses</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">E.1.2</th><td>Annual Transparency Reporting</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">E.2.1</th><td>Lay Involvement in Governance</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">E.2.2</th><td>Public Engagement Capacity</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr><th scope="row">E.3.1</th><td>Opt-Out Management</td><td>Core</td><td>B0</td><td>S</td><td></td></tr>
+    <tr><th scope="row">E.3.2</th><td>Public Benefit &amp; Value</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">E.3.3</th><td>Legitimacy, Assurance &amp; Learning</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain F: Sustainability</th></tr>
+    <tr><th scope="row">F.1.1</th><td>Funding Horizon</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">F.1.2</th><td>Financial Risk Management</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr><th scope="row">F.2.1</th><td>Cost Recovery &amp; Pricing</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">F.2.2</th><td>Commercial Revenue &amp; Partnerships</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr><th scope="row">F.3.1</th><td>Economic Impact Assessment</td><td>Enh</td><td>Y</td><td>B</td><td></td></tr>
+    <tr><th scope="row">F.3.2</th><td>Value Demonstration</td><td>Enh</td><td>Y</td><td>B</td><td></td></tr>
+    <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain G: Workforce &amp; Culture</th></tr>
+    <tr><th scope="row">G.1.1</th><td>Staff Capacity</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">G.1.2</th><td>Staff Retention &amp; Development</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr><th scope="row">G.1.3</th><td>Strategic Workforce Planning</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr><th scope="row">G.2.1</th><td>Role Definition &amp; Professionalization</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">G.2.2</th><td>Technical Skills</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+    <tr><th scope="row">G.3.1</th><td>Service Orientation</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>
+    <tr><th scope="row">G.3.2</th><td>Collaboration &amp; Knowledge Sharing</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+    <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain H: Infrastructure &amp; Compute</th></tr>
+    <tr><th scope="row">H.1.1</th><td>SDE Architecture &amp; Standards</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>
+    <tr><th scope="row">H.1.2</th><td>User Environment &amp; Experience</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>
+    <tr><th scope="row">H.2.1</th><td>Compute Scalability</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>
+    <tr><th scope="row">H.2.2</th><td>Storage &amp; Data Management</td><td>Enh</td><td>O</td><td>V</td><td></td></tr>
+    <tr><th scope="row">H.3.1</th><td>Security Certification &amp; Audit</td><td>Core</td><td>B0</td><td>V</td><td>Yes</td></tr>
+    <tr><th scope="row">H.3.2</th><td>Security Operations</td><td>Core</td><td>B0</td><td>V</td><td>Yes</td></tr>
+    <tr><th scope="row">H.3.3</th><td>Privacy-Enhancing Technologies</td><td>Enh</td><td>O</td><td>V</td><td></td></tr>
+    <tr><th scope="row">H.4.1</th><td>ML/AI Platform Capability</td><td>Enh</td><td>O</td><td>V</td><td></td></tr>
+    <tr><th scope="row">H.4.2</th><td>Responsible AI Practices</td><td>Core</td><td>C3/4</td><td>V</td><td></td></tr>
+  </tbody>
+</table>
+</div>
 
 ---
 
@@ -88,23 +95,35 @@ Complete summary of all 64 indicators across 8 domains.
 - **Type:** Core (essential) / Enh (Enhancement — good practice)
 - **Class:** B0 (Baseline Core — mandatory), Cx (Capability x), O (Optional), Y (Outcome/Context — excluded from readiness scoring)
 - **Unit:** S (System), V (Service), B (Both)
-- **:warning: Foundational Requirement:** These 5 indicators require minimum L3 for baseline participation
+- **Foundational:** five proposed Foundational Indicators within the B0 class; these assume a minimum L3 for baseline participation within the framework's own assessment logic
 
 ---
 
 ## Statistics
 
-| Category | Count |
-|:---------|------:|
-| Total Indicators | 64 |
-| Core Indicators | 43 |
-| Enhancement Indicators | 21 |
-| Baseline Core (B0) | 37 |
-| Capability Core (Cx) | 7 |
-| Optional (O) | 16 |
-| Outcome/Context (Y) | 4 |
-| Proposed Foundational Indicators | 5 |
+The same 64 indicators can be grouped in three different ways. Each row below is a complete partition of the framework; the categories within a row add to 64.
+
+| Grouping | Complete split | Total |
+|:--|:--|--:|
+| **Type** | 43 Core + 21 Enhancement | **64** |
+| **Applicability class** | 37 Baseline Core (B0) + 7 Capability Core (Cx) + 16 Optional (O) + 4 Outcome/Context (Y) | **64** |
+| **Unit** | 11 System (S) + 14 Service (V) + 39 Both (B) | **64** |
+
+The five proposed Foundational Indicators are a **subset of the 37 B0 indicators**, not a fourth way of dividing or an additional group within the 64.
 
 ---
 
 *Source: Health Data Readiness Level Framework v1.0 — January 2026*
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Understand the classifications](classification.md){ .md-button .md-button--primary }
+[Browse all eight domains](../domains/index.md){ .md-button }
+[Use the framework](using-the-framework.md){ .md-button }
+
+</div>
+</div>

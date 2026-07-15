@@ -157,3 +157,16 @@ Data coverage is the foundation of any health data research service. If core dat
 | **L3** | Selected multi-modal available. Coverage incomplete; linkage partial. |
 | **L4** | Routine access to >= 2 types with >= 25% coverage each. Linked to core datasets. |
 | **L5** | Comprehensive access: imaging, genomics, pathology, clinical letters. Population-scale. NLP-processed text. |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Next: Domain B](b-data-semantics.md){ .md-button .md-button--primary }
+[All eight domains](index.md){ .md-button }
+[Quick reference](../framework/quick-reference.md){ .md-button }
+
+</div>
+</div>

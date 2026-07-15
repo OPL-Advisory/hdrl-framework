@@ -145,3 +145,16 @@ Secure data environments (SDEs), including trusted research environments (TREs),
 | **L3** | Framework developing. Diversity assessed for some using STANDING Together. Guidelines referenced. Selected bias assessment. |
 | **L4** | Comprehensive framework. All projects assess diversity per STANDING Together. TRIPOD-AI/CONSORT-AI mandated. Bias embedded. NICE AI aligned. |
 | **L5** | Leading practice. Full STANDING Together. Contributing to standards. Advanced fairness monitoring. Scottish AI Playbook aligned. Sharing frameworks. |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Use the framework](../framework/using-the-framework.md){ .md-button .md-button--primary }
+[All eight domains](index.md){ .md-button }
+[Quick reference](../framework/quick-reference.md){ .md-button }
+
+</div>
+</div>

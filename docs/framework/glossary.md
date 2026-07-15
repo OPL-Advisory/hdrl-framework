@@ -34,3 +34,16 @@ The framework uses some established health-data, research and maturity-model ter
 
 !!! note "Framework codes remain unchanged"
     The B0, Cx, O and Y codes are part of HDRL v1.0. The glossary explains them but does not alter the framework or its application in the 3 Nations assessment.
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Start with the overview](overview.md){ .md-button .md-button--primary }
+[Understand the classifications](classification.md){ .md-button }
+[Open the quick reference](quick-reference.md){ .md-button }
+
+</div>
+</div>

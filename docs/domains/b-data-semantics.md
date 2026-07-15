@@ -99,3 +99,16 @@ Researchers consistently report that data preparation consumes 60–80% of proje
 | **L3** | Growing library. Selected phenotypes validated. Searchable but not integrated. |
 | **L4** | Comprehensive with validated definitions. Standardised validation. Integrated with access. Version control. |
 | **L5** | Internationally validated. Cross-references HDR UK/OHDSI. Phenotype-as-code. |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Next: Domain C](c-governance-access.md){ .md-button .md-button--primary }
+[All eight domains](index.md){ .md-button }
+[Quick reference](../framework/quick-reference.md){ .md-button }
+
+</div>
+</div>

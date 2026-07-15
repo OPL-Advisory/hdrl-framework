@@ -56,3 +56,16 @@ These indicators represent the foundational safety and trust requirements withou
 | **C.4.1** | Policy operational. Trained checkers. Manual review of outputs. |
 | **H.3.1** | Controls implemented. ISO 27001 in progress. Penetration testing conducted. |
 | **H.3.2** | Basic ops monitoring key systems. Incident plan documented and tested. |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Understand indicator classifications](classification.md){ .md-button .md-button--primary }
+[Use the framework](using-the-framework.md){ .md-button }
+[Open the quick reference](quick-reference.md){ .md-button }
+
+</div>
+</div>

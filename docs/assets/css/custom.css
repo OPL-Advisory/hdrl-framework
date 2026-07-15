@@ -473,11 +473,57 @@ svg.feature-icon {
   border-top: 1px solid var(--md-default-fg-color--lightest);
 }
 
+.hdrl-button-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.hdrl-button-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.hdrl-button-grid > p {
+  display: contents;
+}
+
+.hdrl-button-grid .md-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 3.2rem;
+  margin: 0;
+  text-align: center;
+}
+
+.hdrl-table-scroll {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.hdrl-indicator-table {
+  min-width: 680px;
+}
+
+.hdrl-indicator-table .hdrl-domain-row th {
+  padding: 0.85rem 0.8rem;
+  border-top: 2px solid var(--md-primary-fg-color);
+  background: color-mix(in srgb, var(--md-primary-fg-color) 9%, transparent);
+  color: var(--md-primary-fg-color);
+  font-weight: 800;
+  text-align: left;
+}
+
 @media (max-width: 760px) {
   .hdrl-hero { padding: 1.8rem 0 1rem; }
   .hdrl-value-grid,
   .hdrl-start-grid { grid-template-columns: 1fr; }
   .hdrl-practice { padding: 1.25rem; }
+  .hdrl-button-grid,
+  .hdrl-button-grid--two { grid-template-columns: 1fr; }
 }
 
 /* ---------- Foundational requirement badge ---------- */

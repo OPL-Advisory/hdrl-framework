@@ -23,6 +23,17 @@ The **Health Data Readiness Level (HDRL)** Framework uses a dual classification 
 | **O** | Optional / Enhancement | Good practice; informs roadmaps but not required for baseline or capability readiness |
 | **Y** | Outcome / Context | Reported for awareness and benefit tracking but **excluded from readiness scoring** |
 
+The C1–C6 codes refer back to the six goals described in the [initial HDRS capability mapping](overview.md#initial-hdrs-capability-mapping). The table below shows the **capability-defining indicators whose Applicability Class contains a C code** in HDRL v1.0. It is not a list of every B0, O or Y indicator that also supported assessment of each original goal.
+
+| Code | Original capability or goal | Capability-defining indicators in HDRL v1.0 |
+|:-----|:----------------------------|:---------------------------------------------|
+| **C1** | Linked national-scale data | B.1.1 Common Data Model Adoption; B.1.2 Terminology Standards |
+| **C2** | Consented cohort data | A.4.1 Consented Cohort Integration |
+| **C3** | Multi-modal data | A.4.2 Multi-Modal Data Access; H.4.2 Responsible AI Practices (shared C3/4) |
+| **C4** | Trial acceleration | D.4.1 Trial Data & Recruitment; H.4.2 Responsible AI Practices (shared C3/4) |
+| **C5** | Single-entry point with secure environments | No separate C5-class indicator. In HDRL v1.0 this goal was represented primarily through B0 indicators and their original capability mapping. |
+| **C6** | Cross-sector linkage | C.3.3 Cross-sector Linkage Governance |
+
 !!! note "Important"
     Some indicators labelled as *Enhancement* are **capability-defining** (e.g., multi-modal data access, trial acceleration) and are treated as **Cx** when assessing that capability.
 
@@ -39,16 +50,36 @@ The **Health Data Readiness Level (HDRL)** Framework uses a dual classification 
 
 ## Statistics
 
-| Category | Count |
-|:---------|------:|
-| **Total Indicators** | 64 |
-| **Core Indicators** | 43 |
-| **Enhancement Indicators** | 21 |
-| **Baseline Core (B0)** | 37 |
-| **Capability Core (Cx)** | 7 |
-| **Optional (O)** | 16 |
-| **Outcome/Context (Y)** | 4 |
-| **Proposed Foundational Indicators** | 5 |
+The framework uses several classifications for different purposes. **Type**, **Applicability Class** and **Unit** are three separate ways of partitioning the same 64 indicators; they should not be added together across groups.
+
+**By indicator type — complete partition of 64**
+
+| Type | Count |
+|:-----|------:|
+| Core | 43 |
+| Enhancement | 21 |
+| **Total** | **64** |
+
+**By applicability class — complete partition of 64**
+
+| Class | Count |
+|:------|------:|
+| Baseline Core (B0) | 37 |
+| Capability Core (Cx) | 7 |
+| Optional / Enhancement (O) | 16 |
+| Outcome / Context (Y) | 4 |
+| **Total** | **64** |
+
+**By unit of assessment — complete partition of 64**
+
+| Unit | Count |
+|:-----|------:|
+| System (S) | 11 |
+| Service (V) | 14 |
+| Both (B) | 39 |
+| **Total** | **64** |
+
+**Cross-cutting designation:** the five proposed Foundational Indicators are a subset of the 37 Baseline Core indicators. They are not an additional class and should not be added to the class totals.
 
 ## Scoring Rules
 
@@ -57,3 +88,15 @@ The **Health Data Readiness Level (HDRL)** Framework uses a dual classification 
 - **Capability assessment**: Score the subset mapped to that capability (including capability-defining enhancements)
 - **Enhancement indicators**: Inform the overall picture and roadmap but do not affect baseline domain scores
 - **Outcome/Context (Y)**: Reported separately, do not affect readiness scoring
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+[Review the proposed Foundational Indicators](foundational-requirements.md){ .md-button .md-button--primary }
+[Open the quick reference](quick-reference.md){ .md-button }
+[Return to the framework overview](overview.md){ .md-button }
+</div>
+
+</div>

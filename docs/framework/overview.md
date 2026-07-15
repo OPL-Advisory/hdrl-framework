@@ -6,7 +6,7 @@ The **Health Data Readiness Level (HDRL)** Assessment Framework provides a commo
 
 HDRL is not tied to one national programme or institutional model. It can support improvement planning for individual data services, national or regional systems, and federated networks in the UK and internationally, provided the assessment scope, governance context and terminology are made explicit.
 
-The framework's first field application examined the potential readiness of organisations and systems to participate in the emerging UK **Health Data Research Service (HDRS)**. That application is an important origin and test case, not the limit of the framework's relevance.
+The framework's first field application examined the potential readiness of organisations and systems from the UK’s Devolved Nations to participate in the emerging UK **Health Data Research Service (HDRS)**. That application is an important origin and test case, not the limit of the framework's relevance.
 
 !!! important "Positioning"
     HDRL is an independently developed planning and assessment instrument. It complements existing principles, standards and assurance processes; it does not replace them and is not an official HDRS or other programme accreditation or participation standard.
@@ -24,7 +24,7 @@ The framework's first field application examined the potential readiness of orga
 The HDRL Framework was developed through a structured landscape review and first-principles analysis. **Three AI models independently reviewed 56 existing frameworks** across data governance, health information systems, research infrastructure, and workforce capacity domains. Outputs were triangulated to identify areas of consensus and disagreement, with retained claims checked by a human reviewer against primary or authoritative sources.
 
 !!! success "Design rationale"
-    Relevant conditions were distributed across multiple instruments rather than operationalised in one assessment at the system-and-service scope required for this project. HDRL brings those conditions together for the specific challenge of trusted, federated health data research.
+    Relevant conditions were distributed across multiple instruments rather than operationalised in one assessment at the system-and-service scope required for this project. HDRL brings those conditions together for the specific challenge of delivering trusted, federated health data research services.
 
 The framework architecture reflects strong consensus across source frameworks:
 
@@ -44,9 +44,9 @@ HDRL fills the "missing middle" between abstract principles and detailed technic
 
 ## Relationship to Federated TRE Maturity Work
 
-[Luong and colleagues' 2026 maturity-model framework](https://doi.org/10.3389/fdgth.2026.1699125){ target="_blank" rel="noopener" } addresses the related problem of preparing networks of Trusted Research Environments (TREs) for federation. It proposes six high-level domains and maps them to the Standardised Architecture for Trusted Research Environments (SATRE) and the DARE UK Federated Architecture Blueprint, while identifying indicators and maturity descriptors as areas for further development and validation.
+[Luong and colleagues' 2026 maturity-model framework](https://doi.org/10.3389/fdgth.2026.1699125){ target="_blank" rel="noopener" } (published after the development and first field application of HDRL) addresses the related problem of preparing networks of Trusted Research Environments (TREs) for federation. It proposes six high-level domains and maps them to the Standardised Architecture for Trusted Research Environments (SATRE) and the DARE UK Federated Architecture Blueprint, while identifying indicators and maturity descriptors as areas for further development and validation.
 
-HDRL does not claim exclusivity in this field. Its distinct contribution is a broader system-and-service readiness lens, operationalised through 64 indicators across eight domains and formatively applied across three heterogeneous national settings. It includes data coverage and semantics, research delivery, public trust, sustainability and workforce alongside governance and technical infrastructure. The two approaches are complementary rather than interchangeable.
+The HDRL Framework's distinct contribution is a broader system-and-service readiness lens, operationalised through 64 indicators across eight domains and formatively applied across three heterogeneous national settings. It includes data coverage and semantics, research delivery, public trust, sustainability and workforce alongside governance and technical infrastructure. The two approaches are complementary rather than interchangeable.
 
 ## Unit of Assessment
 
@@ -58,7 +58,7 @@ HDRL can be applied at multiple levels. Each indicator is tagged:
 | **V** | Service | Individual secure data environment (SDE) or data service level. Operational delivery specific to that service. |
 | **B** | Both | Can be assessed at either level. Score may differ between levels. |
 
-### Assessment Approaches
+## Assessment Approaches
 
 === "System-Level"
     When assessing a nation or system: assess all indicators; for V indicators, assess the primary service or aggregate across services.
@@ -93,7 +93,7 @@ HDRL supports roadmap development rather than pass/fail judgements.
 
 **Domain Scores:** Calculate as the median of Core indicators (excluding Outcome/Context) within the domain.
 
-### Indicative Readiness Profiles
+## Indicative Readiness Profiles
 
 | Profile | Characteristics |
 |:--------|:----------------|
@@ -104,3 +104,15 @@ HDRL supports roadmap development rather than pass/fail judgements.
 
 !!! important
     These profiles support planning, not accreditation. A maturity level does not guarantee delivery performance, and participation or assurance decisions for HDRS or any other programme are made through separate governance.
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+[Using the framework](using-the-framework.md){ .md-button .md-button--primary }
+[Read the methodology](methodology.md){ .md-button }
+[Explore all eight domains](../domains/index.md){ .md-button }
+</div>
+
+</div>

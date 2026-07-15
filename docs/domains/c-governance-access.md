@@ -169,3 +169,16 @@ Governance is the largest single determinant of whether a health data service ca
 | **L3** | Most restrictions documented and used in decisions. Manual checks common. |
 | **L4** | Restrictions captured and enforced end-to-end. Audit trail and change control in place. |
 | **L5** | Automated policy enforcement. Routine audits; scalable reuse (e.g., standard models where applicable). |
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Next: Domain D](d-research-integration.md){ .md-button .md-button--primary }
+[All eight domains](index.md){ .md-button }
+[Quick reference](../framework/quick-reference.md){ .md-button }
+
+</div>
+</div>

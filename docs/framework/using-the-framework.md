@@ -105,10 +105,13 @@ HDRL has been applied formatively through one multi-jurisdiction assessment acro
 
 <div class="hdrl-next" markdown>
 
-### Continue
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
 
 [Read the methodology](methodology.md){ .md-button .md-button--primary }
 [See the maturity levels](maturity-levels.md){ .md-button }
 [Open the quick reference](quick-reference.md){ .md-button }
 
+</div>
 </div>

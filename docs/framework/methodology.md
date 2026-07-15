@@ -93,16 +93,19 @@ Five indicators designated by HDRL as proposed safety and governance prerequisit
 
 | Source | Contribution to HDRL |
 |:-------|:--------------------|
-| **RDA FAIR Data Maturity Model** (2020) | Indicator classification and priority tiers |
-| **HIMSS EMRAM** | Validation of staged maturity assessment in healthcare |
-| **EDM Council DCAM** | Capability-based assessment and hierarchical indicator structure |
-| **ESSENCE Framework** (TDR/WHO, 2016) | Multi-level assessment through System/Service/Both tags |
-| **OECD Health Data Governance** (2016/2022) | Normative foundation for Domains C and E |
-| **Five Safes Framework** (Ritchie, ONS) | Governance model operationalised across Domains C and H |
-| **Building Trusted Research Environments** (UK HDRA, 2021) | TRE operational requirements informing Domain H |
-| **SATRE Specification** (DARE UK, 2023) | TRE capability tiers informing H.1.1 |
-| [**Federated TRE maturity-model framework**](https://doi.org/10.3389/fdgth.2026.1699125) (Luong et al., 2026) | Related six-domain model for federated TRE networks; published after HDRL v1.0 was developed |
-| **CMMI** | Maturity level nomenclature and progression logic |
+| [**FAIR Data Maturity Model: Specification and Guidelines**](https://doi.org/10.15497/RDA00050){ target="_blank" rel="noopener" } (Research Data Alliance, 2020; DOI 10.15497/RDA00050) | Indicator classification and priority tiers |
+| [**Electronic Medical Record Adoption Model (EMRAM)**](https://www.himss.org/maturity-models/emram/){ target="_blank" rel="noopener" } (HIMSS) | Validation of staged maturity assessment in healthcare |
+| [**Data Management Capability Assessment Model (DCAM) v3**](https://edmcouncil.org/frameworks/dcam/){ target="_blank" rel="noopener" } (EDM Council) | Capability-based assessment and hierarchical indicator structure |
+| [**Planning, Monitoring and Evaluation Framework for Research Capacity Strengthening**](https://tdr.who.int/publications/m/item/planning-monitoring-and-evaluation-framework-for-capacity-strengthening-in-health-research){ target="_blank" rel="noopener" } (ESSENCE/TDR, 2016 revision) | Multi-level assessment through System/Service/Both tags |
+| [**Recommendation of the Council on Health Data Governance**](https://legalinstruments.oecd.org/en/instruments/OECD-LEGAL-0433){ target="_blank" rel="noopener" } (OECD/LEGAL/0433) | Normative foundation for Domains C and E |
+| [**The Five Safes: A framework for planning, designing and evaluating data access solutions**](https://uwe-repository.worktribe.com/output/880713){ target="_blank" rel="noopener" } (Ritchie, 2017; originating in ONS practice) | Governance model operationalised across Domains C and H |
+| [**Building Trusted Research Environments: Principles and Best Practices**](https://doi.org/10.5281/zenodo.5767586){ target="_blank" rel="noopener" } (UK Health Data Research Alliance and NHSX, 2021; DOI 10.5281/zenodo.5767586) | TRE operational requirements informing Domain H |
+| [**SATRE: Standardised Architecture for Trusted Research Environments**](https://doi.org/10.5281/zenodo.10055345){ target="_blank" rel="noopener" } (DARE UK, 2023; version 1.0) | TRE capability tiers informing H.1.1 |
+| [**CMMI Levels of Capability and Performance**](https://cmmiinstitute.com/learning/appraisals/levels){ target="_blank" rel="noopener" } (CMMI Institute) | Maturity-level nomenclature and progression logic |
+
+## Later Related Work
+
+[Luong and colleagues' federated TRE maturity-model framework](https://doi.org/10.3389/fdgth.2026.1699125){ target="_blank" rel="noopener" } was published in 2026, after HDRL v1.0 had been developed and first applied. It is therefore **not a source used to develop HDRL**. It is included as later related work because it addresses the complementary problem of preparing networks of Trusted Research Environments for federation.
 
 ---
 
@@ -111,3 +114,15 @@ Five indicators designated by HDRL as proposed safety and governance prerequisit
 Version 1.0 was applied formatively across three distinct UK jurisdictions using documentary evidence, stakeholder interviews, national workshops, structured Right of Reply, cross-nation calibration and two research use-case stress tests. This demonstrated practical feasibility across heterogeneous institutional models; it was not designed as psychometric validation or a national league table.
 
 Further validation is still required. Priorities include independent expert and public content-validity review, scoring by multiple assessors, formal inter-rater reliability testing, sensitivity analysis, prospective application and refinement of Level 4 and Level 5 thresholds using benchmark data. The framework and any assessment results should therefore be presented as evidence-informed and formatively applied, not as a fully validated accreditation instrument.
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+[See the maturity levels](maturity-levels.md){ .md-button .md-button--primary }
+[Understand indicator classification](classification.md){ .md-button }
+[Use the framework](using-the-framework.md){ .md-button }
+</div>
+
+</div>

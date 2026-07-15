@@ -23,6 +23,12 @@ The site includes:
 
 HDRL supports planning and improvement in the UK and internationally. Its first application informed discussion about the emerging UK Health Data Research Service (HDRS), but it is not an official HDRS standard, accreditation scheme or participation decision.
 
+## Applied v1 reference files
+
+The two reference files at the repository root preserve the framework and domain reference tables used for the 3 Nations field application, including their original development-stage terminology. They are retained for reproducibility rather than presented as current validation claims. The website's [methodology and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
+
+These files contain framework definitions and descriptors. They do not contain country-level evidence, detailed assessment records or unpublished scores.
+
 ## Local development
 
 ```bash

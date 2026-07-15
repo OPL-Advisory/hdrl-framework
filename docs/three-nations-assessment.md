@@ -54,13 +54,6 @@ The field application tested whether one framework could:
 
 It also reinforced that an overall score is not enough: domain patterns, evidence gaps, capacity and use-case dependencies all matter to readiness.
 
-## Publication boundary
-
-!!! warning "What this website publishes"
-    This website publishes the HDRL Framework and general information about its development and use. It does **not** publish the detailed country-level assessment records, indicator-level scores, submitted evidence or evaluation material. Findings about individual nations should be taken only from the authorised Final Report published by Research Data Scotland.
-
-The website has intentionally not reproduced country-level findings or scores. Open licensing of the framework methodology does not place the underlying detailed assessment records into the public domain. Research Data Scotland and the respective nations control decisions about release of those materials.
-
 ## Final Report
 
 Research Data Scotland published the Final Report on **14 July 2026**. It presents the authorised findings from the 3 Nations Readiness Assessment and the roadmap arising from them.
@@ -69,18 +62,16 @@ Research Data Scotland published the Final Report on **14 July 2026**. It presen
 [Download the Final Report (PDF) :material-file-pdf-box:](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ .md-button target="_blank" rel="noopener" }
 
 !!! info "Public reporting boundary"
-    The public report is the authoritative source for the assessment findings. This website links to it but does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material. No source DOCX or unpublished country assessment material is stored in this repository.
-
-## Academic paper
-
-An academic paper describing framework development, field application, results and limitations is in preparation. Until it is published, this website does not present the manuscript as a peer-reviewed source.
+    The public report is the authoritative source for the assessment findings. This website links to it but does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material.
 
 <div class="hdrl-next" markdown>
 
-### Explore the public framework
+## Explore the public framework
 
+<div class="hdrl-button-grid" markdown>
 [Framework overview](framework/overview.md){ .md-button .md-button--primary }
 [Using the framework](framework/using-the-framework.md){ .md-button }
 [All eight domains](domains/index.md){ .md-button }
+</div>
 
 </div>

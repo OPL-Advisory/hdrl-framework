@@ -40,3 +40,16 @@ Each indicator is classified by:
 - **Unit of Assessment**: System (S), Service (V), or Both (B)
 
 See [Indicator Classification](../framework/classification.md) for full details.
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Start with Domain A](a-data-coverage.md){ .md-button .md-button--primary }
+[Open the quick reference](../framework/quick-reference.md){ .md-button }
+[Use the framework](../framework/using-the-framework.md){ .md-button }
+
+</div>
+</div>

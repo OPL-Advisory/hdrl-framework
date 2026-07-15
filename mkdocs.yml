@@ -2,13 +2,6 @@ site_name: HDRL Framework
 site_description: A practical, evidence-led maturity framework for assessing organisational and system readiness for trusted, federated health data research.
 site_url: https://hdrlframework.org/
 site_author: OPL Advisory Ltd for Research Data Scotland
-repo_url: https://github.com/OPL-Advisory/hdrl-framework
-repo_name: OPL-Advisory/hdrl-framework
-
-# Retain legacy briefing assets in the repository without publishing their
-# superseded marketing language as part of the launch site.
-exclude_docs: |
-  assets/html/
 
 theme:
   name: material
@@ -41,8 +34,6 @@ theme:
     - content.tooltips
     - toc.follow
   custom_dir: overrides
-  icon:
-    repo: fontawesome/brands/github
   logo: assets/images/logo.svg
   favicon: assets/images/favicon.svg
 
@@ -66,16 +57,12 @@ plugins:
   - search
 
 extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/OPL-Advisory/hdrl-framework
-      name: HDRL Framework on GitHub
   generator: false
 
 extra_css:
   - assets/css/custom.css
 
-copyright: "HDRL Framework v1.0 · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · CC BY 4.0"
+copyright: 'HDRL Framework v1.0 · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a href="https://hdrlframework.org/about/">About &amp; reuse</a>'
 
 nav:
   - Home: index.md

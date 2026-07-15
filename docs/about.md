@@ -70,3 +70,16 @@ For factual corrections or proposed improvements to the website presentation, pl
 
 !!! info "Version discipline"
     Readiness changes over time. A future framework version or reassessment should not silently overwrite the structure, evidence or interpretation of a previous assessment.
+
+<div class="hdrl-next" markdown>
+
+## Continue exploring
+
+<div class="hdrl-button-grid" markdown>
+
+[Use the framework](framework/using-the-framework.md){ .md-button .md-button--primary }
+[Review the 3 Nations application](three-nations-assessment.md){ .md-button }
+[Return home](index.md){ .md-button }
+
+</div>
+</div>
