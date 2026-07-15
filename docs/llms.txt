@@ -29,5 +29,6 @@
 ## Published Assessment
 
 - [3 Nations Readiness Assessment context](https://hdrlframework.org/three-nations-assessment/)
+- [Accessible HTML transcription of the Final Report](https://hdrlframework.org/explore-report/)
 - [RDS Final Report (PDF; externally hosted by Research Data Scotland and authoritative for assessment findings)](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf)
 - [RDS publication page (externally hosted)](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/)

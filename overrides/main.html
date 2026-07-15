@@ -69,5 +69,32 @@
     }
   }
   </script>
+  {% elif page and page.meta and page.meta.schema_type == "report" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Report",
+    "@id": "https://hdrlframework.org/explore-report/#report",
+    "name": "Health Data Research Service: Three Nations Readiness Assessment—Final Report",
+    "url": "https://hdrlframework.org/explore-report/",
+    "version": "1.0",
+    "datePublished": "2026-07-14",
+    "author": {
+      "@type": "Person",
+      "name": "David Seymour",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "OPL Advisory"
+      }
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Research Data Scotland"
+    },
+    "isBasedOn": "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf",
+    "sameAs": "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf",
+    "mainEntityOfPage": "https://hdrlframework.org/explore-report/"
+  }
+  </script>
   {% endif %}
 {% endblock %}

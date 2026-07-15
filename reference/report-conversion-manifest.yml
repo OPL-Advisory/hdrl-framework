@@ -1,0 +1,161 @@
+manifest_version: 1
+status: source_locked_local_development
+publication_ready: false
+
+authoritative_source:
+  publication_page: https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/
+  pdf_url: https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf
+  retrieved_on: 2026-07-15
+  sha256: 49953014b1aaa815259bd46204a04cc59752c47c8625f25f7e6ac090a19556de
+  pages: 29
+  local_copy_compared: true
+  local_copy_byte_identical: true
+  sole_authoritative_content_source: true
+
+publication_gate:
+  full_text_republication_permission: pending
+  public_branch_push_permitted: false
+  merge_permitted: false
+  deployment_permitted: false
+  note: >-
+    Design and development are source-locked and complete locally. The HTML
+    transcription must not be pushed to the public repository, merged or
+    deployed until RDS provides explicit written full-text republication
+    permission and the complete rendering receives publication approval.
+
+conversion:
+  transcription_aid: >-
+    An operator-supplied local Markdown transcription was used only as a
+    conversion aid. Its internal working preamble was excluded, and all
+    retained narrative text and table cells were independently compared with
+    the authoritative PDF.
+  generated_page: docs/explore-report.md
+  preparation_script: scripts/prepare_report_page.py
+  fidelity_script: scripts/verify_report_transcription.py
+  media_metadata_check: scripts/validate_report_media.py
+  pdf_download_tool: curl 8.7.1
+  pdf_text_extraction_tool: pdftotext 26.05.0
+  pdf_rendering_tool: pdftoppm 26.05.0
+  conversion_runtime: Python 3.12.13
+  site_builder: MkDocs 1.6.1
+  source_normalisations:
+    - Omitted repeated OFFICIAL marks, page numbers, headers and footers as print furniture.
+    - Rendered the cover as semantic text and did not duplicate its organisational logo marks.
+    - Replaced the print contents pages with native HTML table-of-contents navigation.
+    - Shifted heading levels under the HTML page's single H1 without changing heading wording.
+    - Restored Score distribution across 64 indicators as a semantic subsection heading, consistent with the published contents.
+    - Replaced non-breaking layout spaces with ordinary spaces for responsive reflow.
+    - Added hidden table captions, column scopes, row scopes and keyboard-focusable scroll regions as accessibility metadata.
+  silent_corrections: false
+  known_source_inconsistency_retained: >-
+    The cover is dated July 2026 while the Document Control table says April
+    2026. Both published values are retained without editorial correction.
+
+qa:
+  checksum_lock: pass
+  markdown_input_checksum_lock: pass
+  automated_text_comparison:
+    status: pass
+    token_similarity: 0.993175
+    pdf_tokens: 6957
+    markdown_tokens: 6962
+    narrative_sentences_matched: 255/255
+    table_cells_matched: 315/315
+  pdf_visual_overview:
+    status: pass
+    pages_reviewed: 1-29
+    method: 120-dpi page renders and five six-page contact sheets
+  built_html_visual_review:
+    status: pass
+    widths: [1200, 800, 500]
+    page_level_horizontal_overflow: false
+    regression_pages_checked_at_500: [home, three-nations-assessment, about]
+  automated_accessibility_review:
+    status: pass
+    evidence: >-
+      Single H1 and ordered hierarchy; 12 named table regions; 42 scoped
+      column headers; 98 scoped row headers; keyboard focus outline; light and
+      dark report-accent contrast checks; no console errors.
+  codex_keyboard_and_scroll_smoke:
+    status: pass
+    evidence: Table region received visible focus and scrolled horizontally to its maximum extent without page overflow.
+  manual_keyboard_review: pending_human
+  human_source_and_visual_review: pending
+  schema_org_validation:
+    local_strict_json_and_output_checks: pass
+    external_validator: pending_deployable_preview
+  final_public_safety_review:
+    status: pass_local_source_locked_build
+    note: >-
+      No local paths, internal preamble, working-document names, unpublished
+      annexes or media assets are present. All report narrative and table
+      content is accounted for in the authoritative published PDF. Public
+      publication remains blocked by the explicit rights gate above.
+
+section_qa:
+  - section: Cover and source framing
+    pdf_pages: [1]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: Document Control
+    pdf_pages: [2]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: Contents
+    pdf_pages: [3, 4]
+    automated_text: not_applicable
+    conversion_visual: pass
+    note: Replaced by native HTML navigation; no report wording added.
+    human_review: pending
+  - section: Glossary of Terms and Abbreviations
+    pdf_pages: [5, 6, 7]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: Executive Summary
+    pdf_pages: [8, 9, 10]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 1. Introduction
+    pdf_pages: [11, 12, 13]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 2. Assessment Approach
+    pdf_pages: [14, 15]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 3. Cross-Nation Comparative Analysis
+    pdf_pages: [16, 17, 18, 19, 20]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 4. Use Case Analysis
+    pdf_pages: [21, 22]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 5. The Strategic Context
+    pdf_pages: [23]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 6. Recommendations
+    pdf_pages: [24, 25, 26, 27]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 7. Reflections for HDRS leadership
+    pdf_pages: [28]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 8. Governance and Next Steps
+    pdf_pages: [29]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
