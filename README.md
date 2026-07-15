@@ -12,6 +12,8 @@ The framework was commissioned by and its intellectual property rights are owned
 
 The framework is published at <https://hdrlframework.org/>. The original GitHub Pages address remains available as a redirect.
 
+A concise machine-readable guide to the public site is available at <https://hdrlframework.org/llms.txt>.
+
 The site includes:
 
 - the complete 8-domain, 64-indicator reference;

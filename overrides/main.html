@@ -12,4 +12,62 @@
   <meta name="twitter:title" content="{{ page.title }} — HDRL Framework" />
   <meta name="twitter:description" content="{{ social_description }}" />
   <meta name="keywords" content="HDRL, health data, readiness level, maturity model, UK health data research, TRE, SDE, HDRS, data governance, Five Safes" />
+  {% if page and page.meta and page.meta.schema_type == "framework" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "@id": "https://hdrlframework.org/#framework",
+    "name": "Health Data Readiness Level (HDRL) Assessment Framework",
+    "url": "https://hdrlframework.org/",
+    "version": "1.0",
+    "creator": {
+      "@type": "Organization",
+      "name": "OPL Advisory Ltd"
+    },
+    "copyrightHolder": {
+      "@type": "Organization",
+      "name": "Research Data Scotland"
+    },
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "creditText": "Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer",
+    "citation": {
+      "@type": "Report",
+      "@id": "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf",
+      "name": "Health Data Research Service: Three Nations Readiness Assessment—Final Report",
+      "url": "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf",
+      "version": "1.0",
+      "datePublished": "2026-07-14",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Research Data Scotland"
+      },
+      "mainEntityOfPage": "https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/"
+    }
+  }
+  </script>
+  {% elif page and page.meta and page.meta.schema_type == "citation" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://hdrlframework.org/about/#webpage",
+    "name": "About, Citation and Reuse",
+    "url": "https://hdrlframework.org/about/",
+    "citation": {
+      "@type": "Report",
+      "@id": "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf",
+      "name": "Health Data Research Service: Three Nations Readiness Assessment—Final Report",
+      "url": "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf",
+      "version": "1.0",
+      "datePublished": "2026-07-14",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Research Data Scotland"
+      },
+      "mainEntityOfPage": "https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/"
+    }
+  }
+  </script>
+  {% endif %}
 {% endblock %}

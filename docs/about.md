@@ -1,6 +1,7 @@
 ---
 title: About, Citation and Reuse
 description: Version, attribution, licence, citation and responsible reuse information for the HDRL Framework.
+schema_type: citation
 ---
 
 # About, Citation and Reuse
@@ -65,6 +66,8 @@ To preserve comparability and avoid misleading claims:
 ## Source and corrections
 
 The canonical applied-v1 framework and method reference is available from the [Applied v1 Method Source](framework/applied-v1-reference-files.md) page. The website source and version history remain available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
+
+A concise machine-readable guide to the site's public resources is available at [`/llms.txt`](https://hdrlframework.org/llms.txt).
 
 For factual corrections or proposed improvements to the website presentation, please [open a GitHub issue](https://github.com/OPL-Advisory/hdrl-framework/issues/new){ target="_blank" rel="noopener" }. Changes to the framework itself should be versioned explicitly so that HDRL v1.0 remains reproducible.
 
