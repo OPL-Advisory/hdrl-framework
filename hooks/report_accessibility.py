@@ -10,6 +10,10 @@ TABLE_RE = re.compile(r"<table>.*?</table>", flags=re.DOTALL)
 THEAD_RE = re.compile(r"<thead>.*?</thead>", flags=re.DOTALL)
 TBODY_RE = re.compile(r"<tbody>.*?</tbody>", flags=re.DOTALL)
 ROW_RE = re.compile(r"<tr>.*?</tr>", flags=re.DOTALL)
+HEADER_CELL_RE = re.compile(r"<th[^>]*>(.*?)</th>", flags=re.DOTALL)
+BODY_CELL_RE = re.compile(r"<(?:th|td)[^>]*>(.*?)</(?:th|td)>", flags=re.DOTALL)
+TAG_RE = re.compile(r"<[^>]+>")
+MOBILE_CARD_TABLES = {3, 6, 7, 8, 9, 10, 11, 12}
 
 
 def _add_column_scopes(thead: str) -> str:
@@ -30,12 +34,54 @@ def _add_row_scope(row: str) -> str:
     )
 
 
+def _plain_text(fragment: str) -> str:
+    return html_module.unescape(TAG_RE.sub("", fragment)).strip()
+
+
+def _build_mobile_cards(table: str, index: int, caption: str) -> str:
+    if index not in MOBILE_CARD_TABLES:
+        return ""
+
+    thead = THEAD_RE.search(table)
+    tbody = TBODY_RE.search(table)
+    if not thead or not tbody:
+        raise ValueError(f"Report table {index} cannot be converted to mobile cards")
+
+    headers = [_plain_text(cell) for cell in HEADER_CELL_RE.findall(thead.group(0))]
+    rows = ROW_RE.findall(tbody.group(0))
+    label_id = f"report-table-{index}-cards-label"
+    safe_caption = html_module.escape(caption)
+    cards = [
+        f'<div class="hdrl-report-cards hdrl-report-cards--{index}" '
+        f'role="list" aria-labelledby="{label_id}">',
+        f'<p id="{label_id}" class="hdrl-visually-hidden">{safe_caption}, mobile layout</p>',
+    ]
+
+    for row in rows:
+        cells = BODY_CELL_RE.findall(row)
+        if len(cells) != len(headers):
+            raise ValueError(
+                f"Report table {index} mobile-card metadata mismatch: "
+                f"{len(headers)} header(s), {len(cells)} cell(s)"
+            )
+        title = html_module.escape(_plain_text(cells[0]))
+        cards.append('<section class="hdrl-report-card" role="listitem">')
+        cards.append(f'<p class="hdrl-report-card-title">{title}</p><dl>')
+        for label, value in zip(headers[1:], cells[1:]):
+            safe_label = html_module.escape(label or "Value")
+            cards.append(f"<div><dt>{safe_label}</dt><dd>{value}</dd></div>")
+        cards.append("</dl></section>")
+
+    cards.append("</div>")
+    return "".join(cards)
+
+
 def _enhance_table(table: str, index: int, caption: str) -> str:
     caption_id = f"report-table-{index}-caption"
     safe_caption = html_module.escape(caption)
     table = table.replace(
         "<table>",
-        f'<table class="hdrl-report-table"><caption id="{caption_id}" '
+        f'<table class="hdrl-report-table hdrl-report-table--{index}"><caption id="{caption_id}" '
         f'class="hdrl-visually-hidden">{safe_caption}</caption>',
         1,
     )
@@ -46,11 +92,12 @@ def _enhance_table(table: str, index: int, caption: str) -> str:
         ),
         table,
     )
-    return (
-        '<div class="md-typeset__table hdrl-report-table-wrapper" '
-        f'tabindex="0" role="region" aria-labelledby="{caption_id}">'
+    table_layout = (
+        '<div class="md-typeset__table hdrl-report-table-wrapper '
+        f'hdrl-report-table-wrapper--{index}">'
         f"{table}</div>"
     )
+    return table_layout + _build_mobile_cards(table, index, caption)
 
 
 def on_page_content(html: str, page, config, files) -> str:

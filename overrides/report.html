@@ -1,10 +1,25 @@
 {% extends "main.html" %}
 
+{% block site_nav %}
+  {% if nav %}
+    <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner">
+          {% include "partials/nav.html" %}
+          <div class="hdrl-report-integrated-toc">
+            {% include "partials/toc.html" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="hdrl-report-page">
   <header class="hdrl-report-masthead">
     <span class="hdrl-kicker">Published Final Report · accessible HTML</span>
-    <h1>Health Data Research Service:<br />Three Nations Readiness Assessment</h1>
+    <h1>Health Data Research Service: Three Nations Readiness Assessment</h1>
     <p class="hdrl-report-subtitle">Final Report</p>
     <p class="hdrl-report-byline"><strong>David Seymour, OPL Advisory</strong> · July 2026 · V1.0</p>
     <p>Commissioned by Research Data Scotland on behalf of the three devolved nations.</p>

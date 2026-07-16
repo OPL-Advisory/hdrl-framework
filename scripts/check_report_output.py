@@ -13,6 +13,7 @@ from pathlib import Path
 EXPECTED_REPORT_ID = "https://hdrlframework.org/explore-report/#report"
 EXPECTED_REPORT_URL = "https://hdrlframework.org/explore-report/"
 EXPECTED_PDF_URL = "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf"
+EXPECTED_MOBILE_CARD_TABLES = {3, 6, 7, 8, 9, 10, 11, 12}
 
 
 def require(condition: bool, message: str) -> None:
@@ -62,17 +63,41 @@ def main() -> None:
     require(metadata.get("url") == EXPECTED_REPORT_URL, "JSON-LD URL is not canonical")
     require(metadata.get("sameAs") == EXPECTED_PDF_URL, "JSON-LD authoritative PDF is missing")
 
-    tables = re.findall(r'<table class="hdrl-report-table">.*?</table>', document, flags=re.DOTALL)
+    tables = re.findall(
+        r'<table class="hdrl-report-table hdrl-report-table--\d+">.*?</table>',
+        document,
+        flags=re.DOTALL,
+    )
     wrappers = re.findall(
-        r'<div class="md-typeset__table hdrl-report-table-wrapper" '
-        r'tabindex="0" role="region" aria-labelledby="([^"]+)">',
+        r'<div class="md-typeset__table hdrl-report-table-wrapper '
+        r'hdrl-report-table-wrapper--(\d+)">',
         document,
     )
     require(len(tables) == 12, f"Expected 12 report tables, found {len(tables)}")
-    require(len(wrappers) == len(tables), "Every report table must have a keyboard-focusable region")
+    require(len(wrappers) == len(tables), "Every report table must have a responsive wrapper")
+    require(
+        'hdrl-report-table-wrapper" tabindex=' not in document,
+        "Non-scrolling report tables must not add keyboard tab stops",
+    )
+
+    mobile_card_tables = {
+        int(index)
+        for index in re.findall(
+            r'class="hdrl-report-cards hdrl-report-cards--(\d+)"',
+            document,
+        )
+    }
+    require(
+        mobile_card_tables == EXPECTED_MOBILE_CARD_TABLES,
+        "Dense narrative tables do not have the expected mobile-card alternatives",
+    )
 
     for index, table in enumerate(tables, start=1):
         caption_id = f"report-table-{index}-caption"
+        require(
+            f'hdrl-report-table--{index}' in table,
+            f"Table {index} responsive-layout class is missing",
+        )
         require(f'<caption id="{caption_id}"' in table, f"Table {index} caption is missing")
         thead_match = re.search(r"<thead>.*?</thead>", table, flags=re.DOTALL)
         tbody_match = re.search(r"<tbody>.*?</tbody>", table, flags=re.DOTALL)
@@ -85,7 +110,13 @@ def main() -> None:
             all(re.search(r'<tr>\s*<th scope="row"', row) for row in rows),
             f"Table {index} has a body row without a scoped row header",
         )
-        require(wrappers[index - 1] == caption_id, f"Table {index} region is not labelled by its caption")
+        require(int(wrappers[index - 1]) == index, f"Table {index} wrapper is misnumbered")
+
+        if index in EXPECTED_MOBILE_CARD_TABLES:
+            require(
+                f'id="report-table-{index}-cards-label"' in document,
+                f"Table {index} mobile-card label is missing",
+            )
 
     require(
         f'href="{EXPECTED_PDF_URL}"' in document,

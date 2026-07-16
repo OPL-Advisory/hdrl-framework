@@ -45,7 +45,8 @@ conversion:
     - Shifted heading levels under the HTML page's single H1 without changing heading wording.
     - Restored Score distribution across 64 indicators as a semantic subsection heading, consistent with the published contents.
     - Replaced non-breaking layout spaces with ordinary spaces for responsive reflow.
-    - Added hidden table captions, column scopes, row scopes and keyboard-focusable scroll regions as accessibility metadata.
+    - Added hidden table captions, column scopes and row scopes as accessibility metadata.
+    - Added labelled small-screen card alternatives for dense narrative tables without changing their wording.
   silent_corrections: false
   known_source_inconsistency_retained: >-
     The cover is dated July 2026 while the Document Control table says April
@@ -67,23 +68,36 @@ qa:
     method: 120-dpi page renders and five six-page contact sheets
   built_html_visual_review:
     status: pass
-    widths: [1200, 800, 500]
+    widths: [2048, 1200, 800, 500, 320]
     page_level_horizontal_overflow: false
     regression_pages_checked_at_500: [home, three-nations-assessment, about]
   automated_accessibility_review:
     status: pass
     evidence: >-
-      Single H1 and ordered hierarchy; 12 named table regions; 42 scoped
-      column headers; 98 scoped row headers; keyboard focus outline; light and
-      dark report-accent contrast checks; no console errors.
-  codex_keyboard_and_scroll_smoke:
+      Single H1 and ordered hierarchy; 12 captioned semantic tables; 42 scoped
+      column headers; 98 scoped row headers; labelled mobile card alternatives
+      for eight dense narrative tables; no unnecessary table tab stops; light
+      and dark report-accent contrast checks; no console errors.
+  codex_keyboard_and_reflow_smoke:
     status: pass
-    evidence: Table region received visible focus and scrolled horizontally to its maximum extent without page overflow.
-  manual_keyboard_review: pending_human
-  human_source_and_visual_review: pending
+    evidence: >-
+      No document or visible-table overflow at 1200, 800, 500 or 320 CSS
+      pixels. Dense tables reflow to labelled cards below 600 pixels while
+      compact tables retain their semantic table layout.
+  manual_keyboard_review: pending_human_recheck_after_layout_revision
+  human_source_and_visual_review:
+    status: in_progress
+    evidence: >-
+      Initial Chrome on macOS review found the content comparison satisfactory
+      and keyboard behaviour broadly successful. The title, navigation and
+      table layout issues raised in that review have been revised; complete
+      page-by-page sign-off remains pending.
   schema_org_validation:
     local_strict_json_and_output_checks: pass
-    external_validator: pending_deployable_preview
+    external_validator: pass_code_snippet
+    validated_on: 2026-07-16
+    result: Report; 0 errors; 0 warnings
+    evidence: Schema.org-validator-Report-0-errors-0-warnings.png
   final_public_safety_review:
     status: pass_local_source_locked_build
     note: >-
