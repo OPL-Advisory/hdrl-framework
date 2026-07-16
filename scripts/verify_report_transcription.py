@@ -85,7 +85,13 @@ def word_tokens(text: str) -> list[str]:
     )
 
 
+def strip_markdown_links(text: str) -> str:
+    """Remove navigational URLs while retaining their source-locked labels."""
+    return re.sub(r"\[([^\]]+)\]\(https://[^)]+\)", r"\1", text)
+
+
 def normalise_markdown_for_tokens(text: str) -> list[str]:
+    text = strip_markdown_links(text)
     text = re.sub(
         r"^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$",
         " ",
@@ -113,6 +119,7 @@ def narrative_sentences(markdown: str) -> list[str]:
         candidate = re.sub(r"^>\s*", "", candidate)
         candidate = re.sub(r"^[-*+]\s+", "", candidate)
         candidate = re.sub(r"^\d+\.\s+", "", candidate)
+        candidate = strip_markdown_links(candidate)
         candidate = candidate.replace("**", "").replace("`", "")
         for sentence in re.split(r"(?<=[.!?])\s+", candidate):
             if len(normalise_tight(sentence)) >= 30:
@@ -126,7 +133,7 @@ def table_cells(markdown: str) -> list[str]:
         if not line.startswith("|") or re.fullmatch(r"\|?[\s:|-]+\|?", line):
             continue
         for cell in line.strip("|").split("|"):
-            cell = cell.strip()
+            cell = strip_markdown_links(cell.strip())
             if word_tokens(cell):
                 cells.append(cell)
     return cells

@@ -23,7 +23,7 @@ report_table_captions:
 
 | Item | Detail |
 |---|---|
-| Client | Research Data Scotland |
+| Client | [Research Data Scotland](https://www.researchdata.scot/) |
 | Deliverable | Final Report (Deliverable 3) |
 | Version | V1.0 |
 | Date | April 2026 |
@@ -77,7 +77,7 @@ This report covers a technically specialist domain. The following glossary defin
 
 ### Purpose and Scope
 
-This report presents the first structured, evidence-based and independently conducted multi-jurisdiction maturity assessment of health data research infrastructure conducted against a common framework, together with a prioritised roadmap for action. Commissioned by Research Data Scotland on behalf of the devolved nations and conducted by OPL Advisory between December 2025 and April 2026, the project provides an independent evaluation of the maturity of Scotland, Wales and Northern Ireland’s health data research services and hence their potential readiness to participate in the UK Health Data Research Service (HDRS), a £600 million initiative to simplify secure access to health data for research across the four UK nations.
+This report presents the first structured, evidence-based and independently conducted multi-jurisdiction maturity assessment of health data research infrastructure conducted against a common framework, together with a prioritised roadmap for action. Commissioned by Research Data Scotland on behalf of the devolved nations and conducted by OPL Advisory between December 2025 and April 2026, the project provides an independent evaluation of the maturity of Scotland, Wales and Northern Ireland’s health data research services and hence their potential readiness to participate in the [UK Health Data Research Service (HDRS)](https://www.hdrs.com/), a £600 million initiative to simplify secure access to health data for research across the four UK nations.
 
 The assessment applies the Health Data Readiness Level (HDRL) Framework. The framework was developed specifically for this project through systematic analysis of 56 existing frameworks. It covers eight domains, 64 indicators, and five maturity levels (L1–5). Five indicators have been designated Foundational Indicators where a minimum standard is assumed to be necessary for participation in federated data research services. Two stress-testing use cases (COALESCE retrospective and Shingrix prospective) complement the framework assessment with operational evidence of what multi-nation research delivery looks like in practice.
 
@@ -144,7 +144,7 @@ The three nations bring specific assets that HDRS cannot replicate from English 
 
 #### Scotland System Overview
 
-Scotland's health data research infrastructure is delivered through the Scottish Safe Haven Network, a collaboration of five regional and national Safe Havens coordinated by Research Data Scotland (RDS), a Scottish Government-funded, independent charitable organisation established in 2021 to make it faster and simpler to access public sector data for research.
+Scotland's health data research infrastructure is delivered through the [Scottish Safe Haven Network](https://www.researchdata.scot/accessing-data/scottish-safe-haven-network/), a collaboration of five regional and national Safe Havens coordinated by Research Data Scotland (RDS), a Scottish Government-funded, independent charitable organisation established in 2021 to make it faster and simpler to access public sector data for research.
 
 The network comprises: the National Safe Haven (NSH) operated by eDRIS within Public Health Scotland; DataLoch (Edinburgh/Lothian); DaSH (Aberdeen/Grampian); HIC (Dundee/Tayside); and the West of Scotland Safe Haven (Greater Glasgow & Clyde). Technical infrastructure for the national data safe haven is provided by EPCC at the University of Edinburgh. The Researcher Access Service (RAS) provides a new route for accessing a subset of nationally-held datasets, complementing the governance oversight from the HSC Public Benefit & Privacy Panel (PBPP).
 
@@ -152,13 +152,13 @@ Access to data through the network is governed by a common Safe Haven Charter (o
 
 #### Wales System Overview
 
-Wales’s health data research infrastructure centres on the SAIL Databank (Secure Anonymised Information Linkage), operated by Swansea University since 2007. SAIL is Wales’s national Trusted Research Environment (TRE) and the primary route for accessing linked health, administrative, and social data for research.
+Wales’s health data research infrastructure centres on the [SAIL Databank](https://saildatabank.com/) (Secure Anonymised Information Linkage), operated by Swansea University since 2007. SAIL is Wales’s national Trusted Research Environment (TRE) and the primary route for accessing linked health, administrative, and social data for research.
 
 SAIL holds over 70 data sources covering approximately 5 million individuals, with GP data coverage of 86% of the Welsh population. Governance is provided by the Information Governance Review Panel (IGRP), an independent panel assessing data access applications. Technical infrastructure includes the SAIL Gateway secure remote access environment.
 
 #### Northern Ireland System Overview
 
-Northern Ireland's health data research infrastructure is delivered through the Northern Ireland Trusted Research Environment (NITRE), operated by the HSC Data Institute within Digital Health and Care Northern Ireland (DHCNI). The Honest Broker Service (HBS), hosted by the Business Services Organisation (BSO), an arm's-length body of the Department of Health, provides the established data access pathway, managing 25 core datasets covering the 1.9 million Northern Ireland population.
+Northern Ireland's health data research infrastructure is delivered through the [Northern Ireland Trusted Research Environment (NITRE), operated by the HSC Data Institute](https://dhcni.hscni.net/digital-strategy/data/) within Digital Health and Care Northern Ireland (DHCNI). [The Honest Broker Service (HBS)](https://bso.hscni.net/directorates/digital/honest-broker-service/honest-broker-service-our-work/), hosted by the Business Services Organisation (BSO), an arm's-length body of the Department of Health, provides the established data access pathway, managing 25 core datasets covering the 1.9 million Northern Ireland population.
 
 NITRE is hosted on SAIL Databank infrastructure under a partnership arrangement with Swansea University, providing ISO 27001-certified secure processing. Governance is provided through the HBS governance framework with oversight from DHCNI.
 
@@ -393,7 +393,7 @@ HDRS’s own priorities are expected to crystallise by June 2026, feeding into a
 
 ### 5.2 The ABPI Signal
 
-The ABPI’s March 2026 report on data-enabled clinical trials provides external validation for a potential three nations’ proposition. The report highlights that the UK conducted its lowest number of clinical trial participant recruitments in 2024/25 since 2017/18, that screen failure rates reach 90% in some therapeutic areas, and that fewer than 5% of UK trials currently use routinely collected health data. It specifically names SAIL as an exemplar and recommends that a service design function for data-enabled trials be placed within HDRS.
+[The ABPI’s March 2026 report on data-enabled clinical trials](https://www.abpi.org.uk/publications/globally-competitive-uk-wide-data-enabled-clinical-trials-the-time-is-now/) provides external validation for a potential three nations’ proposition. The report highlights that the UK conducted its lowest number of clinical trial participant recruitments in 2024/25 since 2017/18, that screen failure rates reach 90% in some therapeutic areas, and that fewer than 5% of UK trials currently use routinely collected health data. It specifically names SAIL as an exemplar and recommends that a service design function for data-enabled trials be placed within HDRS.
 
 ### 5.3 The Funding Question
 

@@ -20,6 +20,37 @@ EXPECTED_INPUT_SHA256 = (
     "62e9126d3f48880816a6f74aa846656518b634255788910051f2cd47e2c6b7d3"
 )
 
+NAVIGATIONAL_LINKS = (
+    (
+        "| Client | Research Data Scotland |",
+        "| Client | [Research Data Scotland](https://www.researchdata.scot/) |",
+    ),
+    (
+        "UK Health Data Research Service (HDRS), a £600 million initiative",
+        "[UK Health Data Research Service (HDRS)](https://www.hdrs.com/), a £600 million initiative",
+    ),
+    (
+        "through the Scottish Safe Haven Network,",
+        "through the [Scottish Safe Haven Network](https://www.researchdata.scot/accessing-data/scottish-safe-haven-network/),",
+    ),
+    (
+        "centres on the SAIL Databank (Secure Anonymised Information Linkage),",
+        "centres on the [SAIL Databank](https://saildatabank.com/) (Secure Anonymised Information Linkage),",
+    ),
+    (
+        "through the Northern Ireland Trusted Research Environment (NITRE), operated by the HSC Data Institute within Digital Health and Care Northern Ireland (DHCNI).",
+        "through the [Northern Ireland Trusted Research Environment (NITRE), operated by the HSC Data Institute](https://dhcni.hscni.net/digital-strategy/data/) within Digital Health and Care Northern Ireland (DHCNI).",
+    ),
+    (
+        "The Honest Broker Service (HBS), hosted by the Business Services Organisation (BSO),",
+        "[The Honest Broker Service (HBS)](https://bso.hscni.net/directorates/digital/honest-broker-service/honest-broker-service-our-work/), hosted by the Business Services Organisation (BSO),",
+    ),
+    (
+        "The ABPI’s March 2026 report on data-enabled clinical trials",
+        "[The ABPI’s March 2026 report on data-enabled clinical trials](https://www.abpi.org.uk/publications/globally-competitive-uk-wide-data-enabled-clinical-trials-the-time-is-now/)",
+    ),
+)
+
 FRONT_MATTER = """---
 title: Explore the Final Report
 description: An accessible HTML transcription of the published Three Nations Readiness Assessment Final Report, with the RDS PDF retained as the authoritative version.
@@ -87,6 +118,15 @@ def prepare(source: Path) -> str:
     # Non-breaking spaces in the transcription are layout artefacts from the
     # word-processing source and impede natural text wrapping in HTML.
     body = re.sub(r" *\u00a0 *", " ", body)
+
+    # Add source-verified navigation without changing any published wording.
+    # The PDF remains the sole source for the linked labels and surrounding text.
+    for source_text, linked_text in NAVIGATIONAL_LINKS:
+        if body.count(source_text) != 1:
+            raise SystemExit(
+                "Navigational-link anchor changed or is ambiguous: " + source_text
+            )
+        body = body.replace(source_text, linked_text, 1)
 
     return FRONT_MATTER + body.rstrip() + "\n"
 

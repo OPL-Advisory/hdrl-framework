@@ -14,6 +14,15 @@ EXPECTED_REPORT_ID = "https://hdrlframework.org/explore-report/#report"
 EXPECTED_REPORT_URL = "https://hdrlframework.org/explore-report/"
 EXPECTED_PDF_URL = "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf"
 EXPECTED_MOBILE_CARD_TABLES = {3, 6, 7, 8, 9, 10, 11, 12}
+EXPECTED_REFERENCE_LINKS = {
+    "Research Data Scotland": "https://www.researchdata.scot/",
+    "Health Data Research Service": "https://www.hdrs.com/",
+    "Scottish Safe Haven Network": "https://www.researchdata.scot/accessing-data/scottish-safe-haven-network/",
+    "SAIL Databank": "https://saildatabank.com/",
+    "HSC Data Institute and NITRE": "https://dhcni.hscni.net/digital-strategy/data/",
+    "Honest Broker Service": "https://bso.hscni.net/directorates/digital/honest-broker-service/honest-broker-service-our-work/",
+    "ABPI data-enabled clinical trials report": "https://www.abpi.org.uk/publications/globally-competitive-uk-wide-data-enabled-clinical-trials-the-time-is-now/",
+}
 
 
 def require(condition: bool, message: str) -> None:
@@ -27,6 +36,24 @@ def main() -> None:
     args = parser.parse_args()
 
     document = args.html.read_text(encoding="utf-8")
+    stylesheet_path = args.html.parents[1] / "assets" / "css" / "custom.css"
+    require(stylesheet_path.is_file(), f"Built stylesheet is missing: {stylesheet_path}")
+    stylesheet = stylesheet_path.read_text(encoding="utf-8")
+    report_styles = stylesheet.split("/* ---------- Accessible report transcription ---------- */", 1)[-1]
+
+    require("table-layout: auto;" in report_styles, "Report tables are not content-sized")
+    require(
+        "table-layout: fixed;" not in report_styles,
+        "A fixed report-table layout overrides content-sized columns",
+    )
+    require(
+        not re.search(
+            r"\.hdrl-report-table--\d+[^\{]*\{[^\}]*\bwidth\s*:",
+            report_styles,
+            flags=re.DOTALL,
+        ),
+        "A report-table-specific column width overrides content sizing",
+    )
 
     require('lang="en"' in document, "The document language is not English")
     require(
@@ -124,9 +151,13 @@ def main() -> None:
     )
     require("RDS publication page" in document, "The RDS publication-page link is missing")
 
+    for label, url in EXPECTED_REFERENCE_LINKS.items():
+        require(f'href="{url}"' in document, f"The {label} reference link is missing")
+
     print("Built report checks passed")
     print(f"Headings: {len(heading_levels)}; tables: {len(tables)}; scoped row headers: {document.count('scope=\"row\"')}")
     print(f"JSON-LD: {metadata['@type']} {metadata['@id']}")
+    print(f"Content-sized tables: {len(tables)}; source-verified reference links: {len(EXPECTED_REFERENCE_LINKS)}")
 
 
 if __name__ == "__main__":

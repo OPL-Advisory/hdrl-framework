@@ -47,6 +47,7 @@ conversion:
     - Replaced non-breaking layout spaces with ordinary spaces for responsive reflow.
     - Added hidden table captions, column scopes and row scopes as accessibility metadata.
     - Added labelled small-screen card alternatives for dense narrative tables without changing their wording.
+    - Added seven source-verified outbound links around unchanged report wording as navigational annotations; URLs are excluded from transcription comparison.
   silent_corrections: false
   known_source_inconsistency_retained: >-
     The cover is dated July 2026 while the Document Control table says April
@@ -70,28 +71,43 @@ qa:
     status: pass
     widths: [2048, 1200, 800, 500, 320]
     page_level_horizontal_overflow: false
+    table_layout: >-
+      All 12 tables use content-sized automatic columns with no table-specific
+      width overrides. No table overflow was present at 1200 or 800 pixels;
+      eight dense tables use labelled cards at 500 and 320 pixels.
     regression_pages_checked_at_500: [home, three-nations-assessment, about]
   automated_accessibility_review:
     status: pass
     evidence: >-
       Single H1 and ordered hierarchy; 12 captioned semantic tables; 42 scoped
       column headers; 98 scoped row headers; labelled mobile card alternatives
-      for eight dense narrative tables; no unnecessary table tab stops; light
-      and dark report-accent contrast checks; no console errors.
+      for eight dense narrative tables; no unnecessary table tab stops;
+      high-contrast emphasis panels checked in light and dark modes; no console
+      errors.
   codex_keyboard_and_reflow_smoke:
     status: pass
     evidence: >-
       No document or visible-table overflow at 1200, 800, 500 or 320 CSS
-      pixels. Dense tables reflow to labelled cards below 600 pixels while
-      compact tables retain their semantic table layout.
+      pixels. All 12 desktop/tablet tables use content-sized columns. Dense
+      tables reflow to labelled cards below 600 pixels while compact tables
+      retain their semantic table layout.
+  outbound_reference_links:
+    status: pass
+    checked_on: 2026-07-16
+    links_checked: 7
+    result: all_http_200
+    policy: >-
+      Links are limited to organisation-owned pages for RDS, HDRS, the
+      Scottish Safe Haven Network, SAIL Databank, the HSC Data Institute and
+      NITRE, the Honest Broker Service, and the ABPI report.
   manual_keyboard_review: pending_human_recheck_after_layout_revision
   human_source_and_visual_review:
     status: in_progress
     evidence: >-
       Initial Chrome on macOS review found the content comparison satisfactory
-      and keyboard behaviour broadly successful. The title, navigation and
-      table layout issues raised in that review have been revised; complete
-      page-by-page sign-off remains pending.
+      and keyboard behaviour broadly successful. The title, navigation, table
+      sizing and emphasis issues raised in that review have been revised;
+      complete page-by-page sign-off remains pending.
   schema_org_validation:
     local_strict_json_and_output_checks: pass
     external_validator: pass_code_snippet
@@ -103,8 +119,10 @@ qa:
     note: >-
       No local paths, internal preamble, working-document names, unpublished
       annexes or media assets are present. All report narrative and table
-      content is accounted for in the authoritative published PDF. Public
-      publication remains blocked by the explicit rights gate above.
+      content is accounted for in the authoritative published PDF. The added
+      hyperlinks are source-verified navigational annotations and do not add
+      report claims. Public publication remains blocked by the explicit rights
+      gate above.
 
 section_qa:
   - section: Cover and source framing
