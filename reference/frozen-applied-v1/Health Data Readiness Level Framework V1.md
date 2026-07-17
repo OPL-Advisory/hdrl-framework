@@ -144,7 +144,7 @@ HDRL has 64 indicators organised across eight domains. Per-domain narrative comm
 
 ## 3.1 Development approach
 
-The HDRL Framework was developed through systematic evidence synthesis and first-principles analysis. Three frontier AI models independently reviewed 56 existing frameworks across data governance, health information systems, research infrastructure, and workforce capacity domains. Outputs were triangulated to identify areas of consensus and disagreement, with all findings verified against primary sources.
+The HDRL Framework was developed through systematic evidence synthesis and first-principles analysis. Three frontier AI models independently reviewed 56 existing frameworks across data governance, health information systems, research infrastructure, and workforce capacity domains. Outputs were triangulated to identify areas of consensus and disagreement, with findings verified against primary sources except for four reduced-confidence single mentions retained in the catalogue without independent review.
 
 A critical finding was that no existing framework comprehensively addresses health data research readiness. While mature frameworks exist for general data management (DCAM, DAMA-DMBOK), health information systems (HIMSS EMRAM, WHO SCORE) and FAIR data practices (RDA FAIR DMM), none integrates these dimensions for assessing readiness to participate in multi-site health data research infrastructure. This validates the purpose of HDRL.
 
@@ -2887,9 +2887,13 @@ Given the breadth of potentially relevant frameworks and the absence of a compre
 
 - Partial consensus: findings identified by two models (medium confidence, verification applied).
 
-- Unique contributions: findings from single models (verified against primary sources before inclusion).
+- Unique contributions: findings from single models given a dedicated review (verified against primary sources before inclusion).
+
+- Single mentions: frameworks named by one model in passing and retained in the catalogue as reduced-confidence items (not independently reviewed).
 
 - Contradictions: points of disagreement (resolved through primary source verification).
+
+- Practitioner-sourced: findings nominated directly by the project lead from prior professional practice, pre-dating the AI review (verified against primary sources).
 
 This approach enabled comprehensive coverage whilst providing triangulation of findings and explicit confidence assessment. The methodology followed established multi-source verification principles, taking the most conservative confidence rating where models disagreed and documenting all discordances for transparency.
 
@@ -2897,7 +2901,7 @@ This approach enabled comprehensive coverage whilst providing triangulation of f
 
 The evidence synthesis addressed three complementary tasks:
 
-**Task 1: Systematic framework review.** Identification and analysis of existing maturity and readiness frameworks across six domains: data governance and management; health-specific frameworks; research infrastructure; digital government and data protection; data quality and FAIR principles; and workforce capacity. For each framework, eleven extraction elements were documented including purpose, domain structure, indicator design, measurement approach, level architecture, validation evidence, strengths, limitations, and relevance to health data research.
+**Task 1: Systematic framework review.** Identification and analysis of existing maturity and readiness frameworks across seven domains: data governance and management; health-specific frameworks; research infrastructure; digital government and data protection; data quality and FAIR principles; workforce capacity; and national strategies. For each framework, eleven extraction elements were documented including purpose, domain structure, indicator design, measurement approach, level architecture, validation evidence, strengths, limitations, and relevance to health data research.
 
 **Task 2: Jurisdictional evidence review.** Analysis of health data research ecosystems across diverse contexts to understand what readiness looks like in practice, spanning high-income exemplars (UK, Nordic countries, Singapore, Australia, Canada, Estonia), middle-income contexts (India, Jordan, Brazil), and lower-resource settings.
 
@@ -2907,17 +2911,17 @@ The evidence synthesis addressed three complementary tasks:
 
 ### 8.2.1 Coverage and scope
 
-The systematic review identified 56 frameworks across six domains relevant to health data research readiness assessment. Of these, 24 were identified by all three AI models (high consensus), 18 by two models (partial consensus), and 14 by single models (subsequently verified against primary sources).
+The systematic review identified 56 frameworks across seven domains relevant to health data research readiness assessment. Of these, 14 were identified by all three AI models (high consensus), 10 by two models (partial consensus), 25 by a single model with a dedicated review (verified against primary sources), 4 named by a single model in passing without independent review, and 3 were practitioner-sourced — nominated by the lead author from prior professional practice and not identified by any AI model.
 
 | **Domain** | **Frameworks** | **High Consensus** | **Key Exemplars** |
 |----|----|----|----|
 | Data governance and management | 8 | 6 | CMMI-DMM, DAMA-DMBOK, EDM Council DCAM |
-| Health-specific | 12 | 8 | OECD Health Data Governance, WHO SCORE, HIMSS EMRAM |
-| Research infrastructure | 9 | 6 | EOSC Readiness, RDA FAIR DMM, NIH DMSP |
-| Digital government | 7 | 5 | UN EGDI, World Bank GTMI, OECD DGI |
-| Data quality and FAIR | 8 | 6 | RDA FAIR Data Maturity Model, WHO DQR, ISO 8000 |
-| Workforce capacity | 6 | 4 | ESSENCE Framework, NHS NCF, WHO HWF Assessment |
-| National strategies | 6 | 4 | Various national data strategies with maturity components |
+| Health-specific | 12 | 3 | OECD Health Data Governance, WHO SCORE, HIMSS EMRAM, B1MG MLM |
+| Research infrastructure | 9 | 1 | EOSC Readiness, RDA FAIR DMM, NIH DMSP, SATRE, Building TREs |
+| Digital government | 7 | 0 | UN EGDI, World Bank GTMI, OECD DGI |
+| Data quality and FAIR | 8 | 4 | RDA FAIR Data Maturity Model, WHO DQR, ISO 8000 |
+| Workforce capacity | 6 | 0 | ESSENCE Framework, NHS NCF, WHO HWF Assessment |
+| National strategies | 6 | 0 | Various national data strategies with maturity components |
 
 ### 8.2.2 Critical gap finding
 
@@ -3079,14 +3083,14 @@ The HDRL Framework has been validated through:
 
 4\. HIMSS Analytics. (2023). Electronic Medical Record Adoption Model (EMRAM). https://www.himss.org/what-we-do-solutions/digital-health-transformation/maturity-models/emram
 
-5\. Beyond 1 Million Genomes (B1MG). (2022). D3.4 Maturity Level Model v2. Zenodo. https://zenodo.org/records/6587561
+5\. Costa, A., Cardoso, M.L., Konopko, M., Pérez Sitjà, X., Lopes, M.F., et al. (2022). B1MG D5.1: B1MG Maturity Level Model and Country-Specific Alignment within the Model. Zenodo. https://doi.org/10.5281/zenodo.6587561
 
 6\. TDR/WHO. (2016). ESSENCE Framework for Health Research Capacity Strengthening. https://www.who.int/tdr/publications/essence-framework
 
 7\. OECD. (2019). Recommendation of the Council on Health Data Governance (OECD/LEGAL/0433). https://legalinstruments.oecd.org/en/instruments/OECD-LEGAL-0433
 
-8\. Ritchie, F. (2017). The "Five Safes": A framework for planning, designing and evaluating data access solutions. Data for Policy 2017. Originally developed at ONS c.2003. https://uwe-repository.worktribe.com/output/886029
+8\. Ritchie, F. (2017). The "Five Safes": A framework for planning, designing and evaluating data access solutions. Data for Policy 2017. Originally developed at ONS c.2003. https://doi.org/10.5281/zenodo.897821
 
 9\. UK Health Data Research Alliance. (2021). Building Trusted Research Environments: Principles and Best Practices. Zenodo. https://zenodo.org/records/5767586
 
-10\. DARE UK. (2023). SATRE: Standardised Architecture for Trusted Research Environments. https://satre-specification.readthedocs.io/
+10\. DARE UK. (2023). SATRE: Standardised Architecture for Trusted Research Environments, v1.0. Zenodo. https://doi.org/10.5281/zenodo.10055345

@@ -7,7 +7,7 @@ description: Download the canonical HDRL Framework v1.0 method source as Markdow
 
 **Health Data Readiness Level Framework V1.md** contains the complete applied framework and method: purpose and scope, classifications, all 64 indicators and maturity descriptors, evidence and assessor guidance, the broader HDRS capability map and methodology and evidence base.
 
-Markdown SHA-256: `06fad6b396fa38dab45b22feeefb36b94344beba498d9fe1a7f12cecae43bd75`
+Markdown SHA-256: `2ec52519ede0a1f8b7787b182ba567d7afab4edd125baeab7dc7d0b14dd764fb`
 
 <div class="hdrl-button-grid hdrl-button-grid--two" markdown>
 
