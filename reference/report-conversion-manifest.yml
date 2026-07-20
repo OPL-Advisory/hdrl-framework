@@ -1,6 +1,16 @@
 manifest_version: 1
-status: source_locked_local_development
+status: source_locked_permission_confirmed_draft_review
 publication_ready: false
+
+implementation_baseline:
+  frozen_launch_commit: 0c5d98a5f0d2a4e17d4ccf8a8bd2ba7a393539c3
+  current_main_commit: 3847b640af6e694873912836119f7ce2fdfde314
+  applied_v1_source_sha256: 2ec52519ede0a1f8b7787b182ba567d7afab4edd125baeab7dc7d0b14dd764fb
+  baseline_change_authorised_on: 2026-07-20
+  note: >-
+    PR #9 is an authorised successor baseline aligning the public methodology
+    with the academic paper being prepared for submission. The PR B branch is
+    based on that commit and records its updated applied-v1 source checksum.
 
 authoritative_source:
   publication_page: https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/
@@ -13,15 +23,22 @@ authoritative_source:
   sole_authoritative_content_source: true
 
 publication_gate:
-  full_text_republication_permission: pending
-  public_branch_push_permitted: false
+  full_text_republication_permission: confirmed_by_rds
+  permission_confirmed_on: 2026-07-20
+  permission_confirmed_by: Professor Roger Halliday, Chief Executive Officer, Research Data Scotland
+  permission_evidence: >-
+    Email confirmation: "Also, no problem with you putting out a markdown
+    version of the Exec report on your website labelled up the way you have
+    done. Hope all goes well securing the publication route you've outlined –
+    keep us informed of progress."
+  permission_interpretation_confirmed_by_project_owner: true
+  public_branch_push_permitted: true
   merge_permitted: false
   deployment_permitted: false
   note: >-
-    Design and development are source-locked and complete locally. The HTML
-    transcription must not be pushed to the public repository, merged or
-    deployed until RDS provides explicit written full-text republication
-    permission and the complete rendering receives publication approval.
+    RDS permission and the authoritative source lock allow the implementation
+    to be pushed as a draft pull request for review. Merge and deployment remain
+    blocked until the complete rendering receives Gate B3 publication approval.
 
 conversion:
   transcription_aid: >-
@@ -54,6 +71,7 @@ conversion:
     2026. Both published values are retained without editorial correction.
 
 qa:
+  rebased_validation_on: 2026-07-20
   checksum_lock: pass
   markdown_input_checksum_lock: pass
   automated_text_comparison:
@@ -115,14 +133,14 @@ qa:
     result: Report; 0 errors; 0 warnings
     evidence: Schema.org-validator-Report-0-errors-0-warnings.png
   final_public_safety_review:
-    status: pass_local_source_locked_build
+    status: pass_source_locked_draft_build
     note: >-
       No local paths, internal preamble, working-document names, unpublished
       annexes or media assets are present. All report narrative and table
       content is accounted for in the authoritative published PDF. The added
       hyperlinks are source-verified navigational annotations and do not add
-      report claims. Public publication remains blocked by the explicit rights
-      gate above.
+      report claims. Merge and deployment remain blocked pending final human
+      source, visual, keyboard and publication approval.
 
 section_qa:
   - section: Cover and source framing

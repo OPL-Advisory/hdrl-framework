@@ -154,8 +154,9 @@ def main() -> None:
     for label, url in EXPECTED_REFERENCE_LINKS.items():
         require(f'href="{url}"' in document, f"The {label} reference link is missing")
 
+    scoped_row_headers = document.count('scope="row"')
     print("Built report checks passed")
-    print(f"Headings: {len(heading_levels)}; tables: {len(tables)}; scoped row headers: {document.count('scope=\"row\"')}")
+    print(f"Headings: {len(heading_levels)}; tables: {len(tables)}; scoped row headers: {scoped_row_headers}")
     print(f"JSON-LD: {metadata['@type']} {metadata['@id']}")
     print(f"Content-sized tables: {len(tables)}; source-verified reference links: {len(EXPECTED_REFERENCE_LINKS)}")
 
