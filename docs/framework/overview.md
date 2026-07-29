@@ -1,4 +1,9 @@
-# Framework Overview
+---
+title: HDRL Framework Overview
+description: What the HDRL Framework is, who it is for, what it assesses and how it relates to health-data research programmes and standards.
+---
+
+# HDRL Framework Overview
 
 ## Purpose and Scope
 
@@ -21,16 +26,12 @@ The framework's first field application examined the potential readiness of orga
 
 ## Development Approach
 
-The HDRL Framework was developed through a structured landscape review and first-principles analysis. **Three AI models independently reviewed 56 existing frameworks** across data governance, health information systems, research infrastructure, and workforce capacity domains. Outputs were triangulated to identify areas of consensus and disagreement, with retained claims checked by a human reviewer against primary or authoritative sources.
+HDRL was developed through a structured landscape review, first-principles analysis and stakeholder calibration. The evidence base contains 56 frameworks: AI models independently searched and synthesised the wider landscape, three practitioner-sourced frameworks were added from prior professional application, and retained claims were checked by a human reviewer against primary or authoritative sources.
 
 !!! success "Design rationale"
     Relevant conditions were distributed across multiple instruments rather than operationalised in one assessment at the system-and-service scope required for this project. HDRL brings those conditions together for the specific challenge of delivering trusted, federated health data research services.
 
-The framework architecture reflects strong consensus across source frameworks:
-
-- **5 maturity levels** — aligned with Capability Maturity Model Integration (CMMI) nomenclature
-- **8 domains** — within the 6-11 range observed across sources
-- **Core/Enhancement classification** — adapted from the Research Data Alliance (RDA) FAIR Data Maturity Model's priority tiers
+[Read the full development method, evidence base and validation status](methodology.md){ .md-button }
 
 ## Bridging the Gap
 
@@ -50,68 +51,25 @@ The HDRL Framework's distinct contribution is a broader system-and-service readi
 
 ## Unit of Assessment
 
-HDRL can be applied at multiple levels. Each indicator is tagged:
+HDRL can be applied at system, service or dual level. Every indicator identifies its appropriate unit of assessment so systemic constraints can be distinguished from service-level capability.
 
-| Tag | Level | Description |
-|:----|:------|:------------|
-| **S** | System | Nation or health system level. Policy, legal framework, population infrastructure. Services inherit these scores. |
-| **V** | Service | Individual secure data environment (SDE) or data service level. Operational delivery specific to that service. |
-| **B** | Both | Can be assessed at either level. Score may differ between levels. |
+[See how to scope and conduct an assessment](using-the-framework.md#choose-the-right-unit-of-assessment){ .md-button }
 
-## Assessment Approaches
+## First Application
 
-=== "System-Level"
-    When assessing a nation or system: assess all indicators; for V indicators, assess the primary service or aggregate across services.
+HDRL v1.0 was first applied through the 3 Nations Readiness Assessment. That project retained historical capability mappings linked to the proposition available at the start of the assessment in 2025. They remain public for reproducibility, but are project context rather than current HDRS requirements or permanent properties of the core indicators.
 
-=== "Service-Level"
-    When assessing an individual secure data environment or data service: focus on V and B indicators; inherit S indicators from the wider system context or mark them not applicable.
+Future users can define contextual indicator sets for their own service, network or system while retaining the stable domains, indicators, maturity descriptors and evidence requirements.
 
-=== "Dual-Level"
-    For comprehensive view, conduct both. This reveals whether gaps are systemic (policy/investment) or operational (individual service).
-
-## Initial HDRS Capability Mapping
-
-When HDRL v1.0 was developed, the Department of Health and Social Care and Wellcome described six intended capabilities or goals for the emerging Health Data Research Service. HDRL retained a mapping to those six areas so that capability-specific indicators could be identified during the 3 Nations Readiness Assessment:
-
-1. **Linked national-scale data**
-2. **Consented cohort data**
-3. **Multi-modal data**
-4. **Trial acceleration**
-5. **Single-entry point with secure environments**
-6. **Cross-sector linkage**
-
-!!! warning "Historical programme context, not a current commitment"
-    This six-part mapping records the proposition available at the start of the assessment in 2025. It should not be read as a statement of the service model or capability set that the current HDRS leadership will adopt. The programme may retain, refine, combine or replace those capabilities. They remain visible here so that HDRL v1.0 and the 3 Nations assessment are reproducible.
-
-For use beyond HDRS, assessors should define the capabilities and outcomes relevant to their own service, network or system. The eight domains, maturity levels and evidence approach can be used without adopting the six-part HDRS mapping. Any formal remapping of the C1–C6 tags should be recorded as an adaptation rather than silently presented as unchanged HDRL v1.0.
-
-[Read Wellcome's description of the six original goals](https://wellcome.org/research-funding/funding-portfolio/major-initiatives/health-data-research-service){ target="_blank" rel="noopener" }.
-
-## Aggregation & Interpretation
-
-HDRL supports roadmap development rather than pass/fail judgements.
-
-**Domain Scores:** Calculate as the median of Core indicators (excluding Outcome/Context) within the domain.
-
-## Indicative Readiness Profiles
-
-| Profile | Characteristics |
-|:--------|:----------------|
-| **Emerging** | Majority of Baseline Core at Level 1-2. Significant foundational work required. |
-| **Developing** | Majority of Baseline Core at Level 2-3. Active improvement. May participate with roadmap and support. |
-| **Managed** | Majority of Baseline Core at Level 3-4, none below Level 2. Meets baseline requirements. |
-| **Optimising** | Majority of Baseline Core at Level 4-5. Exceeds baseline. Potential exemplar. |
-
-!!! important
-    These profiles support planning, not accreditation. A maturity level does not guarantee delivery performance, and participation or assurance decisions for HDRS or any other programme are made through separate governance.
+[Read about the 3 Nations assessment and its historical mapping](../three-nations-assessment.md#historical-capability-mapping){ .md-button }
 
 <div class="hdrl-next" markdown>
 
 ## Continue exploring
 
 <div class="hdrl-button-grid" markdown>
-[Using the framework](using-the-framework.md){ .md-button .md-button--primary }
-[Read the methodology](methodology.md){ .md-button }
+[How to apply HDRL](using-the-framework.md){ .md-button .md-button--primary }
+[Development and evidence](methodology.md){ .md-button }
 [Explore all eight domains](../domains/index.md){ .md-button }
 </div>
 

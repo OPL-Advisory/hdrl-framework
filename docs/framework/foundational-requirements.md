@@ -1,3 +1,8 @@
+---
+title: Proposed Foundational Indicators
+description: The five indicators that HDRL v1.0.1 proposes at Level 3 for its internal baseline profile, with their scope and limitations.
+---
+
 # Proposed Foundational Indicators
 
 **Foundational Indicators** are the five indicators that the **Health Data Readiness Level (HDRL)** Framework designates as requiring a **minimum of Level 3** when assessing potential baseline participation within the framework. They represent proposed safety and governance conditions in HDRL's assessment logic.
@@ -14,11 +19,11 @@
 
 | ID | Indicator | Domain |
 |:---|:----------|:-------|
-| [C.1.1](../domains/c-governance-access.md#c11-legal-basis-for-research-processing) | Legal Basis for Processing | Governance & Access |
+| [C.1.1](../domains/c-governance-access.md#c11-legal-basis-for-processing) | Legal Basis for Processing | Governance & Access |
 | [C.2.2](../domains/c-governance-access.md#c22-data-access-committee) | Data Access Committee | Governance & Access |
 | [C.4.1](../domains/c-governance-access.md#c41-statistical-disclosure-control) | Statistical Disclosure Control | Governance & Access |
-| [H.3.1](../domains/h-infrastructure.md#h31-security-certification-audit) | Security Certification & Audit | Infrastructure & Compute |
-| [H.3.2](../domains/h-infrastructure.md#h32-security-operations) | Security Operations | Infrastructure & Compute |
+| [H.3.1](../domains/h-infrastructure.md#h31-security-certification-audit) | Security Certification & Audit | Infrastructure & Compute Capacity |
+| [H.3.2](../domains/h-infrastructure.md#h32-security-operations) | Security Operations | Infrastructure & Compute Capacity |
 
 ---
 
@@ -64,8 +69,8 @@ These indicators represent the foundational safety and trust requirements withou
 <div class="hdrl-button-grid" markdown>
 
 [Understand indicator classifications](classification.md){ .md-button .md-button--primary }
-[Use the framework](using-the-framework.md){ .md-button }
-[Open the quick reference](quick-reference.md){ .md-button }
+[How to apply HDRL](using-the-framework.md){ .md-button }
+[Indicator quick reference](quick-reference.md){ .md-button }
 
 </div>
 </div>

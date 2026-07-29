@@ -13,6 +13,9 @@ from pathlib import Path
 EXPECTED_REPORT_ID = "https://hdrlframework.org/explore-report/#report"
 EXPECTED_REPORT_URL = "https://hdrlframework.org/explore-report/"
 EXPECTED_PDF_URL = "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf"
+EXPECTED_MARKDOWN_URL = (
+    "/downloads/three-nations-readiness-assessment-final-report.md"
+)
 EXPECTED_MOBILE_CARD_TABLES = {3, 6, 7, 8, 9, 10, 11, 12}
 EXPECTED_REFERENCE_LINKS = {
     "Research Data Scotland": "https://www.researchdata.scot/",
@@ -37,8 +40,15 @@ def main() -> None:
 
     document = args.html.read_text(encoding="utf-8")
     stylesheet_path = args.html.parents[1] / "assets" / "css" / "custom.css"
+    markdown_path = (
+        args.html.parents[1]
+        / "downloads"
+        / "three-nations-readiness-assessment-final-report.md"
+    )
     require(stylesheet_path.is_file(), f"Built stylesheet is missing: {stylesheet_path}")
+    require(markdown_path.is_file(), f"Built Markdown download is missing: {markdown_path}")
     stylesheet = stylesheet_path.read_text(encoding="utf-8")
+    markdown_download = markdown_path.read_text(encoding="utf-8")
     report_styles = stylesheet.split("/* ---------- Accessible report transcription ---------- */", 1)[-1]
 
     require("table-layout: auto;" in report_styles, "Report tables are not content-sized")
@@ -61,6 +71,14 @@ def main() -> None:
         "The canonical report URL is missing",
     )
     require(len(re.findall(r"<h1(?:\s|>)", document)) == 1, "Expected exactly one H1")
+    require(
+        'href="#report-source-note-title" class="md-skip"' in document,
+        "The skip link does not land on the accessible-version notice",
+    )
+    require(
+        "the report wording below uses “Level 2 (Repeatable)”" in document,
+        "The preserved Level 2 terminology is not explained",
+    )
 
     heading_levels = [int(level) for level in re.findall(r"<h([1-6])(?:\s|>)", document)]
     require(heading_levels and heading_levels[0] == 1, "The first heading is not H1")
@@ -97,15 +115,11 @@ def main() -> None:
     )
     wrappers = re.findall(
         r'<div class="md-typeset__table hdrl-report-table-wrapper '
-        r'hdrl-report-table-wrapper--(\d+)">',
+        r'hdrl-report-table-wrapper--(\d+)"([^>]*)>',
         document,
     )
     require(len(tables) == 12, f"Expected 12 report tables, found {len(tables)}")
     require(len(wrappers) == len(tables), "Every report table must have a responsive wrapper")
-    require(
-        'hdrl-report-table-wrapper" tabindex=' not in document,
-        "Non-scrolling report tables must not add keyboard tab stops",
-    )
 
     mobile_card_tables = {
         int(index)
@@ -137,19 +151,53 @@ def main() -> None:
             all(re.search(r'<tr>\s*<th scope="row"', row) for row in rows),
             f"Table {index} has a body row without a scoped row header",
         )
-        require(int(wrappers[index - 1]) == index, f"Table {index} wrapper is misnumbered")
+        wrapper_index, wrapper_attributes = wrappers[index - 1]
+        require(int(wrapper_index) == index, f"Table {index} wrapper is misnumbered")
 
         if index in EXPECTED_MOBILE_CARD_TABLES:
             require(
+                'role="region"' in wrapper_attributes
+                and 'tabindex="0"' in wrapper_attributes
+                and 'aria-label=' in wrapper_attributes,
+                f"Scrollable table {index} is not keyboard-accessible",
+            )
+            require(
                 f'id="report-table-{index}-cards-label"' in document,
                 f"Table {index} mobile-card label is missing",
+            )
+        else:
+            require(
+                'tabindex=' not in wrapper_attributes,
+                f"Non-scrolling table {index} adds an unnecessary tab stop",
             )
 
     require(
         f'href="{EXPECTED_PDF_URL}"' in document,
         "The authoritative PDF link is missing",
     )
+    require(
+        f'href="{EXPECTED_MARKDOWN_URL}"' in document,
+        "The accessible Markdown download link is missing",
+    )
+    require(
+        'download="three-nations-readiness-assessment-final-report.md"' in document,
+        "The accessible Markdown link does not declare download semantics",
+    )
     require("RDS publication page" in document, "The RDS publication-page link is missing")
+    require(
+        markdown_download.startswith(
+            "# Health Data Research Service: Three Nations Readiness Assessment\n"
+        ),
+        "The Markdown download is missing its report title",
+    )
+    require(
+        EXPECTED_PDF_URL in markdown_download,
+        "The Markdown download does not identify the authoritative PDF",
+    )
+    require(
+        "Internal " + "working file" not in markdown_download,
+        "Internal working preamble leaked into the Markdown download",
+    )
 
     for label, url in EXPECTED_REFERENCE_LINKS.items():
         require(f'href="{url}"' in document, f"The {label} reference link is missing")

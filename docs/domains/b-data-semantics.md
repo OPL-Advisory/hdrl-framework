@@ -1,3 +1,8 @@
+---
+title: "Domain B: Data Semantics & Quality"
+description: HDRL indicators for common data models, terminology, quality monitoring, metadata, curated datasets and phenotype libraries.
+---
+
 # Domain B: Data Semantics & Quality
 
 **Focus:** Standardisation, documentation, and quality assurance
@@ -108,7 +113,7 @@ Researchers consistently report that data preparation consumes 60–80% of proje
 
 [Next: Domain C](c-governance-access.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

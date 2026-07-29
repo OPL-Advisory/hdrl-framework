@@ -5,30 +5,39 @@
 ## Framework
 
 - [Framework Overview](https://hdrlframework.org/framework/overview/)
-- [Methodology](https://hdrlframework.org/framework/methodology/)
+- [How to Apply HDRL](https://hdrlframework.org/framework/using-the-framework/)
+- [Development and Evidence](https://hdrlframework.org/framework/methodology/)
 - [Maturity Levels](https://hdrlframework.org/framework/maturity-levels/)
 - [Indicator Classification](https://hdrlframework.org/framework/classification/)
 - [Proposed Foundational Indicators](https://hdrlframework.org/framework/foundational-requirements/)
+- [Indicator Quick Reference](https://hdrlframework.org/framework/quick-reference/)
+- [Framework Files and Data](https://hdrlframework.org/framework/applied-v1-reference-files/)
+- [Complete applied-v1 source of record (Markdown)](https://hdrlframework.org/downloads/health-data-readiness-level-framework-v1.md)
+- [HDRL Framework v1.0.1 indicator catalogue (JSON)](https://hdrlframework.org/data/hdrl-indicators-v1.json)
+- [HDRL Framework v1.0.1 indicator catalogue schema (JSON Schema)](https://hdrlframework.org/data/hdrl-indicators-v1.schema.json)
+- [Release SHA-256 checksums](https://hdrlframework.org/data/hdrl-indicators-v1.sha256)
 
 ## Domains
 
 - [Domain A: Data Coverage & Federation](https://hdrlframework.org/domains/a-data-coverage/)
 - [Domain B: Data Semantics & Quality](https://hdrlframework.org/domains/b-data-semantics/)
 - [Domain C: Governance & Access](https://hdrlframework.org/domains/c-governance-access/)
-- [Domain D: Research Integration](https://hdrlframework.org/domains/d-research-integration/)
-- [Domain E: Public Trust](https://hdrlframework.org/domains/e-public-trust/)
+- [Domain D: Research Integration & Market Use](https://hdrlframework.org/domains/d-research-integration/)
+- [Domain E: Public Trust & Transparency](https://hdrlframework.org/domains/e-public-trust/)
 - [Domain F: Sustainability](https://hdrlframework.org/domains/f-sustainability/)
 - [Domain G: Workforce & Culture](https://hdrlframework.org/domains/g-workforce-culture/)
-- [Domain H: Infrastructure & Compute](https://hdrlframework.org/domains/h-infrastructure/)
+- [Domain H: Infrastructure & Compute Capacity](https://hdrlframework.org/domains/h-infrastructure/)
 
 ## Citation and Reuse
 
 - [Citation and reuse guidance](https://hdrlframework.org/about/)
+- [HDRL development and formative application paper (medRxiv preprint, version 1; not peer reviewed)](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1)
 - [CC BY 4.0 terms for the framework methodology and public framework materials](https://creativecommons.org/licenses/by/4.0/)
 
 ## Published Assessment
 
 - [3 Nations Readiness Assessment context](https://hdrlframework.org/three-nations-assessment/)
 - [Accessible HTML transcription of the Final Report](https://hdrlframework.org/explore-report/)
+- [Accessible Markdown transcription of the Final Report](https://hdrlframework.org/downloads/three-nations-readiness-assessment-final-report.md)
 - [RDS Final Report (PDF; externally hosted by Research Data Scotland and authoritative for assessment findings)](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf)
 - [RDS publication page (externally hosted)](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/)

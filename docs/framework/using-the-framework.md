@@ -1,9 +1,9 @@
 ---
-title: Using the Framework
+title: How to Apply HDRL
 description: A practical guide to scoping, evidencing, scoring and interpreting an HDRL assessment responsibly.
 ---
 
-# Using the Framework
+# How to Apply HDRL
 
 The **Health Data Readiness Level (HDRL)** Framework is designed to turn a complex sociotechnical operating environment into a structured evidence review and improvement roadmap. It can be applied at **system**, **service** or **dual** level, but the scope and evidence standard should be explicit before scoring begins.
 
@@ -31,7 +31,7 @@ The **Health Data Readiness Level (HDRL)** Framework is designed to turn a compl
     <span>3</span>
     <div>
       <h3>Score against the descriptors</h3>
-      <p>Assess every applicable indicator against its five maturity descriptors. Record the evidence, rationale, uncertainty and evidence gap for each judgement.</p>
+      <p>Assess every applicable indicator against its five maturity descriptors in the <a href="/domains/">domain reference</a>. Record the evidence, rationale, uncertainty and evidence gap for each judgement.</p>
     </div>
   </div>
   <div class="hdrl-process-step">
@@ -62,7 +62,22 @@ This evidence hierarchy helps surface an important distinction:
 - **Capacity gap:** capability exists, but staffing, funding or operating headroom limit the volume or pace that can be delivered.
 
 !!! note "Capability and evidence visibility"
-    HDRL v1.0 scores the capability demonstrated by the available evidence, so a result can reflect both operational maturity and the strength or visibility of its evidence. This protects against unsupported self-assessment, but the two concepts should be interpreted separately. A future validation phase should test whether capability maturity and evidence confidence are better recorded as distinct dimensions.
+    HDRL v1.0.1 scores the capability demonstrated by the available evidence, so a result can reflect both operational maturity and the strength or visibility of its evidence. This protects against unsupported self-assessment, but the two concepts should be interpreted separately. A future validation phase should test whether capability maturity and evidence confidence are better recorded as distinct dimensions.
+
+## Keep an auditable assessment record
+
+The short Evidence Register example in the applied-v1 source is a starting point, not a complete audit trail. For each judgement, retain at least:
+
+| Record field | What to capture |
+|:--|:--|
+| Scope and applicability | Organisation or service, assessment unit, time period, applicability class, and any N/A or inherited-score reason |
+| Evidence | Evidence title, location, owner, date, access status, and the specific descriptor or minimum-evidence claim it supports |
+| Judgement | Claimed level, assessor rationale, uncertainty or confidence, evidence gaps, assessor, and assessment date |
+| Calibration | Review or calibration decision, participants, date, and reason for any change |
+| Right of Reply | Factual correction or additional evidence received, adjudication, and resulting score change |
+| Change history | Previous level, new level, author, date, and a concise reason |
+
+Keep sensitive evidence and detailed assessment records within their authorised governance boundary. Publishing a maturity summary does not imply permission to publish its underlying evidence.
 
 ## Choose the right unit of assessment
 
@@ -72,7 +87,32 @@ This evidence hierarchy helps surface an important distinction:
 | **Service-level** | Assessing an individual secure data environment (SDE), trusted research environment (TRE) or data service. | System indicators should be inherited from the relevant national context or marked not applicable. |
 | **Dual-level** | Distinguishing systemic constraints from operational service gaps. | Keep the two evidence records explicit; a shared context does not mean identical scores. |
 
+### Applicability, inheritance and local scoring conventions
+
+The applied-v1 method provides these rules:
+
+- System indicators (**S**) may be inherited by a service unless there is a clearly evidenced service-specific deviation.
+- Capability-specific indicators (**Cx**) may be marked not applicable when the service or system is not claiming that historical capability.
+- Outcome/Context indicators (**Y**) are reported separately where data exist and do not contribute to readiness scoring.
+- Where a system contains multiple services, report the chosen aggregation approach and its coverage basis explicitly.
+
+HDRL v1.0.1 does not prescribe every implementation detail needed for interchangeable automated scoring. Before assessment begins, record how the team will handle partially applicable indicators, multi-part descriptors, even-number medians and display rounding. Do not compare or combine results that use materially different conventions.
+
 ## Interpret the result responsibly
+
+HDRL supports roadmap development rather than pass/fail judgements. For a general domain summary, applied v1 defines the score as the median of applicable Core indicators, excluding Outcome/Context indicators. Baseline interpretation separately focuses on the B0 subset; do not present an all-Core domain median as if it were the complete baseline result. Claims at L3–L5 should use the indicator-specific minimum evidence published in the [domain reference](../domains/index.md) and machine-readable catalogue.
+
+### Indicative readiness profiles
+
+| Profile | Characteristics |
+|:--|:--|
+| **Emerging** | Majority of Baseline Core at Level 1–2. Significant foundational work required. |
+| **Developing** | Majority of Baseline Core at Level 2–3. Active improvement. May participate with a roadmap and support. |
+| **Managed** | Majority of Baseline Core at Level 3–4, with none below Level 2. Meets the framework's internal baseline profile. |
+| **Optimising** | Majority of Baseline Core at Level 4–5. Exceeds the framework's internal baseline profile and may offer examples for others. |
+
+!!! important "Planning profiles, not accreditation"
+    These profiles support interpretation and improvement planning. A maturity profile does not guarantee delivery performance or determine participation in HDRS or any other programme.
 
 ### An assessment can support
 
@@ -109,9 +149,10 @@ HDRL has been applied formatively through one multi-jurisdiction assessment acro
 
 <div class="hdrl-button-grid" markdown>
 
-[Read the methodology](methodology.md){ .md-button .md-button--primary }
+[Development and evidence](methodology.md){ .md-button .md-button--primary }
 [See the maturity levels](maturity-levels.md){ .md-button }
-[Open the quick reference](quick-reference.md){ .md-button }
+[Indicator quick reference](quick-reference.md){ .md-button }
+[Framework files and data](applied-v1-reference-files.md){ .md-button }
 
 </div>
 </div>

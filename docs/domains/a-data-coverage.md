@@ -1,3 +1,8 @@
+---
+title: "Domain A: Data Coverage & Federation"
+description: HDRL indicators for health-data availability, currency, representativeness, identity, linkage, federation and multi-modal access.
+---
+
 # Domain A: Data Coverage & Federation
 
 **Focus:** Availability, linkage, and flow of health data for research
@@ -130,11 +135,11 @@ Data coverage is the foundation of any health data research service. If core dat
 
 ## A.4 — Multi-Modal & Cohort Data
 
-### A.4.1 Consented Cohort & Biobank Integration
+### A.4.1 Consented Cohort Integration
 **ENHANCEMENT** · **C2** · **System**
 
 !!! note "Capability module"
-    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 2 (Consented cohort data). The mapping preserves the initial 2025 UK Health Data Research Service (HDRS) proposition; it should not be treated here as a current programme requirement.
+    Within HDRL v1.0's original six-capability mapping, this indicator is included only when assessing Capability 2 (Consented cohort data). The mapping preserves the initial 2025 UK Health Data Research Service (HDRS) proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|
@@ -148,7 +153,7 @@ Data coverage is the foundation of any health data research service. If core dat
 **ENHANCEMENT** · **C3** · **System**
 
 !!! note "Capability module"
-    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 3 (Multi-modal data). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
+    Within HDRL v1.0's original six-capability mapping, this indicator is included only when assessing Capability 3 (Multi-modal data). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|
@@ -166,7 +171,7 @@ Data coverage is the foundation of any health data research service. If core dat
 
 [Next: Domain B](b-data-semantics.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

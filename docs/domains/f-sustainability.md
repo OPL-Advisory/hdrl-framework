@@ -1,3 +1,8 @@
+---
+title: "Domain F: Sustainability"
+description: HDRL indicators for funding resilience, financial risk, pricing, commercial partnerships, economic impact and value demonstration.
+---
+
 # Domain F: Sustainability
 
 **Focus:** Financial sustainability and economic contribution
@@ -114,7 +119,7 @@ Most health data services in the UK operate on short-term grant funding, creatin
 
 [Next: Domain G](g-workforce-culture.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

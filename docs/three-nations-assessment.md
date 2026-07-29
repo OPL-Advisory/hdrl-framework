@@ -3,9 +3,7 @@ title: 3 Nations Readiness Assessment
 description: How the HDRL Framework was applied across Scotland, Wales and Northern Ireland, and what this public site does and does not publish.
 ---
 
-# Framework in Practice
-
-## The 3 Nations Readiness Assessment
+# 3 Nations Readiness Assessment
 
 The HDRL Framework was developed for an independent assessment of the potential readiness of health data research services in **Scotland, Wales and Northern Ireland** to participate in the emerging UK Health Data Research Service (HDRS).
 
@@ -54,6 +52,38 @@ The field application tested whether one framework could:
 
 It also reinforced that an overall score is not enough: domain patterns, evidence gaps, capacity and use-case dependencies all matter to readiness.
 
+## Historical capability mapping
+
+At the start of the assessment in 2025, the Department of Health and Social Care and Wellcome described six intended capabilities or goals for the emerging Health Data Research Service:
+
+1. **Linked national-scale data**
+2. **Consented cohort data**
+3. **Multi-modal data**
+4. **Trial acceleration**
+5. **Single-entry point with secure environments**
+6. **Cross-sector linkage**
+
+The assessment used the following project-specific indicator subsets to explore those six areas:
+
+<div class="hdrl-table-scroll" role="region" aria-label="Historical capability mapping" tabindex="0" markdown>
+
+| Code | Original capability or goal | Indicators included in the 3 Nations capability assessment |
+|:--|:--|:--|
+| **C1** | Linked national-scale data | A.1.1 Core Dataset Availability; A.2.1 Patient Identifier Infrastructure; A.2.2 Linkage Services; B.1.1 Common Data Model Adoption; B.1.2 Terminology Standards; B.2.1 Quality Framework & Monitoring; E.3.1 Opt-Out Management |
+| **C2** | Consented cohort data | A.2.2 Linkage Services; A.4.1 Consented Cohort Integration; C.4.3 Consent, Permissions & Restrictions Governance |
+| **C3** | Multi-modal data | A.4.2 Multi-Modal Data Access; H.2.1 Compute Scalability; H.4.1 ML/AI Platform Capability; H.4.2 Responsible AI Practices |
+| **C4** | Trial acceleration | A.1.2 Data Currency & Timeliness; D.4.1 Trial Data & Recruitment; H.4.2 Responsible AI Practices |
+| **C5** | Single-entry point with secure environments | C.2.1 Time-to-Data; C.2.2 Data Access Committee; C.3.1 Mutual Recognition & Standards; H.1.1 SDE Architecture & Standards; H.3.1 Security Certification & Audit; H.3.2 Security Operations |
+| **C6** | Cross-sector linkage | A.2.1 Patient Identifier Infrastructure; C.3.3 Cross-sector Data Sharing & Linkage Governance |
+
+</div>
+
+!!! warning "Historical programme context"
+    This mapping records the proposition available to the project in 2025. It is retained for reproducibility and is not a statement of the capability set that current HDRS leadership will adopt. Future uses of HDRL can define separately versioned contextual indicator sets without changing the core indicators or their maturity descriptors.
+
+[Read the indicator classification](framework/classification.md){ .md-button }
+[Read Wellcome's description of the six original goals :material-open-in-new:](https://wellcome.org/research-funding/funding-portfolio/major-initiatives/health-data-research-service){ .md-button target="_blank" rel="noopener" }
+
 ## Final Report
 
 Research Data Scotland published the Final Report on **14 July 2026**. It presents the authorised findings from the 3 Nations Readiness Assessment and the roadmap arising from them.
@@ -61,9 +91,10 @@ Research Data Scotland published the Final Report on **14 July 2026**. It presen
 [Read the RDS publication page :material-open-in-new:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button .md-button--primary target="_blank" rel="noopener" }
 [Download the Final Report (PDF) :material-file-pdf-box:](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ .md-button target="_blank" rel="noopener" }
 [Explore the accessible HTML transcription](explore-report.md){ .md-button }
+[Download the accessible Markdown transcription](/downloads/three-nations-readiness-assessment-final-report.md){ .md-button download="three-nations-readiness-assessment-final-report.md" }
 
 !!! info "Public reporting boundary"
-    The public report is the authoritative source for the assessment findings. This website links to it but does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material.
+    The RDS PDF is the authoritative version of the public report. The accessible HTML and Markdown versions reproduce only its published content; this website does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material.
 
 <div class="hdrl-next" markdown>
 
@@ -71,7 +102,7 @@ Research Data Scotland published the Final Report on **14 July 2026**. It presen
 
 <div class="hdrl-button-grid" markdown>
 [Framework overview](framework/overview.md){ .md-button .md-button--primary }
-[Using the framework](framework/using-the-framework.md){ .md-button }
+[How to apply HDRL](framework/using-the-framework.md){ .md-button }
 [All eight domains](domains/index.md){ .md-button }
 </div>
 

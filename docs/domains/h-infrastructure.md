@@ -1,3 +1,8 @@
+---
+title: "Domain H: Infrastructure & Compute Capacity"
+description: HDRL indicators for secure research environments, compute, storage, security operations, privacy technologies and responsible AI.
+---
+
 # Domain H: Infrastructure & Compute Capacity
 
 **Focus:** Technical infrastructure including secure data environments, compute, security and artificial intelligence capability
@@ -10,7 +15,7 @@
 Secure data environments (SDEs), including trusted research environments (TREs), are the technical backbone of health data research. As workloads shift toward machine learning and large-scale genomics, compute demands are growing exponentially while cyber threats intensify. This domain assesses whether infrastructure meets relevant standards—including National Health Service secure data environment specifications, the Standardised Architecture for Trusted Research Environments (SATRE) and ISO 27001—can scale for emerging use cases, and maintains the security posture that underpins all other domains. Two of the five proposed Foundational Indicators sit here.
 
 !!! warning "Contains 2 proposed Foundational Indicators"
-    HDRL v1.0 treats indicators H.3.1 and H.3.2 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official UK Health Data Research Service (HDRS) participation requirements.
+    HDRL v1.0.1 treats indicators H.3.1 and H.3.2 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official UK Health Data Research Service (HDRS) participation requirements.
 
 ---
 
@@ -136,7 +141,7 @@ Secure data environments (SDEs), including trusted research environments (TREs),
 **CORE** · **C3/4** · **Service**
 
 !!! note "Capability module"
-    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory when assessing Capability 3 (Multi-modal data) or Capability 4 (Trial acceleration). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
+    Within HDRL v1.0's original six-capability mapping, this indicator is included when assessing Capability 3 (Multi-modal data) or Capability 4 (Trial acceleration). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|
@@ -152,9 +157,9 @@ Secure data environments (SDEs), including trusted research environments (TREs),
 
 <div class="hdrl-button-grid" markdown>
 
-[Use the framework](../framework/using-the-framework.md){ .md-button .md-button--primary }
+[How to apply HDRL](../framework/using-the-framework.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

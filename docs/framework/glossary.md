@@ -10,7 +10,7 @@ The framework uses some established health-data, research and maturity-model ter
 | Term | Meaning in this website |
 |:-----|:------------------------|
 | **AI** | **Artificial intelligence** — computer systems used for tasks such as language processing, pattern recognition or prediction. |
-| **B0** | **Baseline Core** — an indicator treated as part of the baseline within HDRL v1.0's own assessment logic. It is not automatically an external programme requirement. |
+| **B0** | **Baseline Core** — an indicator included in the general baseline profile within HDRL v1.0.1's own assessment logic. It is not automatically an external programme requirement. |
 | **CC BY 4.0** | **Creative Commons Attribution 4.0 International** — the licence that permits sharing and adaptation of the framework methodology and public framework materials with appropriate attribution. |
 | **CMMI** | **Capability Maturity Model Integration** — a family of maturity-model approaches whose level terminology informed HDRL. |
 | **Cx** | **Capability Core** — an indicator attached to capability module *x*. In HDRL v1.0, C1–C6 preserve the original six-part mapping used in the 3 Nations assessment. |
@@ -33,7 +33,7 @@ The framework uses some established health-data, research and maturity-model ter
 | **Y** | **Outcome / Context** — information recorded to support interpretation but excluded from HDRL readiness scoring. |
 
 !!! note "Framework codes remain unchanged"
-    The B0, Cx, O and Y codes are part of HDRL v1.0. The glossary explains them but does not alter the framework or its application in the 3 Nations assessment.
+    The B0, Cx, O and Y codes are part of HDRL v1.0.1. The glossary explains them but does not alter the framework or its application in the 3 Nations assessment.
 
 <div class="hdrl-next" markdown>
 

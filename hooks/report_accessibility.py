@@ -4,6 +4,38 @@ from __future__ import annotations
 
 import html as html_module
 import re
+from pathlib import Path
+
+
+MARKDOWN_DOWNLOAD_PATH = (
+    "downloads/three-nations-readiness-assessment-final-report.md"
+)
+MARKDOWN_PREAMBLE = """# Health Data Research Service: Three Nations Readiness Assessment
+
+**Final Report · accessible Markdown transcription**
+
+**David Seymour, OPL Advisory · July 2026 · V1.0**
+
+Commissioned by Research Data Scotland on behalf of the three devolved nations.
+
+> This Markdown transcription preserves the wording and tables of the published
+> report. The [RDS PDF](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf)
+> remains the authoritative version. Navigation and links are accessibility
+> additions and are not part of the report text. See the
+> [RDS publication page](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/).
+
+> The published cover is dated July 2026, while the report's Document Control
+> table records April 2026; both dates are preserved as published. Research Data
+> Scotland published the Final Report on 14 July 2026.
+
+> The CC BY 4.0 terms for the HDRL Framework methodology and public framework
+> materials do not automatically extend to this Final Report.
+
+> **Editorial terminology note:** the report wording below uses "Level 2
+> (Repeatable)". The HDRL v1.0.1 framework reference uses "Level 2
+> (Developing)". The report wording is preserved unchanged.
+
+"""
 
 
 TABLE_RE = re.compile(r"<table>.*?</table>", flags=re.DOTALL)
@@ -92,9 +124,15 @@ def _enhance_table(table: str, index: int, caption: str) -> str:
         ),
         table,
     )
+    accessibility_attributes = ""
+    if index in MOBILE_CARD_TABLES:
+        accessibility_attributes = (
+            ' role="region" tabindex="0" '
+            f'aria-label="{safe_caption}, scrollable table"'
+        )
     table_layout = (
         '<div class="md-typeset__table hdrl-report-table-wrapper '
-        f'hdrl-report-table-wrapper--{index}">'
+        f'hdrl-report-table-wrapper--{index}"{accessibility_attributes}>'
         f"{table}</div>"
     )
     return table_layout + _build_mobile_cards(table, index, caption)
@@ -103,6 +141,18 @@ def _enhance_table(table: str, index: int, caption: str) -> str:
 def on_page_content(html: str, page, config, files) -> str:
     if page.url != "explore-report/":
         return html
+
+    html, notice_heading_count = re.subn(
+        r'<h2 id="report-source-note-title">.*?</h2>',
+        "",
+        html,
+        count=1,
+        flags=re.DOTALL,
+    )
+    if notice_heading_count != 1:
+        raise ValueError(
+            "The report accessibility notice heading metadata is missing"
+        )
 
     captions = page.meta.get("report_table_captions", [])
     tables = list(TABLE_RE.finditer(html))
@@ -118,3 +168,34 @@ def on_page_content(html: str, page, config, files) -> str:
     )
 
     return html
+
+
+def on_post_build(config) -> None:
+    """Publish the verified report transcription as downloadable Markdown."""
+
+    source = Path(config["docs_dir"]) / "explore-report.md"
+    target = Path(config["site_dir"]) / MARKDOWN_DOWNLOAD_PATH
+    text = source.read_text(encoding="utf-8")
+    front_matter = re.match(r"\A---\n.*?\n---\n+", text, flags=re.DOTALL)
+    if not front_matter:
+        raise ValueError("The report Markdown front matter is missing")
+
+    report_text = text[front_matter.end() :].lstrip()
+    report_text, notice_heading_count = re.subn(
+        r"\A## About this accessible version "
+        r"\{ #report-source-note-title \}\n+",
+        "",
+        report_text,
+        count=1,
+    )
+    if notice_heading_count != 1:
+        raise ValueError(
+            "The report accessibility notice heading metadata is missing"
+        )
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        MARKDOWN_PREAMBLE + report_text,
+        encoding="utf-8",
+        newline="\n",
+    )

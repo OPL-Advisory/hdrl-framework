@@ -1,8 +1,13 @@
+---
+title: Indicator Classification
+description: How HDRL classifies its 64 indicators by type, applicability and unit of assessment, including the historical capability classes.
+---
+
 # Indicator Classification
 
 The **Health Data Readiness Level (HDRL)** Framework uses a dual classification system: the original **Core/Enhancement** distinction for continuity, plus an explicit **Applicability Class** for role-based assessment.
 
-!!! important "How to read 'mandatory'"
+!!! important "How to read applicability"
     The classification terms below describe the internal logic of HDRL assessments. They do not create official UK Health Data Research Service (HDRS) participation requirements—or requirements for any other programme—and do not replace decisions made through legal, governance, assurance or programme processes.
 
 ---
@@ -18,16 +23,16 @@ The **Health Data Readiness Level (HDRL)** Framework uses a dual classification 
 
 | Class | Name | Description |
 |:------|:-----|:------------|
-| **B0** | Baseline Core | Treated as mandatory for baseline participation within HDRL v1.0's internal assessment logic |
-| **Cx** | Capability Core | Mandatory within HDRL v1.0 **only when** assessing capability module x (1–6) from the original project mapping |
+| **B0** | Baseline Core | Included in HDRL v1.0.1's general baseline assessment profile |
+| **Cx** | Capability Core | Included in HDRL v1.0.1 **only when** assessing capability module x (1–6) from the original project mapping |
 | **O** | Optional / Enhancement | Good practice; informs roadmaps but not required for baseline or capability readiness |
 | **Y** | Outcome / Context | Reported for awareness and benefit tracking but **excluded from readiness scoring** |
 
-The C1–C6 codes refer back to the six goals described in the [initial HDRS capability mapping](overview.md#initial-hdrs-capability-mapping). Three related but distinct mappings need to be kept separate:
+The C1–C6 codes preserve the six goals used in the framework's first project context. Three related but distinct mappings need to be kept separate:
 
-1. **Applicability Class (`Cx`)** identifies the seven capability-defining indicators in HDRL v1.0.
+1. **Applicability Class (`Cx`)** identifies the seven capability-defining indicators in HDRL v1.0.1.
 2. **Section 7 of the canonical applied-v1 method source** provides the broader indicator-to-capability map, including cross-cutting and other indicators relevant to each capability.
-3. **The 3 Nations assessment** used a selected subset of the broader mapping.
+3. **The 3 Nations assessment** used a selected subset of the broader mapping, documented with that application rather than treated as a permanent property of the core catalogue.
 
 ### Capability-defining `Cx` indicators
 
@@ -40,25 +45,9 @@ The table below shows the indicators whose **Applicability Class contains a C co
 | **C3** | Multi-modal data | A.4.2 Multi-Modal Data Access; H.4.2 Responsible AI Practices (shared C3/4) |
 | **C4** | Trial acceleration | D.4.1 Trial Data & Recruitment; H.4.2 Responsible AI Practices (shared C3/4) |
 | **C5** | Single-entry point with secure environments | No separate C5-class indicator. In HDRL v1.0 this goal was represented primarily through B0 indicators and their original capability mapping. |
-| **C6** | Cross-sector linkage | C.3.3 Cross-sector Linkage Governance |
+| **C6** | Cross-sector linkage | C.3.3 Cross-sector Data Sharing & Linkage Governance |
 
-### Capability subsets used in the 3 Nations assessment
-
-The subset of indicators used to assess readiness for the six HDRS capabilities as part of the 3 Nations assessment is shown in the table below.
-
-| Code | Original capability or goal | Indicators included in the 3 Nations capability assessment |
-|:-----|:----------------------------|:-------------------------------------------------------------|
-| **C1** | Linked national-scale data | A.1.1 Core Dataset Availability; A.2.1 Patient Identifier Infrastructure; A.2.2 Linkage Services; B.1.1 Common Data Model Adoption; B.1.2 Terminology Standards; B.2.1 Quality Framework & Monitoring; E.3.1 Opt-Out Management |
-| **C2** | Consented cohort data | A.2.2 Linkage Services; A.4.1 Consented Cohort Integration; C.4.3 Consent, Permissions & Restrictions |
-| **C3** | Multi-modal data | A.4.2 Multi-Modal Data Access; H.2.1 Compute Scalability; H.4.1 ML/AI Platform Capability; H.4.2 Responsible AI Practices |
-| **C4** | Trial acceleration | A.1.2 Data Currency & Timeliness; D.4.1 Trial Data & Recruitment; H.4.2 Responsible AI Practices |
-| **C5** | Single-entry point with secure environments | C.2.1 Time-to-Data; C.2.2 Data Access Committee; C.3.1 Mutual Recognition & Standards; H.1.1 SDE Architecture & Standards; H.3.1 Security Certification & Audit; H.3.2 Security Operations |
-| **C6** | Cross-sector linkage | A.2.1 Patient Identifier Infrastructure; C.3.3 Cross-sector Linkage Governance |
-
-!!! note "Why C5 appears differently in the two tables"
-    C5 has no indicator with a `C5` Applicability Class, so it has no capability-defining row in the first sense. The 3 Nations assessment nevertheless used six mapped B0 indicators for its C5 capability assessment. That assessment rule did not convert those indicators into `C5` indicators or alter their classifications.
-
-The broader map is available in [Section 7 of the canonical applied-v1 method source](applied-v1-reference-files.md). The subsets above form part of the 3 Nations assessment method, not a current HDRS requirement or a universal rule for future HDRL use.
+The broader map is available in [Section 7 of the complete framework source](applied-v1-reference-files.md#complete-framework-source-markdown). The selected subsets used in the first field application are documented under the [3 Nations assessment](../three-nations-assessment.md#historical-capability-mapping). Neither is a current HDRS requirement or a universal rule for future HDRL use.
 
 !!! note "Important"
     Some indicators labelled as *Enhancement* are **capability-defining** (e.g., multi-modal data access, trial acceleration) and are treated as **Cx** when assessing that capability.
@@ -121,7 +110,7 @@ The framework uses several classifications for different purposes. **Type**, **A
 
 <div class="hdrl-button-grid" markdown>
 [Review the proposed Foundational Indicators](foundational-requirements.md){ .md-button .md-button--primary }
-[Open the quick reference](quick-reference.md){ .md-button }
+[Indicator quick reference](quick-reference.md){ .md-button }
 [Return to the framework overview](overview.md){ .md-button }
 </div>
 

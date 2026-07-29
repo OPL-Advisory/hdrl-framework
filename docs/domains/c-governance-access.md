@@ -1,3 +1,8 @@
+---
+title: "Domain C: Governance & Access"
+description: HDRL indicators for lawful processing, efficient access, ethics, mutual recognition, disclosure control and permissions governance.
+---
+
 # Domain C: Governance & Access
 
 **Focus:** Legal, regulatory, and procedural frameworks; UK-wide coordination
@@ -10,7 +15,7 @@
 Governance is the largest single determinant of whether a health data service can attract and retain users. Time-to-data metrics vary from weeks to years across the UK. This domain assesses the legal foundations, access committee efficiency, and UK-wide interoperability that determine whether researchers experience a streamlined pathway or an opaque bureaucracy. Three of the five proposed Foundational Indicators sit in this domain.
 
 !!! warning "Contains 3 proposed Foundational Indicators"
-    HDRL v1.0 treats indicators C.1.1, C.2.2, and C.4.1 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official UK Health Data Research Service (HDRS) participation requirements.
+    HDRL v1.0.1 treats indicators C.1.1, C.2.2, and C.4.1 as **proposed Foundational Indicators** with a minimum of **Level 3** in its internal baseline assessment logic. They are not official UK Health Data Research Service (HDRS) participation requirements.
 
 ---
 
@@ -22,19 +27,19 @@ Governance is the largest single determinant of whether a health data service ca
 | C.1.2 | Legislative Environment | Enhancement | O | System | |
 | C.2.1 | Time-to-Data | Core | B0 | Both | |
 | C.2.2 | Data Access Committee | Core | B0 | Both | :warning: |
-| C.2.3 | Ethics Pathway Integration | Core | B0 | Both | |
+| C.2.3 | Ethics Pathway Integration & Proportionality | Core | B0 | Both | |
 | C.3.1 | Mutual Recognition & Standards | Core | B0 | Both | |
 | C.3.2 | Cross-Border Legal Alignment | Enhancement | O | System | |
-| C.3.3 | Cross-sector Linkage Governance | Core | C6 | System | |
+| C.3.3 | Cross-sector Data Sharing & Linkage Governance | Core | C6 | System | |
 | C.4.1 | Statistical Disclosure Control | Core | B0 | Service | :warning: |
 | C.4.2 | Researcher Accreditation | Core | B0 | Both | |
-| C.4.3 | Consent, Permissions & Restrictions | Core | B0 | Both | |
+| C.4.3 | Consent, Permissions & Restrictions Governance | Core | B0 | Both | |
 
 ---
 
 ## C.1 — Legal Framework
 
-### C.1.1 Legal Basis for Research Processing { .foundational-req }
+### C.1.1 Legal Basis for Processing { .foundational-req }
 **CORE** · **B0** · **System** · :warning: **FOUNDATIONAL REQUIREMENT** (minimum L3)
 
 | Level | Description |
@@ -123,7 +128,7 @@ Governance is the largest single determinant of whether a health data service ca
 **CORE** · **C6** · **System**
 
 !!! note "Capability module"
-    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 6 (Cross-sector linkage). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
+    Within HDRL v1.0's original six-capability mapping, this indicator is included only when assessing Capability 6 (Cross-sector linkage). The mapping preserves the initial 2025 HDRS proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|
@@ -148,7 +153,7 @@ Governance is the largest single determinant of whether a health data service ca
 | **L4** | Systematic with guidelines. Trained team with capacity. SLA met. Semi-automated tools. |
 | **L5** | Advanced with automated tools. Risk-based. Contributing to standards. Rarely delays. |
 
-### C.4.2 Researcher Accreditation & Training
+### C.4.2 Researcher Accreditation
 **CORE** · **B0** · **Both**
 
 | Level | Description |
@@ -178,7 +183,7 @@ Governance is the largest single determinant of whether a health data service ca
 
 [Next: Domain D](d-research-integration.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

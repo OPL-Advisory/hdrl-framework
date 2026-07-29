@@ -1,3 +1,8 @@
+---
+title: "Domain D: Research Integration & Market Use"
+description: HDRL indicators for research use, impact, researcher support, reproducibility, multi-site delivery, commercial access and trials.
+---
+
 # Domain D: Research Integration & Market Use
 
 **Focus:** Integration with research community; demonstrated use across sectors
@@ -19,7 +24,7 @@ A health data service exists to enable research that improves health outcomes. T
 | D.1.2 | Research Output & Impact | Core | Y | Both |
 | D.2.1 | Researcher Support & Helpdesk | Core | B0 | Service |
 | D.2.2 | Training & Capability Building | Enhancement | O | Service |
-| D.2.3 | Reproducibility & Provenance Support | Core | B0 | Service |
+| D.2.3 | Reproducibility & Analytic Provenance Support | Core | B0 | Service |
 | D.3.1 | Multi-Site Research Capability | Core | B0 | Both |
 | D.3.2 | Commercial Access Framework | Enhancement | O | Both |
 | D.4.1 | Trial Data & Recruitment | Enhancement | C4 | Both |
@@ -123,11 +128,11 @@ A health data service exists to enable research that improves health outcomes. T
 
 ## D.4 — Clinical Trials
 
-### D.4.1 Trial Data & Recruitment Support
+### D.4.1 Trial Data & Recruitment
 **ENHANCEMENT** · **C4** · **Both**
 
 !!! note "Capability module"
-    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 4 (Trial acceleration). The mapping preserves the initial 2025 UK Health Data Research Service (HDRS) proposition; it should not be treated here as a current programme requirement.
+    Within HDRL v1.0's original six-capability mapping, this indicator is included only when assessing Capability 4 (Trial acceleration). The mapping preserves the initial 2025 UK Health Data Research Service (HDRS) proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|
@@ -145,7 +150,7 @@ A health data service exists to enable research that improves health outcomes. T
 
 [Next: Domain E](e-public-trust.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

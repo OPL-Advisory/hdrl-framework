@@ -19,6 +19,8 @@ report_table_captions:
   - Immediate actions
 ---
 
+## About this accessible version { #report-source-note-title }
+
 ## Document Control
 
 | Item | Detail |
