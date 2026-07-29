@@ -23,7 +23,7 @@ schema_type: citation
 The website is a navigable presentation of the framework used in the 3 Nations Readiness Assessment, together with the approved v1.0.1 clarification release. Research Data Scotland owns the intellectual property rights in the commissioned project outputs. The framework methodology is made openly available under CC BY 4.0 in fulfilment of the project's open-access aim, with OPL Advisory credited as its originator and developer. The eight-domain structure, 64 indicators, classifications and five maturity levels remain those used in HDRL Framework v1.0.
 
 !!! info "Version 1.0.1 scope"
-    Version 1.0.1 clarifies that Baseline Core, Capability Core, readiness profiles and Foundational Indicators describe HDRL's internal assessment logic. They do not create official HDRS requirements, participation gates or accreditation decisions. The indicator structure, maturity descriptors, minimum-evidence requirements, aggregation structure and assessment findings are unchanged from v1.0.
+    The paper reports the original applied HDRL v1.0. The website presents v1.0.1, a clarification release that changes programme-status language only; it makes no changes to the method, indicators, evidence or assessment results. Version 1.0.1 clarifies that Baseline Core, Capability Core, readiness profiles and Foundational Indicators describe HDRL's internal assessment logic. They do not create official HDRS requirements, participation gates or accreditation decisions.
 
 ## Change log
 
@@ -86,7 +86,16 @@ The complete versioned source of record, machine-readable catalogue, JSON Schema
 
 A concise machine-readable guide to the site's public resources is available at [`/llms.txt`](https://hdrlframework.org/llms.txt).
 
-For factual corrections or proposed improvements to the website presentation, please [open a GitHub issue](https://github.com/OPL-Advisory/hdrl-framework/issues/new){ target="_blank" rel="noopener" }. Changes to the framework itself should be versioned explicitly so that the version used for an assessment and later public releases remain traceable.
+For a question, critique, correction or implementation insight, please use the public feedback form. Responses are reviewed before suitable substantive points are summarised in the public GitHub issue tracker; contact details are not published.
+
+<div class="hdrl-button-grid hdrl-button-grid--two" markdown>
+
+[Share feedback or a critique :material-message-text-outline:](https://docs.google.com/forms/d/e/1FAIpQLSdrcE7zwWvJ0Pu1klaKF1oAJA7lSyyMFnZp7BIJ6zSGJyk_NA/viewform){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Open a GitHub issue directly :material-github:](https://github.com/OPL-Advisory/hdrl-framework/issues/new){ .md-button target="_blank" rel="noopener" }
+
+</div>
+
+Changes to the framework itself should be versioned explicitly so that the version used for an assessment and later public releases remain traceable.
 
 !!! info "Version discipline"
     Readiness changes over time. A future framework version or reassessment should not silently overwrite the structure, evidence or interpretation of a previous assessment.
