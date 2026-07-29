@@ -1,0 +1,211 @@
+manifest_version: 1
+status: source_locked_permission_confirmed_draft_review
+publication_ready: false
+
+implementation_baseline:
+  frozen_launch_commit: 0c5d98a5f0d2a4e17d4ccf8a8bd2ba7a393539c3
+  current_main_commit: 3847b640af6e694873912836119f7ce2fdfde314
+  applied_v1_source_sha256: 2ec52519ede0a1f8b7787b182ba567d7afab4edd125baeab7dc7d0b14dd764fb
+  baseline_change_authorised_on: 2026-07-20
+  note: >-
+    PR #9 is an authorised successor baseline aligning the public methodology
+    with the academic paper being prepared for submission. The PR B branch is
+    based on that commit and records its updated applied-v1 source checksum.
+
+authoritative_source:
+  publication_page: https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/
+  pdf_url: https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf
+  retrieved_on: 2026-07-15
+  sha256: 49953014b1aaa815259bd46204a04cc59752c47c8625f25f7e6ac090a19556de
+  pages: 29
+  local_copy_compared: true
+  local_copy_byte_identical: true
+  sole_authoritative_content_source: true
+
+publication_gate:
+  full_text_republication_permission: confirmed_by_rds
+  permission_confirmed_on: 2026-07-20
+  permission_confirmed_by: Professor Roger Halliday, Chief Executive Officer, Research Data Scotland
+  permission_evidence: >-
+    Email confirmation: "Also, no problem with you putting out a markdown
+    version of the Exec report on your website labelled up the way you have
+    done. Hope all goes well securing the publication route you've outlined –
+    keep us informed of progress."
+  permission_interpretation_confirmed_by_project_owner: true
+  public_branch_push_permitted: true
+  merge_permitted: false
+  deployment_permitted: false
+  note: >-
+    RDS permission and the authoritative source lock allow the implementation
+    to be pushed as a draft pull request for review. Merge and deployment remain
+    blocked until the complete rendering receives Gate B3 publication approval.
+
+conversion:
+  transcription_aid: >-
+    An operator-supplied local Markdown transcription was used only as a
+    conversion aid. Its internal working preamble was excluded, and all
+    retained narrative text and table cells were independently compared with
+    the authoritative PDF.
+  generated_page: docs/explore-report.md
+  preparation_script: scripts/prepare_report_page.py
+  fidelity_script: scripts/verify_report_transcription.py
+  media_metadata_check: scripts/validate_report_media.py
+  pdf_download_tool: curl 8.7.1
+  pdf_text_extraction_tool: pdftotext 26.05.0
+  pdf_rendering_tool: pdftoppm 26.05.0
+  conversion_runtime: Python 3.12.13
+  site_builder: MkDocs 1.6.1
+  source_normalisations:
+    - Omitted repeated OFFICIAL marks, page numbers, headers and footers as print furniture.
+    - Rendered the cover as semantic text and did not duplicate its organisational logo marks.
+    - Replaced the print contents pages with native HTML table-of-contents navigation.
+    - Shifted heading levels under the HTML page's single H1 without changing heading wording.
+    - Restored Score distribution across 64 indicators as a semantic subsection heading, consistent with the published contents.
+    - Replaced non-breaking layout spaces with ordinary spaces for responsive reflow.
+    - Added hidden table captions, column scopes and row scopes as accessibility metadata.
+    - Added labelled small-screen card alternatives for dense narrative tables without changing their wording.
+    - Added seven source-verified outbound links around unchanged report wording as navigational annotations; URLs are excluded from transcription comparison.
+  silent_corrections: false
+  known_source_inconsistency_retained: >-
+    The cover is dated July 2026 while the Document Control table says April
+    2026. Both published values are retained without editorial correction.
+
+qa:
+  rebased_validation_on: 2026-07-20
+  checksum_lock: pass
+  markdown_input_checksum_lock: pass
+  automated_text_comparison:
+    status: pass
+    token_similarity: 0.993175
+    pdf_tokens: 6957
+    markdown_tokens: 6962
+    narrative_sentences_matched: 255/255
+    table_cells_matched: 315/315
+  pdf_visual_overview:
+    status: pass
+    pages_reviewed: 1-29
+    method: 120-dpi page renders and five six-page contact sheets
+  built_html_visual_review:
+    status: pass
+    widths: [2048, 1200, 800, 500, 320]
+    page_level_horizontal_overflow: false
+    table_layout: >-
+      All 12 tables use content-sized automatic columns with no table-specific
+      width overrides. No table overflow was present at 1200 or 800 pixels;
+      eight dense tables use labelled cards at 500 and 320 pixels.
+    regression_pages_checked_at_500: [home, three-nations-assessment, about]
+  automated_accessibility_review:
+    status: pass
+    evidence: >-
+      Single H1 and ordered hierarchy; 12 captioned semantic tables; 42 scoped
+      column headers; 98 scoped row headers; labelled mobile card alternatives
+      for eight dense narrative tables; no unnecessary table tab stops;
+      high-contrast emphasis panels checked in light and dark modes; no console
+      errors.
+  codex_keyboard_and_reflow_smoke:
+    status: pass
+    evidence: >-
+      No document or visible-table overflow at 1200, 800, 500 or 320 CSS
+      pixels. All 12 desktop/tablet tables use content-sized columns. Dense
+      tables reflow to labelled cards below 600 pixels while compact tables
+      retain their semantic table layout.
+  outbound_reference_links:
+    status: pass
+    checked_on: 2026-07-16
+    links_checked: 7
+    result: all_http_200
+    policy: >-
+      Links are limited to organisation-owned pages for RDS, HDRS, the
+      Scottish Safe Haven Network, SAIL Databank, the HSC Data Institute and
+      NITRE, the Honest Broker Service, and the ABPI report.
+  manual_keyboard_review: pending_human_recheck_after_layout_revision
+  human_source_and_visual_review:
+    status: in_progress
+    evidence: >-
+      Initial Chrome on macOS review found the content comparison satisfactory
+      and keyboard behaviour broadly successful. The title, navigation, table
+      sizing and emphasis issues raised in that review have been revised;
+      complete page-by-page sign-off remains pending.
+  schema_org_validation:
+    local_strict_json_and_output_checks: pass
+    external_validator: pass_code_snippet
+    validated_on: 2026-07-16
+    result: Report; 0 errors; 0 warnings
+    evidence: Schema.org-validator-Report-0-errors-0-warnings.png
+  final_public_safety_review:
+    status: pass_source_locked_draft_build
+    note: >-
+      No local paths, internal preamble, working-document names, unpublished
+      annexes or media assets are present. All report narrative and table
+      content is accounted for in the authoritative published PDF. The added
+      hyperlinks are source-verified navigational annotations and do not add
+      report claims. Merge and deployment remain blocked pending final human
+      source, visual, keyboard and publication approval.
+
+section_qa:
+  - section: Cover and source framing
+    pdf_pages: [1]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: Document Control
+    pdf_pages: [2]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: Contents
+    pdf_pages: [3, 4]
+    automated_text: not_applicable
+    conversion_visual: pass
+    note: Replaced by native HTML navigation; no report wording added.
+    human_review: pending
+  - section: Glossary of Terms and Abbreviations
+    pdf_pages: [5, 6, 7]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: Executive Summary
+    pdf_pages: [8, 9, 10]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 1. Introduction
+    pdf_pages: [11, 12, 13]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 2. Assessment Approach
+    pdf_pages: [14, 15]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 3. Cross-Nation Comparative Analysis
+    pdf_pages: [16, 17, 18, 19, 20]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 4. Use Case Analysis
+    pdf_pages: [21, 22]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 5. The Strategic Context
+    pdf_pages: [23]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 6. Recommendations
+    pdf_pages: [24, 25, 26, 27]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 7. Reflections for HDRS leadership
+    pdf_pages: [28]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending
+  - section: 8. Governance and Next Steps
+    pdf_pages: [29]
+    automated_text: pass
+    conversion_visual: pass
+    human_review: pending

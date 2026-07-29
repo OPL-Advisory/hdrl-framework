@@ -1,0 +1,45 @@
+{% extends "main.html" %}
+
+{% block site_nav %}
+  {% if nav %}
+    <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner">
+          {% include "partials/nav.html" %}
+          <div class="hdrl-report-integrated-toc">
+            {% include "partials/toc.html" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="hdrl-report-page">
+  <header class="hdrl-report-masthead">
+    <span class="hdrl-kicker">Published Final Report · accessible HTML</span>
+    <h1>Health Data Research Service: Three Nations Readiness Assessment</h1>
+    <p class="hdrl-report-subtitle">Final Report</p>
+    <p class="hdrl-report-byline"><strong>David Seymour, OPL Advisory</strong> · July 2026 · V1.0</p>
+    <p>Commissioned by Research Data Scotland on behalf of the three devolved nations.</p>
+    <div class="hdrl-report-actions">
+      <a class="md-button md-button--primary" href="https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf" target="_blank" rel="noopener">Download the authoritative PDF</a>
+      <a class="md-button" href="https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/" target="_blank" rel="noopener">RDS publication page</a>
+    </div>
+  </header>
+
+  <aside class="hdrl-report-source-note" aria-labelledby="report-source-note-title">
+    <h2 id="report-source-note-title">About this accessible version</h2>
+    <p>This HTML transcription preserves the wording and tables of the published report. The RDS PDF remains the authoritative version. Navigation, table semantics and any separately labelled accessibility supplements are additions to aid access and are not part of the report text.</p>
+    <p>The CC BY 4.0 terms for this website apply to the HDRL Framework methodology and public framework materials; no separate licence is asserted here for the Final Report.</p>
+  </aside>
+
+  {% include "partials/report-media.html" %}
+
+  <div class="hdrl-report-transcription">
+    <p class="hdrl-report-transcription-label">Report transcription</p>
+    {{ page.content }}
+  </div>
+</div>
+{% endblock %}

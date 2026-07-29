@@ -1,0 +1,36 @@
+{% set published_media = page.meta.report_media | selectattr("status", "equalto", "published") | list if page.meta.report_media else [] %}
+{% if published_media %}
+<section class="hdrl-report-media" aria-labelledby="report-media-title">
+  <span class="hdrl-kicker">Accessibility supplements · not report content</span>
+  <h2 id="report-media-title">Listen, watch or explore</h2>
+  <p>These optional formats are derived from the published report and are clearly separated from its authoritative text. Use the PDF or transcription below when precise wording matters.</p>
+  <div class="hdrl-report-media-grid">
+    {% for item in published_media %}
+    <article class="hdrl-report-media-card" id="media-{{ item.id }}">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.description }}</p>
+      {% if item.type == "audio" %}
+      <audio controls preload="metadata">
+        <source src="{{ item.url }}" type="{{ item.mime_type }}" />
+        Your browser does not support embedded audio. <a href="{{ item.url }}">Open the audio file</a>.
+      </audio>
+      <p><a href="{{ item.transcript_url }}">Read the audio transcript</a></p>
+      {% elif item.type == "video" %}
+      <video controls preload="metadata"{% if item.poster_url %} poster="{{ item.poster_url }}"{% endif %}>
+        <source src="{{ item.url }}" type="{{ item.mime_type }}" />
+        <track kind="captions" src="{{ item.captions_url }}" srclang="en" label="English" default />
+        Your browser does not support embedded video. <a href="{{ item.url }}">Open the video file</a>.
+      </video>
+      <p><a href="{{ item.transcript_url }}">Read the video transcript</a></p>
+      {% elif item.type == "infographic" %}
+      <figure>
+        <img src="{{ item.image_url }}" alt="{{ item.alt }}" loading="lazy" />
+        <figcaption>{{ item.description }} <a href="{{ item.long_description_url }}">Read the detailed description</a>.</figcaption>
+      </figure>
+      {% endif %}
+      <p class="hdrl-report-media-provenance">AI-assisted format prepared with {{ item.tool }}; reviewed by {{ item.reviewed_by }} on {{ item.reviewed_on }}.</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

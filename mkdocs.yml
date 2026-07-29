@@ -56,6 +56,9 @@ markdown_extensions:
 plugins:
   - search
 
+hooks:
+  - hooks/report_accessibility.py
+
 extra:
   generator: false
 
@@ -87,4 +90,5 @@ nav:
     - "G: Workforce & Culture": domains/g-workforce-culture.md
     - "H: Infrastructure & Compute": domains/h-infrastructure.md
   - 3 Nations Application: three-nations-assessment.md
+  - Explore the Report: explore-report.md
   - About & Reuse: about.md
