@@ -5,7 +5,7 @@ publication_ready: false
 implementation_baseline:
   frozen_launch_commit: 0c5d98a5f0d2a4e17d4ccf8a8bd2ba7a393539c3
   current_main_commit: 3847b640af6e694873912836119f7ce2fdfde314
-  applied_v1_source_sha256: 2ec52519ede0a1f8b7787b182ba567d7afab4edd125baeab7dc7d0b14dd764fb
+  applied_v1_source_sha256: fdf36fb92cd88319e3a9815aa14034fbc81c8ee66d3ef116e0175d5ea001c869
   baseline_change_authorised_on: 2026-07-20
   note: >-
     PR #9 is an authorised successor baseline aligning the public methodology

@@ -1,0 +1,2395 @@
+{
+  "$schema": "https://hdrlframework.org/data/hdrl-indicators-v1.schema.json",
+  "catalogue_id": "hdrl-indicators",
+  "catalogue_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "canonical_url": "https://hdrlframework.org/data/hdrl-indicators-v1.json",
+  "framework": {
+    "name": "Health Data Readiness Level (HDRL) Framework",
+    "version": "1.0",
+    "url": "https://hdrlframework.org/"
+  },
+  "source": {
+    "name": "Health Data Readiness Level Framework V1.md",
+    "url": "https://hdrlframework.org/framework/applied-v1-reference-files/",
+    "repository_path": "reference/frozen-applied-v1/Health Data Readiness Level Framework V1.md",
+    "sha256": "fdf36fb92cd88319e3a9815aa14034fbc81c8ee66d3ef116e0175d5ea001c869"
+  },
+  "license": {
+    "identifier": "CC-BY-4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/",
+    "attribution": "Research Data Scotland: commissioner and intellectual property rights owner; OPL Advisory Ltd: originator and developer."
+  },
+  "indicator_count": 64,
+  "maturity_level_names": {
+    "L1": "Initial",
+    "L2": "Developing",
+    "L3": "Defined",
+    "L4": "Managed",
+    "L5": "Optimising"
+  },
+  "vocabularies": {
+    "indicator_types": {
+      "Core": "Essential controls and capabilities for participation.",
+      "Enhancement": "Improves quality, efficiency and scale but is not required for baseline participation unless capability-defining."
+    },
+    "applicability_classes": {
+      "B0": "Baseline Core.",
+      "C1": "Capability Core 1 in the applied-v1 context.",
+      "C2": "Capability Core 2 in the applied-v1 context.",
+      "C3": "Capability Core 3 in the applied-v1 context.",
+      "C3/4": "Capability Core 3 and 4 in the applied-v1 context.",
+      "C4": "Capability Core 4 in the applied-v1 context.",
+      "C6": "Capability Core 6 in the applied-v1 context.",
+      "O": "Optional or Enhancement.",
+      "Y": "Outcome or Context; reported separately from readiness scoring."
+    },
+    "units": {
+      "S": "System",
+      "V": "Service",
+      "B": "Both"
+    }
+  },
+  "domains": [
+    {
+      "ref": "A",
+      "name": "Data Coverage & Federation",
+      "narrative": "Assesses availability, linkage, and flow of health data. Core indicators include dataset availability, data currency, equity, patient-identifier infrastructure, linkage services, UK Gateway connectivity, and federation operating model and assurance. Enhancement indicators cover federated query capability and multi-modal data access. Maturity levels describe progression from no systematic data inventories to comprehensive, automated, and UK-wide integrated data flows."
+    },
+    {
+      "ref": "B",
+      "name": "Data Semantics & Quality",
+      "narrative": "Assesses standardisation, documentation, and quality assurance. Core indicators include adoption of common data models, terminology standards, quality frameworks, and metadata documentation. Enhancement indicators cover curated datasets and phenotype libraries. Levels range from no standards or documentation to comprehensive, externally validated, and internationally contributing data ecosystems."
+    },
+    {
+      "ref": "C",
+      "name": "Governance & Access",
+      "narrative": "Covers legal, regulatory, and procedural frameworks. Core indicators address legal basis for processing, time-to-data, data access committees, ethics-pathway integration, mutual recognition, statistical disclosure control, researcher accreditation, and consent/permissions governance. Enhancement indicators include legislative environment and cross-border legal alignment. Maturity ranges from unclear legal bases and ad-hoc access to robust, UK-wide interoperable, and streamlined governance processes."
+    },
+    {
+      "ref": "D",
+      "name": "Research Integration & Market Use",
+      "narrative": "Evaluates integration with research communities and multi-sector use. Core indicators assess active user base, research output, researcher support, reproducibility support, and multi-site capability. Enhancement indicators focus on training, commercial access frameworks, and trial support. Levels progress from minimal activity and no support to large, diverse user communities with comprehensive services and international leadership."
+    },
+    {
+      "ref": "E",
+      "name": "Public Trust & Transparency",
+      "narrative": "Assesses engagement, transparency, and social licence. Core indicators include public registers of data uses, annual transparency reporting, lay involvement in governance, opt-out management, public benefit demonstration, and legitimacy/assurance mechanisms. Enhancement indicator covers public engagement capacity. Maturity advances from no transparency or involvement to exemplary, co-developed, and independently assured practices."
+    },
+    {
+      "ref": "F",
+      "name": "Sustainability",
+      "narrative": "Focuses on financial sustainability and economic contribution. Core indicators include funding horizon and cost recovery/pricing. Enhancement indicators cover financial risk management, commercial revenue, economic impact assessment, and value demonstration. Levels range from precarious short-term funding to long-term, diversified, and economically impactful models."
+    },
+    {
+      "ref": "G",
+      "name": "Workforce & Culture",
+      "narrative": "Assesses human capacity, capability, and culture. Core indicators examine staff capacity, role definitions, technical skills, and service orientation. Enhancement indicators cover retention, strategic workforce planning, and collaboration. Maturity moves from critical shortages and undefined roles to optimal staffing, mature professionalisation, and exemplary service culture."
+    },
+    {
+      "ref": "H",
+      "name": "Infrastructure & Compute Capacity",
+      "narrative": "Evaluates technical infrastructure including SDEs, compute, security, and AI capabilities. Core indicators include SDE architecture, user environment, compute scalability, security certification, security operations, and responsible AI practices. Enhancement indicators cover storage, privacy-enhancing technologies, and ML/AI platform capability. Levels span from no dedicated infrastructure to advanced, fully integrated, and internationally benchmarked environments supporting responsible AI."
+    }
+  ],
+  "indicators": [
+    {
+      "ref": "A.1.1",
+      "name": "Core Dataset Availability",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "S",
+      "alliance_principles": [
+        2
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No systematic inventory. Data flows ad-hoc. Core datasets (primary care, secondary care, prescribing, mortality) have unknown or highly restricted availability.",
+        "L2": "Inventory initiated. Feasibility assessed. Strategy documented. Pilot agreements in discussion.",
+        "L3": "Core datasets partially available: secondary care and mortality accessible; primary care <50% coverage or not refreshed; prescribing not linked.",
+        "L4": "Core datasets available with >= 70% population coverage. Refreshed at least quarterly. Data sharing agreements with major providers. [Threshold subject to benchmarking]",
+        "L5": "Core datasets >= 90% coverage with monthly refresh. Automated flows. Proactive provider engagement. Coverage gaps systematically addressed."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Documented dataset inventory showing which core datasets are available and under what conditions",
+          "Evidence of access for at least some core datasets (agreements/approvals; delivered extracts/workspaces)"
+        ],
+        "L4": [
+          "Published data inventory/catalogue for core datasets (incl. coverage method)",
+          "Signed data sharing agreements with major providers (or controller decisions) for those datasets",
+          "Coverage and refresh evidence meeting Level 4 threshold (report/dashboard + extract dates)"
+        ],
+        "L5": [
+          "Automated ingestion/refresh logs showing monthly (or better) updates",
+          "Coverage improvement plan + evidence of actions taken (e.g., onboarding new providers) and resulting change",
+          "Proactive monitoring/reporting demonstrating sustained coverage and refresh performance"
+        ]
+      }
+    },
+    {
+      "ref": "A.1.2",
+      "name": "Data Currency & Timeliness",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "S",
+      "alliance_principles": [
+        2
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Currency unknown or variable. Some datasets years out of date. No monitoring.",
+        "L2": "Requirements defined. Baseline measured. Targets established but not achieved.",
+        "L3": "Core datasets refreshed within 6 months. Latency monitored. Some achieve monthly; others delayed.",
+        "L4": "Refreshed quarterly, median latency <= 120 days. SLAs met >= 80%. [Threshold subject to benchmarking]",
+        "L5": "Median <= 60-day latency. Near-real-time for priority use cases. SLAs met >= 95%."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Defined timeliness requirements/targets + baseline measurement",
+          "Refresh/latency evidence for core datasets consistent with Level 3 claim (extract dates; monitoring output)"
+        ],
+        "L4": [
+          "Latency definition + monitoring dashboard showing quarterly refresh and median latency claim",
+          "SLA/targets for refresh and delivery + evidence of >=80% compliance",
+          "Exception log showing how delays are detected and addressed"
+        ],
+        "L5": [
+          "Monitoring dashboard showing median latency <=60 days (and near-real-time where claimed)",
+          "SLA report showing >=95% compliance for priority datasets/use cases",
+          "Evidence of continuous improvement (trend over time; change log)"
+        ]
+      }
+    },
+    {
+      "ref": "A.1.3",
+      "name": "Data Equity & Representativeness",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "S",
+      "alliance_principles": [
+        2
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No assessment of coverage by demographic/socioeconomic characteristics. Representativeness unknown.",
+        "L2": "Equity dimensions identified (deprivation, ethnicity, geography, age, sex). Baseline assessment initiated.",
+        "L3": "Coverage monitored by key dimensions. Known gaps documented. Improvement actions identified but not systematic.",
+        "L4": "Routine monitoring by deprivation, ethnicity, geography, protected characteristics. Annual equity reporting. Active programmes to address gaps.",
+        "L5": "Comprehensive equity framework with published reports. Demonstrated improvement. Equity embedded in acquisition priorities. Contributing to national guidance."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Baseline representativeness assessment using agreed equity dimensions",
+          "Documented gap register and initial actions (plans, provider engagement)"
+        ],
+        "L4": [
+          "Equity monitoring report with agreed dimensions (deprivation, ethnicity, geography, protected characteristics)",
+          "Documented gap register + prioritised improvement actions",
+          "Published (or internally approved) annual equity report for data coverage/quality"
+        ],
+        "L5": [
+          "Published equity framework + repeated reporting over time",
+          "Evidence of measurable improvement in identified gaps (before/after metrics)",
+          "Evidence equity is embedded in acquisition priorities (e.g., business case decisions, procurement criteria)"
+        ]
+      }
+    },
+    {
+      "ref": "A.2.1",
+      "name": "Patient Identifier Infrastructure",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "S",
+      "alliance_principles": [
+        2
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No consistent identifier. Probabilistic matching with significant errors.",
+        "L2": "National identifier exists but incomplete adoption. Strategy documented. Interim approaches defined.",
+        "L3": "Identifier (CHI, NHS number) used in majority of datasets. Deterministic linkage for most core datasets.",
+        "L4": "Identifier consistently applied across core datasets. Linkage accuracy >= 99%. Validation in place.",
+        "L5": "Universal identifier across all datasets including cohorts and multi-modal. Externally validated. Supports cross-UK linkage."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Evidence identifier is present in the majority of relevant datasets (audit/sample)",
+          "Linkage validation approach documented with initial results"
+        ],
+        "L4": [
+          "Documentation showing identifier coverage across core datasets",
+          "Linkage accuracy validation report (method + results) supporting >=99% claim",
+          "Ongoing control for identifier quality (audit/checks and remediation process)"
+        ],
+        "L5": [
+          "External/independent validation of linkage accuracy and process (audit or peer review)",
+          "Evidence identifier applies across extended datasets (cohorts/multi-modal where applicable)",
+          "Evidence of cross-UK linkage capability (documented approach + successful linkage case)"
+        ]
+      }
+    },
+    {
+      "ref": "A.2.2",
+      "name": "Linkage Services",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        2
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No dedicated service. Linkage ad-hoc with inconsistent methodology.",
+        "L2": "Function identified. Methodology documented. Available for selected projects.",
+        "L3": "Operational service. Standard process. Turnaround variable (weeks to months). Limited combinations.",
+        "L4": "Routinely available with SLAs. Turnaround <= 4 weeks. Flexible linkage. Quality metrics reported.",
+        "L5": "Turnaround <= 2 weeks. Automated workflows. Advanced capabilities (fuzzy matching, privacy-preserving)."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Linkage service SOP/process documented and operational for projects",
+          "Evidence of delivered linkages + basic quality reporting (match rate/error rate)"
+        ],
+        "L4": [
+          "Standard linkage service SOP + published SLA",
+          "Turnaround statistics (median + tail) showing <=4 weeks for routine requests",
+          "Linkage quality metrics report (match rate, error rate) and QC process"
+        ],
+        "L5": [
+          "Workflow automation evidence (tooling/pipeline docs) + stats showing <=2 weeks",
+          "Evidence of advanced methods where used (e.g., privacy-preserving/fuzzy matching) with evaluation",
+          "Independent review or benchmarking of linkage service performance/quality"
+        ]
+      }
+    },
+    {
+      "ref": "A.3.1",
+      "name": "Federated Query Capability",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No federated capability. All analysis requires data transfer.",
+        "L2": "Concepts understood. Options assessed. Pilot in planning.",
+        "L3": "Federated possible for selected datasets. Bespoke setup. Limited tools.",
+        "L4": "Routinely supported. Standard APIs. Compatible with DataSHIELD, OHDSI.",
+        "L5": "Default for appropriate uses. Rich API ecosystem. Active in UK/international networks."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Pilot or limited operational federated query implementation (architecture/API evidence)",
+          "Evidence of at least one federated use case delivered (project log)"
+        ],
+        "L4": [
+          "Operational federated query implementation documentation (APIs/standards supported)",
+          "Evidence of routine use (project list/logs) and supported toolchain (e.g., DataSHIELD/OHDSI)",
+          "Service guidance/SOP for researchers and node operators"
+        ],
+        "L5": [
+          "Policy/architecture showing federated access is default where appropriate",
+          "Participation evidence in federated networks/standards groups + interoperability test results",
+          "Performance and reliability KPIs for federated services (availability, query latency)"
+        ]
+      }
+    },
+    {
+      "ref": "A.3.2",
+      "name": "UK Gateway Connectivity",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No awareness of UK Gateway specs. Architecture does not consider UK-wide interoperability.",
+        "L2": "Specs reviewed. Gap analysis completed. Roadmap defined.",
+        "L3": "Architecture aligned. Connectivity in development/testing. Manual workarounds required.",
+        "L4": "Operational connectivity. Metadata discoverable. Standard requests flow through Gateway.",
+        "L5": "Full integration with automated sync. Complex UK-wide queries supported. Contributing to standards."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Gateway connectivity roadmap + technical alignment evidence (architecture mapping)",
+          "Evidence of connectivity in development/testing (test results; manual workarounds documented)"
+        ],
+        "L4": [
+          "Gateway integration test evidence (metadata discovery + request routing) and operational sign-off",
+          "Operational logs/screenshots showing metadata is discoverable and requests flow via gateway",
+          "SOP for maintaining gateway connectivity (change control + incident handling)"
+        ],
+        "L5": [
+          "Automated synchronisation evidence (scheduled jobs, APIs) with monitoring/alerts",
+          "Demonstration of complex UK-wide requests/queries supported (test cases)",
+          "Evidence of contribution to gateway standards/spec evolution (change proposals, working group outputs)"
+        ]
+      }
+    },
+    {
+      "ref": "A.3.3",
+      "name": "Federation Operating Model & Assurance",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No federation operating model. Roles and cross-node processes undefined.",
+        "L2": "Draft operating model. Limited bilateral agreements; inconsistent use.",
+        "L3": "Model used for priority pathways. Issues logged; assurance limited.",
+        "L4": "Standard model in routine use. Cross-node SOPs and performance reporting.",
+        "L5": "Optimised federation. Joint improvement cycle and independent assurance/benchmarking."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Draft operating model (roles, escalation, change control) with initial adoption evidence",
+          "Evidence of operating model used for at least one cross-node pathway (issues/decisions logged)"
+        ],
+        "L4": [
+          "Signed federation operating model (roles, RACI, escalation, change control) + SOP set",
+          "Joint governance minutes/decision logs showing routine use",
+          "Cross-node KPIs/service reporting and evidence of interoperability testing"
+        ],
+        "L5": [
+          "Evidence of joint improvement cycle (backlog, retrospectives, release notes) and tracked KPI improvement",
+          "Independent assurance/assessment of federation operations (audit/peer review)",
+          "Evidence model has been shared/adopted beyond the node (templates, guidance, community contribution)"
+        ]
+      }
+    },
+    {
+      "ref": "A.4.1",
+      "name": "Consented Cohort Integration",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Enhancement",
+      "applicability_class": "C2",
+      "unit": "S",
+      "alliance_principles": [
+        2
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No systematic linkage to cohorts/biobanks.",
+        "L2": "Key cohorts identified. Consent reviewed. Pilot planned.",
+        "L3": "Selected cohorts linkable. Bespoke arrangements. Coverage incomplete.",
+        "L4": "Major cohorts routinely linkable. Standard processes. Catalogue maintained.",
+        "L5": "Comprehensive linkage. Recall-by-genotype. UK-wide cohort integration."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "List of priority cohorts/biobanks and consent/permissions review summary",
+          "Evidence of at least one linkage arrangement delivered or in active operation"
+        ],
+        "L4": [
+          "Catalogue of linkable cohorts/biobanks + consent/permissions summary",
+          "Standard linkage process + template agreements",
+          "Evidence of routine linkage for major cohorts (delivery logs/metrics)"
+        ],
+        "L5": [
+          "Evidence of comprehensive linkage coverage across major cohorts/biobanks",
+          "Demonstrated advanced use case (e.g., recall-by-genotype or equivalent) with governance approval",
+          "Evidence of UK-wide cohort integration arrangements (cross-node agreements + delivered project)"
+        ]
+      }
+    },
+    {
+      "ref": "A.4.2",
+      "name": "Multi-Modal Data Access",
+      "domain": "A",
+      "domain_name": "Data Coverage & Federation",
+      "type": "Enhancement",
+      "applicability_class": "C3",
+      "unit": "S",
+      "alliance_principles": [
+        2
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Multi-modal data (imaging, genomics, pathology, clinical letters) not available.",
+        "L2": "Strategy defined. Priority types identified. Pilot planned.",
+        "L3": "Selected multi-modal available. Coverage incomplete; linkage partial.",
+        "L4": "Routine access to >= 2 types with >= 25% coverage each. Linked to core datasets. [Threshold subject to benchmarking]",
+        "L5": "Comprehensive access: imaging, genomics, pathology, clinical letters. Population-scale. NLP-processed text."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Multi-modal strategy/inventory with at least one modality accessible for research",
+          "Evidence of linkage for at least one modality to core datasets (technical + governance sign-off)"
+        ],
+        "L4": [
+          "Inventory of multi-modal datasets with coverage estimates for >=2 modalities",
+          "Evidence of linkage to core datasets (technical + governance sign-off)",
+          "Access process and documentation (data dictionaries, quality notes) for those modalities"
+        ],
+        "L5": [
+          "Evidence of population-scale multi-modal availability (coverage/refresh metrics per modality)",
+          "Evidence of advanced handling where relevant (e.g., NLP-processed text pipeline + QC)",
+          "Demonstration of routine multi-modal research delivery (project examples, throughput metrics)"
+        ]
+      }
+    },
+    {
+      "ref": "B.1.1",
+      "name": "Common Data Model Adoption",
+      "domain": "B",
+      "domain_name": "Data Semantics & Quality",
+      "type": "Core",
+      "applicability_class": "C1",
+      "unit": "B",
+      "alliance_principles": [
+        4
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No CDM. Data in source formats with bespoke schemas.",
+        "L2": "CDM (OMOP, Sentinel, PCORnet, or equivalent) evaluated. Mapping assessed. Pilot planned.",
+        "L3": "Core datasets partially mapped. Coverage <50%. CDM available but not routine.",
+        "L4": "Core datasets mapped to recognised CDM with >= 60% coverage. CDM maintained and refreshed. Standard tools operational. [Threshold subject to benchmarking]",
+        "L5": "Comprehensive CDM. Externally validated. Contributing to international networks. CDM-native services."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "CDM selection and mapping approach documented (ETL plan, data model choice)",
+          "Evidence of partial mapping and use on core datasets (tables, coverage metrics, pilot analyses)"
+        ],
+        "L4": [
+          "Mapping/ETL documentation + evidence >=60% coverage for core datasets (counts/metrics)",
+          "Operational CDM environment (repository, pipelines, refresh schedule) and maintained mappings",
+          "Evidence standard tools are available and used (e.g., OHDSI stack)"
+        ],
+        "L5": [
+          "External validation/quality review of CDM mappings (peer review, audit, network validation)",
+          "Evidence CDM is comprehensive and routinely refreshed (change logs, release notes)",
+          "Evidence of contribution/participation in relevant networks (methods/tools shared, study participation)"
+        ]
+      }
+    },
+    {
+      "ref": "B.1.2",
+      "name": "Terminology Standards",
+      "domain": "B",
+      "domain_name": "Data Semantics & Quality",
+      "type": "Core",
+      "applicability_class": "C1",
+      "unit": "B",
+      "alliance_principles": [
+        4
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No consistent standards. Codes as recorded (mixture of Read, ICD-10, OPCS, local).",
+        "L2": "Strategy defined. Target standards identified. Baseline assessed.",
+        "L3": "Primary standards adopted (SNOMED CT, dm+d for new systems). Legacy retains original. Partial mapping.",
+        "L4": "SNOMED CT, dm+d, ICD-10/OPCS consistently applied. Terminology services operational. Limitations documented.",
+        "L5": "Full SNOMED CT with semantic interoperability. Advanced services. Contributing to standards."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Terminology standards strategy documented + mapping plan",
+          "Evidence of partial adoption/mapping on at least one major dataset/system"
+        ],
+        "L4": [
+          "Evidence terminology standards are consistently applied (samples/audits across datasets)",
+          "Operational terminology service or controlled mapping process + documented limitations",
+          "Governance artefact for terminology updates/versioning"
+        ],
+        "L5": [
+          "Evidence of semantic interoperability at scale (cross-system mapping quality, reduced local code use)",
+          "Advanced terminology services (e.g., value set management) with usage metrics",
+          "Contribution to national/international terminology work (submissions, participation)"
+        ]
+      }
+    },
+    {
+      "ref": "B.2.1",
+      "name": "Quality Framework & Monitoring",
+      "domain": "B",
+      "domain_name": "Data Semantics & Quality",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        4
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No framework. Issues ad-hoc. No monitoring.",
+        "L2": "Framework defined. Dimensions identified. Baseline initiated.",
+        "L3": "Metrics for core datasets. Annual reporting. Issues documented. Improvement underway.",
+        "L4": "Comprehensive monitoring with automated checks. Metrics published. SLAs defined. Root cause analysis.",
+        "L5": "Real-time monitoring. Benchmarked nationally/internationally. Certification or audit."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Quality framework documented with defined dimensions and responsibilities",
+          "Evidence of quality metrics produced for core datasets and issues tracked"
+        ],
+        "L4": [
+          "Documented quality framework with automated checks + coverage across core datasets",
+          "Published/internal quality dashboard with metrics and thresholds",
+          "Evidence of root-cause analysis process and tracked remediation actions"
+        ],
+        "L5": [
+          "Evidence of near-real-time or high-frequency monitoring for priority datasets",
+          "Benchmarking against external comparators (UK/international) or certification/audit",
+          "Evidence of continuous quality improvement (trend improvement over time)"
+        ]
+      }
+    },
+    {
+      "ref": "B.2.2",
+      "name": "Data Documentation & Metadata",
+      "domain": "B",
+      "domain_name": "Data Semantics & Quality",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        4
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Minimal documentation. Tacit knowledge. No catalogue.",
+        "L2": "Initiative underway. Basic documentation. Catalogue developing.",
+        "L3": "Structured metadata for core datasets. Variable quality.",
+        "L4": "Comprehensive, standardised metadata. Machine-readable. Searchable catalogue integrated with access. Regular updates.",
+        "L5": "Rich ecosystem with automated generation. Provenance and lineage tracking. Community contributions."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Structured metadata exists for core datasets (data dictionary/metadata template) with variable completeness",
+          "Catalogue or register exists (even if partial) and is used for discovery"
+        ],
+        "L4": [
+          "Standardised, machine-readable metadata for core datasets (schema, example records)",
+          "Searchable catalogue integrated with access workflow (screenshots/URL + process)",
+          "Evidence of regular metadata updates (change log, release cadence)"
+        ],
+        "L5": [
+          "Automated metadata generation or validation pipeline (tooling evidence)",
+          "Lineage/provenance documentation (data flows, transformations) with traceability",
+          "Evidence of community contribution mechanism (issues/PRs, feedback loops)"
+        ]
+      }
+    },
+    {
+      "ref": "B.3.1",
+      "name": "Curated Dataset Availability",
+      "domain": "B",
+      "domain_name": "Data Semantics & Quality",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [
+        4
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No curated datasets. Raw extracts requiring extensive cleaning.",
+        "L2": "Needs assessed. Priority datasets identified. Pilot underway.",
+        "L3": "Selected curated datasets. Methodology documented but not standardised.",
+        "L4": "Portfolio with standard methodology. Derived variables, phenotypes, linked data. Version control.",
+        "L5": "Comprehensive library. Community contributions. Automated pipelines. Benchmarked."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Pilot curated datasets produced with documented methodology",
+          "Evidence curated outputs used in at least one project and are versioned at least minimally"
+        ],
+        "L4": [
+          "Curated dataset portfolio list + published methodology/SOP",
+          "Version control evidence for curated products (release notes, tags)",
+          "Evidence curated datasets are routinely used (project examples/usage stats)"
+        ],
+        "L5": [
+          "Evidence of comprehensive curated library with automated pipelines",
+          "Community contribution process with governance (requests, approvals, updates)",
+          "Benchmarking or external validation of curated products (comparisons, audits)"
+        ]
+      }
+    },
+    {
+      "ref": "B.3.2",
+      "name": "Phenotype Library & Validation",
+      "domain": "B",
+      "domain_name": "Data Semantics & Quality",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [
+        4,
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No library. Researchers define from scratch.",
+        "L2": "Concept established. Initial phenotypes documented. No validation.",
+        "L3": "Growing library. Selected phenotypes validated. Searchable but not integrated.",
+        "L4": "Comprehensive with validated definitions. Standardised validation. Integrated with access. Version control.",
+        "L5": "Internationally validated. Cross-references HDR UK/OHDSI. Phenotype-as-code."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Initial phenotype library exists (definitions stored and discoverable)",
+          "Evidence of validation for selected phenotypes or documented validation plan"
+        ],
+        "L4": [
+          "Phenotype library with validated definitions and versioning (repository + governance)",
+          "Standard validation protocol + evidence of completed validations",
+          "Integration evidence (library searchable and usable within analysis environments)"
+        ],
+        "L5": [
+          "International validation/crosswalk evidence (e.g., OHDSI/HDR UK alignment) where relevant",
+          "Phenotype-as-code implementation (tests, CI, reproducible packages)",
+          "Evidence of sharing/contribution beyond the organisation (public repos, publications)"
+        ]
+      }
+    },
+    {
+      "ref": "C.1.1",
+      "name": "Legal Basis for Processing",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "S",
+      "alliance_principles": [
+        3,
+        5
+      ],
+      "foundational": true,
+      "maturity_levels": {
+        "L1": "Legal basis unclear. Reliance on consent for all research. No systematic review.",
+        "L2": "Framework developing. Review initiated. GDPR options assessed.",
+        "L3": "Primary basis established. Controller/processor defined. Review process exists. Some ambiguity.",
+        "L4": "Comprehensive basis. Clear documentation per dataset. Agreements in place. Timely guidance.",
+        "L5": "Robust framework. Proactive horizon scanning. Contributing to national guidance. UK-wide and international support."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Documented legal basis and roles for key datasets (controller/processor clarity)",
+          "Evidence legal review process exists and is used (DPIA/TRA, sign-off records)"
+        ],
+        "L4": [
+          "Per-dataset legal basis documentation (lawful basis, purposes, roles) with sign-off",
+          "Template agreements (DAA/DSA, controller/processor arrangements) in routine use",
+          "DPIA/TRA artefacts and governance process evidence (review cycle, updates)"
+        ],
+        "L5": [
+          "Horizon scanning/legal review process evidence (register + update cadence)",
+          "Evidence of contribution to national/UK-wide guidance or shared legal patterns",
+          "Evidence framework supports UK-wide operation (cross-node legal arrangements, resolved issues)"
+        ]
+      }
+    },
+    {
+      "ref": "C.1.2",
+      "name": "Legislative Environment",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "S",
+      "alliance_principles": [
+        3
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Significant barriers. Key statutes block secondary use. No reform pathway.",
+        "L2": "Barriers identified. Policy engagement initiated. Interim approaches defined.",
+        "L3": "Permits research under conditions. Constraints remain. Active in legislative review.",
+        "L4": "Enabling environment with safeguards. Clear pathway. Compatible with UK-wide operation.",
+        "L5": "Actively enables research. Legislation updated. Supports innovation within ethics."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Assessment of legal/legislative constraints with documented workarounds",
+          "Evidence of active engagement in policy/legislative review processes"
+        ],
+        "L4": [
+          "Documented assessment of legislative barriers/enablers + mitigation pathway",
+          "Evidence of enabling safeguards and clear pathway for secondary use",
+          "Demonstrated compatibility with UK-wide operation (policy/guidance mapping)"
+        ],
+        "L5": [
+          "Evidence of updated/modernised legislation or formal policy instruments enabling research",
+          "Evaluation evidence showing reduced barriers while maintaining safeguards",
+          "Evidence of leadership in policy shaping (consultations, published positions)"
+        ]
+      }
+    },
+    {
+      "ref": "C.2.1",
+      "name": "Time-to-Data",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        8
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No standard process. Case-by-case. >12 months where successful.",
+        "L2": "Central function exists. Documentation drafted. Median 6-12 months.",
+        "L3": "Operational process. Single application. Median 3-6 months. SLAs defined but not consistent.",
+        "L4": "Single-gateway. Median <90 days. SLAs met >= 80%. Applicant support. [Threshold subject to benchmarking]",
+        "L5": "Median <45 days. Tiered/fast-track approvals. Automated workflows. Top-quartile UK."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Operational access workflow with a single application route (process map + artefacts)",
+          "Time-to-data measurement evidence supporting Level 3 claim (median 3--6 months; SLA defined)"
+        ],
+        "L4": [
+          "End-to-end process map + SOP defining start/stop points for the clock",
+          "Time-to-data distribution (median + 90th percentile) showing Level 4 claim",
+          "SLA compliance report showing >=80% plus evidence of applicant support workflow"
+        ],
+        "L5": [
+          "Time-to-data distribution showing median <45 days + tiered/fast-track pathway evidence",
+          "Automation evidence (workflow tooling, integration) reducing manual steps",
+          "Benchmarking evidence (UK comparative position) or independent review"
+        ]
+      }
+    },
+    {
+      "ref": "C.2.2",
+      "name": "Data Access Committee",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        1,
+        5
+      ],
+      "foundational": true,
+      "maturity_levels": {
+        "L1": "No formal DAC. Ad-hoc decisions. No criteria. No public benefit assessment.",
+        "L2": "DAC established/forming. Terms defined. Public benefit criteria developing. Infrequent meetings.",
+        "L3": "Operational DAC meeting monthly. Published criteria including NDG public benefit. Decisions documented. Lay members initiated.",
+        "L4": "Efficient with clear criteria. Public benefit per NDG for every decision. Lay >= 25% with voting. Decisions within 2 weeks.",
+        "L5": "Streamlined with risk-proportionate pathways. Public benefit methodology shared. Appeal process. Lay co-governance."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "DAC operating with published criteria and decision logging (minutes/records)",
+          "Evidence of regular meetings and decisions (e.g., monthly cadence)"
+        ],
+        "L4": [
+          "DAC terms of reference + membership list (incl. lay representation) and decision criteria",
+          "Sample minutes/decision logs (redacted) showing timely decisions (<=2 weeks) and NDG public benefit use",
+          "Published guidance for applicants and audit trail of decisions"
+        ],
+        "L5": [
+          "Evidence of risk-proportionate pathways (tiering rules + examples)",
+          "Appeals process evidence + outcomes",
+          "Evidence DAC criteria/method is shared or adopted more widely (templates, training)"
+        ]
+      }
+    },
+    {
+      "ref": "C.2.3",
+      "name": "Ethics Pathway Integration & Proportionality",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        5
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Ethics pathway unclear or duplicative. Handled ad-hoc.",
+        "L2": "Pathway mapped and documented. Proportionality intent stated.",
+        "L3": "Standard ethics triage for common studies. Variable duplication remains.",
+        "L4": "Integrated, risk-proportionate pathway. Tiered routes and SLAs tracked.",
+        "L5": "Optimised pathway. Reuse/mutual recognition where lawful; learning loop and benchmarking."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Ethics triage guidance available for common study types (process doc)",
+          "Evidence of at least some approval reuse/portability or reduced duplication (cases)"
+        ],
+        "L4": [
+          "Documented ethics pathway integrated with access (triage rules + decision rights)",
+          "SLA/turnaround reporting for ethics steps (where applicable)",
+          "Evidence of templates/support for multi-site studies (guidance, examples)"
+        ],
+        "L5": [
+          "Evidence of approval reuse/mutual recognition where lawful (agreements + cases)",
+          "Metrics showing reduced duplication (trend over time) and documented learning loop",
+          "Contribution to sector guidance or external review endorsing the pathway"
+        ]
+      }
+    },
+    {
+      "ref": "C.3.1",
+      "name": "Mutual Recognition & Standards",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        8
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No UK-wide engagement. Organisation-specific agreements.",
+        "L2": "Standards reviewed. Gap analysis. Participation initiated.",
+        "L3": "Partial adoption (Alliance DAA). Mutual recognition of some approvals. Additional steps for UK-wide.",
+        "L4": "Full adoption of UK-standard DAA. Mutual accreditation recognition. Single approval for UK-wide. Participating in governance.",
+        "L5": "Leading contributor. Full interoperability. Supporting others. Contributing to Alliance standards."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Evidence of partial adoption of UK standards (e.g., Alliance DAA) and engagement",
+          "Evidence of mutual recognition for at least some approvals or accreditations (cases)"
+        ],
+        "L4": [
+          "Evidence of adoption of UK-standard DAA (or equivalent) and mutual recognition arrangements",
+          "Evidence single approval works in practice (case studies + reduced duplicative steps)",
+          "Participation evidence in UK governance/standards bodies (minutes/roles)"
+        ],
+        "L5": [
+          "Evidence of leadership contributions (standards proposals, tooling, guidance)",
+          "Interoperability evidence across nodes (tests, joint exercises)",
+          "Support evidence provided to other nodes (mentoring, implementation packs)"
+        ]
+      }
+    },
+    {
+      "ref": "C.3.2",
+      "name": "Cross-Border Legal Alignment",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "S",
+      "alliance_principles": [
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No consideration of cross-border issues.",
+        "L2": "Issues identified (NI-Ireland, Scotland common law). Initial assessment.",
+        "L3": "Complexities documented with workarounds. Some friction.",
+        "L4": "Arrangements address cross-border. Controller agreements enable UK-wide. Manageable overhead.",
+        "L5": "Framework designed for UK-wide. Proactive resolution. International arrangements where relevant."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Documented cross-border legal issues and practical workarounds",
+          "Evidence of at least one cross-border case managed/delivered"
+        ],
+        "L4": [
+          "Documented cross-border legal arrangements enabling data flow/linkage",
+          "Controller agreements and DPIA/TRA addressing cross-border issues",
+          "Case example showing cross-border project delivered with manageable overhead"
+        ],
+        "L5": [
+          "Proactive framework design evidence (policy/agreements anticipating cross-border needs)",
+          "Evidence of resolving cross-border friction (issue log + fixes)",
+          "International arrangements evidence where relevant"
+        ]
+      }
+    },
+    {
+      "ref": "C.3.3",
+      "name": "Cross-sector Data Sharing & Linkage Governance",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "C6",
+      "unit": "S",
+      "alliance_principles": [
+        8,
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No cross-sector pathway. Roles, decision rights and feasibility unclear.",
+        "L2": "Priority sectors identified. Draft principles/templates; DPIA/TRA approach emerging.",
+        "L3": "Governance operational for >=1 sector. Templates in use; pilot linkage delivered.",
+        "L4": "Repeatable pathway for multiple sectors. Defined accountabilities; performance tracked.",
+        "L5": "Scaled and assured cross-sector linkage. Quality/bias monitored; good practice shared."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Identified priority partner sector(s) and documented principles/roles (controllers/processors)",
+          "Evidence of at least one cross-sector linkage/data sharing project delivered (case)"
+        ],
+        "L4": [
+          "Named partner sectors + documented controller/processor roles and decision rights",
+          "Template agreements and DPIA/TRA approach (reusable where appropriate)",
+          "Delivery evidence for cross-sector linkage across multiple sectors + cycle-time metrics"
+        ],
+        "L5": [
+          "Breadth/maintenance evidence (published approach; refreshed partner list)",
+          "Linkage quality/bias monitoring evidence (metrics + improvement actions)",
+          "Independent assurance and evidence of sharing templates/good practice cross-UK"
+        ]
+      }
+    },
+    {
+      "ref": "C.4.1",
+      "name": "Statistical Disclosure Control",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        3,
+        5
+      ],
+      "foundational": true,
+      "maturity_levels": {
+        "L1": "No systematic control. Outputs released without review.",
+        "L2": "Policy drafted. Training identified. Manual checking for some.",
+        "L3": "Policy operational. Trained checkers. Manual review. Some delays.",
+        "L4": "Systematic with guidelines. Trained team with capacity. SLA met. Semi-automated tools.",
+        "L5": "Advanced with automated tools. Risk-based. Contributing to standards. Rarely delays."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "SDC policy operational with trained reviewers",
+          "Evidence of disclosure review decisions logged (audit trail)"
+        ],
+        "L4": [
+          "SDC policy and guidelines + trained checker list",
+          "SLA/performance evidence for disclosure review (turnaround, backlog)",
+          "Evidence of semi-automated tooling use and documented decisions/audit trail"
+        ],
+        "L5": [
+          "Automated or advanced tooling evidence (risk-based rules, tool validation)",
+          "Evidence of contributing to SDC standards/guidance (methods shared)",
+          "Performance evidence showing minimal delays without compromising safety"
+        ]
+      }
+    },
+    {
+      "ref": "C.4.2",
+      "name": "Researcher Accreditation",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        5
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No requirements. Access without competency demonstration.",
+        "L2": "Requirements defined. Curriculum developing. Enforcement not systematic.",
+        "L3": "Accreditation required. Training available. Status tracked. Some legacy gaps.",
+        "L4": "Comprehensive with mandatory training, renewal, enforcement. Aligned with ONS RAS. Integrated.",
+        "L5": "Advanced pathway. Tiered accreditation. Contributing to UK standards. Mentorship."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Accreditation requirement in place with training offer",
+          "Evidence accreditation status is tracked and used in access decisions"
+        ],
+        "L4": [
+          "Accreditation/training requirements policy + renewal rules",
+          "Tracking system evidence (who is accredited, expiry, enforcement)",
+          "Alignment evidence with ONS RAS (or equivalent) and integration with access workflow"
+        ],
+        "L5": [
+          "Tiered accreditation pathway evidence + mentoring/support arrangements",
+          "Contribution to UK-wide accreditation standards (materials, working groups)",
+          "Evaluation evidence of improved compliance/quality (audit findings, incidents reduced)"
+        ]
+      }
+    },
+    {
+      "ref": "C.4.3",
+      "name": "Consent, Permissions & Restrictions Governance",
+      "domain": "C",
+      "domain_name": "Governance & Access",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        3,
+        5
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Permissions/restrictions not captured. Applied inconsistently or discovered late.",
+        "L2": "Inventory initiated. Key restrictions documented; enforcement mainly manual.",
+        "L3": "Most restrictions documented and used in decisions. Manual checks common.",
+        "L4": "Restrictions captured and enforced end-to-end. Audit trail and change control in place.",
+        "L5": "Automated policy enforcement. Routine audits; scalable reuse (e.g., standard models where applicable)."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Permissions/restrictions documented for most datasets and used in decisions",
+          "Evidence of manual compliance checks and handling of edge cases (logs)"
+        ],
+        "L4": [
+          "Permissions/restrictions inventory linked to datasets/cohorts + governance sign-off",
+          "End-to-end enforcement evidence (triage rules, provisioning controls, access controls)",
+          "Audit trail + change control evidence for restriction updates"
+        ],
+        "L5": [
+          "Automated policy enforcement evidence (rules engine, attribute-based controls, etc.)",
+          "Routine audit evidence (internal/external) covering compliance with permissions",
+          "Evidence of scalable reuse patterns shared (standard models, templates; dynamic consent where applicable)"
+        ]
+      }
+    },
+    {
+      "ref": "D.1.1",
+      "name": "Active User Base",
+      "domain": "D",
+      "domain_name": "Research Integration & Market Use",
+      "type": "Core",
+      "applicability_class": "Y",
+      "unit": "B",
+      "alliance_principles": [
+        6
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Minimal activity. <10 projects. Internal researchers only.",
+        "L2": "Growing with 10-30 projects. External engaging. Pipeline developing.",
+        "L3": "Established with 30-75 projects. Mix of academic, NHS, commercial. Growing.",
+        "L4": "Substantial >= 75 projects (or >= 15/million pop). Diverse community. Demand exceeds supply.",
+        "L5": "Large >= 150 projects. International. High retention. Community promoting."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Project register demonstrating Level 3 activity level and mix (definition stated)",
+          "Evidence of repeat use or sustained demand (pipeline metrics)"
+        ],
+        "L4": [
+          "Project register showing counts and segmentation (last 12 months definition)",
+          "Evidence of active external user engagement (applications, onboarded users)",
+          "Demand/throughput metrics (requests received vs provisioned)"
+        ],
+        "L5": [
+          "Retention/returning user metrics and pipeline evidence",
+          "Evidence of international engagement/collaboration where claimed",
+          "Independent validation or benchmarking of user base/activity (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "D.1.2",
+      "name": "Research Output & Impact",
+      "domain": "D",
+      "domain_name": "Research Integration & Market Use",
+      "type": "Core",
+      "applicability_class": "Y",
+      "unit": "B",
+      "alliance_principles": [
+        10
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No tracking. Publications and impacts unknown.",
+        "L2": "Tracking initiated. Reporting requirement. Baseline identified.",
+        "L3": "Regular tracking with annual reporting. Publications cited. Selected case studies.",
+        "L4": "Comprehensive tracking. >= 30 publications/year (or >= 6/million pop). Health service impact. Policy influence.",
+        "L5": "Leadership with high-impact publications. Influencing practice/policy. Economic impact quantified. International recognition."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Annual publication/output tracking linked to datasets/services",
+          "Initial impact case studies or policy/service influence examples"
+        ],
+        "L4": [
+          "Publication/output register linked to projects with annual reporting",
+          "Impact case studies (service/policy) with traceable evidence",
+          "Bibliometrics/altmetrics dashboard or report"
+        ],
+        "L5": [
+          "Evidence of high-impact outputs (citation metrics, journal quality) and translation to practice",
+          "Economic/health impact quantification where available (methods + results)",
+          "External recognition evidence (awards, invitations, international leadership)"
+        ]
+      }
+    },
+    {
+      "ref": "D.2.1",
+      "name": "Researcher Support & Helpdesk",
+      "domain": "D",
+      "domain_name": "Research Integration & Market Use",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        8
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No dedicated support. Researchers navigate independently.",
+        "L2": "Function identified. Basic documentation/FAQs. Variable response.",
+        "L3": "Dedicated helpdesk. Targets defined. Application and basic technical support.",
+        "L4": "Comprehensive: pre-submission, guidance, technical, analytical. SLAs (2-day response). Satisfaction surveyed.",
+        "L5": "Exemplary with proactive outreach. Account management. >= 80% satisfaction."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Dedicated support function with targets defined (SOP + staffing)",
+          "Ticketing/helpdesk evidence showing response and resolution activity"
+        ],
+        "L4": [
+          "Helpdesk SOP + ticketing system export showing SLA performance and volumes",
+          "Published support offer (pre-submission + technical/analytical) and staffing evidence",
+          "User satisfaction survey results and improvement actions"
+        ],
+        "L5": [
+          "Proactive engagement/account management evidence (plans + activity logs)",
+          "Sustained high satisfaction (>=80%) with methodology and response rate documented",
+          "Evidence of service improvements driven by user insight (release notes, backlog)"
+        ]
+      }
+    },
+    {
+      "ref": "D.2.2",
+      "name": "Training & Capability Building",
+      "domain": "D",
+      "domain_name": "Research Integration & Market Use",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "V",
+      "alliance_principles": [
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No provision. Researchers expected to have skills.",
+        "L2": "Needs identified. Ad-hoc training. Strategy developing.",
+        "L3": "Regular programme. Moderate uptake.",
+        "L4": "Comprehensive with multiple levels. Regular schedule. Linked to accreditation.",
+        "L5": "Extensive ecosystem. Co-developed. NHS analyst capacity building. Shared UK-wide."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Regular training programme delivered with attendance records",
+          "Feedback/evaluation evidence and iteration over time"
+        ],
+        "L4": [
+          "Training curriculum + schedule + attendance records",
+          "Evaluation evidence (feedback scores; learning outcomes where measured)",
+          "Evidence of linkage to accreditation or capability plans"
+        ],
+        "L5": [
+          "Co-developed programme evidence (partners, PPIE involvement where relevant)",
+          "Evidence of wide reach (NHS analyst capacity building) and reuse by others",
+          "Materials shared (open resources) and evidence of continuous improvement"
+        ]
+      }
+    },
+    {
+      "ref": "D.2.3",
+      "name": "Reproducibility & Analytic Provenance Support",
+      "domain": "D",
+      "domain_name": "Research Integration & Market Use",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        10
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No reproducibility support. Code/data/environments not versioned.",
+        "L2": "Basic expectations documented. Tooling limited; relies on individuals.",
+        "L3": "Standard tools available. Partial provenance; inconsistent adoption.",
+        "L4": "Reproducibility-by-design. Versioned data/environments and provenance capture supported.",
+        "L5": "Automated provenance and reusable pipelines. Routine reproducibility audit and sharing."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Standard reproducibility tooling available (e.g., version control, notebooks) and guidance",
+          "Evidence of partial adoption (some projects use versioning/provenance)"
+        ],
+        "L4": [
+          "Project template standards + guidance for reproducible analysis",
+          "Evidence of versioned datasets and environments (release tags, snapshots, package locks)",
+          "Provenance/audit logging evidence (who ran what, when, with which data/version)"
+        ],
+        "L5": [
+          "Automated provenance capture and containerised or equivalent reproducible environments",
+          "Reusable pipelines/workflows (CI/CD, tests) with examples",
+          "Evidence of reproducibility checks/audits and sharing tooling/practice beyond the service"
+        ]
+      }
+    },
+    {
+      "ref": "D.3.1",
+      "name": "Multi-Site Research Capability",
+      "domain": "D",
+      "domain_name": "Research Integration & Market Use",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No multi-site. Cannot combine with other UK nodes.",
+        "L2": "Requirements understood. Barriers identified. Pilot planned.",
+        "L3": "Possible with bespoke arrangements. >= 2 projects delivered. Effortful.",
+        "L4": "Routine capability. Standard processes. Participating in federated networks.",
+        "L5": "Leading capability. Proactively supporting UK-wide. Advanced federated. International."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Evidence of at least two multi-site projects delivered (cases)",
+          "Documented multi-site process and agreements (even if bespoke)"
+        ],
+        "L4": [
+          "Standard multi-site/federated process documentation + template agreements",
+          "Evidence of routine delivery (projects, networks participated in)",
+          "Interoperability testing evidence (data model alignment, gateway/federation tests)"
+        ],
+        "L5": [
+          "Evidence of leadership role in UK-wide multi-site delivery (host/coordinate)",
+          "Advanced federation capability evidence (scale, performance) and international links",
+          "Evidence of supporting other nodes (implementation packs, mentoring)"
+        ]
+      }
+    },
+    {
+      "ref": "D.3.2",
+      "name": "Commercial Access Framework",
+      "domain": "D",
+      "domain_name": "Research Integration & Market Use",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [
+        6,
+        7
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No framework. Commercial access unclear. No IP policy.",
+        "L2": "Policy developing. Pricing discussed. IP under review. Pilots exploring.",
+        "L3": "Access permitted under conditions. Pricing exists. IP policy drafted.",
+        "L4": "Clear framework with published pricing/terms. IP aligned with Fair Value principles. Revenue contributing.",
+        "L5": "Mature offering. Competitive. Comprehensive IP. Diverse partnership models. Good practice."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Commercial access permitted under defined conditions (policy) and pricing exists",
+          "Evidence of at least one commercial project delivered with documented terms"
+        ],
+        "L4": [
+          "Published commercial terms/pricing and IP policy aligned to Fair Value principles",
+          "Governance evidence showing non-preferential access decisions and transparency",
+          "Revenue/usage reporting and reinvestment approach (where applicable)"
+        ],
+        "L5": [
+          "Mature partnership models evidence (multiple routes, templates, case studies)",
+          "Evidence of competitiveness and operational efficiency (cycle times, repeat customers)",
+          "External assurance/independent review of commercial framework fairness (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "D.4.1",
+      "name": "Trial Data & Recruitment",
+      "domain": "D",
+      "domain_name": "Research Integration & Market Use",
+      "type": "Enhancement",
+      "applicability_class": "C4",
+      "unit": "B",
+      "alliance_principles": [
+        2
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No integration. Trial data flows separate.",
+        "L2": "Opportunities identified. Trials unit discussions. Feasibility assessed.",
+        "L3": "Selected services (feasibility, site identification). Some trial data flows.",
+        "L4": "Routine services. Follow-up linkable. IRAS/REC integration.",
+        "L5": "Comprehensive integration. Real-time recruitment. Contributing to UK trial acceleration."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Selected trial support services delivered (feasibility/site identification) with examples",
+          "Trial-related data linkage possible for some studies (case evidence)"
+        ],
+        "L4": [
+          "Documented trial support offer integrated with access (feasibility, recruitment, follow-up linkage)",
+          "Evidence of IRAS/REC alignment where applicable (process map + cases)",
+          "Performance evidence (cycle times, number of supported studies)"
+        ],
+        "L5": [
+          "Evidence of real-time or near-real-time recruitment/feasibility support for priority pathways",
+          "Demonstrated impact on trial delivery (metrics, case studies)",
+          "Contribution to UK trial acceleration capability (shared methods, partnerships)"
+        ]
+      }
+    },
+    {
+      "ref": "E.1.1",
+      "name": "Public Register of Data Uses",
+      "domain": "E",
+      "domain_name": "Public Trust & Transparency",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        10
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No register. Approved uses not disclosed.",
+        "L2": "Register developing. Content/format defined. Alliance standard reviewed.",
+        "L3": "Operational with basic info. Updates may be delayed. Partially aligned.",
+        "L4": "Comprehensive meeting Alliance standard. Updated within 30 days. Searchable, promoted.",
+        "L5": "Exemplary with outcomes. Public feedback. Aligned with HRA Make it Public. Good practice."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Operational register exists with basic fields and some delay tolerance",
+          "Evidence approved uses are consistently entered (sample audit)"
+        ],
+        "L4": [
+          "Public data use register URL meeting required fields (Alliance standard mapping)",
+          "Update log or evidence register is updated within 30 days (samples)",
+          "Governance evidence linking approvals to register entries (audit trail)"
+        ],
+        "L5": [
+          "Register includes outcomes/benefits and is actively promoted (usage analytics)",
+          "Mechanism for public feedback and evidence it is acted on",
+          "Independent review/assurance of register completeness/quality (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "E.1.2",
+      "name": "Annual Transparency Reporting",
+      "domain": "E",
+      "domain_name": "Public Trust & Transparency",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        10
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No annual reporting. No public accountability.",
+        "L2": "Report developing. Framework defined.",
+        "L3": "Basic report (projects, releases, users). Published.",
+        "L4": "Comprehensive: approvals, rejections, access times, satisfaction, outputs, incidents, plans. Within 3 months.",
+        "L5": "Best-practice with independent assurance. Co-developed with public. Influences improvement."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Published basic annual report (projects, releases, users) with date-stamp",
+          "Evidence reporting process exists and is repeated annually"
+        ],
+        "L4": [
+          "Published annual transparency report within 3 months (date-stamped)",
+          "Report includes required operational metrics (approvals/rejections, access times, incidents, plans)",
+          "Evidence report informs improvement actions (tracked action log)"
+        ],
+        "L5": [
+          "Independent assurance statement or audit of the report",
+          "Evidence of co-development with public/lay partners (process and outputs)",
+          "Year-on-year trend reporting demonstrating learning and improvement"
+        ]
+      }
+    },
+    {
+      "ref": "E.2.1",
+      "name": "Lay Involvement in Governance",
+      "domain": "E",
+      "domain_name": "Public Trust & Transparency",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        1
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No lay involvement. Decisions without public input.",
+        "L2": "Approach defined. Recruitment initiated. NIHR standards reviewed.",
+        "L3": "Lay members appointed. Limited influence. Perspective sought but not embedded.",
+        "L4": "Meaningful: >= 25% lay DAC. Voting rights. Support, remuneration per NIHR. Demonstrably influences.",
+        "L5": "Exemplary in strategic and operational. Lay co-chairs. Diverse. Contributing to engagement. PEDRI aligned."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Lay members appointed to governance with defined roles",
+          "Evidence lay input is sought and recorded (minutes/feedback)"
+        ],
+        "L4": [
+          "Lay membership evidence (>=25% where claimed) with role descriptions and voting rights",
+          "Support/remuneration evidence consistent with NIHR standards",
+          "Minutes/examples showing lay input influenced decisions"
+        ],
+        "L5": [
+          "Lay co-governance evidence (co-chairs/strategic roles) and diversity monitoring",
+          "Evaluation evidence of PPIE effectiveness and improvements made",
+          "Contribution to wider PPIE practice (shared methods, networks)"
+        ]
+      }
+    },
+    {
+      "ref": "E.2.2",
+      "name": "Public Engagement Capacity",
+      "domain": "E",
+      "domain_name": "Public Trust & Transparency",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [
+        1
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No dedicated capacity. Reactive, ad-hoc.",
+        "L2": "Strategy developing. Responsibility assigned. Activities planned.",
+        "L3": "Some activities. Not systematic or evaluated.",
+        "L4": "Dedicated function with budget/staff. Diverse audiences. Evaluated. Two-way dialogue.",
+        "L5": "Comprehensive with multiple channels. Co-designed. Social media. Proactive. Capacity shared."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Some engagement activity delivered (log) but not yet systematic",
+          "Evidence learning captured (feedback) even if evaluation limited"
+        ],
+        "L4": [
+          "Dedicated function evidence (staff/budget) and engagement plan",
+          "Activity log covering diverse audiences + evaluation results",
+          "Evidence outputs feed back into governance decisions (issues/actions)"
+        ],
+        "L5": [
+          "Co-designed engagement programme evidence (materials, partners, governance)",
+          "Multi-channel sustained delivery with measured reach/impact",
+          "Evidence of sharing capacity or supporting others (toolkits, training)"
+        ]
+      }
+    },
+    {
+      "ref": "E.3.1",
+      "name": "Opt-Out Management",
+      "domain": "E",
+      "domain_name": "Public Trust & Transparency",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "S",
+      "alliance_principles": [
+        1,
+        3
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No mechanism or not operational. Choices not respected.",
+        "L2": "Mechanism exists but incomplete. Some opted-out data may be included.",
+        "L3": "Operational. Opted-out excluded. Audit. Rate monitored.",
+        "L4": "Robust mechanism with routine auditing. Opt-outs are applied consistently across all relevant data flows. Clear public information is available and maintained.",
+        "L5": "Mature preferences management (granular where policy permits). Auditable, timely updates and proactive communications; opt-out rates reported contextually."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Operational opt-out mechanism with audit evidence",
+          "Monitoring of opt-out rates and documented handling of exclusions"
+        ],
+        "L4": [
+          "Policy and technical design showing opt-outs applied across all relevant data flows",
+          "Audit evidence (sampling/results) demonstrating correct application",
+          "Public-facing information (webpages/materials) kept current"
+        ],
+        "L5": [
+          "Evidence of preference management maturity (granular options where policy permits)",
+          "Audit evidence of timely updates and sustained compliance over time",
+          "Contextual reporting of opt-out rates with interpretation (not used as readiness proxy)"
+        ]
+      }
+    },
+    {
+      "ref": "E.3.2",
+      "name": "Public Benefit & Value",
+      "domain": "E",
+      "domain_name": "Public Trust & Transparency",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        1,
+        6
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No articulation. Benefits without visibility. No framework.",
+        "L2": "Framework developing using NDG. Commitment expressed. Initial mechanisms.",
+        "L3": "Benefit articulated using NDG. Examples. Commercial income partially reinvested. Statement required.",
+        "L4": "Clear proposition. NDG methodology applied consistently. Revenue supports public. Principles published.",
+        "L5": "Comprehensive with measurable return. Methodology contributes to sector. Community agreements. Public involved."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Public benefit statements required and examples available",
+          "Evidence NDG-aligned framework is used at least for priority decisions"
+        ],
+        "L4": [
+          "Published public benefit framework aligned to NDG (or equivalent) and applied in decisions",
+          "Evidence of consistent benefit statements in DAC approvals",
+          "Evidence of reinvestment/use of revenues to support public benefit (where applicable)"
+        ],
+        "L5": [
+          "Measurable return evidence (benefits tracked with metrics and attribution approach)",
+          "Public involvement evidence in benefit definition/assessment",
+          "Evidence of sharing/standardising benefit methodology beyond the organisation"
+        ]
+      }
+    },
+    {
+      "ref": "E.3.3",
+      "name": "Legitimacy, Assurance & Learning",
+      "domain": "E",
+      "domain_name": "Public Trust & Transparency",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        1,
+        10
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No meaningful assurance or learning. Issues repeat; accountability weak.",
+        "L2": "Assurance/learning plan exists. Complaints/appeals defined but not embedded.",
+        "L3": "Periodic internal assurance. Learning after incidents; limited visibility.",
+        "L4": "Regular independent review. Systematic learning with published actions.",
+        "L5": "Trusted model. Routine independent assurance; confidence measures tracked; good practice shared."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Periodic internal assurance activity and incident learning documented",
+          "Evidence actions are tracked even if not fully public (action log)"
+        ],
+        "L4": [
+          "Independent review/assurance report covering governance and transparency",
+          "Complaint/incident learning process evidence + published action log",
+          "Evidence of public feedback mechanisms and responses"
+        ],
+        "L5": [
+          "Routine independent assurance over time with comparative benchmarking",
+          "Public confidence/legitimacy measures tracked (survey/metrics) with trend",
+          "Evidence of sharing assurance/learning approach with other nodes"
+        ]
+      }
+    },
+    {
+      "ref": "F.1.1",
+      "name": "Funding Horizon",
+      "domain": "F",
+      "domain_name": "Sustainability",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Precarious. Short-term grants. Gap within 12 months.",
+        "L2": "Secured 1-2 years. Not baselined. Grant-dependent.",
+        "L3": "Core secured 2-3 years. Mixed baseline/grant. Medium-term concerns.",
+        "L4": "Core >= 3 years. Baseline covers essentials. Grants supplement not sustain.",
+        "L5": "Long-term >= 5 years. Diverse sources. Reserves. Enables innovation."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Funding documentation showing 2--3 year horizon for core operations",
+          "Evidence mixed baseline/grant model with identified medium-term risks"
+        ],
+        "L4": [
+          "Budget/funding documents showing >=3-year committed core funding",
+          "Evidence baseline funding covers essential operations (staff, platform, governance)",
+          "Financial plan showing grants supplement rather than substitute core funding"
+        ],
+        "L5": [
+          "Funding documents showing >=5-year horizon and diversified sources",
+          "Reserves policy and evidence of reserves held (audited accounts/statement)",
+          "Evidence funding enables improvement/innovation (investment plan)"
+        ]
+      }
+    },
+    {
+      "ref": "F.1.2",
+      "name": "Financial Risk Management",
+      "domain": "F",
+      "domain_name": "Sustainability",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No management. Single funder. No contingency.",
+        "L2": "Risks identified. Mitigation discussed. Limited diversification.",
+        "L3": "Basic with risks/mitigations. Some diversification. Minor contingency.",
+        "L4": "Active with register, plans, review. >= 3 sources. 3+ months reserves.",
+        "L5": "Comprehensive resilience. Scenario planning. Counter-cyclical. Enables opportunistic investment."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Basic risk register/mitigation list exists with some diversification",
+          "Evidence of contingency planning and periodic review"
+        ],
+        "L4": [
+          "Financial risk register with owners and review cycle",
+          "Evidence of diversification (>=3 funding sources) and contingency plans",
+          "Evidence of minimum reserves or equivalent mitigation (policy + current position)"
+        ],
+        "L5": [
+          "Scenario planning evidence (stress tests, sensitivity analysis)",
+          "Evidence of counter-cyclical or resilience planning (e.g., cost base flexibility)",
+          "Independent assurance of financial governance (audit committee minutes, external audit)"
+        ]
+      }
+    },
+    {
+      "ref": "F.2.1",
+      "name": "Cost Recovery & Pricing",
+      "domain": "F",
+      "domain_name": "Sustainability",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [
+        7
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No recovery. Services free/subsidised. True cost unknown.",
+        "L2": "Analysis initiated. Unit costs calculated. Principles discussed.",
+        "L3": "Model with pricing for some services. Partial recovery. Basic IP terms.",
+        "L4": "Comprehensive with rate card. Tiered. >= 50% recovery. IP aligned with Fair Value principles.",
+        "L5": "Transparent, sustainable pricing model (published rate card, justified subsidies, predictable invoicing). Fair Value aligned."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Pricing model exists for some services with documented unit costs and assumptions",
+          "Evidence of partial cost recovery tracking and basic IP terms"
+        ],
+        "L4": [
+          "Rate card and cost model documentation (unit cost basis) with governance sign-off",
+          "Evidence of tiering/subsidy rules and alignment to Fair Value principles",
+          "Evidence of cost recovery tracking (management accounts)"
+        ],
+        "L5": [
+          "Published pricing model with justified subsidies and predictable invoicing",
+          "Evidence pricing reviewed and improved (change log, stakeholder input)",
+          "Benchmarking or independent review of pricing fairness and sustainability (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "F.2.2",
+      "name": "Commercial Revenue & Partnerships",
+      "domain": "F",
+      "domain_name": "Sustainability",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [
+        7
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No commercial revenue. No partnership framework.",
+        "L2": "Opportunities identified. Pilots initiated. Principles developing.",
+        "L3": "Some revenue (<10%). Offering exists. Basic agreements.",
+        "L4": "Significant (10-30%). Active pipeline. Competitive. LSSD2 aligned. IP defined.",
+        "L5": "Substantial (>30%). Major partnerships. Sophisticated models. Good practice."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Evidence some commercial revenue exists, and basic partnership agreements are used",
+          "Due diligence and governance for partnerships documented"
+        ],
+        "L4": [
+          "Commercial partnership framework + standard agreements and due diligence process",
+          "Revenue evidence in the 10--30% range (or relevant threshold) with reporting",
+          "Evidence of compliance with policy (Fair Value/LSSD2 alignment where relevant)"
+        ],
+        "L5": [
+          "Evidence of substantial commercial activity (portfolio, pipeline, revenue share)",
+          "Case studies showing sophisticated partnership models and delivery at scale",
+          "Independent review/assurance of partnership governance (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "F.3.1",
+      "name": "Economic Impact Assessment",
+      "domain": "F",
+      "domain_name": "Sustainability",
+      "type": "Enhancement",
+      "applicability_class": "Y",
+      "unit": "B",
+      "alliance_principles": [],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No assessment. Contribution not quantified.",
+        "L2": "Commissioned/planned. Methodology developing.",
+        "L3": "Initial completed. Headlines available. May be limited.",
+        "L4": "Proportionate assessment within 3 years. Methodology documented. Findings published.",
+        "L5": "Regular. Validated. Trajectory tracked. Influences policy. Contributing nationally."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Initial economic impact assessment completed with headline results",
+          "Methodology documented and findings used in internal planning"
+        ],
+        "L4": [
+          "Published economic impact assessment within 3 years (methods + results)",
+          "Evidence methodology is proportionate and documented",
+          "Evidence findings inform strategy/investment decisions"
+        ],
+        "L5": [
+          "Repeated assessments over time with trend tracking",
+          "External validation/peer review of methodology and results",
+          "Evidence results influence wider policy or national narrative"
+        ]
+      }
+    },
+    {
+      "ref": "F.3.2",
+      "name": "Value Demonstration",
+      "domain": "F",
+      "domain_name": "Sustainability",
+      "type": "Enhancement",
+      "applicability_class": "Y",
+      "unit": "B",
+      "alliance_principles": [
+        10
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No systematic demonstration. Benefits claimed not evidenced.",
+        "L2": "Proposition articulated. Case studies developing. Metrics defined.",
+        "L3": "Portfolio of case studies. Metrics tracked. Communicated.",
+        "L4": "Comprehensive framework with multiple dimensions. Regular reporting. Supports funding case.",
+        "L5": "Sophisticated with attribution. ROI quantified. Influences policy. Framework shared."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Portfolio of case studies with defined metrics tracked",
+          "Evidence value narrative is used for funding and stakeholder reporting"
+        ],
+        "L4": [
+          "Value framework with defined dimensions and metrics",
+          "Regular reporting outputs (dashboards/reports) linked to activities",
+          "Case studies linked to metrics (attribution narrative)"
+        ],
+        "L5": [
+          "Attribution/ROI approach documented with quantified impacts",
+          "Evidence framework adopted/used for funding/policy decisions",
+          "Sharing of framework and peer learning evidence"
+        ]
+      }
+    },
+    {
+      "ref": "G.1.1",
+      "name": "Staff Capacity",
+      "domain": "G",
+      "domain_name": "Workforce & Culture",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Critical shortages. Key roles vacant. Insufficient. High temp reliance.",
+        "L2": "Challenges identified. Recruitment underway. Below requirements.",
+        "L3": "Adequate for core. Constraints in peak/specialist. Vacancy <15%.",
+        "L4": "Meets requirements with headroom. Vacancy <10%. Planning enables recruitment.",
+        "L5": "Optimal with strategic capacity. Vacancy <5%. Strong pipeline. Flexible surge."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Staffing baseline and vacancy metrics documented",
+          "Evidence capacity is sufficient for delivery of core services (throughput vs staffing)"
+        ],
+        "L4": [
+          "Workforce plan and org chart showing staffing meets requirements with headroom",
+          "Vacancy and recruitment metrics showing <10% vacancy rate (or equivalent)",
+          "Evidence of capability to manage peaks (rota/surge plan, prioritisation)"
+        ],
+        "L5": [
+          "Vacancy metrics showing <5% and evidence of stable pipeline (talent pathways)",
+          "Evidence of surge capacity/flex (cross-training, partnerships, reserve staff)",
+          "Retention/engagement evidence supporting sustained capacity"
+        ]
+      }
+    },
+    {
+      "ref": "G.1.2",
+      "name": "Staff Retention & Development",
+      "domain": "G",
+      "domain_name": "Workforce & Culture",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "High turnover. Limited development. Knowledge lost.",
+        "L2": "Concerns identified. Opportunities expanding. Exit interviews informing.",
+        "L3": "Moderate (<20% turnover). Pathways exist. Some progression.",
+        "L4": "Good (<15%). Clear pathways. Regular review. Succession identified. Satisfaction surveyed.",
+        "L5": "Excellent (<10%). Employer of choice. Comprehensive development. Alumni network."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Turnover tracked with basic development offer documented",
+          "Evidence of mitigation actions for retention risks"
+        ],
+        "L4": [
+          "Turnover metrics showing <15% with breakdown by role",
+          "Career pathways and development offer evidence (CPD plans, training records)",
+          "Staff satisfaction survey results and actions"
+        ],
+        "L5": [
+          "Turnover metrics <10% sustained with progression evidence",
+          "Evidence of employer-of-choice practices (benefits, recognition, development)",
+          "Knowledge management practices limiting loss (handover, documentation audits)"
+        ]
+      }
+    },
+    {
+      "ref": "G.1.3",
+      "name": "Strategic Workforce Planning",
+      "domain": "G",
+      "domain_name": "Workforce & Culture",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No planning. Reactive recruitment. No future view.",
+        "L2": "Planning initiated. Workforce profiled. Requirements scoped.",
+        "L3": "Basic 1-2 year plan. Key gaps identified. Annual review.",
+        "L4": "Comprehensive 3+ years aligned to strategy. Scenario planning. Pipeline development.",
+        "L5": "Sophisticated with workforce as asset. Long-term pipelines. Integrated with financial. Contributing nationally."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Workforce plan exists linking roles to expected demand",
+          "Evidence of recruitment/training pipeline actions underway"
+        ],
+        "L4": [
+          "3+ year workforce plan aligned to strategy with scenario elements",
+          "Pipeline development evidence (training partnerships, apprenticeships)",
+          "Annual review evidence and tracked delivery against plan"
+        ],
+        "L5": [
+          "Long-term pipeline evidence (multi-year agreements, national programmes)",
+          "Workforce treated as strategic asset (investment cases, metrics)",
+          "Contribution to wider workforce standards/initiatives (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "G.2.1",
+      "name": "Role Definition & Professionalization",
+      "domain": "G",
+      "domain_name": "Workforce & Culture",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Undefined. Staff outside competencies. No framework.",
+        "L2": "Definitions developing. Frameworks reviewed. Gap analysis.",
+        "L3": "Key roles defined. Framework for some. Job families emerging.",
+        "L4": "Comprehensive aligned to DDaT/SFIA. All mapped. Competency informs development.",
+        "L5": "Mature professional workforce. Contributing to standards. Recognised leader."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Role definitions documented with basic competency expectations",
+          "Evidence roles are used for recruitment/performance management"
+        ],
+        "L4": [
+          "Role framework mapped to DDaT/SFIA (or equivalent) across all roles",
+          "Job families and competency-based development evidence",
+          "Evidence recruitment and performance processes use the framework"
+        ],
+        "L5": [
+          "Evidence of mature professionalisation (certifications, progression, community leadership)",
+          "Contribution to sector standards/job families (optional)",
+          "External recognition evidence (awards, invitations, benchmarking)"
+        ]
+      }
+    },
+    {
+      "ref": "G.2.2",
+      "name": "Technical Skills",
+      "domain": "G",
+      "domain_name": "Workforce & Culture",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "B",
+      "alliance_principles": [],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Critical gaps (engineering, governance, analysis, AI/ML). Limited specialist access.",
+        "L2": "Assessment completed. Priority training. Development underway. Gaps remain.",
+        "L3": "Core skills present. Development programme. Specialists via partnerships.",
+        "L4": "Comprehensive across engineering, governance, security, analysis, data science/AI. Skills matrix. CPD.",
+        "L5": "Advanced including AI/ML, federated, PETs. Contributing to standards. Attracts talent."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Skills coverage assessed (skills matrix) with identified gaps",
+          "Evidence of training/contracting to address gaps"
+        ],
+        "L4": [
+          "Skills matrix covering engineering, governance, security, analysis, data science/AI",
+          "Evidence of training/CPD and specialist access where required",
+          "Assessment evidence showing coverage of required competencies"
+        ],
+        "L5": [
+          "Evidence of advanced capability (PETs, federation, AI/ML) with applied projects",
+          "Evidence of attracting/retaining talent (offers, partnerships, fellowships)",
+          "Contribution to standards or shared training materials (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "G.3.1",
+      "name": "Service Orientation",
+      "domain": "G",
+      "domain_name": "Workforce & Culture",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        8
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "\"Computer says no\". Requests as burden. Defensive.",
+        "L2": "Improvement priority. Feedback collected. Culture change initiated.",
+        "L3": "Improving. Feedback reviewed. Some embrace service culture.",
+        "L4": "Embedded. Needs prioritised. \"How can we help?\" Satisfaction tracked. Standards published.",
+        "L5": "Exemplary with proactive engagement. Empowered staff. Continuous improvement. Externally recognised."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Service standards and targets defined with evidence of delivery for some",
+          "Evidence of service mindset (feedback loops, issue resolution)"
+        ],
+        "L4": [
+          "Service standards published + evidence of adherence (tickets, SLAs, metrics)",
+          "User satisfaction survey results and improvement actions",
+          "Evidence of service culture embedded (training, leadership messages, behaviours)"
+        ],
+        "L5": [
+          "External recognition or benchmarking of service quality (awards, comparisons)",
+          "Evidence of proactive engagement and continuous improvement (roadmap, releases)",
+          "Sustained high satisfaction results with methodology documented"
+        ]
+      }
+    },
+    {
+      "ref": "G.3.2",
+      "name": "Collaboration & Knowledge Sharing",
+      "domain": "G",
+      "domain_name": "Workforce & Culture",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "B",
+      "alliance_principles": [
+        9
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Siloed. Limited collaboration. Knowledge held by individuals.",
+        "L2": "Improvement identified. Knowledge management started. Cross-team emerging.",
+        "L3": "Regular cross-team. Knowledge documented. Some external collaboration.",
+        "L4": "Strong collaborative culture. Communities of practice. Knowledge accessible. UK/international networks.",
+        "L5": "Collaborative leadership. Anchors networks. Knowledge flows. Attracts opportunities."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Knowledge sharing mechanisms exist (communities, docs) with participation evidence",
+          "Evidence of collaboration supporting delivery (shared artefacts, joint work)"
+        ],
+        "L4": [
+          "Communities of practice/knowledge base evidence + participation records",
+          "Knowledge management artefacts (wikis, SOP repositories) with usage stats",
+          "Evidence of UK/international network participation"
+        ],
+        "L5": [
+          "Evidence of leadership in collaboration networks (hosting, chairing, outputs)",
+          "Cross-organisational knowledge sharing outputs (toolkits, templates)",
+          "Measured improvement in delivery attributable to collaboration (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "H.1.1",
+      "name": "SDE Architecture & Standards",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        3
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No dedicated SDE. Ad-hoc access. Controls inconsistent.",
+        "L2": "SDE developing. Architecture defined. NHS SDE specs and SATRE reviewed.",
+        "L3": "Operational meeting basic requirements. ISO 27001 in progress. Some gaps vs gold-standard/SATRE.",
+        "L4": "Mature meeting NHS SDE gold-standard and SATRE mandatory. ISO 27001. DEA accredited.",
+        "L5": "Advanced exceeding baseline. Most SATRE recommended. Enables emerging uses. Contributing to UK standards."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "SDE architecture documented and aligned to key specs; gaps identified",
+          "Evidence of implemented controls and progress towards certification/accreditation"
+        ],
+        "L4": [
+          "Architecture documentation showing compliance with NHS SDE specs and SATRE mandatory controls",
+          "ISO 27001 certificate (scope includes service) and DEA accreditation evidence",
+          "Independent gap assessment evidence and remediation status"
+        ],
+        "L5": [
+          "Evidence of exceeding baseline (SATRE recommended controls implemented) with documentation",
+          "Continuous improvement evidence (security/architecture roadmap + delivery)",
+          "Contribution to UK standards/specs (working groups, shared patterns)"
+        ]
+      }
+    },
+    {
+      "ref": "H.1.2",
+      "name": "User Environment & Experience",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        8
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Poor experience. Difficult access. Tools outdated. Significant complaints.",
+        "L2": "Issues identified. Roadmap defined. Upgrades underway.",
+        "L3": "Functional. Standard tools (R, Python, SQL). Process works but cumbersome.",
+        "L4": "Good with modern environment. Tools updated. Onboarding <1 day. Satisfaction tracked.",
+        "L5": "Excellent matching commercial platforms. Rich tools. Rapid onboarding. >= 80% satisfaction."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Operational user environment with documented tooling and onboarding process",
+          "Evidence of user feedback collection and response"
+        ],
+        "L4": [
+          "Onboarding metrics showing <1 day for standard users + process evidence",
+          "Tooling/environment list showing modern, maintained stack",
+          "Satisfaction survey results and improvement actions"
+        ],
+        "L5": [
+          "Benchmarking against leading platforms (comparators and results)",
+          "Sustained high satisfaction (>=80%) with methodology documented",
+          "Evidence of rapid enhancement cycle driven by users (release notes/backlog)"
+        ]
+      }
+    },
+    {
+      "ref": "H.2.1",
+      "name": "Compute Scalability",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        3
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Severely limited. Analysis constrained. Frequent delays/failures.",
+        "L2": "Assessed. Upgrade requirements defined. Cloud/HPC evaluated.",
+        "L3": "Adequate for standard. Queuing for intensive. GPU limited. Cloud/HPC for exceptions.",
+        "L4": "Scalable meeting demand with headroom. GPU for AI/ML. Scaling pathway. Cost management.",
+        "L5": "Elastic auto-scaling. Advanced GPU. Cost-optimised. Benchmarked internationally."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Compute environment operational with scaling plan; utilisation monitored",
+          "Evidence of meeting routine demand without persistent capacity constraints"
+        ],
+        "L4": [
+          "Capacity and utilisation metrics showing headroom + scaling pathway",
+          "GPU availability evidence for AI/ML where required",
+          "Cost management evidence (chargeback/showback, monitoring)"
+        ],
+        "L5": [
+          "Elastic autoscaling evidence (architecture + performance under load tests)",
+          "Advanced GPU/accelerator capability evidence + utilisation metrics",
+          "Benchmarking evidence (UK/international) or independent performance review"
+        ]
+      }
+    },
+    {
+      "ref": "H.2.2",
+      "name": "Storage & Data Management",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "V",
+      "alliance_principles": [
+        3
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "Constrained. Retention unclear. No tiering. Costs unmanaged.",
+        "L2": "Assessment completed. Tiered strategy. Retention developing.",
+        "L3": "Adequate with tiering. Retention operational. Costs monitored.",
+        "L4": "Scalable. Comprehensive lifecycle. Costs optimised. Backup/DR tested.",
+        "L5": "Advanced with automated tiering/lifecycle. Costs benchmarked. Multi-site resilience."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Storage management process documented (retention, backup) with implementation evidence",
+          "Evidence of DR/backups functioning (test or restore logs)"
+        ],
+        "L4": [
+          "Storage lifecycle policy (tiering, retention) + implementation evidence",
+          "Backup/DR test results and audit trail",
+          "Cost optimisation evidence (monitoring, tiering usage)"
+        ],
+        "L5": [
+          "Automated lifecycle/tiering evidence with monitoring and alerts",
+          "Cost benchmarking evidence and continuous optimisation",
+          "Multi-site resilience evidence (replication, failover tests)"
+        ]
+      }
+    },
+    {
+      "ref": "H.3.1",
+      "name": "Security Certification & Audit",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        3
+      ],
+      "foundational": true,
+      "maturity_levels": {
+        "L1": "No certification. Controls undocumented/untested.",
+        "L2": "Assessment initiated. Gap analysis vs ISO 27001. Remediation plan.",
+        "L3": "Controls implemented. ISO 27001 in progress. Penetration testing. Incident process defined.",
+        "L4": "ISO 27001 certified (full scope). Annual penetration with remediation. Incident management. DEA accredited.",
+        "L5": "Continuous assurance and independent testing. Demonstrable security outcomes; additional certifications as appropriate."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Controls implemented with certification in progress and regular testing",
+          "Evidence of incident management process defined and used"
+        ],
+        "L4": [
+          "ISO 27001 certificate (full scope) + annual penetration test summary with remediation evidence",
+          "Incident management SOP + exercised/tested evidence",
+          "DEA accreditation evidence (where applicable)"
+        ],
+        "L5": [
+          "Continuous assurance evidence (control monitoring, frequent independent testing/red teaming)",
+          "Demonstrable security outcomes (incident metrics, risk reduction) and improvement actions",
+          "External assurance beyond ISO where appropriate (optional, scope stated)"
+        ]
+      }
+    },
+    {
+      "ref": "H.3.2",
+      "name": "Security Operations",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Core",
+      "applicability_class": "B0",
+      "unit": "V",
+      "alliance_principles": [
+        3
+      ],
+      "foundational": true,
+      "maturity_levels": {
+        "L1": "No dedicated ops. Monitoring ad-hoc. Incident response untested.",
+        "L2": "Function identified. Monitoring implementing. Incident plan drafted.",
+        "L3": "Basic ops monitoring key systems. Incident plan documented.",
+        "L4": "Mature with comprehensive monitoring. 24/7 alerting. Incident tested. Metrics reported.",
+        "L5": "Advanced with threat intelligence. Proactive hunting. Automated response. Benchmarked."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Operational security monitoring and incident response capabilities",
+          "Evidence of regular patching/vulnerability management and reporting"
+        ],
+        "L4": [
+          "Monitoring/alerting evidence (coverage, 24/7 or equivalent) and runbooks",
+          "Incident response exercises and lessons learned documentation",
+          "Security ops KPIs reported (MTTD/MTTR, patch cadence)"
+        ],
+        "L5": [
+          "Threat intelligence and hunting capability evidence (process + outputs)",
+          "Automation evidence (SOAR, auto-remediation) with controls",
+          "Benchmarking or independent assessment of security operations maturity"
+        ]
+      }
+    },
+    {
+      "ref": "H.3.3",
+      "name": "Privacy-Enhancing Technologies",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "V",
+      "alliance_principles": [
+        3
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No PETs. All analysis requires pseudonymised data in secure environment.",
+        "L2": "Options assessed. Federated/differential privacy pilots planned.",
+        "L3": "Selected capabilities (DataSHIELD, federated). Limited use cases.",
+        "L4": "Routinely available (federated, secure computation, differential privacy). Support. Governance.",
+        "L5": "Advanced with multiple technologies. PET default where appropriate. Contributing to standards."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "At least one PET capability piloted or operational for selected use cases",
+          "Governance guidance exists for when to use PETs"
+        ],
+        "L4": [
+          "Documented PET services available (federation, DP, secure computation) and governance",
+          "Use case evidence showing PETs used routinely where appropriate",
+          "Risk assessment templates/policies supporting PET selection"
+        ],
+        "L5": [
+          "Evidence PETs are default for suitable use cases (policy + adoption metrics)",
+          "Multiple PETs with validation evidence and staff capability",
+          "Contribution to PET standards/pilots beyond the service (optional)"
+        ]
+      }
+    },
+    {
+      "ref": "H.4.1",
+      "name": "ML/AI Platform Capability",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Enhancement",
+      "applicability_class": "O",
+      "unit": "V",
+      "alliance_principles": [
+        11
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No ML/AI capability. Cannot run ML workloads.",
+        "L2": "Requirements assessed. Platform evaluated. Pilot planned.",
+        "L3": "Basic with standard libraries. GPU limited. No MLOps.",
+        "L4": "Mature with MLOps (tracking, registry, pipelines). GPU. Governance defined.",
+        "L5": "Advanced full lifecycle. Automated pipelines. Monitoring. Synthetic data. Contributing to UK AI standards."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Basic ML platform components available (tools, GPU) for selected projects",
+          "Governance for ML workflows documented"
+        ],
+        "L4": [
+          "MLOps tooling evidence (experiment tracking, model registry, pipelines) and governance",
+          "GPU and platform capacity evidence supporting routine ML workloads",
+          "Security/privacy controls for ML workflows (data handling, model release)"
+        ],
+        "L5": [
+          "End-to-end ML lifecycle evidence (monitoring, drift, retraining, audit trails)",
+          "Advanced capabilities (synthetic data, federated learning where relevant) with evaluation",
+          "Contribution to UK AI standards/tooling or shared patterns"
+        ]
+      }
+    },
+    {
+      "ref": "H.4.2",
+      "name": "Responsible AI Practices",
+      "domain": "H",
+      "domain_name": "Infrastructure & Compute Capacity",
+      "type": "Core",
+      "applicability_class": "C3/4",
+      "unit": "V",
+      "alliance_principles": [
+        11
+      ],
+      "foundational": false,
+      "maturity_levels": {
+        "L1": "No consideration. Projects without ethics, bias assessment, or reporting.",
+        "L2": "Principles acknowledged. STANDING Together, TRIPOD-AI, CONSORT-AI reviewed. Some awareness.",
+        "L3": "Framework developing. Diversity assessed for some using STANDING Together. Guidelines referenced. Selected bias assessment.",
+        "L4": "Comprehensive framework. All projects assess diversity per STANDING Together. TRIPOD-AI/CONSORT-AI mandated. Bias embedded. NICE AI aligned.",
+        "L5": "Leading practice. Full STANDING Together. Contributing to standards. Advanced fairness monitoring. Scottish AI Playbook aligned. Sharing frameworks."
+      },
+      "minimum_evidence": {
+        "L3": [
+          "Responsible AI expectations documented and applied to some projects",
+          "Evidence of bias/representativeness assessment performed for selected AI studies"
+        ],
+        "L4": [
+          "Responsible AI framework/policy + mandated reporting standards (e.g., TRIPOD-AI/CONSORT-AI where relevant)",
+          "Evidence all AI projects assess dataset representativeness (e.g., STANDING Together) and bias",
+          "Governance evidence (review, approvals, monitoring) linked to project delivery"
+        ],
+        "L5": [
+          "Evidence of advanced fairness/monitoring and continuous improvement",
+          "External contribution/leadership in responsible AI standards/practice",
+          "Independent assurance or peer review of responsible AI governance (optional)"
+        ]
+      }
+    }
+  ]
+}

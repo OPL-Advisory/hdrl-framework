@@ -323,17 +323,17 @@ The current version has 64 indicators across 8 domains. Column key:
 
 | **Ref** | **Indicator** | **Type** | **Class** | **Level** | **HDRS** | **Alliance** |
 |----|----|----|----|----|----|----|
-| **A.1.1** | Core Dataset Availability | Core | B0 | S | 1 | 2 |
-| **A.1.2** | Data Currency & Timeliness | Core | B0 | S | 4 | 2 |
+| **A.1.1** | Core Dataset Availability | Core | B0 | S | 1,5 | 2 |
+| **A.1.2** | Data Currency & Timeliness | Core | B0 | S | 1,4 | 2 |
 | **A.1.3** | Data Equity & Representativeness | Core | B0 | S | 1 | 2 |
-| **A.2.1** | Patient Identifier Infrastructure | Core | B0 | S | 1,2,6 | 2 |
-| **A.2.2** | Linkage Services | Core | B0 | B | 1,2 | 2 |
+| **A.2.1** | Patient Identifier Infrastructure | Core | B0 | S | 1,6 | 2 |
+| **A.2.2** | Linkage Services | Core | B0 | B | 1,2,6 | 2 |
 | **A.3.1** | Federated Query Capability | Enh | O | B | 5 | 9 |
 | **A.3.2** | UK Gateway Connectivity | Core | B0 | B | 5 | 9 |
 | **A.3.3** | Federation Operating Model & Assurance | Core | B0 | B | 5 | 9 |
 | **A.4.1** | Consented Cohort Integration | Enh | C2 | S | 2 | 2 |
 | **A.4.2** | Multi-Modal Data Access | Enh | C3 | S | 3 | 2 |
-| **B.1.1** | Common Data Model Adoption | Core | C1 | B | 1 | 4 |
+| **B.1.1** | Common Data Model Adoption | Core | C1 | B | 1,5 | 4 |
 | **B.1.2** | Terminology Standards | Core | C1 | B | 1 | 4 |
 | **B.2.1** | Quality Framework & Monitoring | Core | B0 | B | 1 | 4 |
 | **B.2.2** | Data Documentation & Metadata | Core | B0 | B | 5 | 4 |

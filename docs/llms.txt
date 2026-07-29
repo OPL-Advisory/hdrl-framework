@@ -5,6 +5,9 @@
 ## Framework
 
 - [Framework Overview](https://hdrlframework.org/framework/overview/)
+- [Machine-readable Indicator Catalogue](https://hdrlframework.org/framework/indicator-catalogue/)
+- [HDRL applied-v1 indicator catalogue (JSON)](https://hdrlframework.org/data/hdrl-indicators-v1.json)
+- [HDRL applied-v1 indicator catalogue schema (JSON Schema)](https://hdrlframework.org/data/hdrl-indicators-v1.schema.json)
 - [Methodology](https://hdrlframework.org/framework/methodology/)
 - [Maturity Levels](https://hdrlframework.org/framework/maturity-levels/)
 - [Indicator Classification](https://hdrlframework.org/framework/classification/)

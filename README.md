@@ -14,6 +14,8 @@ The framework is published at <https://hdrlframework.org/>. The original GitHub 
 
 A concise machine-readable guide to the public site is available at <https://hdrlframework.org/llms.txt>.
 
+The canonical applied-v1 [indicator catalogue](https://hdrlframework.org/data/hdrl-indicators-v1.json), its [JSON Schema](https://hdrlframework.org/data/hdrl-indicators-v1.schema.json), and [SHA-256 checksums](https://hdrlframework.org/data/hdrl-indicators-v1.sha256) are published for tools that need the framework without parsing Markdown.
+
 The site includes:
 
 - the complete 8-domain, 64-indicator reference;
@@ -30,6 +32,8 @@ HDRL supports planning and improvement in the UK and internationally. Its first 
 [`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the canonical applied-v1 framework and method reference. Its SHA-256 checksum is recorded alongside it. The website's [methodology and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
 
 This file contains framework definitions and descriptors. It does not contain country-level evidence, detailed assessment records or unpublished scores.
+
+The machine-readable catalogue deliberately excludes the project-specific HDRS capability mappings retained in the applied-v1 Markdown. Contextual indicator sets should reference stable indicator IDs separately rather than redefine the indicators or their maturity descriptors.
 
 ## Local development
 

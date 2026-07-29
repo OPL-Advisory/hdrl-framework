@@ -1,0 +1,375 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hdrlframework.org/data/hdrl-indicators-v1.schema.json",
+  "title": "HDRL applied-v1 indicator catalogue",
+  "description": "Schema for the canonical machine-readable catalogue of the 64 HDRL applied-v1 indicators.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "catalogue_id",
+    "catalogue_version",
+    "schema_version",
+    "canonical_url",
+    "framework",
+    "source",
+    "license",
+    "indicator_count",
+    "maturity_level_names",
+    "vocabularies",
+    "domains",
+    "indicators"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://hdrlframework.org/data/hdrl-indicators-v1.schema.json"
+    },
+    "catalogue_id": {
+      "const": "hdrl-indicators"
+    },
+    "catalogue_version": {
+      "const": "1.0.0"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "canonical_url": {
+      "const": "https://hdrlframework.org/data/hdrl-indicators-v1.json"
+    },
+    "framework": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "url"
+      ],
+      "properties": {
+        "name": {
+          "const": "Health Data Readiness Level (HDRL) Framework"
+        },
+        "version": {
+          "const": "1.0"
+        },
+        "url": {
+          "const": "https://hdrlframework.org/"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "url",
+        "repository_path",
+        "sha256"
+      ],
+      "properties": {
+        "name": {
+          "const": "Health Data Readiness Level Framework V1.md"
+        },
+        "url": {
+          "const": "https://hdrlframework.org/framework/applied-v1-reference-files/"
+        },
+        "repository_path": {
+          "const": "reference/frozen-applied-v1/Health Data Readiness Level Framework V1.md"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identifier",
+        "url",
+        "attribution"
+      ],
+      "properties": {
+        "identifier": {
+          "const": "CC-BY-4.0"
+        },
+        "url": {
+          "const": "https://creativecommons.org/licenses/by/4.0/"
+        },
+        "attribution": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "indicator_count": {
+      "const": 64
+    },
+    "maturity_level_names": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5"
+      ],
+      "properties": {
+        "L1": {
+          "const": "Initial"
+        },
+        "L2": {
+          "const": "Developing"
+        },
+        "L3": {
+          "const": "Defined"
+        },
+        "L4": {
+          "const": "Managed"
+        },
+        "L5": {
+          "const": "Optimising"
+        }
+      }
+    },
+    "vocabularies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "indicator_types",
+        "applicability_classes",
+        "units"
+      ],
+      "properties": {
+        "indicator_types": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "Core",
+            "Enhancement"
+          ],
+          "properties": {
+            "Core": {
+              "type": "string",
+              "minLength": 1
+            },
+            "Enhancement": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "applicability_classes": {
+          "type": "object",
+          "minProperties": 9,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "units": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "S",
+            "V",
+            "B"
+          ],
+          "properties": {
+            "S": {
+              "const": "System"
+            },
+            "V": {
+              "const": "Service"
+            },
+            "B": {
+              "const": "Both"
+            }
+          }
+        }
+      }
+    },
+    "domains": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/domain"
+      }
+    },
+    "indicators": {
+      "type": "array",
+      "minItems": 64,
+      "maxItems": 64,
+      "items": {
+        "$ref": "#/$defs/indicator"
+      }
+    }
+  },
+  "$defs": {
+    "domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "name",
+        "narrative"
+      ],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "pattern": "^[A-H]$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "narrative": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "indicator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "name",
+        "domain",
+        "domain_name",
+        "type",
+        "applicability_class",
+        "unit",
+        "alliance_principles",
+        "foundational",
+        "maturity_levels",
+        "minimum_evidence"
+      ],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "pattern": "^[A-H]\\.[1-9][0-9]*\\.[1-9][0-9]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "domain": {
+          "type": "string",
+          "pattern": "^[A-H]$"
+        },
+        "domain_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "Core",
+            "Enhancement"
+          ]
+        },
+        "applicability_class": {
+          "enum": [
+            "B0",
+            "C1",
+            "C2",
+            "C3",
+            "C3/4",
+            "C4",
+            "C6",
+            "O",
+            "Y"
+          ]
+        },
+        "unit": {
+          "enum": [
+            "S",
+            "V",
+            "B"
+          ]
+        },
+        "alliance_principles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 11
+          }
+        },
+        "foundational": {
+          "type": "boolean"
+        },
+        "maturity_levels": {
+          "$ref": "#/$defs/maturityLevels"
+        },
+        "minimum_evidence": {
+          "$ref": "#/$defs/minimumEvidence"
+        }
+      }
+    },
+    "maturityLevels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5"
+      ],
+      "properties": {
+        "L1": {
+          "type": "string",
+          "minLength": 1
+        },
+        "L2": {
+          "type": "string",
+          "minLength": 1
+        },
+        "L3": {
+          "type": "string",
+          "minLength": 1
+        },
+        "L4": {
+          "type": "string",
+          "minLength": 1
+        },
+        "L5": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "minimumEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "L3",
+        "L4",
+        "L5"
+      ],
+      "properties": {
+        "L3": {
+          "$ref": "#/$defs/evidenceList"
+        },
+        "L4": {
+          "$ref": "#/$defs/evidenceList"
+        },
+        "L5": {
+          "$ref": "#/$defs/evidenceList"
+        }
+      }
+    },
+    "evidenceList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
