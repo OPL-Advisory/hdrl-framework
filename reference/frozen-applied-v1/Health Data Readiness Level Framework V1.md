@@ -2,13 +2,22 @@ Health Data Research Service
 
 Three Nations Readiness Assessment
 
-# Annex A: HDRL Framework v1.0 and Methodology
+# Annex A: HDRL Framework v1.0.1 and Methodology
 
 April 2026
 
 **Classification: Unrestricted — open access**
 
+**Current framework release:** v1.0.1 — 29 July 2026
+
 This document sets out the Health Data Readiness Level Framework, how it was developed and the method by which the maturity of the health data services across the devolved nations was assessed and hence their potential readiness for participating in the UK Health Data Research Service (HDRS).
+
+## Version history
+
+| **Version** | **Date** | **Change** |
+|----|----|----|
+| **1.0.1** | 29 July 2026 | Clarified that Baseline Core (B0), Capability Core (Cx), readiness profiles and Foundational Indicators describe HDRL's internal assessment logic. They do not create official HDRS requirements, participation gates or accreditation decisions. No indicators, maturity descriptors, minimum-evidence requirements, aggregation structure or assessment findings were changed. |
+| **1.0** | January 2026 | Original framework version used in the Three Nations Readiness Assessment. |
 
 # 1. Introduction
 
@@ -74,7 +83,7 @@ A strategy is in place, and initial steps have been taken. Implementation is jus
 
 Some progress has been made, and parts of the system are working. Targets are set but not always achieved consistently.
 
-**Level 4: Managed — Measured performance (anticipated collaboration baseline)**
+**Level 4: Managed — Measured performance**
 
 Operations are standardised and meet baseline requirements. Service Level Agreements (SLAs) are published and met.
 
@@ -90,17 +99,17 @@ HDRL keeps the existing Core vs Enhancement distinction (used for colour-coding 
 
 **Indicator Type:**
 
-- Core (green): essential controls and capabilities for participation.
+- Core (green): essential controls and capabilities within HDRL's baseline assessment profile.
 
-- Enhancement (amber): improves quality, efficiency, and scale but is not required for baseline participation.
+- Enhancement (amber): improves quality, efficiency, and scale but is not normally included in the general HDRL baseline profile.
 
 **Applicability Class:**
 
-- B0 — Baseline Core: mandatory for any system or service claiming HDRS participation (the "licence to operate" set).
+- B0 — Baseline Core: included in HDRL's general baseline assessment profile. This classification does not create an official HDRS participation requirement or "licence to operate".
 
-- Cx — Capability Core: mandatory only if a system or service claims the relevant HDRS capability x (1–6).
+- Cx — Capability Core: included when assessing the relevant capability module x (1–6) from the original project mapping. This classification does not create an official HDRS requirement.
 
-- O — Optional / Enhancement: good practice; informs roadmaps but not required for baseline or capability readiness.
+- O — Optional / Enhancement: good practice; informs roadmaps but is not normally included in baseline or capability-module scoring.
 
 - Y — Outcome / Context: reported for situational awareness and benefit tracking but excluded from readiness scoring because it is strongly influenced by external demand or context (e.g., research intensity, funding environment).
 
@@ -112,18 +121,18 @@ HDRL supports roadmap development rather than pass/fail judgements.
 
 ### Domain scores
 
-Calculate domain scores as the median of Core indicators excluding Outcome/Context (Y) within the domain. For baseline participation readiness, focus on Baseline Core indicators; for a specific HDRS capability, score the subset of indicators mapped to that capability (including any capability-defining enhancements). Enhancement indicators inform the overall picture and roadmap but do not affect baseline domain scores unless explicitly included in a capability module. Outcome/Context (Y) indicators are reported separately and do not affect readiness scoring.
+Calculate domain scores as the median of Core indicators excluding Outcome/Context (Y) within the domain. For the general HDRL baseline profile, focus on Baseline Core indicators; for a specific capability module from the original project mapping, score the subset of indicators mapped to that capability (including any capability-defining enhancements). Enhancement indicators inform the overall picture and roadmap but do not affect baseline domain scores unless explicitly included in a capability module. Outcome/Context (Y) indicators are reported separately and do not affect readiness scoring.
 
 ### Indicative readiness profiles
 
 | **Profile** | **Characteristics** |
 |----|----|
 | **Emerging** | Majority of Baseline Core at Level 1–2. Significant foundational work required. |
-| **Developing** | Majority of Baseline Core at Level 2–3. Active improvement. May participate with roadmap and support. |
-| **Managed** | Majority of Baseline Core at Level 3–4, none below Level 2. Meets baseline requirements. |
+| **Developing** | Majority of Baseline Core at Level 2–3. Active improvement supported by a roadmap. |
+| **Managed** | Majority of Baseline Core at Level 3–4, none below Level 2. Meets the indicative HDRL baseline profile. |
 | **Optimising** | Majority of Baseline Core at Level 4–5. Exceeds baseline. Potential exemplar. |
 
-**Important:** These profiles support planning, not accreditation. HDRS participation decisions are made through separate governance. Capability module readiness should be reported alongside the baseline profile.
+**Important:** These profiles support planning, not accreditation. They do not create an HDRS participation gate or decision; any such decision is made through separate programme governance. Capability-module results should be reported alongside the baseline profile.
 
 ## 2.4 Domain structure
 
@@ -271,15 +280,15 @@ For system-level scoring where multiple services exist, default approach is to r
 
 To make HDRL outputs decision-useful, produce a concise readiness statement in addition to numeric scores.
 
-- **Ready (baseline met):** Baseline Core (B0) shows a Managed/Optimising profile, and no foundational indicator is below the minimum acceptable level.
+- **Ready (HDRL baseline profile met):** Baseline Core (B0) shows a Managed/Optimising profile, and no Foundational Indicator is below the proposed minimum level within HDRL's assessment logic.
 
 - **Ready with conditions:** Baseline profile is Developing/Managed, but specific gaps are documented with a time-bound delivery plan (or capability modules are not yet met).
 
-- **Not ready (foundational indicator failed):** One or more foundational indicators fail the minimum level, or Baseline Core is predominantly Level 1–2.
+- **HDRL baseline profile not met:** One or more Foundational Indicators are below the proposed minimum level, or Baseline Core is predominantly Level 1–2.
 
 ## 4.5 Foundational indicators
 
-The following indicators are treated as non-negotiable for baseline participation and should be explicitly reported:
+The following are proposed Foundational Indicators within HDRL's baseline assessment logic and should be explicitly reported:
 
 - **C.1.1** Legal basis for processing
 
@@ -295,7 +304,7 @@ Programmes may choose to add others (e.g., C.2.3 ethics integration; E.1.1 trans
 
 **Note:**
 
-Thresholds (e.g., "minimum acceptable level") should be validated using UK benchmarking and may be adjusted over time.
+The proposed thresholds should be validated using UK benchmarking and may be adjusted over time. They are not established HDRS participation requirements.
 
 ## 4.6 Capability module reporting
 
@@ -313,7 +322,7 @@ The current version has 64 indicators across 8 domains. Column key:
 
 - Type — Core (43) or Enhancement (21).
 
-- Class — Applicability Class: B0 = Baseline Core (mandatory for any HDRS participation); C1–C6 = Capability Core (mandatory only when that HDRS capability is claimed; some Enhancements are capability-defining); O = Optional/Enhancement; Y = Outcome/Context. Current distribution: B0 (37), Cx (7), O (16), Y (4).
+- Class — Applicability Class: B0 = Baseline Core (included in HDRL's general baseline profile); C1–C6 = Capability Core (included when the relevant historical capability module is assessed; some Enhancements are capability-defining); O = Optional/Enhancement; Y = Outcome/Context. These classes do not create official HDRS requirements. Current distribution: B0 (37), Cx (7), O (16), Y (4).
 
 - Level — S=System (11), V=Service (14), B=Both (39).
 
@@ -2800,11 +2809,11 @@ How to read the matrix:
 
 - "All" — cross-cutting indicator that applies to every capability.
 
-- "Cx" — capability-defining indicator (mandatory when that capability is claimed).
+- "Cx" — capability-defining indicator included when that historical capability module is assessed.
 
 - "•" — indicator explicitly mapped to that capability in the Indicator Summary.
 
-Applicability Class (Section 2.2) governs what is required in an assessment: **Cx** indicators are mandatory when that capability is claimed; **B0** indicators are baseline prerequisites for participation; **O** are optional enhancements; **Y** are outcomes/context (reported separately).
+Applicability Class (Section 2.2) governs HDRL's assessment population: **Cx** indicators are included when that historical capability module is assessed; **B0** indicators form the general HDRL baseline profile; **O** are optional enhancements; **Y** are outcomes/context (reported separately). These classifications do not create official HDRS participation requirements.
 
 | **Ref** | **Indicator** | **Class** | **C1: Linked national-scale data** | **C2: Consented cohort data** | **C3: Multi-modal data** | **C4: Trial acceleration** | **C5: Single-entry point w/ SDEs** | **C6: Cross-sector linkage** |
 |----|----|----|:--:|:--:|:--:|:--:|:--:|:--:|

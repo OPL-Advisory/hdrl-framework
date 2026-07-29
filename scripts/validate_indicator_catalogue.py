@@ -314,6 +314,25 @@ def main() -> None:
     jsonschema.validate(catalogue, schema)
 
     require(
+        "# Annex A: HDRL Framework v1.0.1 and Methodology" in markdown
+        and "| **1.0.1** | 29 July 2026 |" in markdown,
+        "The framework source version or change log is incomplete",
+    )
+    for retired_wording in (
+        'mandatory for any system or service claiming HDRS participation',
+        "treated as non-negotiable for baseline participation",
+        "B0 = Baseline Core (mandatory for any HDRS participation)",
+        "B0** indicators are baseline prerequisites for participation",
+    ):
+        require(
+            retired_wording not in markdown,
+            f"Retired programme-gate wording remains: {retired_wording}",
+        )
+    require(
+        catalogue["framework"]["version"] == "1.0.1",
+        "Catalogue framework version is not 1.0.1",
+    )
+    require(
         catalogue["source"]["sha256"] == sha256(SOURCE),
         "Catalogue source checksum does not match applied v1",
     )

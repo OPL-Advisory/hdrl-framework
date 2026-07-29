@@ -11,22 +11,30 @@ schema_type: citation
 | | |
 |:--|:--|
 | **Full name** | Health Data Readiness Level (HDRL) Assessment Framework |
-| **Version** | 1.0 |
-| **Framework date** | January 2026 |
+| **Current version** | 1.0.1 |
+| **Current release date** | 29 July 2026 |
+| **Original applied version** | 1.0 — January 2026 |
 | **Validation status** | Evidence-informed and formatively applied; further independent validation is required |
 | **Originated and developed by** | OPL Advisory Ltd |
 | **Original application** | 3 Nations Readiness Assessment for Scotland, Wales and Northern Ireland |
 | **Commissioner** | Research Data Scotland, on behalf of the devolved nations |
 | **Intellectual property rights owner** | Research Data Scotland |
 
-The website is a navigable presentation of the framework used in the 3 Nations Readiness Assessment. Research Data Scotland owns the intellectual property rights in the commissioned project outputs. The framework methodology is made openly available under CC BY 4.0 in fulfilment of the project's open-access aim, with OPL Advisory credited as its originator and developer. The eight-domain structure, 64 indicators, classifications and five maturity levels remain those of HDRL Framework v1.0.
+The website is a navigable presentation of the framework used in the 3 Nations Readiness Assessment, together with the approved v1.0.1 clarification release. Research Data Scotland owns the intellectual property rights in the commissioned project outputs. The framework methodology is made openly available under CC BY 4.0 in fulfilment of the project's open-access aim, with OPL Advisory credited as its originator and developer. The eight-domain structure, 64 indicators, classifications and five maturity levels remain those used in HDRL Framework v1.0.
 
-!!! info "Version 1.0 terminology"
-    This site uses the framework's maturity-level names: Initial, Developing, Defined, Managed and Optimising. The indicator structure, descriptors and scoring logic are unchanged from HDRL v1.0.
+!!! info "Version 1.0.1 scope"
+    Version 1.0.1 clarifies that Baseline Core, Capability Core, readiness profiles and Foundational Indicators describe HDRL's internal assessment logic. They do not create official HDRS requirements, participation gates or accreditation decisions. The indicator structure, maturity descriptors, minimum-evidence requirements, aggregation structure and assessment findings are unchanged from v1.0.
+
+## Change log
+
+| Version | Date | Change |
+|:--|:--|:--|
+| **1.0.1** | 29 July 2026 | Clarified programme status and participation language in the source and website. No method, indicator, evidence or assessment-result changes. |
+| **1.0** | January 2026 | Original framework version used in the Three Nations Readiness Assessment. |
 
 ## Suggested citation
 
-> OPL Advisory Ltd. *Health Data Readiness Level (HDRL) Assessment Framework*. Version 1.0. January 2026. Commissioned by and intellectual property rights owned by Research Data Scotland. <https://hdrlframework.org/>.
+> OPL Advisory Ltd. *Health Data Readiness Level (HDRL) Assessment Framework*. Version 1.0.1. 29 July 2026. Commissioned by and intellectual property rights owned by Research Data Scotland. <https://hdrlframework.org/>.
 
 When citing an assessment, also identify the system or service assessed, the assessment date, scope, evidence standard and assessor.
 
@@ -66,7 +74,7 @@ Research Data Scotland and the respective nations retain control over those asse
 To preserve comparability and avoid misleading claims:
 
 - identify any changes to indicator wording, classifications, thresholds or aggregation;
-- do not describe an adapted instrument as HDRL v1.0 without clearly recording the adaptation;
+- do not describe an adapted instrument as HDRL v1.0 or v1.0.1 without clearly recording the adaptation;
 - retain the distinction between framework assessment and official accreditation or participation decisions;
 - document the evidence and assessment date behind every score;
 - obtain permission from Research Data Scotland and, where relevant, the assessed nation before publishing non-public evidence, detailed assessment records or results outside the authorised Final Report; and
@@ -74,11 +82,11 @@ To preserve comparability and avoid misleading claims:
 
 ## Source and corrections
 
-The complete applied-v1 source of record, machine-readable catalogue, JSON Schema and release-wide checksums are available from [Framework Files and Data](framework/applied-v1-reference-files.md). The website source and version history remain available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
+The complete versioned source of record, machine-readable catalogue, JSON Schema and release-wide checksums are available from [Framework Files and Data](framework/applied-v1-reference-files.md). The website source and version history remain available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
 
 A concise machine-readable guide to the site's public resources is available at [`/llms.txt`](https://hdrlframework.org/llms.txt).
 
-For factual corrections or proposed improvements to the website presentation, please [open a GitHub issue](https://github.com/OPL-Advisory/hdrl-framework/issues/new){ target="_blank" rel="noopener" }. Changes to the framework itself should be versioned explicitly so that HDRL v1.0 remains reproducible.
+For factual corrections or proposed improvements to the website presentation, please [open a GitHub issue](https://github.com/OPL-Advisory/hdrl-framework/issues/new){ target="_blank" rel="noopener" }. Changes to the framework itself should be versioned explicitly so that the version used for an assessment and later public releases remain traceable.
 
 !!! info "Version discipline"
     Readiness changes over time. A future framework version or reassessment should not silently overwrite the structure, evidence or interpretation of a previous assessment.

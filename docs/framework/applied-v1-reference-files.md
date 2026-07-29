@@ -1,11 +1,11 @@
 ---
 title: Framework Files and Data
-description: Download the complete HDRL Framework v1.0 method, machine-readable indicator catalogue, JSON Schema and checksums.
+description: Download the complete HDRL Framework v1.0.1 method, machine-readable indicator catalogue, JSON Schema and checksums.
 ---
 
 # Framework Files and Data
 
-This page provides the versioned files for reading, applying and building with the **HDRL Framework v1.0**.
+This page provides the versioned files for reading, applying and building with the **HDRL Framework v1.0.1**.
 
 ## Choose the right format
 
@@ -17,18 +17,18 @@ This page provides the versioned files for reading, applying and building with t
 | Verify the exact published files | [SHA-256 checksums](#versions-and-integrity) |
 | Read the research account and compact indicator table | [medRxiv paper and Supplementary Table S1](#research-publication) |
 
-!!! important "Source hierarchy and historical status"
-    The Markdown file is the frozen, complete applied-v1 source of record. It preserves the historical HDRS-specific assessment language used for the 2025–26 project. That language is retained for reproducibility and must not be interpreted as a current HDRS standard, participation gate or endorsement. The public [How to Apply HDRL](using-the-framework.md) and [Indicator Classification](classification.md) pages provide the current public interpretation of HDRL's internal logic.
+!!! important "Source hierarchy and programme status"
+    The Markdown file is the complete versioned source of record for HDRL v1.0.1. It now states directly that Baseline Core, Capability Core, readiness profiles and Foundational Indicators describe HDRL's internal assessment logic and do not create official HDRS requirements, participation gates or accreditation decisions. Its short change log records the original v1.0 assessment release and the approved v1.0.1 clarification.
 
-    The JSON catalogue is the official machine-readable representation of the indicator records and is automatically checked against that Markdown. If a discrepancy is ever found, use the frozen applied-v1 source and [report it through GitHub](https://github.com/OPL-Advisory/hdrl-framework/issues){ target="_blank" rel="noopener" }.
+    The JSON catalogue is the official machine-readable representation of the indicator records and is automatically checked against that Markdown. If a discrepancy is ever found, use the versioned source of record and [report it through GitHub](https://github.com/OPL-Advisory/hdrl-framework/issues){ target="_blank" rel="noopener" }.
 
 ## Complete framework source — Markdown
 
-**Health Data Readiness Level Framework V1.md** contains the complete framework and method: purpose and scope, classifications, all 64 indicators and maturity descriptors, minimum evidence and assessor guidance, the historical project-specific capability map, and the methodology and evidence base.
+**Health Data Readiness Level Framework V1.md** contains the complete v1.0.1 framework and method: purpose and scope, version history, classifications, all 64 indicators and maturity descriptors, minimum evidence and assessor guidance, the historical project-specific capability map, and the methodology and evidence base.
 
 <div class="hdrl-button-grid" markdown>
 
-[Download the complete applied-v1 source as Markdown :material-download:](/downloads/health-data-readiness-level-framework-v1.md){ .md-button .md-button--primary download="health-data-readiness-level-framework-v1.md" }
+[Download the complete v1.0.1 source as Markdown :material-download:](/downloads/health-data-readiness-level-framework-v1.md){ .md-button .md-button--primary download="health-data-readiness-level-framework-v1.md" }
 
 </div>
 
@@ -45,7 +45,7 @@ The versioned JSON contains all 64 indicator references, names, domains, types, 
 </div>
 
 !!! warning "Catalogue scope"
-    The JSON is an indicator catalogue, not an executable assessment policy. It does not encode the full scoring population and calculation rules, N/A and inheritance handling, readiness-profile logic or the historical capability indicator sets. Tool builders should pair it with [How to Apply HDRL](using-the-framework.md), make assessment conventions explicit and avoid presenting inferred rules as part of HDRL v1.0.
+    The JSON is an indicator catalogue, not an executable assessment policy. It does not encode the full scoring population and calculation rules, N/A and inheritance handling, readiness-profile logic or the historical capability indicator sets. Tool builders should pair it with [How to Apply HDRL](using-the-framework.md), make assessment conventions explicit and avoid presenting inferred rules as part of HDRL v1.0.1.
 
 The JSON deliberately excludes the broader HDRS capability mappings that were specific to the initial 2025 project proposition. Those mappings remain in the Markdown for reproducibility, but should not be treated as current programme requirements or permanent properties of an indicator.
 
@@ -55,9 +55,9 @@ Future assessment-specific or purpose-specific indicator sets can reference the 
 
 | Artefact | Version | SHA-256 |
 |:--|---:|:--|
-| Complete Markdown method source | 1.0 | `fdf36fb92cd88319e3a9815aa14034fbc81c8ee66d3ef116e0175d5ea001c869` |
-| Indicator catalogue | 1.0.1 | `ac490dca5e6eb16a0723dcc94372b0e008b5d27f819690208eb10d3ac918aeba` |
-| JSON Schema | 1.0.1 | `4daf6c03577328635243c64a8a7ba4b663fb139118308db5906796c98649863e` |
+| Complete Markdown method source | 1.0.1 | `a6d0671c329759474b09f8271ecca487d25f48a6211a6fe286188235a735a4de` |
+| Indicator catalogue | 1.0.2 | `442a10be23a0ddec889785577fb8853db2296cc5b3a50929849025e27077cd47` |
+| JSON Schema | 1.0.2 | `0b2db036f399c3ef3dc79c59ca9681868ac32eac8d3de9f755b10de139288d9a` |
 
 The downloadable release manifest covers the Markdown source, catalogue and Schema. The catalogue also records the checksum of the exact Markdown source from which its descriptors and evidence requirements were verified. Framework, catalogue and Schema versions are recorded separately because a machine-readable format can be corrected or extended without silently changing the framework method.
 

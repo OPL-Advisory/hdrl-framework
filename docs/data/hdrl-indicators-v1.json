@@ -1,19 +1,19 @@
 {
   "$schema": "https://hdrlframework.org/data/hdrl-indicators-v1.schema.json",
   "catalogue_id": "hdrl-indicators",
-  "catalogue_version": "1.0.1",
-  "schema_version": "1.0.1",
+  "catalogue_version": "1.0.2",
+  "schema_version": "1.0.2",
   "canonical_url": "https://hdrlframework.org/data/hdrl-indicators-v1.json",
   "framework": {
     "name": "Health Data Readiness Level (HDRL) Framework",
-    "version": "1.0",
+    "version": "1.0.1",
     "url": "https://hdrlframework.org/"
   },
   "source": {
     "name": "Health Data Readiness Level Framework V1.md",
     "url": "https://hdrlframework.org/downloads/health-data-readiness-level-framework-v1.md",
     "repository_path": "reference/frozen-applied-v1/Health Data Readiness Level Framework V1.md",
-    "sha256": "fdf36fb92cd88319e3a9815aa14034fbc81c8ee66d3ef116e0175d5ea001c869"
+    "sha256": "a6d0671c329759474b09f8271ecca487d25f48a6211a6fe286188235a735a4de"
   },
   "license": {
     "identifier": "CC-BY-4.0",

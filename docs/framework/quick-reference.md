@@ -112,7 +112,7 @@ Compact index of all 64 indicators across eight domains. Use the [domain pages](
 ## Legend
 
 - **Type:** Core (essential) / Enh (Enhancement — good practice)
-- **Class:** B0 (Baseline Core — treated as baseline within HDRL v1.0's internal assessment logic), Cx (Capability x in the historical project mapping), O (Optional), Y (Outcome/Context — excluded from readiness scoring)
+- **Class:** B0 (Baseline Core — included in HDRL v1.0.1's general baseline assessment profile), Cx (Capability x in the historical project mapping), O (Optional), Y (Outcome/Context — excluded from readiness scoring)
 - **Unit:** S (System), V (Service), B (Both)
 - **Foundational:** five proposed Foundational Indicators within the B0 class; these assume a minimum L3 for baseline participation within the framework's own assessment logic
 
@@ -132,7 +132,7 @@ The five proposed Foundational Indicators are a **subset of the 37 B0 indicators
 
 ---
 
-*Source: Health Data Readiness Level Framework v1.0 — January 2026*
+*Source: Health Data Readiness Level Framework v1.0.1 — 29 July 2026*
 
 <div class="hdrl-next" markdown>
 

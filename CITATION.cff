@@ -12,7 +12,7 @@ preferred-citation:
   title: "Health Data Readiness Level (HDRL) Assessment Framework"
   authors:
     - name: "OPL Advisory Ltd"
-  version: "1.0"
+  version: "1.0.1"
   year: 2026
   url: "https://hdrlframework.org/"
   notes: "Commissioned by and intellectual property rights owned by Research Data Scotland."

@@ -7,7 +7,7 @@ description: How HDRL classifies its 64 indicators by type, applicability and un
 
 The **Health Data Readiness Level (HDRL)** Framework uses a dual classification system: the original **Core/Enhancement** distinction for continuity, plus an explicit **Applicability Class** for role-based assessment.
 
-!!! important "How to read 'mandatory'"
+!!! important "How to read applicability"
     The classification terms below describe the internal logic of HDRL assessments. They do not create official UK Health Data Research Service (HDRS) participation requirements—or requirements for any other programme—and do not replace decisions made through legal, governance, assurance or programme processes.
 
 ---
@@ -23,14 +23,14 @@ The **Health Data Readiness Level (HDRL)** Framework uses a dual classification 
 
 | Class | Name | Description |
 |:------|:-----|:------------|
-| **B0** | Baseline Core | Treated as mandatory for baseline participation within HDRL v1.0's internal assessment logic |
-| **Cx** | Capability Core | Mandatory within HDRL v1.0 **only when** assessing capability module x (1–6) from the original project mapping |
+| **B0** | Baseline Core | Included in HDRL v1.0.1's general baseline assessment profile |
+| **Cx** | Capability Core | Included in HDRL v1.0.1 **only when** assessing capability module x (1–6) from the original project mapping |
 | **O** | Optional / Enhancement | Good practice; informs roadmaps but not required for baseline or capability readiness |
 | **Y** | Outcome / Context | Reported for awareness and benefit tracking but **excluded from readiness scoring** |
 
 The C1–C6 codes preserve the six goals used in the framework's first project context. Three related but distinct mappings need to be kept separate:
 
-1. **Applicability Class (`Cx`)** identifies the seven capability-defining indicators in HDRL v1.0.
+1. **Applicability Class (`Cx`)** identifies the seven capability-defining indicators in HDRL v1.0.1.
 2. **Section 7 of the canonical applied-v1 method source** provides the broader indicator-to-capability map, including cross-cutting and other indicators relevant to each capability.
 3. **The 3 Nations assessment** used a selected subset of the broader mapping, documented with that application rather than treated as a permanent property of the core catalogue.
 

@@ -62,7 +62,7 @@ This evidence hierarchy helps surface an important distinction:
 - **Capacity gap:** capability exists, but staffing, funding or operating headroom limit the volume or pace that can be delivered.
 
 !!! note "Capability and evidence visibility"
-    HDRL v1.0 scores the capability demonstrated by the available evidence, so a result can reflect both operational maturity and the strength or visibility of its evidence. This protects against unsupported self-assessment, but the two concepts should be interpreted separately. A future validation phase should test whether capability maturity and evidence confidence are better recorded as distinct dimensions.
+    HDRL v1.0.1 scores the capability demonstrated by the available evidence, so a result can reflect both operational maturity and the strength or visibility of its evidence. This protects against unsupported self-assessment, but the two concepts should be interpreted separately. A future validation phase should test whether capability maturity and evidence confidence are better recorded as distinct dimensions.
 
 ## Keep an auditable assessment record
 
@@ -96,7 +96,7 @@ The applied-v1 method provides these rules:
 - Outcome/Context indicators (**Y**) are reported separately where data exist and do not contribute to readiness scoring.
 - Where a system contains multiple services, report the chosen aggregation approach and its coverage basis explicitly.
 
-HDRL v1.0 does not prescribe every implementation detail needed for interchangeable automated scoring. Before assessment begins, record how the team will handle partially applicable indicators, multi-part descriptors, even-number medians and display rounding. Do not compare or combine results that use materially different conventions.
+HDRL v1.0.1 does not prescribe every implementation detail needed for interchangeable automated scoring. Before assessment begins, record how the team will handle partially applicable indicators, multi-part descriptors, even-number medians and display rounding. Do not compare or combine results that use materially different conventions.
 
 ## Interpret the result responsibly
 

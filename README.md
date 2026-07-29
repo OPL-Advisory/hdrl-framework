@@ -29,7 +29,7 @@ HDRL supports planning and improvement in the UK and internationally. Its first 
 
 ## Framework files and data
 
-[`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the frozen, complete applied-v1 source of record. It preserves the historical HDRS-specific assessment language used for the 2025–26 project; that language must not be interpreted as a current HDRS standard, participation gate or endorsement. Its SHA-256 checksum is recorded in the release manifest. The website's [application guidance, development evidence and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
+[`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the complete versioned source of record for HDRL v1.0.1. This patch release clarifies within the source that its Baseline Core, Capability Core, readiness profiles and Foundational Indicators are parts of HDRL's internal assessment logic—not official HDRS requirements, participation gates or accreditation decisions. Its short change log records that no indicators, maturity descriptors, minimum-evidence requirements, aggregation structure or assessment findings changed. The SHA-256 checksum is recorded in the release manifest.
 
 This file contains framework definitions and descriptors. It does not contain country-level evidence, detailed assessment records or unpublished scores.
 
@@ -66,8 +66,8 @@ The framework-development and formative-application paper is available as a vers
 
 ## Version and licence
 
-**HDRL Framework v1.0** — January 2026.
+**HDRL Framework v1.0.1** — 29 July 2026. The original v1.0 framework was issued in January 2026 and used in the Three Nations Readiness Assessment.
 
-The framework methodology and public framework materials—including the frozen applied-v1 Markdown method source—are licensed under [Creative Commons Attribution 4.0 International](LICENSE.md). This licence does not publish or license unpublished assessment evidence, detailed country-level assessment records or other controlled project materials.
+The framework methodology and public framework materials—including the versioned Markdown method source—are licensed under [Creative Commons Attribution 4.0 International](LICENSE.md). This licence does not publish or license unpublished assessment evidence, detailed country-level assessment records or other controlled project materials.
 
 The website's software and theme customisations are not included in the CC BY 4.0 licence. No separate software licence is granted; third-party dependencies remain subject to their own licences.

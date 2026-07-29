@@ -332,8 +332,15 @@ def main() -> None:
         "Commissioned by and intellectual property rights owned by "
         "Research Data Scotland" in homepage
         and "Read the medRxiv preprint" in homepage
-        and "further independent validation is required" in homepage,
+        and "Further independent validation is required" in homepage
+        and "Open framework · Version 1.0.1" in homepage,
         "Homepage provenance or validation status is incomplete",
+    )
+    about = (SITE / "about" / "index.html").read_text(encoding="utf-8")
+    require(
+        "Version 1.0.1 scope" in about
+        and "Clarified programme status and participation language" in about,
+        "The public framework version history is incomplete",
     )
     keyboard_script = SITE / "assets" / "js" / "table-keyboard.js"
     require(

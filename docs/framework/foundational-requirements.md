@@ -1,6 +1,6 @@
 ---
 title: Proposed Foundational Indicators
-description: The five indicators that HDRL v1.0 proposes at Level 3 for its internal baseline profile, with their scope and limitations.
+description: The five indicators that HDRL v1.0.1 proposes at Level 3 for its internal baseline profile, with their scope and limitations.
 ---
 
 # Proposed Foundational Indicators

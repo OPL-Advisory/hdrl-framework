@@ -32,7 +32,7 @@ Commissioned by Research Data Scotland on behalf of the three devolved nations.
 > materials do not automatically extend to this Final Report.
 
 > **Editorial terminology note:** the report wording below uses "Level 2
-> (Repeatable)". The HDRL v1.0 framework reference uses "Level 2
+> (Repeatable)". The HDRL v1.0.1 framework reference uses "Level 2
 > (Developing)". The report wording is preserved unchanged.
 
 """

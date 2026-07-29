@@ -132,7 +132,7 @@ A health data service exists to enable research that improves health outcomes. T
 **ENHANCEMENT** · **C4** · **Both**
 
 !!! note "Capability module"
-    Within HDRL v1.0's original six-capability mapping, this indicator is mandatory only when assessing Capability 4 (Trial acceleration). The mapping preserves the initial 2025 UK Health Data Research Service (HDRS) proposition; it should not be treated here as a current programme requirement.
+    Within HDRL v1.0's original six-capability mapping, this indicator is included only when assessing Capability 4 (Trial acceleration). The mapping preserves the initial 2025 UK Health Data Research Service (HDRS) proposition; it should not be treated here as a current programme requirement.
 
 | Level | Description |
 |:------|:------------|

@@ -70,7 +70,7 @@ extra_css:
 extra_javascript:
   - assets/js/table-keyboard.js
 
-copyright: 'HDRL Framework v1.0 · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · Framework methodology and public framework materials: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a href="https://hdrlframework.org/about/">About &amp; reuse</a>'
+copyright: 'HDRL Framework v1.0.1 · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · Framework methodology and public framework materials: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a href="https://hdrlframework.org/about/">About &amp; reuse</a>'
 
 nav:
   - Home: index.md

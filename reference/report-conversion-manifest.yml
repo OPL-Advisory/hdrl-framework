@@ -1,16 +1,20 @@
 manifest_version: 1
-status: source_locked_permission_confirmed_draft_review
-publication_ready: false
+status: source_locked_permission_confirmed_publication_approved
+publication_ready: true
 
 implementation_baseline:
   frozen_launch_commit: 0c5d98a5f0d2a4e17d4ccf8a8bd2ba7a393539c3
   current_main_commit: 3847b640af6e694873912836119f7ce2fdfde314
-  applied_v1_source_sha256: fdf36fb92cd88319e3a9815aa14034fbc81c8ee66d3ef116e0175d5ea001c869
+  conversion_baseline_source_sha256: fdf36fb92cd88319e3a9815aa14034fbc81c8ee66d3ef116e0175d5ea001c869
+  current_framework_release: 1.0.1
+  current_framework_source_sha256: a6d0671c329759474b09f8271ecca487d25f48a6211a6fe286188235a735a4de
   baseline_change_authorised_on: 2026-07-20
+  framework_clarification_authorised_on: 2026-07-29
   note: >-
-    PR #9 is an authorised successor baseline aligning the public methodology
-    with the academic paper being prepared for submission. The PR B branch is
-    based on that commit and records its updated applied-v1 source checksum.
+    The conversion baseline records the source used while the accessible report
+    was prepared. HDRL v1.0.1 subsequently clarified programme-status language
+    without changing indicators, maturity descriptors, evidence requirements,
+    aggregation structure or assessment findings.
 
 authoritative_source:
   publication_page: https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/
@@ -32,12 +36,14 @@ publication_gate:
     Markdown and HTML on the HDRL Framework website.
   permission_interpretation_confirmed_by_project_owner: true
   public_branch_push_permitted: true
-  merge_permitted: false
-  deployment_permitted: false
+  final_publication_approval_on: 2026-07-29
+  final_publication_approval_by_project_owner: true
+  merge_permitted: true
+  deployment_permitted: true
   note: >-
-    RDS permission and the authoritative source lock allow the implementation
-    to be pushed as a draft pull request for review. Merge and deployment remain
-    blocked until the complete rendering receives Gate B3 publication approval.
+    RDS permission, the authoritative source lock, the completed independent
+    site-coherence review and the project owner's launch instruction satisfy
+    the publication gate.
 
 conversion:
   transcription_aid: >-
@@ -70,7 +76,7 @@ conversion:
     2026. Both published values are retained without editorial correction.
 
 qa:
-  rebased_validation_on: 2026-07-20
+  rebased_validation_on: 2026-07-29
   checksum_lock: pass
   markdown_input_checksum_lock: pass
   automated_text_comparison:
@@ -83,7 +89,7 @@ qa:
   pdf_visual_overview:
     status: pass
     pages_reviewed: 1-29
-    method: 120-dpi page renders and five six-page contact sheets
+    method: Page renders and five six-page contact sheets
   built_html_visual_review:
     status: pass
     widths: [2048, 1200, 800, 500, 320]
@@ -117,14 +123,14 @@ qa:
       Links are limited to organisation-owned pages for RDS, HDRS, the
       Scottish Safe Haven Network, SAIL Databank, the HSC Data Institute and
       NITRE, the Honest Broker Service, and the ABPI report.
-  manual_keyboard_review: pending_human_recheck_after_layout_revision
+  manual_keyboard_review: pass
   human_source_and_visual_review:
-    status: in_progress
+    status: pass
     evidence: >-
-      Initial Chrome on macOS review found the content comparison satisfactory
-      and keyboard behaviour broadly successful. The title, navigation, table
-      sizing and emphasis issues raised in that review have been revised;
-      complete page-by-page sign-off remains pending.
+      The final independent accessibility/editorial review, page-by-page PDF
+      contact-sheet review, automated narrative/table comparison and complete
+      desktop/mobile route sweeps passed. Identified focus, contrast, table and
+      source-notice issues were corrected and rechecked.
   schema_org_validation:
     local_strict_json_and_output_checks: pass
     external_validator: pass_code_snippet
@@ -132,79 +138,79 @@ qa:
     result: Report; 0 errors; 0 warnings
     evidence: Schema.org-validator-Report-0-errors-0-warnings.png
   final_public_safety_review:
-    status: pass_source_locked_draft_build
+    status: pass_publication_approved
     note: >-
       No local paths, internal preamble, working-document names, unpublished
       annexes or media assets are present. All report narrative and table
       content is accounted for in the authoritative published PDF. The added
       hyperlinks are source-verified navigational annotations and do not add
-      report claims. Merge and deployment remain blocked pending final human
-      source, visual, keyboard and publication approval.
+      report claims. The project owner approved public launch after the final
+      independent review.
 
 section_qa:
   - section: Cover and source framing
     pdf_pages: [1]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: Document Control
     pdf_pages: [2]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: Contents
     pdf_pages: [3, 4]
     automated_text: not_applicable
     conversion_visual: pass
     note: Replaced by native HTML navigation; no report wording added.
-    human_review: pending
+    human_review: pass
   - section: Glossary of Terms and Abbreviations
     pdf_pages: [5, 6, 7]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: Executive Summary
     pdf_pages: [8, 9, 10]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: 1. Introduction
     pdf_pages: [11, 12, 13]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: 2. Assessment Approach
     pdf_pages: [14, 15]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: 3. Cross-Nation Comparative Analysis
     pdf_pages: [16, 17, 18, 19, 20]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: 4. Use Case Analysis
     pdf_pages: [21, 22]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: 5. The Strategic Context
     pdf_pages: [23]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: 6. Recommendations
     pdf_pages: [24, 25, 26, 27]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: 7. Reflections for HDRS leadership
     pdf_pages: [28]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass
   - section: 8. Governance and Next Steps
     pdf_pages: [29]
     automated_text: pass
     conversion_visual: pass
-    human_review: pending
+    human_review: pass

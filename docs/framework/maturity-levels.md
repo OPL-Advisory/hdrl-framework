@@ -33,7 +33,7 @@ The **Health Data Readiness Level (HDRL)** Framework uses **five levels** to des
 - Service Level Agreements (SLAs) are published and met
 
 !!! tip "How to interpret Level 4"
-    In HDRL v1.0, **Level 4** describes measured and standardised performance. The original project treated it as an aspirational collaboration profile, not as a current HDRS or other programme threshold. Any use of a maturity level as a formal participation gate would require validation and an explicit decision by the relevant programme authority.
+    In HDRL v1.0.1, **Level 4** describes measured and standardised performance. The original project treated it as an aspirational collaboration profile, not as a current HDRS or other programme threshold. Any use of a maturity level as a formal participation gate would require validation and an explicit decision by the relevant programme authority.
 
 ## Level 5: Optimising — Continuous Improvement
 

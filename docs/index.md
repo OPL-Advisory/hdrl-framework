@@ -9,7 +9,7 @@ hide:
 
 <div class="hdrl-hero" markdown>
 
-<span class="hdrl-eyebrow">Open framework · Version 1.0</span>
+<span class="hdrl-eyebrow">Open framework · Version 1.0.1</span>
 
 # Make readiness for health data research visible
 
@@ -19,7 +19,7 @@ Its 64 indicators turn broad principles into a structured view of capability, ev
 
 **Commissioned by and intellectual property rights owned by Research Data Scotland; originated and developed by OPL Advisory Ltd.**
 
-**Validation status:** HDRL v1.0 has been applied formatively; further independent validation is required. [Review the evidence and limitations](framework/methodology.md#field-application-and-further-validation).
+**Validation status:** HDRL v1.0 was applied formatively; the current v1.0.1 clarification release does not change the method or that evidence base. Further independent validation is required. [Review the evidence and limitations](framework/methodology.md#field-application-and-further-validation).
 
 <div class="hdrl-cta" markdown>
 
