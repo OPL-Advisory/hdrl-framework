@@ -3,7 +3,7 @@
 {% block extrahead %}
   {% set social_description = page.meta.description if page and page.meta and page.meta.description else config.site_description %}
   {% set social_title = page.meta.social_title if page and page.meta and page.meta.social_title else page.title ~ " — HDRL Framework" %}
-  {% set social_image = config.site_url ~ "assets/images/hdrl-social-card.png" %}
+  {% set social_image = config.site_url ~ "assets/images/hdrl-social-card.png?v=3422eb0" %}
   {% set social_image_alt = "HDRL Framework — Make readiness for health data research visible" %}
   <meta property="og:title" content="{{ social_title }}" />
   <meta property="og:description" content="{{ social_description }}" />
