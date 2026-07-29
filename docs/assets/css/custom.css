@@ -59,15 +59,25 @@
 
 /* ---------- CTA button row ---------- */
 .hdrl-cta {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
   margin: 1.6rem 0 0;
-  justify-content: center;
+}
+
+.hdrl-cta > p {
+  display: contents;
 }
 
 .hdrl-cta .md-button {
-  min-width: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 3.2rem;
+  margin: 0;
   text-align: center;
   border-radius: 8px;
   font-weight: 600;
@@ -502,6 +512,10 @@ svg.feature-icon {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.hdrl-report-links {
+  margin: 1rem 0 1.5rem;
+}
+
 .hdrl-button-grid > p {
   display: contents;
 }
@@ -587,6 +601,7 @@ svg.feature-icon {
   .hdrl-value-grid,
   .hdrl-start-grid { grid-template-columns: 1fr; }
   .hdrl-practice { padding: 1.25rem; }
+  .hdrl-cta,
   .hdrl-button-grid,
   .hdrl-button-grid--two { grid-template-columns: 1fr; }
 }
