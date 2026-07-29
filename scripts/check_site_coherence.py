@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import posixpath
 import re
 from collections import Counter, defaultdict
@@ -204,6 +205,7 @@ def main() -> None:
     allowed_repeat_starts = (
         "This is an Outcome/Context indicator",
         "Framework overview",
+        "Use this source-defined minimum evidence",
     )
     repeated_paragraphs = {
         paragraph: routes
@@ -258,10 +260,88 @@ def main() -> None:
         'aria-label="All 64 HDRL indicators" tabindex="0"' in quick_reference,
         "Indicator Quick Reference table is not a labelled keyboard region",
     )
+    indicator_table = re.search(
+        r'<table class="hdrl-indicator-table">.*?</table>',
+        quick_reference,
+        flags=re.DOTALL,
+    )
+    require(
+        indicator_table is not None
+        and indicator_table.group(0).count("<tbody>") == 8
+        and indicator_table.group(0).count('scope="rowgroup"') == 8,
+        "Indicator Quick Reference does not expose eight valid row groups",
+    )
+    three_nations = (
+        SITE / "three-nations-assessment" / "index.html"
+    ).read_text(encoding="utf-8")
+    require(
+        re.search(
+            r'<div(?=[^>]*class="hdrl-table-scroll")'
+            r'(?=[^>]*role="region")'
+            r'(?=[^>]*aria-label="Historical capability mapping")'
+            r'(?=[^>]*tabindex="0")[^>]*>',
+            three_nations,
+        )
+        is not None,
+        "Historical capability mapping is not a labelled keyboard region",
+    )
+    domain_evidence_count = sum(
+        document.read_text(encoding="utf-8").count(
+            'class="hdrl-minimum-evidence"'
+        )
+        for document in sorted((SITE / "domains").glob("*/index.html"))
+    )
+    require(
+        domain_evidence_count == 64,
+        f"Expected minimum evidence for 64 indicators, found "
+        f"{domain_evidence_count}",
+    )
+
+    catalogue_path = SITE / "data" / "hdrl-indicators-v1.json"
+    catalogue = json.loads(catalogue_path.read_text(encoding="utf-8"))
+    require(
+        catalogue["source"]["url"]
+        == "https://hdrlframework.org/downloads/"
+        "health-data-readiness-level-framework-v1.md",
+        "Catalogue provenance URL is not the direct source artefact",
+    )
+    manifest = SITE / "data" / "hdrl-indicators-v1.sha256"
+    manifest_entries = manifest.read_text(encoding="utf-8").splitlines()
+    require(
+        len(manifest_entries) == 3,
+        "Release checksum manifest does not contain all three artefacts",
+    )
+    for line in manifest_entries:
+        expected, filename = line.split("  ", 1)
+        target = (manifest.parent / filename).resolve()
+        require(
+            target.is_relative_to(SITE.resolve()) and target.is_file(),
+            f"Release manifest target is invalid: {filename}",
+        )
+        require(
+            sha256(target) == expected,
+            f"Release manifest checksum mismatch: {filename}",
+        )
+
     homepage = (SITE / "index.html").read_text(encoding="utf-8")
     require(
         'class="hdrl-bridge" role="img"' not in homepage,
         "The meaningful homepage bridge is incorrectly exposed as one image",
+    )
+    require(
+        "Commissioned by and intellectual property rights owned by "
+        "Research Data Scotland" in homepage
+        and "Read the medRxiv preprint" in homepage
+        and "further independent validation is required" in homepage,
+        "Homepage provenance or validation status is incomplete",
+    )
+    keyboard_script = SITE / "assets" / "js" / "table-keyboard.js"
+    require(
+        keyboard_script.is_file()
+        and 'event.key === "ArrowRight"' in keyboard_script.read_text(
+            encoding="utf-8"
+        ),
+        "Keyboard support for horizontal table regions is missing",
     )
 
     print("Built site coherence checks passed")

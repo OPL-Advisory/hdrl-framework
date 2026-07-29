@@ -71,6 +71,14 @@ def main() -> None:
         "The canonical report URL is missing",
     )
     require(len(re.findall(r"<h1(?:\s|>)", document)) == 1, "Expected exactly one H1")
+    require(
+        'href="#report-source-note-title" class="md-skip"' in document,
+        "The skip link does not land on the accessible-version notice",
+    )
+    require(
+        "the report wording below uses “Level 2 (Repeatable)”" in document,
+        "The preserved Level 2 terminology is not explained",
+    )
 
     heading_levels = [int(level) for level in re.findall(r"<h([1-6])(?:\s|>)", document)]
     require(heading_levels and heading_levels[0] == 1, "The first heading is not H1")
@@ -170,6 +178,10 @@ def main() -> None:
     require(
         f'href="{EXPECTED_MARKDOWN_URL}"' in document,
         "The accessible Markdown download link is missing",
+    )
+    require(
+        'download="three-nations-readiness-assessment-final-report.md"' in document,
+        "The accessible Markdown link does not declare download semantics",
     )
     require("RDS publication page" in document, "The RDS publication-page link is missing")
     require(

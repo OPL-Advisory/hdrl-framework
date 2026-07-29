@@ -190,7 +190,12 @@ def find_blocked_keys(value: object, path: str = "$") -> list[str]:
 def validate_checksums() -> None:
     for line in CHECKSUMS.read_text(encoding="utf-8").splitlines():
         expected, filename = line.split("  ", 1)
-        path = CHECKSUMS.parent / filename
+        path = (
+            SOURCE
+            if filename
+            == "../downloads/health-data-readiness-level-framework-v1.md"
+            else CHECKSUMS.parent / filename
+        )
         require(path.is_file(), f"Checksum target is missing: {filename}")
         require(
             sha256(path) == expected,
@@ -311,6 +316,12 @@ def main() -> None:
     require(
         catalogue["source"]["sha256"] == sha256(SOURCE),
         "Catalogue source checksum does not match applied v1",
+    )
+    require(
+        catalogue["source"]["url"]
+        == "https://hdrlframework.org/downloads/"
+        "health-data-readiness-level-framework-v1.md",
+        "Catalogue source URL does not resolve directly to the source artefact",
     )
     validate_checksums()
 

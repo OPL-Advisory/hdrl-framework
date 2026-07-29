@@ -28,6 +28,8 @@ Compact index of all 64 indicators across eight domains. Use the [domain pages](
     <tr><th scope="row">A.3.3</th><td>Federation Operating Model &amp; Assurance</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">A.4.1</th><td>Consented Cohort Integration</td><td>Enh</td><td>C2</td><td>S</td><td></td></tr>
     <tr><th scope="row">A.4.2</th><td>Multi-Modal Data Access</td><td>Enh</td><td>C3</td><td>S</td><td></td></tr>
+  </tbody>
+  <tbody>
     <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain B: Data Semantics &amp; Quality</th></tr>
     <tr><th scope="row">B.1.1</th><td>Common Data Model Adoption</td><td>Core</td><td>C1</td><td>B</td><td></td></tr>
     <tr><th scope="row">B.1.2</th><td>Terminology Standards</td><td>Core</td><td>C1</td><td>B</td><td></td></tr>
@@ -35,6 +37,8 @@ Compact index of all 64 indicators across eight domains. Use the [domain pages](
     <tr><th scope="row">B.2.2</th><td>Data Documentation &amp; Metadata</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">B.3.1</th><td>Curated Dataset Availability</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
     <tr><th scope="row">B.3.2</th><td>Phenotype Library &amp; Validation</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+  </tbody>
+  <tbody>
     <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain C: Governance &amp; Access</th></tr>
     <tr><th scope="row">C.1.1</th><td>Legal Basis for Processing</td><td>Core</td><td>B0</td><td>S</td><td>Yes</td></tr>
     <tr><th scope="row">C.1.2</th><td>Legislative Environment</td><td>Enh</td><td>O</td><td>S</td><td></td></tr>
@@ -47,6 +51,8 @@ Compact index of all 64 indicators across eight domains. Use the [domain pages](
     <tr><th scope="row">C.4.1</th><td>Statistical Disclosure Control</td><td>Core</td><td>B0</td><td>V</td><td>Yes</td></tr>
     <tr><th scope="row">C.4.2</th><td>Researcher Accreditation</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">C.4.3</th><td>Consent, Permissions &amp; Restrictions Governance</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+  </tbody>
+  <tbody>
     <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain D: Research Integration &amp; Market Use</th></tr>
     <tr><th scope="row">D.1.1</th><td>Active User Base</td><td>Core</td><td>Y</td><td>B</td><td></td></tr>
     <tr><th scope="row">D.1.2</th><td>Research Output &amp; Impact</td><td>Core</td><td>Y</td><td>B</td><td></td></tr>
@@ -56,6 +62,8 @@ Compact index of all 64 indicators across eight domains. Use the [domain pages](
     <tr><th scope="row">D.3.1</th><td>Multi-Site Research Capability</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">D.3.2</th><td>Commercial Access Framework</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
     <tr><th scope="row">D.4.1</th><td>Trial Data &amp; Recruitment</td><td>Enh</td><td>C4</td><td>B</td><td></td></tr>
+  </tbody>
+  <tbody>
     <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain E: Public Trust &amp; Transparency</th></tr>
     <tr><th scope="row">E.1.1</th><td>Public Register of Data Uses</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">E.1.2</th><td>Annual Transparency Reporting</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
@@ -64,6 +72,8 @@ Compact index of all 64 indicators across eight domains. Use the [domain pages](
     <tr><th scope="row">E.3.1</th><td>Opt-Out Management</td><td>Core</td><td>B0</td><td>S</td><td></td></tr>
     <tr><th scope="row">E.3.2</th><td>Public Benefit &amp; Value</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">E.3.3</th><td>Legitimacy, Assurance &amp; Learning</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
+  </tbody>
+  <tbody>
     <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain F: Sustainability</th></tr>
     <tr><th scope="row">F.1.1</th><td>Funding Horizon</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">F.1.2</th><td>Financial Risk Management</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
@@ -71,6 +81,8 @@ Compact index of all 64 indicators across eight domains. Use the [domain pages](
     <tr><th scope="row">F.2.2</th><td>Commercial Revenue &amp; Partnerships</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
     <tr><th scope="row">F.3.1</th><td>Economic Impact Assessment</td><td>Enh</td><td>Y</td><td>B</td><td></td></tr>
     <tr><th scope="row">F.3.2</th><td>Value Demonstration</td><td>Enh</td><td>Y</td><td>B</td><td></td></tr>
+  </tbody>
+  <tbody>
     <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain G: Workforce &amp; Culture</th></tr>
     <tr><th scope="row">G.1.1</th><td>Staff Capacity</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">G.1.2</th><td>Staff Retention &amp; Development</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
@@ -79,6 +91,8 @@ Compact index of all 64 indicators across eight domains. Use the [domain pages](
     <tr><th scope="row">G.2.2</th><td>Technical Skills</td><td>Core</td><td>B0</td><td>B</td><td></td></tr>
     <tr><th scope="row">G.3.1</th><td>Service Orientation</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>
     <tr><th scope="row">G.3.2</th><td>Collaboration &amp; Knowledge Sharing</td><td>Enh</td><td>O</td><td>B</td><td></td></tr>
+  </tbody>
+  <tbody>
     <tr class="hdrl-domain-row"><th colspan="6" scope="rowgroup">Domain H: Infrastructure &amp; Compute Capacity</th></tr>
     <tr><th scope="row">H.1.1</th><td>SDE Architecture &amp; Standards</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>
     <tr><th scope="row">H.1.2</th><td>User Environment &amp; Experience</td><td>Core</td><td>B0</td><td>V</td><td></td></tr>

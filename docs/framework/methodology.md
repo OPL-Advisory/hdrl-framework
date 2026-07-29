@@ -82,7 +82,7 @@ The framework architecture reflects strong consensus across source frameworks:
 
 ### Five Maturity Levels
 
-Level descriptors align with Capability Maturity Model Integration (CMMI) nomenclature: **Initial** (L1), **Developing** (L2), **Defined** (L3), **Managed** (L4), **Optimising** (L5). The use of "Optimising" rather than "Optimised" reflects maturity as a continuous process.
+HDRL uses a five-stage progression informed by established maturity-model conventions: **Initial** (L1), **Developing** (L2), **Defined** (L3), **Managed** (L4), **Optimising** (L5). These names and their ordering are specific to HDRL; CMMI uses different labels at Levels 2 and 4. The use of "Optimising" reflects maturity as a continuous process.
 
 ### Eight Domains
 
@@ -111,7 +111,7 @@ Five indicators designated by HDRL as proposed safety and governance prerequisit
 | [**B1MG D5.1: B1MG Maturity Level Model and Country-Specific Alignment within the Model**](https://doi.org/10.5281/zenodo.6587561) (Costa, Cardoso, Konopko, Pérez Sitjà, Lopes et al., 2022) | Precedent for HDRL's domain × level self-assessment architecture; applied directly by the lead author in national genomic-medicine implementation work (Jordan Population Genome Programme) |
 | [**Building Trusted Research Environments: Principles and Best Practices**](https://doi.org/10.5281/zenodo.5767586){ target="_blank" rel="noopener" } (UK Health Data Research Alliance and NHSX, 2021; DOI 10.5281/zenodo.5767586) | TRE operational requirements informing Domain H |
 | [**SATRE: Standardised Architecture for Trusted Research Environments**](https://doi.org/10.5281/zenodo.10055345){ target="_blank" rel="noopener" } (DARE UK, 2023; version 1.0) | TRE capability tiers informing H.1.1 |
-| [**CMMI Levels of Capability and Performance**](https://cmmiinstitute.com/learning/appraisals/levels){ target="_blank" rel="noopener" } (CMMI Institute) | Maturity-level nomenclature and progression logic |
+| [**CMMI Levels of Capability and Performance**](https://cmmiinstitute.com/learning/appraisals/levels){ target="_blank" rel="noopener" } (CMMI Institute) | Reference point for staged maturity progression; HDRL uses its own level names and ordering |
 
 ## Later Related Work
 

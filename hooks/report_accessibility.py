@@ -31,6 +31,10 @@ Commissioned by Research Data Scotland on behalf of the three devolved nations.
 > The CC BY 4.0 terms for the HDRL Framework methodology and public framework
 > materials do not automatically extend to this Final Report.
 
+> **Editorial terminology note:** the report wording below uses "Level 2
+> (Repeatable)". The HDRL v1.0 framework reference uses "Level 2
+> (Developing)". The report wording is preserved unchanged.
+
 """
 
 
@@ -138,6 +142,18 @@ def on_page_content(html: str, page, config, files) -> str:
     if page.url != "explore-report/":
         return html
 
+    html, notice_heading_count = re.subn(
+        r'<h2 id="report-source-note-title">.*?</h2>',
+        "",
+        html,
+        count=1,
+        flags=re.DOTALL,
+    )
+    if notice_heading_count != 1:
+        raise ValueError(
+            "The report accessibility notice heading metadata is missing"
+        )
+
     captions = page.meta.get("report_table_captions", [])
     tables = list(TABLE_RE.finditer(html))
     if len(tables) != len(captions):
@@ -164,9 +180,22 @@ def on_post_build(config) -> None:
     if not front_matter:
         raise ValueError("The report Markdown front matter is missing")
 
+    report_text = text[front_matter.end() :].lstrip()
+    report_text, notice_heading_count = re.subn(
+        r"\A## About this accessible version "
+        r"\{ #report-source-note-title \}\n+",
+        "",
+        report_text,
+        count=1,
+    )
+    if notice_heading_count != 1:
+        raise ValueError(
+            "The report accessibility notice heading metadata is missing"
+        )
+
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(
-        MARKDOWN_PREAMBLE + text[front_matter.end() :].lstrip(),
+        MARKDOWN_PREAMBLE + report_text,
         encoding="utf-8",
         newline="\n",
     )

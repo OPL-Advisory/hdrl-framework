@@ -17,10 +17,14 @@ hide:
 
 Its 64 indicators turn broad principles into a structured view of capability, evidence gaps and investment priorities across the whole operating environment.
 
+**Commissioned by and intellectual property rights owned by Research Data Scotland; originated and developed by OPL Advisory Ltd.**
+
+**Validation status:** HDRL v1.0 has been applied formatively; further independent validation is required. [Review the evidence and limitations](framework/methodology.md#field-application-and-further-validation).
+
 <div class="hdrl-cta" markdown>
 
 [Understand the framework :material-arrow-right:](framework/overview.md){ .md-button .md-button--primary }
-[Read the medRxiv paper :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button target="_blank" rel="noopener" }
+[Read the medRxiv preprint :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button target="_blank" rel="noopener" }
 [Use HDRL :material-clipboard-check-outline:](framework/using-the-framework.md){ .md-button }
 [Explore all domains :material-compass-outline:](domains/index.md){ .md-button }
 
@@ -47,11 +51,11 @@ Its 64 indicators turn broad principles into a structured view of capability, ev
   </div>
   <div class="hdrl-stat">
     <span class="number">5</span>
-    <span class="label">Foundational indicators</span>
+    <span class="label">Proposed foundational indicators</span>
   </div>
 </div>
 
-!!! important "Independent framework, relevant beyond one programme"
+!!! important "Framework distinct from programme requirements"
     HDRL supports assessment, comparison and improvement planning for health data research services, networks and systems in the UK and internationally. Its first application informed discussion about the emerging UK Health Data Research Service (HDRS), but it is not an official HDRS standard, accreditation scheme or participation decision. The five Foundational Indicators are proposals within HDRL's own assessment logic, not established programme requirements.
 
 ---
@@ -210,7 +214,7 @@ That field application tested whether one framework could create a consistent, d
 
 <div class="hdrl-button-grid hdrl-button-grid--two" markdown>
 [About the 3 Nations assessment :material-arrow-right:](three-nations-assessment.md){ .md-button .md-button--primary }
-[Read the accessible Final Report :material-file-document-outline:](explore-report.md){ .md-button }
+[Explore the accessible HTML transcription :material-file-document-outline:](explore-report.md){ .md-button }
 [Read the medRxiv preprint :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button target="_blank" rel="noopener" }
 </div>
 

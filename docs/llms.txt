@@ -12,8 +12,10 @@
 - [Proposed Foundational Indicators](https://hdrlframework.org/framework/foundational-requirements/)
 - [Indicator Quick Reference](https://hdrlframework.org/framework/quick-reference/)
 - [Framework Files and Data](https://hdrlframework.org/framework/applied-v1-reference-files/)
+- [Complete applied-v1 source of record (Markdown)](https://hdrlframework.org/downloads/health-data-readiness-level-framework-v1.md)
 - [HDRL Framework v1.0 indicator catalogue (JSON)](https://hdrlframework.org/data/hdrl-indicators-v1.json)
 - [HDRL Framework v1.0 indicator catalogue schema (JSON Schema)](https://hdrlframework.org/data/hdrl-indicators-v1.schema.json)
+- [Release SHA-256 checksums](https://hdrlframework.org/data/hdrl-indicators-v1.sha256)
 
 ## Domains
 

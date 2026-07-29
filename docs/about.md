@@ -74,7 +74,7 @@ To preserve comparability and avoid misleading claims:
 
 ## Source and corrections
 
-The complete canonical method, machine-readable catalogue, JSON Schema and checksums are available from [Framework Files and Data](framework/applied-v1-reference-files.md). The website source and version history remain available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
+The complete applied-v1 source of record, machine-readable catalogue, JSON Schema and release-wide checksums are available from [Framework Files and Data](framework/applied-v1-reference-files.md). The website source and version history remain available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
 
 A concise machine-readable guide to the site's public resources is available at [`/llms.txt`](https://hdrlframework.org/llms.txt).
 

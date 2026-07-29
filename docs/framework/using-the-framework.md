@@ -64,6 +64,21 @@ This evidence hierarchy helps surface an important distinction:
 !!! note "Capability and evidence visibility"
     HDRL v1.0 scores the capability demonstrated by the available evidence, so a result can reflect both operational maturity and the strength or visibility of its evidence. This protects against unsupported self-assessment, but the two concepts should be interpreted separately. A future validation phase should test whether capability maturity and evidence confidence are better recorded as distinct dimensions.
 
+## Keep an auditable assessment record
+
+The short Evidence Register example in the applied-v1 source is a starting point, not a complete audit trail. For each judgement, retain at least:
+
+| Record field | What to capture |
+|:--|:--|
+| Scope and applicability | Organisation or service, assessment unit, time period, applicability class, and any N/A or inherited-score reason |
+| Evidence | Evidence title, location, owner, date, access status, and the specific descriptor or minimum-evidence claim it supports |
+| Judgement | Claimed level, assessor rationale, uncertainty or confidence, evidence gaps, assessor, and assessment date |
+| Calibration | Review or calibration decision, participants, date, and reason for any change |
+| Right of Reply | Factual correction or additional evidence received, adjudication, and resulting score change |
+| Change history | Previous level, new level, author, date, and a concise reason |
+
+Keep sensitive evidence and detailed assessment records within their authorised governance boundary. Publishing a maturity summary does not imply permission to publish its underlying evidence.
+
 ## Choose the right unit of assessment
 
 | Approach | Use when | Key consideration |
@@ -72,9 +87,20 @@ This evidence hierarchy helps surface an important distinction:
 | **Service-level** | Assessing an individual secure data environment (SDE), trusted research environment (TRE) or data service. | System indicators should be inherited from the relevant national context or marked not applicable. |
 | **Dual-level** | Distinguishing systemic constraints from operational service gaps. | Keep the two evidence records explicit; a shared context does not mean identical scores. |
 
+### Applicability, inheritance and local scoring conventions
+
+The applied-v1 method provides these rules:
+
+- System indicators (**S**) may be inherited by a service unless there is a clearly evidenced service-specific deviation.
+- Capability-specific indicators (**Cx**) may be marked not applicable when the service or system is not claiming that historical capability.
+- Outcome/Context indicators (**Y**) are reported separately where data exist and do not contribute to readiness scoring.
+- Where a system contains multiple services, report the chosen aggregation approach and its coverage basis explicitly.
+
+HDRL v1.0 does not prescribe every implementation detail needed for interchangeable automated scoring. Before assessment begins, record how the team will handle partially applicable indicators, multi-part descriptors, even-number medians and display rounding. Do not compare or combine results that use materially different conventions.
+
 ## Interpret the result responsibly
 
-HDRL supports roadmap development rather than pass/fail judgements. Domain scores are calculated as the median of Core indicators, excluding Outcome/Context indicators.
+HDRL supports roadmap development rather than pass/fail judgements. For a general domain summary, applied v1 defines the score as the median of applicable Core indicators, excluding Outcome/Context indicators. Baseline interpretation separately focuses on the B0 subset; do not present an all-Core domain median as if it were the complete baseline result. Claims at L3–L5 should use the indicator-specific minimum evidence published in the [domain reference](../domains/index.md) and machine-readable catalogue.
 
 ### Indicative readiness profiles
 

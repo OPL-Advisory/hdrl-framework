@@ -29,11 +29,11 @@ HDRL supports planning and improvement in the UK and internationally. Its first 
 
 ## Framework files and data
 
-[`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the complete canonical framework and method reference for HDRL v1.0. Its SHA-256 checksum is recorded alongside it. The website's [development evidence and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
+[`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the frozen, complete applied-v1 source of record. It preserves the historical HDRS-specific assessment language used for the 2025–26 project; that language must not be interpreted as a current HDRS standard, participation gate or endorsement. Its SHA-256 checksum is recorded in the release manifest. The website's [application guidance, development evidence and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
 
 This file contains framework definitions and descriptors. It does not contain country-level evidence, detailed assessment records or unpublished scores.
 
-The machine-readable catalogue deliberately excludes the project-specific HDRS capability mappings retained in the applied-v1 Markdown. Contextual indicator sets should reference stable indicator IDs separately rather than redefine the indicators or their maturity descriptors.
+The machine-readable catalogue deliberately excludes the project-specific HDRS capability mappings retained in the applied-v1 Markdown. It is an indicator catalogue, not an executable assessment policy. Contextual indicator sets should reference stable indicator IDs separately rather than redefine the indicators or their maturity descriptors.
 
 ## Local development
 

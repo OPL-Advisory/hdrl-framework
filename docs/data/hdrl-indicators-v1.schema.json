@@ -28,10 +28,10 @@
       "const": "hdrl-indicators"
     },
     "catalogue_version": {
-      "const": "1.0.0"
+      "const": "1.0.1"
     },
     "schema_version": {
-      "const": "1.0.0"
+      "const": "1.0.1"
     },
     "canonical_url": {
       "const": "https://hdrlframework.org/data/hdrl-indicators-v1.json"
@@ -70,7 +70,7 @@
           "const": "Health Data Readiness Level Framework V1.md"
         },
         "url": {
-          "const": "https://hdrlframework.org/framework/applied-v1-reference-files/"
+          "const": "https://hdrlframework.org/downloads/health-data-readiness-level-framework-v1.md"
         },
         "repository_path": {
           "const": "reference/frozen-applied-v1/Health Data Readiness Level Framework V1.md"

@@ -65,6 +65,8 @@ At the start of the assessment in 2025, the Department of Health and Social Care
 
 The assessment used the following project-specific indicator subsets to explore those six areas:
 
+<div class="hdrl-table-scroll" role="region" aria-label="Historical capability mapping" tabindex="0" markdown>
+
 | Code | Original capability or goal | Indicators included in the 3 Nations capability assessment |
 |:--|:--|:--|
 | **C1** | Linked national-scale data | A.1.1 Core Dataset Availability; A.2.1 Patient Identifier Infrastructure; A.2.2 Linkage Services; B.1.1 Common Data Model Adoption; B.1.2 Terminology Standards; B.2.1 Quality Framework & Monitoring; E.3.1 Opt-Out Management |
@@ -73,6 +75,8 @@ The assessment used the following project-specific indicator subsets to explore 
 | **C4** | Trial acceleration | A.1.2 Data Currency & Timeliness; D.4.1 Trial Data & Recruitment; H.4.2 Responsible AI Practices |
 | **C5** | Single-entry point with secure environments | C.2.1 Time-to-Data; C.2.2 Data Access Committee; C.3.1 Mutual Recognition & Standards; H.1.1 SDE Architecture & Standards; H.3.1 Security Certification & Audit; H.3.2 Security Operations |
 | **C6** | Cross-sector linkage | A.2.1 Patient Identifier Infrastructure; C.3.3 Cross-sector Data Sharing & Linkage Governance |
+
+</div>
 
 !!! warning "Historical programme context"
     This mapping records the proposition available to the project in 2025. It is retained for reproducibility and is not a statement of the capability set that current HDRS leadership will adopt. Future uses of HDRL can define separately versioned contextual indicator sets without changing the core indicators or their maturity descriptors.
@@ -87,7 +91,7 @@ Research Data Scotland published the Final Report on **14 July 2026**. It presen
 [Read the RDS publication page :material-open-in-new:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button .md-button--primary target="_blank" rel="noopener" }
 [Download the Final Report (PDF) :material-file-pdf-box:](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ .md-button target="_blank" rel="noopener" }
 [Explore the accessible HTML transcription](explore-report.md){ .md-button }
-[Download the accessible Markdown transcription](/downloads/three-nations-readiness-assessment-final-report.md){ .md-button }
+[Download the accessible Markdown transcription](/downloads/three-nations-readiness-assessment-final-report.md){ .md-button download="three-nations-readiness-assessment-final-report.md" }
 
 !!! info "Public reporting boundary"
     The RDS PDF is the authoritative version of the public report. The accessible HTML and Markdown versions reproduce only its published content; this website does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material.
