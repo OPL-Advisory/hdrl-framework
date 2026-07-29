@@ -88,10 +88,14 @@ The assessment used the following project-specific indicator subsets to explore 
 
 Research Data Scotland published the Final Report on **14 July 2026**. It presents the authorised findings from the 3 Nations Readiness Assessment and the roadmap arising from them.
 
+<div class="hdrl-button-grid hdrl-button-grid--two hdrl-report-links" markdown>
+
 [Read the RDS publication page :material-open-in-new:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button .md-button--primary target="_blank" rel="noopener" }
 [Download the Final Report (PDF) :material-file-pdf-box:](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ .md-button target="_blank" rel="noopener" }
 [Explore the accessible HTML transcription](explore-report.md){ .md-button }
 [Download the accessible Markdown transcription](/downloads/three-nations-readiness-assessment-final-report.md){ .md-button download="three-nations-readiness-assessment-final-report.md" }
+
+</div>
 
 !!! info "Public reporting boundary"
     The RDS PDF is the authoritative version of the public report. The accessible HTML and Markdown versions reproduce only its published content; this website does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material.
