@@ -1,6 +1,7 @@
 ---
 title: Health Data Readiness Level Framework
 description: A practical, evidence-informed maturity framework for assessing organisational and system readiness for trusted, federated health data research.
+social_title: Make readiness for health data research visible | HDRL
 schema_type: framework
 hide:
   - navigation
@@ -15,16 +16,22 @@ hide:
 
 **Health Data Readiness Level (HDRL)** is a practical, evidence-informed maturity framework for assessing organisational and system readiness for trusted, federated health data research.
 
+<div class="hdrl-button-grid hdrl-button-grid--two hdrl-launch-actions" markdown>
+
+[Read and critique the preprint :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Share feedback :material-message-text-outline:](https://docs.google.com/forms/d/e/1FAIpQLSdrcE7zwWvJ0Pu1klaKF1oAJA7lSyyMFnZp7BIJ6zSGJyk_NA/viewform){ .md-button target="_blank" rel="noopener" }
+
+</div>
+
 Its 64 indicators turn broad principles into a structured view of capability, evidence gaps and investment priorities across the whole operating environment.
 
 **Commissioned by and intellectual property rights owned by Research Data Scotland; originated and developed by OPL Advisory Ltd.**
 
-**Validation status:** HDRL v1.0 was applied formatively; the current v1.0.1 clarification release does not change the method or that evidence base. Further independent validation is required. [Review the evidence and limitations](framework/methodology.md#field-application-and-further-validation).
+**Version and validation:** The paper reports the original applied HDRL v1.0. The website presents v1.0.1, a clarification release that changes programme-status language only; it makes no changes to the method, indicators, evidence or assessment results. Further independent validation is required. [Review the evidence and limitations](framework/methodology.md#field-application-and-further-validation).
 
 <div class="hdrl-cta" markdown>
 
 [Understand the framework :material-arrow-right:](framework/overview.md){ .md-button .md-button--primary }
-[Read the medRxiv preprint :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button target="_blank" rel="noopener" }
 [Use HDRL :material-clipboard-check-outline:](framework/using-the-framework.md){ .md-button }
 [Explore all domains :material-compass-outline:](domains/index.md){ .md-button }
 
