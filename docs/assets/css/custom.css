@@ -504,6 +504,12 @@ svg.feature-icon {
   margin: 1rem 0;
 }
 
+.hdrl-table-scroll:focus-visible,
+.hdrl-report-table-wrapper[tabindex]:focus-visible {
+  outline: 3px solid var(--md-accent-fg-color);
+  outline-offset: 3px;
+}
+
 .hdrl-indicator-table {
   min-width: 680px;
 }

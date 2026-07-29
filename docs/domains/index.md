@@ -1,4 +1,9 @@
-# The Eight Domains
+---
+title: The Eight HDRL Domains
+description: An overview of the eight domains that organise HDRL's 64 indicators across data, governance, research, trust, sustainability, workforce and infrastructure.
+---
+
+# The Eight HDRL Domains
 
 The HDRL Framework organises health data readiness into **eight domains**, each capturing a critical dimension of organisational maturity. Together, they provide a 360-degree view of an organisation's capability to participate in federated health data research.
 
@@ -9,11 +14,11 @@ The HDRL Framework organises health data readiness into **eight domains**, each 
 | **[A](a-data-coverage.md)** | Data Coverage & Federation | Are the required data available, linkable and usable across settings? | 10 |
 | **[B](b-data-semantics.md)** | Data Semantics & Quality | Can data be understood, assessed and reused consistently? | 6 |
 | **[C](c-governance-access.md)** | Governance & Access | Can safe, lawful research be approved and delivered efficiently? | 11 |
-| **[D](d-research-integration.md)** | Research Integration & Market | Does the service support real research use, collaboration and impact? | 8 |
+| **[D](d-research-integration.md)** | Research Integration & Market Use | Does the service support real research use, collaboration and impact? | 8 |
 | **[E](e-public-trust.md)** | Public Trust & Transparency | Are transparency, public benefit and meaningful engagement built in? | 7 |
 | **[F](f-sustainability.md)** | Sustainability | Can capability, funding and service continuity be sustained over time? | 6 |
 | **[G](g-workforce-culture.md)** | Workforce & Culture | Are the people, skills and service culture in place to deliver? | 7 |
-| **[H](h-infrastructure.md)** | Infrastructure & Compute | Is the technical environment secure, resilient and scalable? | 9 |
+| **[H](h-infrastructure.md)** | Infrastructure & Compute Capacity | Is the technical environment secure, resilient and scalable? | 9 |
 
 **Total: 64 indicators** (43 Core, 21 Enhancement)
 
@@ -49,7 +54,7 @@ See [Indicator Classification](../framework/classification.md) for full details.
 
 [Start with Domain A](a-data-coverage.md){ .md-button .md-button--primary }
 [Open the quick reference](../framework/quick-reference.md){ .md-button }
-[Use the framework](../framework/using-the-framework.md){ .md-button }
+[How to apply HDRL](../framework/using-the-framework.md){ .md-button }
 
 </div>
 </div>

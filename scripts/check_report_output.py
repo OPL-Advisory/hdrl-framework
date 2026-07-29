@@ -107,15 +107,11 @@ def main() -> None:
     )
     wrappers = re.findall(
         r'<div class="md-typeset__table hdrl-report-table-wrapper '
-        r'hdrl-report-table-wrapper--(\d+)">',
+        r'hdrl-report-table-wrapper--(\d+)"([^>]*)>',
         document,
     )
     require(len(tables) == 12, f"Expected 12 report tables, found {len(tables)}")
     require(len(wrappers) == len(tables), "Every report table must have a responsive wrapper")
-    require(
-        'hdrl-report-table-wrapper" tabindex=' not in document,
-        "Non-scrolling report tables must not add keyboard tab stops",
-    )
 
     mobile_card_tables = {
         int(index)
@@ -147,12 +143,24 @@ def main() -> None:
             all(re.search(r'<tr>\s*<th scope="row"', row) for row in rows),
             f"Table {index} has a body row without a scoped row header",
         )
-        require(int(wrappers[index - 1]) == index, f"Table {index} wrapper is misnumbered")
+        wrapper_index, wrapper_attributes = wrappers[index - 1]
+        require(int(wrapper_index) == index, f"Table {index} wrapper is misnumbered")
 
         if index in EXPECTED_MOBILE_CARD_TABLES:
             require(
+                'role="region"' in wrapper_attributes
+                and 'tabindex="0"' in wrapper_attributes
+                and 'aria-label=' in wrapper_attributes,
+                f"Scrollable table {index} is not keyboard-accessible",
+            )
+            require(
                 f'id="report-table-{index}-cards-label"' in document,
                 f"Table {index} mobile-card label is missing",
+            )
+        else:
+            require(
+                'tabindex=' not in wrapper_attributes,
+                f"Non-scrolling table {index} adds an unnecessary tab stop",
             )
 
     require(

@@ -1,6 +1,6 @@
 # HDRL Framework
 
-The **Health Data Readiness Level (HDRL) Assessment Framework** is a practical, evidence-led maturity framework for assessing organisational and system readiness for trusted, federated health data research.
+The **Health Data Readiness Level (HDRL) Assessment Framework** is a practical, evidence-informed maturity framework for assessing organisational and system readiness for trusted, federated health data research.
 
 HDRL brings data coverage, semantics, governance, research integration, public trust, sustainability, workforce and infrastructure into one assessment instrument. It was developed from a review of 56 source frameworks and first applied across Scotland, Wales and Northern Ireland.
 
@@ -14,7 +14,7 @@ The framework is published at <https://hdrlframework.org/>. The original GitHub 
 
 A concise machine-readable guide to the public site is available at <https://hdrlframework.org/llms.txt>.
 
-The canonical applied-v1 [indicator catalogue](https://hdrlframework.org/data/hdrl-indicators-v1.json), its [JSON Schema](https://hdrlframework.org/data/hdrl-indicators-v1.schema.json), and [SHA-256 checksums](https://hdrlframework.org/data/hdrl-indicators-v1.sha256) are published for tools that need the framework without parsing Markdown.
+The [complete method, machine-readable indicator catalogue, JSON Schema and checksums](https://hdrlframework.org/framework/applied-v1-reference-files/) are published together for people and tools that need versioned framework files.
 
 The site includes:
 
@@ -27,9 +27,9 @@ The site includes:
 
 HDRL supports planning and improvement in the UK and internationally. Its first application informed discussion about the emerging UK Health Data Research Service (HDRS), but it is not an official HDRS standard, accreditation scheme or participation decision.
 
-## Applied v1 method source
+## Framework files and data
 
-[`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the canonical applied-v1 framework and method reference. Its SHA-256 checksum is recorded alongside it. The website's [methodology and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
+[`Health Data Readiness Level Framework V1.md`](reference/frozen-applied-v1/Health%20Data%20Readiness%20Level%20Framework%20V1.md) is the complete canonical framework and method reference for HDRL v1.0. Its SHA-256 checksum is recorded alongside it. The website's [development evidence and validation status](https://hdrlframework.org/framework/methodology/) provide the intended public interpretation: HDRL v1.0 has been formatively applied, but is not a fully validated accreditation instrument.
 
 This file contains framework definitions and descriptors. It does not contain country-level evidence, detailed assessment records or unpublished scores.
 

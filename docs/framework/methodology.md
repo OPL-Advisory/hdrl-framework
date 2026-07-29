@@ -1,4 +1,9 @@
-# Methodology
+---
+title: Development and Evidence
+description: How HDRL was developed, the evidence landscape it drew on, its design decisions and the further validation still required.
+---
+
+# Development and Evidence
 
 ## How the Framework Was Developed
 
@@ -6,9 +11,9 @@ The **Health Data Readiness Level (HDRL)** Framework was developed through a com
 
 ---
 
-## Multi-Model AI Synthesis
+## Evidence Landscape and AI-supported Synthesis
 
-**Three artificial intelligence (AI) models**—Claude, Gemini and ChatGPT—independently reviewed the framework landscape against identical research specifications. Outputs were then triangulated to assess confidence:
+**Three artificial intelligence (AI) models**—Claude, Gemini and ChatGPT—independently searched and synthesised the framework landscape against identical research specifications. Their outputs were triangulated to assess confidence. Three additional practitioner-sourced frameworks pre-dated this search and were retained from the lead author's prior professional application:
 
 | Confidence Level | Definition | Count |
 |:-----------------|:-----------|------:|
@@ -127,7 +132,7 @@ Further validation is still required. Priorities include independent expert and 
 <div class="hdrl-button-grid" markdown>
 [See the maturity levels](maturity-levels.md){ .md-button .md-button--primary }
 [Understand indicator classification](classification.md){ .md-button }
-[Use the framework](using-the-framework.md){ .md-button }
+[How to apply HDRL](using-the-framework.md){ .md-button }
 </div>
 
 </div>

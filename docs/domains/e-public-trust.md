@@ -1,3 +1,8 @@
+---
+title: "Domain E: Public Trust & Transparency"
+description: HDRL indicators for transparency, public involvement, opt-out management, public benefit, legitimacy and organisational learning.
+---
+
 # Domain E: Public Trust & Transparency
 
 **Focus:** Engagement, transparency, and social licence
@@ -90,7 +95,7 @@ The care.data programme collapse in 2014 demonstrated that technical capability 
 | **L4** | Robust mechanism with routine auditing. Opt-outs applied consistently across all relevant data flows. Clear public information available and maintained. |
 | **L5** | Mature preferences management (granular where policy permits). Auditable, timely updates and proactive communications; opt-out rates reported contextually. |
 
-### E.3.2 Public Benefit & Value Demonstration
+### E.3.2 Public Benefit & Value
 **CORE** · **B0** · **Both**
 
 | Level | Description |
@@ -120,7 +125,7 @@ The care.data programme collapse in 2014 demonstrated that technical capability 
 
 [Next: Domain F](f-sustainability.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

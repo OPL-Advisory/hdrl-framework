@@ -45,7 +45,7 @@ When reusing the framework, attribute **Research Data Scotland as commissioner a
 
 > Seymour D. *Health Data Research Service: Three Nations Readiness Assessment—Final Report*. Version 1.0. OPL Advisory; July 2026. Published by Research Data Scotland, 14 July 2026.
 
-[Read the RDS publication page](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ target="_blank" rel="noopener" }, [download the authoritative Final Report (PDF)](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ target="_blank" rel="noopener" }, [explore the accessible HTML transcription](explore-report.md), or [download the accessible Markdown transcription](/downloads/three-nations-readiness-assessment-final-report.md).
+[Review the 3 Nations assessment overview](three-nations-assessment.md) for the authoritative PDF, accessible HTML and Markdown versions. The [RDS publication page](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ target="_blank" rel="noopener" } remains the external publication record.
 
 The RDS PDF is the authoritative version of the Final Report. The accessible HTML and Markdown transcriptions reproduce only its published content and clearly labelled accessibility or navigational additions. The framework website does not reproduce the underlying detailed country assessment records.
 
@@ -74,7 +74,7 @@ To preserve comparability and avoid misleading claims:
 
 ## Source and corrections
 
-The canonical applied-v1 framework and method reference is available from the [Applied v1 Method Source](framework/applied-v1-reference-files.md) page. The website source and version history remain available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
+The complete canonical method, machine-readable catalogue, JSON Schema and checksums are available from [Framework Files and Data](framework/applied-v1-reference-files.md). The website source and version history remain available in the [public GitHub repository](https://github.com/OPL-Advisory/hdrl-framework){ target="_blank" rel="noopener" }.
 
 A concise machine-readable guide to the site's public resources is available at [`/llms.txt`](https://hdrlframework.org/llms.txt).
 
@@ -89,8 +89,8 @@ For factual corrections or proposed improvements to the website presentation, pl
 
 <div class="hdrl-button-grid" markdown>
 
-[Use the framework](framework/using-the-framework.md){ .md-button .md-button--primary }
-[Review the 3 Nations application](three-nations-assessment.md){ .md-button }
+[How to apply HDRL](framework/using-the-framework.md){ .md-button .md-button--primary }
+[Review the 3 Nations assessment](three-nations-assessment.md){ .md-button }
 [Return home](index.md){ .md-button }
 
 </div>

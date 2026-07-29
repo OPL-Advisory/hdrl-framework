@@ -1,3 +1,8 @@
+---
+title: "Domain H: Infrastructure & Compute Capacity"
+description: HDRL indicators for secure research environments, compute, storage, security operations, privacy technologies and responsible AI.
+---
+
 # Domain H: Infrastructure & Compute Capacity
 
 **Focus:** Technical infrastructure including secure data environments, compute, security and artificial intelligence capability
@@ -152,9 +157,9 @@ Secure data environments (SDEs), including trusted research environments (TREs),
 
 <div class="hdrl-button-grid" markdown>
 
-[Use the framework](../framework/using-the-framework.md){ .md-button .md-button--primary }
+[How to apply HDRL](../framework/using-the-framework.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

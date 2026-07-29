@@ -1,3 +1,8 @@
+---
+title: "Domain G: Workforce & Culture"
+description: HDRL indicators for staffing, roles, technical skills, retention, workforce planning, service culture and collaboration.
+---
+
 # Domain G: Workforce & Culture
 
 **Focus:** Human capacity, capability, and culture
@@ -120,7 +125,7 @@ The UK faces an acute shortage of data engineers, research software engineers, a
 
 [Next: Domain H](h-infrastructure.md){ .md-button .md-button--primary }
 [All eight domains](index.md){ .md-button }
-[Quick reference](../framework/quick-reference.md){ .md-button }
+[Indicator quick reference](../framework/quick-reference.md){ .md-button }
 
 </div>
 </div>

@@ -66,7 +66,7 @@ From principles and specifications to a usable readiness roadmap
 
 Federated health data research is a sociotechnical undertaking, not simply a technology deployment. Data coverage, semantics, governance, research delivery, public trust, long-term sustainability and skilled people all have to work together. HDRL provides a common assessment structure across those interdependent conditions, regardless of governance model, organisational structure or scale.
 
-<div class="hdrl-bridge" role="img" aria-label="HDRL connects high-level principles with detailed technical specifications">
+<div class="hdrl-bridge">
   <div class="hdrl-bridge-layer faded">
     <strong>High-level principles</strong>
     <p>Five Safes, public benefit and trustworthy data use</p>
@@ -131,13 +131,13 @@ Each domain answers a distinct question about trusted research delivery
 
 <a href="domains/d-research-integration/" class="hdrl-domain-card domain-d">
   <span class="domain-ref">Domain D</span>
-  <h3>Research Integration</h3>
+  <h3>Research Integration &amp; Market Use</h3>
   <p>Does the service support real research use, collaboration and impact?</p>
 </a>
 
 <a href="domains/e-public-trust/" class="hdrl-domain-card domain-e">
   <span class="domain-ref">Domain E</span>
-  <h3>Public Trust</h3>
+  <h3>Public Trust &amp; Transparency</h3>
   <p>Are transparency, public benefit and meaningful engagement built in?</p>
 </a>
 
@@ -155,7 +155,7 @@ Each domain answers a distinct question about trusted research delivery
 
 <a href="domains/h-infrastructure/" class="hdrl-domain-card domain-h">
   <span class="domain-ref">Domain H</span>
-  <h3>Infrastructure &amp; Compute</h3>
+  <h3>Infrastructure &amp; Compute Capacity</h3>
   <p>Is the technical environment secure, resilient and scalable?</p>
 </a>
 
@@ -206,15 +206,12 @@ A common language for people making different decisions
 
 HDRL originated in the **3 Nations Readiness Assessment**, commissioned by Research Data Scotland on behalf of Scotland, Wales and Northern Ireland and delivered by OPL Advisory. Its formative application combined documentary evidence, stakeholder engagement, national workshops, structured Right of Reply and two research use-case stress tests.
 
-That field application tested whether one framework could create a consistent, decision-useful view across different health data research systems without assuming a single institutional model. The Final Report was published by Research Data Scotland on 14 July 2026. The framework-development and formative-application paper was posted on medRxiv on 27 July 2026. This site publishes additional information about the framework that others are free to use and adapt to meet their needs under the [Creative Commons Attribution 4.0 International licence](https://creativecommons.org/licenses/by/4.0/){ target="_blank" rel="noopener" } (CC BY 4.0).
+That field application tested whether one framework could create a consistent, decision-useful view across different health data research systems without assuming a single institutional model. Research Data Scotland published the Final Report on 14 July 2026, and the framework-development and formative-application paper was posted on medRxiv on 27 July 2026.
 
 <div class="hdrl-button-grid hdrl-button-grid--two" markdown>
-[Explore the accessible Final Report :material-file-document-outline:](explore-report.md){ .md-button .md-button--primary }
-[RDS publication and authoritative PDF :material-open-in-new:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button target="_blank" rel="noopener" }
+[About the 3 Nations assessment :material-arrow-right:](three-nations-assessment.md){ .md-button .md-button--primary }
+[Read the accessible Final Report :material-file-document-outline:](explore-report.md){ .md-button }
 [Read the medRxiv preprint :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button target="_blank" rel="noopener" }
-[About the 3 Nations application :material-arrow-right:](three-nations-assessment.md){ .md-button }
-[Review the methodology](framework/methodology.md){ .md-button }
-[Plain-language glossary](framework/glossary.md){ .md-button }
 </div>
 
 </div>
@@ -232,16 +229,12 @@ That field application tested whether one framework could create a consistent, d
     <span class="hdrl-kicker">Planning an assessment?</span>
     <h3>Apply it responsibly</h3>
     <p>Define scope, collect evidence, score descriptors and turn findings into a roadmap.</p>
-    <a href="framework/using-the-framework/">Using the framework →</a>
+    <a href="framework/using-the-framework/">How to apply HDRL →</a>
   </div>
   <div>
     <span class="hdrl-kicker">Need the detail?</span>
     <h3>Go to the reference</h3>
     <p>Review all domains, maturity levels, classifications and proposed Foundational Indicators.</p>
-    <a href="framework/quick-reference/">Quick reference →</a>
+    <a href="framework/quick-reference/">Indicator quick reference →</a>
   </div>
-</div>
-
-<div class="hdrl-footer">
-  <p><strong>HDRL Framework v1.0</strong> · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · CC BY 4.0</p>
 </div>

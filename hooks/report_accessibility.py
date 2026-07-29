@@ -24,6 +24,10 @@ Commissioned by Research Data Scotland on behalf of the three devolved nations.
 > additions and are not part of the report text. See the
 > [RDS publication page](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/).
 
+> The published cover is dated July 2026, while the report's Document Control
+> table records April 2026; both dates are preserved as published. Research Data
+> Scotland published the Final Report on 14 July 2026.
+
 > The CC BY 4.0 terms for the HDRL Framework methodology and public framework
 > materials do not automatically extend to this Final Report.
 
@@ -116,9 +120,15 @@ def _enhance_table(table: str, index: int, caption: str) -> str:
         ),
         table,
     )
+    accessibility_attributes = ""
+    if index in MOBILE_CARD_TABLES:
+        accessibility_attributes = (
+            ' role="region" tabindex="0" '
+            f'aria-label="{safe_caption}, scrollable table"'
+        )
     table_layout = (
         '<div class="md-typeset__table hdrl-report-table-wrapper '
-        f'hdrl-report-table-wrapper--{index}">'
+        f'hdrl-report-table-wrapper--{index}"{accessibility_attributes}>'
         f"{table}</div>"
     )
     return table_layout + _build_mobile_cards(table, index, caption)

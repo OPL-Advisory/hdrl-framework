@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import html
 import json
 import re
 from pathlib import Path
@@ -21,6 +22,12 @@ SOURCE = (
 CATALOGUE = ROOT / "docs" / "data" / "hdrl-indicators-v1.json"
 SCHEMA = ROOT / "docs" / "data" / "hdrl-indicators-v1.schema.json"
 CHECKSUMS = ROOT / "docs" / "data" / "hdrl-indicators-v1.sha256"
+QUICK_REFERENCE = ROOT / "docs" / "framework" / "quick-reference.md"
+DOMAINS_DIR = ROOT / "docs" / "domains"
+DOMAINS_INDEX = DOMAINS_DIR / "index.md"
+HOMEPAGE = ROOT / "docs" / "index.md"
+LLMS = ROOT / "docs" / "llms.txt"
+MKDOCS = ROOT / "mkdocs.yml"
 BLOCKED_RESULT_KEYS = {
     "assessment_result",
     "assessed_level",
@@ -191,6 +198,109 @@ def validate_checksums() -> None:
         )
 
 
+def strip_heading_attributes(value: str) -> str:
+    return re.sub(r"\s*\{[^}]+\}\s*$", "", value).strip()
+
+
+def parse_public_indicator_names() -> tuple[
+    dict[str, str],
+    dict[str, str],
+    dict[str, str],
+    dict[str, str],
+]:
+    quick_text = QUICK_REFERENCE.read_text(encoding="utf-8")
+    quick_names = {
+        ref: html.unescape(re.sub(r"<[^>]+>", "", name)).strip()
+        for ref, name in re.findall(
+            r'<tr><th scope="row">([A-H]\.\d+\.\d+)</th><td>(.*?)</td>',
+            quick_text,
+        )
+    }
+    quick_domains = {
+        ref: html.unescape(name).strip()
+        for ref, name in re.findall(
+            r"Domain ([A-H]): ([^<]+)</th></tr>",
+            quick_text,
+        )
+    }
+
+    summary_names: dict[str, str] = {}
+    heading_names: dict[str, str] = {}
+    page_domains: dict[str, str] = {}
+    for path in sorted(DOMAINS_DIR.glob("*.md")):
+        if path == DOMAINS_INDEX:
+            continue
+        text = path.read_text(encoding="utf-8")
+        heading = re.search(r"^# Domain ([A-H]): (.+)$", text, flags=re.MULTILINE)
+        require(heading is not None, f"Domain page has no canonical H1: {path}")
+        domain_ref, domain_name = heading.groups()
+        page_domains[domain_ref] = domain_name.strip()
+
+        for ref, name in re.findall(
+            r"^\| ([A-H]\.\d+\.\d+) \| ([^|]+) \|",
+            text,
+            flags=re.MULTILINE,
+        ):
+            require(ref not in summary_names, f"Duplicate public summary row: {ref}")
+            summary_names[ref] = name.strip()
+
+        for ref, name in re.findall(
+            r"^### ([A-H]\.\d+\.\d+) (.+)$",
+            text,
+            flags=re.MULTILINE,
+        ):
+            require(ref not in heading_names, f"Duplicate public indicator heading: {ref}")
+            heading_names[ref] = strip_heading_attributes(name)
+
+    return quick_names, summary_names, heading_names, {
+        **{f"page:{ref}": name for ref, name in page_domains.items()},
+        **{f"quick:{ref}": name for ref, name in quick_domains.items()},
+    }
+
+
+def parse_public_domain_names() -> dict[str, dict[str, str]]:
+    index_text = DOMAINS_INDEX.read_text(encoding="utf-8")
+    homepage_text = HOMEPAGE.read_text(encoding="utf-8")
+    llms_text = LLMS.read_text(encoding="utf-8")
+    mkdocs_text = MKDOCS.read_text(encoding="utf-8")
+
+    return {
+        "index": {
+            ref: name.strip()
+            for ref, name in re.findall(
+                r"^\| \*\*\[([A-H])\]\([^)]+\)\*\* \| ([^|]+) \|",
+                index_text,
+                flags=re.MULTILINE,
+            )
+        },
+        "homepage": {
+            ref.upper(): html.unescape(name).strip()
+            for ref, name in re.findall(
+                r'class="hdrl-domain-card domain-([a-h])".*?'
+                r"<h3>(.*?)</h3>",
+                homepage_text,
+                flags=re.DOTALL,
+            )
+        },
+        "llms": {
+            ref: name.strip()
+            for ref, name in re.findall(
+                r"^- \[Domain ([A-H]): (.+?)\]\(",
+                llms_text,
+                flags=re.MULTILINE,
+            )
+        },
+        "navigation": {
+            ref: name.strip()
+            for ref, name in re.findall(
+                r'^\s+- "([A-H]): (.+?)": domains/',
+                mkdocs_text,
+                flags=re.MULTILINE,
+            )
+        },
+    }
+
+
 def main() -> None:
     markdown = SOURCE.read_text(encoding="utf-8")
     catalogue = json.loads(CATALOGUE.read_text(encoding="utf-8"))
@@ -244,6 +354,36 @@ def main() -> None:
         published_domains == domains,
         "Published domain metadata differs from applied v1",
     )
+
+    quick_names, summary_names, heading_names, embedded_domains = (
+        parse_public_indicator_names()
+    )
+    expected_names = {ref: item["name"] for ref, item in details.items()}
+    for label, names in (
+        ("Indicator Quick Reference", quick_names),
+        ("domain summary tables", summary_names),
+        ("domain indicator headings", heading_names),
+    ):
+        require(
+            names == expected_names,
+            f"{label} indicator names differ from the canonical catalogue",
+        )
+
+    expected_domain_names = {
+        ref: item["name"] for ref, item in domains.items()
+    }
+    for key, name in embedded_domains.items():
+        source, ref = key.split(":", 1)
+        require(
+            name == expected_domain_names[ref],
+            f"{source} domain name differs for Domain {ref}: "
+            f"{name!r} != {expected_domain_names[ref]!r}",
+        )
+    for source, names in parse_public_domain_names().items():
+        require(
+            names == expected_domain_names,
+            f"{source} domain names differ from the canonical catalogue",
+        )
 
     published_refs: list[str] = []
     for indicator in catalogue["indicators"]:
@@ -304,6 +444,7 @@ def main() -> None:
     print(f"Source SHA-256: {catalogue['source']['sha256']}")
     print("Domains: 8; indicators: 64; foundational indicators: 5")
     print("Section 5/6 metadata: consistent")
+    print("Public indicator/domain names: consistent")
     print("Project-specific HDRS mappings in core catalogue: 0")
 
 

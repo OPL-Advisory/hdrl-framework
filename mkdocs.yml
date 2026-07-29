@@ -58,6 +58,7 @@ plugins:
 
 hooks:
   - hooks/report_accessibility.py
+  - hooks/framework_files.py
 
 extra:
   generator: false
@@ -65,31 +66,32 @@ extra:
 extra_css:
   - assets/css/custom.css
 
-copyright: 'HDRL Framework v1.0 · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a href="https://hdrlframework.org/about/">About &amp; reuse</a>'
+copyright: 'HDRL Framework v1.0 · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · Framework methodology and public framework materials: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a href="https://hdrlframework.org/about/">About &amp; reuse</a>'
 
 nav:
   - Home: index.md
   - Framework:
     - Overview: framework/overview.md
-    - Using the Framework: framework/using-the-framework.md
-    - Quick Reference: framework/quick-reference.md
-    - Applied v1 Method Source: framework/applied-v1-reference-files.md
-    - Machine-readable Catalogue: framework/indicator-catalogue.md
-    - Methodology: framework/methodology.md
-    - Maturity Levels: framework/maturity-levels.md
-    - Indicator Classification: framework/classification.md
-    - Proposed Foundational Indicators: framework/foundational-requirements.md
-    - Glossary: framework/glossary.md
+    - How to Apply HDRL: framework/using-the-framework.md
+    - Development & Evidence: framework/methodology.md
+    - Reference:
+      - Maturity Levels: framework/maturity-levels.md
+      - Indicator Classification: framework/classification.md
+      - Proposed Foundational Indicators: framework/foundational-requirements.md
+      - Indicator Quick Reference: framework/quick-reference.md
+      - Glossary: framework/glossary.md
+    - Framework Files & Data: framework/applied-v1-reference-files.md
   - Domains:
     - domains/index.md
     - "A: Data Coverage & Federation": domains/a-data-coverage.md
     - "B: Data Semantics & Quality": domains/b-data-semantics.md
     - "C: Governance & Access": domains/c-governance-access.md
-    - "D: Research Integration": domains/d-research-integration.md
-    - "E: Public Trust": domains/e-public-trust.md
+    - "D: Research Integration & Market Use": domains/d-research-integration.md
+    - "E: Public Trust & Transparency": domains/e-public-trust.md
     - "F: Sustainability": domains/f-sustainability.md
     - "G: Workforce & Culture": domains/g-workforce-culture.md
-    - "H: Infrastructure & Compute": domains/h-infrastructure.md
-  - 3 Nations Application: three-nations-assessment.md
-  - Explore the Report: explore-report.md
+    - "H: Infrastructure & Compute Capacity": domains/h-infrastructure.md
+  - 3 Nations Readiness Assessment:
+    - Overview: three-nations-assessment.md
+    - Final Report: explore-report.md
   - About & Reuse: about.md

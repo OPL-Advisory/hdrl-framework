@@ -31,6 +31,9 @@ jobs:
       - name: Validate machine-readable indicator catalogue
         run: python scripts/validate_indicator_catalogue.py
 
+      - name: Check built-site coherence
+        run: python scripts/check_site_coherence.py
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

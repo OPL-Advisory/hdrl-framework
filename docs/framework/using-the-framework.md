@@ -1,9 +1,9 @@
 ---
-title: Using the Framework
+title: How to Apply HDRL
 description: A practical guide to scoping, evidencing, scoring and interpreting an HDRL assessment responsibly.
 ---
 
-# Using the Framework
+# How to Apply HDRL
 
 The **Health Data Readiness Level (HDRL)** Framework is designed to turn a complex sociotechnical operating environment into a structured evidence review and improvement roadmap. It can be applied at **system**, **service** or **dual** level, but the scope and evidence standard should be explicit before scoring begins.
 
@@ -31,7 +31,7 @@ The **Health Data Readiness Level (HDRL)** Framework is designed to turn a compl
     <span>3</span>
     <div>
       <h3>Score against the descriptors</h3>
-      <p>Assess every applicable indicator against its five maturity descriptors. Record the evidence, rationale, uncertainty and evidence gap for each judgement.</p>
+      <p>Assess every applicable indicator against its five maturity descriptors in the <a href="/domains/">domain reference</a>. Record the evidence, rationale, uncertainty and evidence gap for each judgement.</p>
     </div>
   </div>
   <div class="hdrl-process-step">
@@ -74,6 +74,20 @@ This evidence hierarchy helps surface an important distinction:
 
 ## Interpret the result responsibly
 
+HDRL supports roadmap development rather than pass/fail judgements. Domain scores are calculated as the median of Core indicators, excluding Outcome/Context indicators.
+
+### Indicative readiness profiles
+
+| Profile | Characteristics |
+|:--|:--|
+| **Emerging** | Majority of Baseline Core at Level 1–2. Significant foundational work required. |
+| **Developing** | Majority of Baseline Core at Level 2–3. Active improvement. May participate with a roadmap and support. |
+| **Managed** | Majority of Baseline Core at Level 3–4, with none below Level 2. Meets the framework's internal baseline profile. |
+| **Optimising** | Majority of Baseline Core at Level 4–5. Exceeds the framework's internal baseline profile and may offer examples for others. |
+
+!!! important "Planning profiles, not accreditation"
+    These profiles support interpretation and improvement planning. A maturity profile does not guarantee delivery performance or determine participation in HDRS or any other programme.
+
 ### An assessment can support
 
 - a shared view of strengths, constraints and missing evidence;
@@ -109,9 +123,10 @@ HDRL has been applied formatively through one multi-jurisdiction assessment acro
 
 <div class="hdrl-button-grid" markdown>
 
-[Read the methodology](methodology.md){ .md-button .md-button--primary }
+[Development and evidence](methodology.md){ .md-button .md-button--primary }
 [See the maturity levels](maturity-levels.md){ .md-button }
-[Open the quick reference](quick-reference.md){ .md-button }
+[Indicator quick reference](quick-reference.md){ .md-button }
+[Framework files and data](applied-v1-reference-files.md){ .md-button }
 
 </div>
 </div>

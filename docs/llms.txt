@@ -5,24 +5,26 @@
 ## Framework
 
 - [Framework Overview](https://hdrlframework.org/framework/overview/)
-- [Machine-readable Indicator Catalogue](https://hdrlframework.org/framework/indicator-catalogue/)
-- [HDRL applied-v1 indicator catalogue (JSON)](https://hdrlframework.org/data/hdrl-indicators-v1.json)
-- [HDRL applied-v1 indicator catalogue schema (JSON Schema)](https://hdrlframework.org/data/hdrl-indicators-v1.schema.json)
-- [Methodology](https://hdrlframework.org/framework/methodology/)
+- [How to Apply HDRL](https://hdrlframework.org/framework/using-the-framework/)
+- [Development and Evidence](https://hdrlframework.org/framework/methodology/)
 - [Maturity Levels](https://hdrlframework.org/framework/maturity-levels/)
 - [Indicator Classification](https://hdrlframework.org/framework/classification/)
 - [Proposed Foundational Indicators](https://hdrlframework.org/framework/foundational-requirements/)
+- [Indicator Quick Reference](https://hdrlframework.org/framework/quick-reference/)
+- [Framework Files and Data](https://hdrlframework.org/framework/applied-v1-reference-files/)
+- [HDRL Framework v1.0 indicator catalogue (JSON)](https://hdrlframework.org/data/hdrl-indicators-v1.json)
+- [HDRL Framework v1.0 indicator catalogue schema (JSON Schema)](https://hdrlframework.org/data/hdrl-indicators-v1.schema.json)
 
 ## Domains
 
 - [Domain A: Data Coverage & Federation](https://hdrlframework.org/domains/a-data-coverage/)
 - [Domain B: Data Semantics & Quality](https://hdrlframework.org/domains/b-data-semantics/)
 - [Domain C: Governance & Access](https://hdrlframework.org/domains/c-governance-access/)
-- [Domain D: Research Integration](https://hdrlframework.org/domains/d-research-integration/)
-- [Domain E: Public Trust](https://hdrlframework.org/domains/e-public-trust/)
+- [Domain D: Research Integration & Market Use](https://hdrlframework.org/domains/d-research-integration/)
+- [Domain E: Public Trust & Transparency](https://hdrlframework.org/domains/e-public-trust/)
 - [Domain F: Sustainability](https://hdrlframework.org/domains/f-sustainability/)
 - [Domain G: Workforce & Culture](https://hdrlframework.org/domains/g-workforce-culture/)
-- [Domain H: Infrastructure & Compute](https://hdrlframework.org/domains/h-infrastructure/)
+- [Domain H: Infrastructure & Compute Capacity](https://hdrlframework.org/domains/h-infrastructure/)
 
 ## Citation and Reuse
 
