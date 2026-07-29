@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use the HDRL Framework, please cite the preferred citation below."
+message: "Cite the framework using the preferred citation below. Cite the medRxiv paper when referring to its development and formative application."
 title: "HDRL Framework website implementation"
 type: software
 authors:
@@ -16,3 +16,23 @@ preferred-citation:
   year: 2026
   url: "https://hdrlframework.org/"
   notes: "Commissioned by and intellectual property rights owned by Research Data Scotland."
+references:
+  - type: article
+    title: "Development and formative application of the Health Data Readiness Level framework for federated health-data services"
+    authors:
+      - given-names: "David"
+        family-names: "Seymour"
+        orcid: "https://orcid.org/0000-0003-4194-2056"
+      - given-names: "Roger"
+        family-names: "Halliday"
+        orcid: "https://orcid.org/0009-0009-5339-553X"
+      - given-names: "Jonathan"
+        family-names: "Smart"
+        orcid: "https://orcid.org/0000-0003-4616-9728"
+      - given-names: "Frances"
+        family-names: "Burns"
+    doi: "10.64898/2026.07.23.26358713"
+    url: "https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1"
+    year: 2026
+    scope: "Cite this preprint when referring to HDRL development, methods or formative application."
+    notes: "medRxiv preprint, version 1; posted 27 July 2026; not certified by peer review."

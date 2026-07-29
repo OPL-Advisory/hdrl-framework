@@ -20,6 +20,7 @@ Its 64 indicators turn broad principles into a structured view of capability, ev
 <div class="hdrl-cta" markdown>
 
 [Understand the framework :material-arrow-right:](framework/overview.md){ .md-button .md-button--primary }
+[Read the medRxiv paper :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button target="_blank" rel="noopener" }
 [Use HDRL :material-clipboard-check-outline:](framework/using-the-framework.md){ .md-button }
 [Explore all domains :material-compass-outline:](domains/index.md){ .md-button }
 
@@ -205,10 +206,12 @@ A common language for people making different decisions
 
 HDRL originated in the **3 Nations Readiness Assessment**, commissioned by Research Data Scotland on behalf of Scotland, Wales and Northern Ireland and delivered by OPL Advisory. Its formative application combined documentary evidence, stakeholder engagement, national workshops, structured Right of Reply and two research use-case stress tests.
 
-That field application tested whether one framework could create a consistent, decision-useful view across different health data research systems without assuming a single institutional model. The Final Report was published by Research Data Scotland on 14 July 2026. This site publishes additional information about the framework that others are free to use and adapt to meet their needs under the [Creative Commons Attribution 4.0 International licence](https://creativecommons.org/licenses/by/4.0/){ target="_blank" rel="noopener" } (CC BY 4.0).
+That field application tested whether one framework could create a consistent, decision-useful view across different health data research systems without assuming a single institutional model. The Final Report was published by Research Data Scotland on 14 July 2026. The framework-development and formative-application paper was posted on medRxiv on 27 July 2026. This site publishes additional information about the framework that others are free to use and adapt to meet their needs under the [Creative Commons Attribution 4.0 International licence](https://creativecommons.org/licenses/by/4.0/){ target="_blank" rel="noopener" } (CC BY 4.0).
 
 <div class="hdrl-button-grid hdrl-button-grid--two" markdown>
-[Read the published Final Report :material-file-document-outline:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Explore the accessible Final Report :material-file-document-outline:](explore-report.md){ .md-button .md-button--primary }
+[RDS publication and authoritative PDF :material-open-in-new:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button target="_blank" rel="noopener" }
+[Read the medRxiv preprint :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button target="_blank" rel="noopener" }
 [About the 3 Nations application :material-arrow-right:](three-nations-assessment.md){ .md-button }
 [Review the methodology](framework/methodology.md){ .md-button }
 [Plain-language glossary](framework/glossary.md){ .md-button }

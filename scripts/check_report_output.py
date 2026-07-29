@@ -13,6 +13,9 @@ from pathlib import Path
 EXPECTED_REPORT_ID = "https://hdrlframework.org/explore-report/#report"
 EXPECTED_REPORT_URL = "https://hdrlframework.org/explore-report/"
 EXPECTED_PDF_URL = "https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf"
+EXPECTED_MARKDOWN_URL = (
+    "/downloads/three-nations-readiness-assessment-final-report.md"
+)
 EXPECTED_MOBILE_CARD_TABLES = {3, 6, 7, 8, 9, 10, 11, 12}
 EXPECTED_REFERENCE_LINKS = {
     "Research Data Scotland": "https://www.researchdata.scot/",
@@ -37,8 +40,15 @@ def main() -> None:
 
     document = args.html.read_text(encoding="utf-8")
     stylesheet_path = args.html.parents[1] / "assets" / "css" / "custom.css"
+    markdown_path = (
+        args.html.parents[1]
+        / "downloads"
+        / "three-nations-readiness-assessment-final-report.md"
+    )
     require(stylesheet_path.is_file(), f"Built stylesheet is missing: {stylesheet_path}")
+    require(markdown_path.is_file(), f"Built Markdown download is missing: {markdown_path}")
     stylesheet = stylesheet_path.read_text(encoding="utf-8")
+    markdown_download = markdown_path.read_text(encoding="utf-8")
     report_styles = stylesheet.split("/* ---------- Accessible report transcription ---------- */", 1)[-1]
 
     require("table-layout: auto;" in report_styles, "Report tables are not content-sized")
@@ -149,7 +159,25 @@ def main() -> None:
         f'href="{EXPECTED_PDF_URL}"' in document,
         "The authoritative PDF link is missing",
     )
+    require(
+        f'href="{EXPECTED_MARKDOWN_URL}"' in document,
+        "The accessible Markdown download link is missing",
+    )
     require("RDS publication page" in document, "The RDS publication-page link is missing")
+    require(
+        markdown_download.startswith(
+            "# Health Data Research Service: Three Nations Readiness Assessment\n"
+        ),
+        "The Markdown download is missing its report title",
+    )
+    require(
+        EXPECTED_PDF_URL in markdown_download,
+        "The Markdown download does not identify the authoritative PDF",
+    )
+    require(
+        "Internal " + "working file" not in markdown_download,
+        "Internal working preamble leaked into the Markdown download",
+    )
 
     for label, url in EXPECTED_REFERENCE_LINKS.items():
         require(f'href="{url}"' in document, f"The {label} reference link is missing")

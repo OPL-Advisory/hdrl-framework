@@ -20,7 +20,7 @@ The site includes:
 - maturity levels and indicator classifications;
 - guidance for scoping, evidencing and interpreting an assessment;
 - methodology, current validation status and limitations;
-- context on the 3 Nations Readiness Assessment; and
+- context on the 3 Nations Readiness Assessment and accessible HTML and Markdown transcriptions of its published Final Report; and
 - citation, licensing and responsible-reuse guidance.
 
 HDRL supports planning and improvement in the UK and internationally. Its first application informed discussion about the emerging UK Health Data Research Service (HDRS), but it is not an official HDRS standard, accreditation scheme or participation decision.
@@ -56,7 +56,9 @@ The public site contains the framework and approved high-level context only. Do 
 
 The authorised Final Report was published by Research Data Scotland on 14 July 2026: [New independent assessment highlights devolved nations’ leading role in health data research](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/).
 
-The site links to the public report but does not reproduce the detailed country-level assessment records, indicator-level scores, submitted evidence or right-of-reply material.
+With permission from Research Data Scotland, the site provides accessible [HTML](https://hdrlframework.org/explore-report/) and [Markdown](https://hdrlframework.org/downloads/three-nations-readiness-assessment-final-report.md) transcriptions of the published Final Report. The RDS PDF remains the authoritative version. The site does not reproduce the underlying detailed country assessment records, indicator-level scoring matrix, submitted evidence or right-of-reply material.
+
+The framework-development and formative-application paper is available as a version 1 medRxiv preprint: [Seymour D, Halliday R, Smart J, Burns F. *Development and formative application of the Health Data Readiness Level framework for federated health-data services*](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1). It has not been certified by peer review.
 
 ## Version and licence
 

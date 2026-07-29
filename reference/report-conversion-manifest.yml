@@ -23,14 +23,13 @@ authoritative_source:
   sole_authoritative_content_source: true
 
 publication_gate:
-  full_text_republication_permission: confirmed_by_rds
-  permission_confirmed_on: 2026-07-20
+  full_text_republication_permission: confirmed_by_rds_for_markdown_and_html
+  permission_confirmed_on: 2026-07-29
   permission_confirmed_by: Professor Roger Halliday, Chief Executive Officer, Research Data Scotland
   permission_evidence: >-
-    Email confirmation: "Also, no problem with you putting out a markdown
-    version of the Exec report on your website labelled up the way you have
-    done. Hope all goes well securing the publication route you've outlined –
-    keep us informed of progress."
+    The project owner confirmed that Research Data Scotland's written
+    permission covers publication of the authorised Final Report as both
+    Markdown and HTML on the HDRL Framework website.
   permission_interpretation_confirmed_by_project_owner: true
   public_branch_push_permitted: true
   merge_permitted: false

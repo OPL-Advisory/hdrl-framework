@@ -32,13 +32,22 @@ When citing an assessment, also identify the system or service assessed, the ass
 
 When reusing the framework, attribute **Research Data Scotland as commissioner and intellectual property rights owner** and **OPL Advisory Ltd as originator and developer**.
 
+## Academic paper
+
+> Seymour D, Halliday R, Smart J, Burns F. *Development and formative application of the Health Data Readiness Level framework for federated health-data services*. medRxiv. 2026.07.23.26358713. Posted 27 July 2026. [doi:10.64898/2026.07.23.26358713](https://doi.org/10.64898/2026.07.23.26358713).
+
+[Read the medRxiv preprint](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button .md-button--primary target="_blank" rel="noopener" }
+
+!!! note "Preprint status"
+    This is a version 1 preprint and has not been certified by peer review. It reports formative application of HDRL and supports practical usability; content validity, inter-rater reliability, responsiveness and predictive validity remain to be established.
+
 ## Published assessment
 
 > Seymour D. *Health Data Research Service: Three Nations Readiness Assessment—Final Report*. Version 1.0. OPL Advisory; July 2026. Published by Research Data Scotland, 14 July 2026.
 
-[Read the RDS publication page](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ target="_blank" rel="noopener" } or [download the Final Report (PDF)](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ target="_blank" rel="noopener" }.
+[Read the RDS publication page](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ target="_blank" rel="noopener" }, [download the authoritative Final Report (PDF)](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ target="_blank" rel="noopener" }, [explore the accessible HTML transcription](explore-report.md), or [download the accessible Markdown transcription](/downloads/three-nations-readiness-assessment-final-report.md).
 
-The Final Report is the authorised source for findings from the 3 Nations Readiness Assessment. The framework website does not reproduce the underlying detailed country assessment records.
+The RDS PDF is the authoritative version of the Final Report. The accessible HTML and Markdown transcriptions reproduce only its published content and clearly labelled accessibility or navigational additions. The framework website does not reproduce the underlying detailed country assessment records.
 
 ## Licence
 

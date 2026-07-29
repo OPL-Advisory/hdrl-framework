@@ -4,6 +4,30 @@ from __future__ import annotations
 
 import html as html_module
 import re
+from pathlib import Path
+
+
+MARKDOWN_DOWNLOAD_PATH = (
+    "downloads/three-nations-readiness-assessment-final-report.md"
+)
+MARKDOWN_PREAMBLE = """# Health Data Research Service: Three Nations Readiness Assessment
+
+**Final Report · accessible Markdown transcription**
+
+**David Seymour, OPL Advisory · July 2026 · V1.0**
+
+Commissioned by Research Data Scotland on behalf of the three devolved nations.
+
+> This Markdown transcription preserves the wording and tables of the published
+> report. The [RDS PDF](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf)
+> remains the authoritative version. Navigation and links are accessibility
+> additions and are not part of the report text. See the
+> [RDS publication page](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/).
+
+> The CC BY 4.0 terms for the HDRL Framework methodology and public framework
+> materials do not automatically extend to this Final Report.
+
+"""
 
 
 TABLE_RE = re.compile(r"<table>.*?</table>", flags=re.DOTALL)
@@ -118,3 +142,21 @@ def on_page_content(html: str, page, config, files) -> str:
     )
 
     return html
+
+
+def on_post_build(config) -> None:
+    """Publish the verified report transcription as downloadable Markdown."""
+
+    source = Path(config["docs_dir"]) / "explore-report.md"
+    target = Path(config["site_dir"]) / MARKDOWN_DOWNLOAD_PATH
+    text = source.read_text(encoding="utf-8")
+    front_matter = re.match(r"\A---\n.*?\n---\n+", text, flags=re.DOTALL)
+    if not front_matter:
+        raise ValueError("The report Markdown front matter is missing")
+
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        MARKDOWN_PREAMBLE + text[front_matter.end() :].lstrip(),
+        encoding="utf-8",
+        newline="\n",
+    )

@@ -61,9 +61,10 @@ Research Data Scotland published the Final Report on **14 July 2026**. It presen
 [Read the RDS publication page :material-open-in-new:](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/){ .md-button .md-button--primary target="_blank" rel="noopener" }
 [Download the Final Report (PDF) :material-file-pdf-box:](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf){ .md-button target="_blank" rel="noopener" }
 [Explore the accessible HTML transcription](explore-report.md){ .md-button }
+[Download the accessible Markdown transcription](/downloads/three-nations-readiness-assessment-final-report.md){ .md-button }
 
 !!! info "Public reporting boundary"
-    The public report is the authoritative source for the assessment findings. This website links to it but does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material.
+    The RDS PDF is the authoritative version of the public report. The accessible HTML and Markdown versions reproduce only its published content; this website does not reproduce the underlying indicator-by-country matrix, detailed evidence records or right-of-reply material.
 
 <div class="hdrl-next" markdown>
 

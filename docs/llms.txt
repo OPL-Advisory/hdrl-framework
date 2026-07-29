@@ -24,11 +24,13 @@
 ## Citation and Reuse
 
 - [Citation and reuse guidance](https://hdrlframework.org/about/)
+- [HDRL development and formative application paper (medRxiv preprint, version 1; not peer reviewed)](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1)
 - [CC BY 4.0 terms for the framework methodology and public framework materials](https://creativecommons.org/licenses/by/4.0/)
 
 ## Published Assessment
 
 - [3 Nations Readiness Assessment context](https://hdrlframework.org/three-nations-assessment/)
 - [Accessible HTML transcription of the Final Report](https://hdrlframework.org/explore-report/)
+- [Accessible Markdown transcription of the Final Report](https://hdrlframework.org/downloads/three-nations-readiness-assessment-final-report.md)
 - [RDS Final Report (PDF; externally hosted by Research Data Scotland and authoritative for assessment findings)](https://www.researchdata.scot/media/icxggzvo/rds-branded-three-nations-readiness-report.pdf)
 - [RDS publication page (externally hosted)](https://www.researchdata.scot/news-and-insights/new-independent-assessment-highlights-devolved-nations-leading-role-in-health-data-research/)
