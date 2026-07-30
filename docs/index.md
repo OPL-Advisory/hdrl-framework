@@ -16,9 +16,10 @@ hide:
 
 **Health Data Readiness Level (HDRL)** is a practical, evidence-informed maturity framework for assessing organisational and system readiness for trusted, federated health data research.
 
-<div class="hdrl-button-grid hdrl-button-grid--two hdrl-launch-actions" markdown>
+<div class="hdrl-button-grid hdrl-launch-actions" markdown>
 
 [Read and critique the preprint :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button .md-button--primary target="_blank" rel="noopener" }
+[Download presentation kit :material-microsoft-powerpoint:](presentation-kit.md){ .md-button }
 [Share feedback :material-message-text-outline:](https://docs.google.com/forms/d/e/1FAIpQLSdrcE7zwWvJ0Pu1klaKF1oAJA7lSyyMFnZp7BIJ6zSGJyk_NA/viewform){ .md-button target="_blank" rel="noopener" }
 
 </div>

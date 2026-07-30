@@ -306,6 +306,38 @@ def parse_public_domain_names() -> dict[str, dict[str, str]]:
     }
 
 
+def validate_public_domain_counts(catalogue: dict) -> None:
+    for path in sorted(DOMAINS_DIR.glob("[a-h]-*.md")):
+        text = path.read_text(encoding="utf-8")
+        heading = re.search(r"^# Domain ([A-H]):", text, flags=re.MULTILINE)
+        counts = re.search(
+            r"^\*\*Indicators:\*\* (\d+) \((\d+) Core, (\d+) Enhancement\)$",
+            text,
+            flags=re.MULTILINE,
+        )
+        require(
+            heading is not None and counts is not None,
+            f"Domain page has no parseable indicator count: {path}",
+        )
+        domain_ref = heading.group(1)
+        indicators = [
+            indicator
+            for indicator in catalogue["indicators"]
+            if indicator["domain"] == domain_ref
+        ]
+        expected = (
+            len(indicators),
+            sum(indicator["type"] == "Core" for indicator in indicators),
+            sum(indicator["type"] == "Enhancement" for indicator in indicators),
+        )
+        published = tuple(int(value) for value in counts.groups())
+        require(
+            published == expected,
+            f"Domain {domain_ref} indicator-count summary differs from the catalogue: "
+            f"{published} != {expected}",
+        )
+
+
 def main() -> None:
     markdown = SOURCE.read_text(encoding="utf-8")
     catalogue = json.loads(CATALOGUE.read_text(encoding="utf-8"))
@@ -414,6 +446,7 @@ def main() -> None:
             names == expected_domain_names,
             f"{source} domain names differ from the canonical catalogue",
         )
+    validate_public_domain_counts(catalogue)
 
     published_refs: list[str] = []
     for indicator in catalogue["indicators"]:

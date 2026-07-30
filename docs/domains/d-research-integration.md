@@ -7,7 +7,7 @@ description: HDRL indicators for research use, impact, researcher support, repro
 
 **Focus:** Integration with research community; demonstrated use across sectors
 
-**Indicators:** 8 (6 Core, 2 Enhancement)
+**Indicators:** 8 (5 Core, 3 Enhancement)
 
 !!! quote "The business question"
     Are people actually using the service? This measures real-world output, not theoretical capacity.
