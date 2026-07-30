@@ -358,6 +358,8 @@ def main() -> None:
         and "indicator catalogue <strong>v1.0.2</strong>" in presentation_kit
         and "reliability, validity and fitness for accreditation"
         in presentation_kit
+        and 'download="HDRL-Presentation-Kit-v1.1.0.pptx"'
+        in presentation_kit
         and "Research Data Scotland" in presentation_kit
         and "OPL Advisory Ltd" in presentation_kit,
         "Presentation Kit page is missing scope, validation or attribution guidance",
