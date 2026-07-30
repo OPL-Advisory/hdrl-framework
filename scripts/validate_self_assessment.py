@@ -1,0 +1,178 @@
+#!/usr/bin/env python3
+"""Validate the versioned HDRL self-assessment research prototype."""
+
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CATALOGUE_PATH = ROOT / "docs" / "data" / "hdrl-indicators-v1.json"
+CONTENT_PATH = (
+    ROOT / "docs" / "data" / "hdrl-assessment-content-v0.1.0.json"
+)
+APP_PATH = ROOT / "docs" / "assets" / "js" / "self-assessment.js"
+PAGE_PATH = ROOT / "docs" / "self-assessment" / "index.md"
+MKDOCS_PATH = ROOT / "mkdocs.yml"
+EXPECTED_DOMAINS = list("ABCDEFGH")
+EXPECTED_RULES = {
+    "R-EVIDENCE-GAP",
+    "R-HIGH-UNCERTAINTY",
+    "R-NOT-ASSESSED",
+    "R-USER-ACTION",
+    "R-TEAM-DISAGREEMENT",
+}
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise SystemExit(message)
+
+
+def version_from_js(source: str, key: str) -> str:
+    match = re.search(rf'\b{re.escape(key)}:\s*"([^"]+)"', source)
+    require(match is not None, f"JavaScript version {key!r} is missing")
+    return match.group(1)
+
+
+def main() -> None:
+    catalogue = json.loads(CATALOGUE_PATH.read_text(encoding="utf-8"))
+    content = json.loads(CONTENT_PATH.read_text(encoding="utf-8"))
+    app = APP_PATH.read_text(encoding="utf-8")
+    page = PAGE_PATH.read_text(encoding="utf-8")
+    mkdocs = MKDOCS_PATH.read_text(encoding="utf-8")
+
+    domains = [domain["ref"] for domain in catalogue["domains"]]
+    require(domains == EXPECTED_DOMAINS, "Canonical domains are not A–H")
+    require(
+        catalogue["indicator_count"] == len(catalogue["indicators"]) == 64,
+        "Canonical catalogue must contain exactly 64 indicators",
+    )
+    require(
+        content["framework_version"] == catalogue["framework"]["version"],
+        "Assessment content framework version does not match catalogue",
+    )
+    require(
+        content["catalogue_version"] == catalogue["catalogue_version"],
+        "Assessment content catalogue version does not match catalogue",
+    )
+    require(
+        content["tool_version"] == "0.1.0-prototype"
+        and content["content_version"] == "0.1.0"
+        and content["recommendation_rules_version"] == "0.1.0"
+        and content["report_generation_version"] == "0.1.0",
+        "Assessment content release versions are unexpected",
+    )
+
+    rapid_domains = [item["domain"] for item in content["rapid_questions"]]
+    require(
+        rapid_domains == EXPECTED_DOMAINS
+        and content["rapid_method"]["question_count"] == 8,
+        "Rapid pass must contain one ordered question for every domain",
+    )
+    require(
+        len(content["impression_bands"]) == 5
+        and len({item["value"] for item in content["impression_bands"]}) == 5,
+        "Rapid pass must contain five unique impression bands",
+    )
+    require(
+        set(content["domain_guidance"]) == set(EXPECTED_DOMAINS),
+        "Every domain needs versioned guidance",
+    )
+    require(
+        {rule["id"] for rule in content["recommendation_rules"]}
+        == EXPECTED_RULES,
+        "Recommendation-rule identifiers are incomplete or unexpected",
+    )
+
+    js_versions = {
+        "framework": version_from_js(app, "framework"),
+        "catalogue": version_from_js(app, "catalogue"),
+        "tool": version_from_js(app, "tool"),
+        "guidance": version_from_js(app, "guidance"),
+        "rules": version_from_js(app, "rules"),
+        "report": version_from_js(app, "report"),
+    }
+    require(js_versions["framework"] == content["framework_version"], "JS framework version mismatch")
+    require(js_versions["catalogue"] == content["catalogue_version"], "JS catalogue version mismatch")
+    require(js_versions["tool"] == content["tool_version"], "JS tool version mismatch")
+    require(js_versions["guidance"] == content["content_version"], "JS guidance version mismatch")
+    require(
+        js_versions["rules"] == content["recommendation_rules_version"],
+        "JS rules version mismatch",
+    )
+    require(
+        js_versions["report"] == content["report_generation_version"],
+        "JS report version mismatch",
+    )
+
+    require("localStorage" not in app and "sessionStorage" not in app, "Disallowed web storage found")
+    require('type="file"' not in app and "type='file'" not in app, "File upload input found")
+    require(
+        app.count("fetch(") == 2
+        and "root.dataset.catalogueUrl" in app
+        and "root.dataset.contentUrl" in app,
+        "Prototype may fetch only its two same-origin versioned data files",
+    )
+    require(
+        not re.search(r'fetch\(\s*["\']https?://', app),
+        "Prototype contains an external fetch",
+    )
+    require(
+        "No overall HDRL score is calculated." in app
+        and "Rapid impressions are not HDRL indicator scores." in app,
+        "Structured export limitations are incomplete",
+    )
+    require(
+        "/^[=+\\-@\\t\\r]/" in app,
+        "CSV export is missing spreadsheet-formula injection protection",
+    )
+    require(
+        "catalogue.indicators.map" in app
+        and "indicator.maturity_levels[level]" in app
+        and "indicator.minimum_evidence[level]" in app,
+        "Evidence-led UI must render every canonical indicator and descriptor",
+    )
+
+    require("robots: noindex, nofollow" in page, "Prototype page must remain noindex")
+    require("analytics: false" in page, "Prototype page must disable public-site analytics")
+    require("Research prototype — not a live assessment service." in page, "Prototype warning is missing")
+    require("There is no file upload." in page, "No-upload notice is missing")
+    require(
+        "patient-level data" in page and "access tokens" in page,
+        "Sensitive-data warning is incomplete",
+    )
+    require(
+        "assets/css/self-assessment.css" in mkdocs
+        and "assets/js/self-assessment.js" in mkdocs
+        and "self-assessment/index.md" in mkdocs,
+        "Self-assessment assets or navigation are not wired into MkDocs",
+    )
+
+    for filename in (
+        "research-and-design.md",
+        "product-requirements.md",
+        "architecture-and-data.md",
+        "privacy-and-data-flow.md",
+        "sample-individual-report.md",
+        "sample-team-report.md",
+        "operations-and-roadmap.md",
+    ):
+        require(
+            (ROOT / "docs" / "self-assessment" / filename).is_file(),
+            f"Required self-assessment deliverable is missing: {filename}",
+        )
+
+    print("Self-assessment prototype validation passed")
+    print(
+        "Versions: "
+        f"HDRL {js_versions['framework']}; catalogue {js_versions['catalogue']}; "
+        f"tool {js_versions['tool']}; guidance/rules/report 0.1.0"
+    )
+    print("Rapid questions: 8; canonical indicators reachable: 64; external data submissions: 0")
+
+
+if __name__ == "__main__":
+    main()

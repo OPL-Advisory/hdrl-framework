@@ -66,9 +66,11 @@ extra:
 
 extra_css:
   - assets/css/custom.css
+  - assets/css/self-assessment.css
 
 extra_javascript:
   - assets/js/table-keyboard.js
+  - assets/js/self-assessment.js
 
 copyright: 'HDRL Framework v1.0.1 · Research Data Scotland: commissioner and intellectual property rights owner · OPL Advisory Ltd: originator and developer · Framework methodology and public framework materials: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · <a href="https://hdrlframework.org/about/">About &amp; reuse</a>'
 
@@ -86,6 +88,16 @@ nav:
       - Indicator Quick Reference: framework/quick-reference.md
       - Glossary: framework/glossary.md
     - Framework Files & Data: framework/applied-v1-reference-files.md
+  - Self-assessment:
+    - Research prototype: self-assessment/index.md
+    - Research & design: self-assessment/research-and-design.md
+    - Product requirements: self-assessment/product-requirements.md
+    - Architecture & data model: self-assessment/architecture-and-data.md
+    - Privacy & data flow: self-assessment/privacy-and-data-flow.md
+    - Sample reports:
+      - Individual: self-assessment/sample-individual-report.md
+      - Team: self-assessment/sample-team-report.md
+    - Operations & roadmap: self-assessment/operations-and-roadmap.md
   - Domains:
     - domains/index.md
     - "A: Data Coverage & Federation": domains/a-data-coverage.md

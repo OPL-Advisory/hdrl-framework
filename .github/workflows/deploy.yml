@@ -34,6 +34,9 @@ jobs:
       - name: Validate versioned Presentation Kit
         run: python scripts/validate_presentation_kit.py
 
+      - name: Validate self-assessment research prototype
+        run: python scripts/validate_self_assessment.py
+
       - name: Check built-site coherence
         run: python scripts/check_site_coherence.py
 

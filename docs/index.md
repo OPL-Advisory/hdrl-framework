@@ -34,6 +34,7 @@ Its 64 indicators turn broad principles into a structured view of capability, ev
 
 [Understand the framework :material-arrow-right:](framework/overview.md){ .md-button .md-button--primary }
 [Use HDRL :material-clipboard-check-outline:](framework/using-the-framework.md){ .md-button }
+[Try the self-assessment prototype :material-flask-outline:](self-assessment/index.md){ .md-button }
 [Explore all domains :material-compass-outline:](domains/index.md){ .md-button }
 
 </div>

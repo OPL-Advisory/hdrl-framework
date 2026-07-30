@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
+  {% if page and page.meta and page.meta.robots %}
+  <meta name="robots" content="{{ page.meta.robots }}" />
+  {% endif %}
+  {% if not (page and page.meta and page.meta.analytics == false) %}
   <!-- Privacy-friendly, aggregate website analytics. No cookies or persistent identifiers. -->
   <script async src="https://plausible.io/js/pa-Znp0dST1h0tZ8m6Ywsb4J.js"></script>
   <script>
@@ -12,6 +16,7 @@
     }
     plausible.init()
   </script>
+  {% endif %}
   {% set social_description = page.meta.description if page and page.meta and page.meta.description else config.site_description %}
   {% set social_title = page.meta.social_title if page and page.meta and page.meta.social_title else page.title ~ " — HDRL Framework" %}
   {% set social_image = config.site_url ~ "assets/images/hdrl-social-card-3422eb0.png" %}

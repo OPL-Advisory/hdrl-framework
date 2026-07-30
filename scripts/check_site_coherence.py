@@ -184,10 +184,20 @@ def main() -> None:
             f"{route} canonical URL is {parser.canonical!r}, "
             f"expected {expected_canonical!r}",
         )
-        require(
-            not parser.robots or "noindex" not in parser.robots.lower(),
-            f"{route} contains an unintended noindex directive",
-        )
+        if route == "/self-assessment/":
+            require(
+                parser.robots and "noindex" in parser.robots.lower(),
+                "Research prototype must remain excluded from indexing",
+            )
+            require(
+                "plausible.io" not in document,
+                "Assessment prototype must not initialise public-site analytics",
+            )
+        else:
+            require(
+                not parser.robots or "noindex" not in parser.robots.lower(),
+                f"{route} contains an unintended noindex directive",
+            )
         require(
             "Framework methodology and public framework materials:" in document,
             f"{route} does not scope the global CC BY statement",
