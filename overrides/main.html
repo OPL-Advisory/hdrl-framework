@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 
 {% block extrahead %}
+  <!-- Privacy-friendly, aggregate website analytics. No cookies or persistent identifiers. -->
+  <script async src="https://plausible.io/js/pa-Znp0dST1h0tZ8m6Ywsb4J.js"></script>
+  <script>
+    window.plausible = window.plausible || function() {
+      (plausible.q = plausible.q || []).push(arguments)
+    }
+    plausible.init = plausible.init || function(options) {
+      plausible.o = options || {}
+    }
+    plausible.init()
+  </script>
   {% set social_description = page.meta.description if page and page.meta and page.meta.description else config.site_description %}
   {% set social_title = page.meta.social_title if page and page.meta and page.meta.social_title else page.title ~ " — HDRL Framework" %}
   {% set social_image = config.site_url ~ "assets/images/hdrl-social-card-3422eb0.png" %}

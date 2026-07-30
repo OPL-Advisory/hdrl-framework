@@ -100,6 +100,12 @@ Changes to the framework itself should be versioned explicitly so that the versi
 !!! info "Version discipline"
     Readiness changes over time. A future framework version or reassessment should not silently overwrite the structure, evidence or interpretation of a previous assessment.
 
+## Website analytics and privacy
+
+This website uses [Plausible Analytics](https://plausible.io/privacy-focused-web-analytics){ target="_blank" rel="noopener" } to understand aggregate use and improve the framework's dissemination and content. Plausible does not use cookies or persistent identifiers. The information reported includes pages visited, referral sources, broad country-level location, device and browser categories, and selected actions such as outbound-link clicks, file downloads and form submissions.
+
+Analytics are administered by OPL Advisory Ltd for this website. They are not used to profile individual visitors, support advertising or combine browsing activity with information from other sources. See [Plausible's data policy](https://plausible.io/data-policy){ target="_blank" rel="noopener" } for further details.
+
 <div class="hdrl-next" markdown>
 
 ## Continue exploring
