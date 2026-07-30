@@ -9,7 +9,7 @@ An editable, modular slide deck for people who want to introduce HDRL to colleag
 
 <div class="hdrl-button-grid hdrl-button-grid--two" markdown>
 
-[Download the PowerPoint :material-microsoft-powerpoint:](downloads/HDRL-Presentation-Kit-v1.1.0.pptx){ .md-button .md-button--primary download }
+[Download the PowerPoint :material-microsoft-powerpoint:](downloads/HDRL-Presentation-Kit-v1.1.0.pptx){ .md-button .md-button--primary download="HDRL-Presentation-Kit-v1.1.0.pptx" }
 [Read the medRxiv preprint :material-open-in-new:](https://www.medrxiv.org/content/10.64898/2026.07.23.26358713v1){ .md-button target="_blank" rel="noopener" }
 
 </div>
