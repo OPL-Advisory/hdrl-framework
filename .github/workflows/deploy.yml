@@ -31,6 +31,9 @@ jobs:
       - name: Validate machine-readable indicator catalogue
         run: python scripts/validate_indicator_catalogue.py
 
+      - name: Validate versioned Presentation Kit
+        run: python scripts/validate_presentation_kit.py
+
       - name: Check built-site coherence
         run: python scripts/check_site_coherence.py
 

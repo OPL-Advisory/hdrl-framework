@@ -24,6 +24,9 @@ SOURCE = (
 SOURCE_DOWNLOAD = (
     SITE / "downloads" / "health-data-readiness-level-framework-v1.md"
 )
+PRESENTATION_KIT = (
+    SITE / "downloads" / "HDRL-Presentation-Kit-v1.1.0.pptx"
+)
 CANONICAL_ORIGIN = "https://hdrlframework.org"
 INTERNAL_HOSTS = {
     "hdrlframework.org",
@@ -251,6 +254,10 @@ def main() -> None:
         SOURCE_DOWNLOAD.read_bytes() == SOURCE.read_bytes(),
         "Built framework Markdown differs from the canonical source",
     )
+    require(
+        PRESENTATION_KIT.is_file(),
+        "Built HDRL Presentation Kit download is missing",
+    )
 
     quick_reference = (
         SITE / "framework" / "quick-reference" / "index.html"
@@ -341,6 +348,19 @@ def main() -> None:
         "Version 1.0.1 scope" in about
         and "Clarified programme status and participation language" in about,
         "The public framework version history is incomplete",
+    )
+    presentation_kit = (
+        SITE / "presentation-kit" / "index.html"
+    ).read_text(encoding="utf-8")
+    require(
+        "92 editable slides" in presentation_kit
+        and "Presentation Kit v1.1.0" in presentation_kit
+        and "indicator catalogue <strong>v1.0.2</strong>" in presentation_kit
+        and "reliability, validity and fitness for accreditation"
+        in presentation_kit
+        and "Research Data Scotland" in presentation_kit
+        and "OPL Advisory Ltd" in presentation_kit,
+        "Presentation Kit page is missing scope, validation or attribution guidance",
     )
     keyboard_script = SITE / "assets" / "js" / "table-keyboard.js"
     require(

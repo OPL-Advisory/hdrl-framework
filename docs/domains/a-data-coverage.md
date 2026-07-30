@@ -7,7 +7,7 @@ description: HDRL indicators for health-data availability, currency, representat
 
 **Focus:** Availability, linkage, and flow of health data for research
 
-**Indicators:** 10 (8 Core, 2 Enhancement)
+**Indicators:** 10 (7 Core, 3 Enhancement)
 
 !!! quote "The business question"
     Do we actually have the data researchers want? Without this, the shop shelves are empty.
