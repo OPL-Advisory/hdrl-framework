@@ -1,6 +1,8 @@
 # HDRL thin beta service
 
-This Cloudflare Worker is the operational companion to the browser-only HDRL self-assessment. It stores beta administration and coarse funnel data only. It must never receive assessment levels, certainty, scope, comments, evidence or report content.
+> **Superseded proof of concept — do not deploy.** The approved beta path is the dedicated Supabase London project in [`../../supabase`](../../supabase), with Plausible aggregate events and IONOS SMTP. This Worker is retained only as design/migration evidence and must not be configured as a second operational service.
+
+This Cloudflare Worker was the first operational companion explored for the browser-only HDRL self-assessment. It stores beta administration and coarse funnel data only. It must never receive assessment levels, certainty, scope, comments, evidence or report content.
 
 ## Data boundary
 

@@ -89,7 +89,7 @@ Help people learn HDRL by applying it and create a proportionate, traceable impr
 - Starting the snapshot requires no account or email and therefore keeps initial activation energy low.
 - Before the first report/export action, the user may provide feedback or explicitly skip it; either disposition can be counted without collecting the feedback content in analytics.
 - Production report access verifies an email address and records role, organisation, individual/team use and a broad intended-use category; name, region, service type and scale remain optional. It does not upload the assessment, levels, certainty, notes, evidence or report.
-- Operational events use an allow-list and may include a random beta session identifier, event/time, coarse active-time band, completed indicator/domain counts and requested export type only.
+- Operational events use an allow-list and may include tool version, event name, coarse active-time band, completed indicator/domain counts and requested export type only. The application sends Plausible no participant, email, organisation or application-session identifier.
 - “Download” measurement means a download was requested in the browser; the service must not claim it can prove that a file was retained or opened.
 - Feedback submitted without contact details is stored separately from participant identity and session events. The notice explains that free text or unusual context may still identify the author, so it is not described as guaranteed anonymous.
 - The service records that feedback was submitted or skipped in the funnel, but never copies feedback text into event analytics or logs.

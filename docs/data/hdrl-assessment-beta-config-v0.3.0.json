@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "config_id": "hdrl-self-assessment-beta",
+  "config_version": "0.3.0",
+  "tool_version": "0.5.0-beta",
+  "status": "staging-service-live-public-client-disabled",
+  "privacy_notice_version": "beta-privacy-v0.3-draft",
+  "contact_wording_version": "beta-contact-v0.3",
+  "transport": {
+    "mode": "local-with-optional-service",
+    "supabase_url": "https://grajbgnnnlhzvdxhldvy.supabase.co",
+    "supabase_publishable_key": null,
+    "service_base_url": "https://grajbgnnnlhzvdxhldvy.supabase.co/functions/v1/beta-service",
+    "function_region": "eu-west-2",
+    "remote_collection_enabled": false,
+    "request_timeout_ms": 8000,
+    "local_preview_enabled": true
+  },
+  "plausible": {
+    "enabled": false,
+    "script_url": "https://plausible.io/js/pa-Znp0dST1h0tZ8m6Ywsb4J.js",
+    "capture_pageview": false,
+    "event_name_map": {
+      "assessment_started": "HDRL Beta Started",
+      "domain_orientation_completed": "HDRL Orientation Completed",
+      "snapshot_started": "HDRL Snapshot Started",
+      "snapshot_domain_completed": "HDRL Snapshot Domain Completed",
+      "snapshot_completed": "HDRL Snapshot Completed",
+      "evidence_workspace_started": "HDRL Evidence Workspace Started",
+      "report_unlocked": "HDRL Report Unlocked",
+      "report_download_requested": "HDRL Report Download",
+      "feedback_prompt_seen": "HDRL Feedback Prompt Seen",
+      "feedback_submitted": "HDRL Feedback Submitted",
+      "feedback_skipped": "HDRL Feedback Skipped",
+      "feedback_dismissed": "HDRL Feedback Dismissed",
+      "share_bundle_created": "HDRL Share Bundle Created"
+    },
+    "property_allowlist": [
+      "entry_point",
+      "completed_indicator_count",
+      "completed_domain_count",
+      "active_time_band",
+      "domain_ref",
+      "download_type",
+      "context",
+      "bundle_scope"
+    ]
+  },
+  "feature_flags": {
+    "domain_orientation": true,
+    "whole_framework_snapshot": true,
+    "evidence_workspace": true,
+    "local_beta_events": true,
+    "feedback_checkpoint": true,
+    "feedback_without_contact_details": true,
+    "contactable_feedback": true,
+    "local_result_share_bundle": true,
+    "email_verification": true,
+    "remote_result_sharing": false,
+    "benchmarking": false
+  },
+  "privacy_boundary": {
+    "operational_by_default": [
+      "tool_and_framework_versions",
+      "allow-listed_event_name",
+      "coarse_active_time_band",
+      "completed_indicator_count",
+      "completed_domain_count",
+      "download_type",
+      "feedback_disposition"
+    ],
+    "local_only": [
+      "maturity_levels",
+      "certainty",
+      "assessment_scope",
+      "rationale_and_comments",
+      "evidence_records",
+      "report_contents",
+      "team_comparisons"
+    ],
+    "explicit_share_only": [
+      "snapshot_results",
+      "evidence_led_results",
+      "comments_and_rationale",
+      "evidence_references",
+      "identifiable_feedback"
+    ]
+  },
+  "event_allowlist": {
+    "assessment_started": ["entry_point"],
+    "domain_orientation_completed": ["completed_domain_count", "active_time_band"],
+    "snapshot_started": ["entry_point"],
+    "snapshot_domain_completed": ["domain_ref", "completed_indicator_count", "active_time_band"],
+    "snapshot_completed": ["completed_indicator_count", "completed_domain_count", "active_time_band"],
+    "evidence_workspace_started": ["entry_point"],
+    "report_unlocked": ["completed_indicator_count", "completed_domain_count"],
+    "report_download_requested": ["download_type", "completed_indicator_count"],
+    "feedback_prompt_seen": ["context"],
+    "feedback_submitted": [],
+    "feedback_skipped": ["context"],
+    "feedback_dismissed": ["context"],
+    "share_bundle_created": ["bundle_scope"]
+  },
+  "feedback_context_allowlist": [
+    "tool_version",
+    "framework_version",
+    "catalogue_version",
+    "view",
+    "domain_ref",
+    "indicator_ref",
+    "completed_indicator_count",
+    "completed_domain_count",
+    "active_time_band",
+    "viewport_band"
+  ],
+  "feedback_categories": [
+    "overall_experience",
+    "bug",
+    "unclear_framework_wording",
+    "unclear_tool_wording",
+    "accessibility",
+    "suggestion",
+    "other"
+  ],
+  "certainty_reasons": [
+    {"value": "knowledge_gap", "label": "I do not know this part of the service well enough"},
+    {"value": "evidence_gap", "label": "Relevant evidence is unavailable"},
+    {"value": "descriptors_overlap", "label": "The level descriptions overlap or are unclear"},
+    {"value": "scope_unclear", "label": "The assessment boundary is unclear"},
+    {"value": "other", "label": "Another reason"}
+  ],
+  "clarity_options": [
+    {"value": "clear", "label": "Clear", "description": "The adjacent levels were easy to distinguish."},
+    {"value": "some_overlap", "label": "Some overlap", "description": "I could choose, but adjacent levels felt similar."},
+    {"value": "unclear", "label": "Unclear", "description": "The wording made a dependable choice difficult."}
+  ]
+}

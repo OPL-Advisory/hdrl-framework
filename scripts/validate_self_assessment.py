@@ -14,14 +14,14 @@ CONTENT_PATH = (
     ROOT / "docs" / "data" / "hdrl-assessment-content-v0.2.0.json"
 )
 BETA_CONFIG_PATH = (
-    ROOT / "docs" / "data" / "hdrl-assessment-beta-config-v0.2.0.json"
+    ROOT / "docs" / "data" / "hdrl-assessment-beta-config-v0.3.0.json"
 )
 APP_PATH = ROOT / "docs" / "assets" / "js" / "self-assessment.js"
 PAGE_PATH = ROOT / "docs" / "self-assessment" / "index.md"
 MKDOCS_PATH = ROOT / "mkdocs.yml"
-SERVICE_PATH = ROOT / "services" / "beta-service" / "src" / "index.js"
-SERVICE_SCHEMA_PATH = ROOT / "services" / "beta-service" / "migrations" / "0001_initial.sql"
-WRANGLER_PATH = ROOT / "services" / "beta-service" / "wrangler.jsonc"
+SERVICE_PATH = ROOT / "supabase" / "functions" / "beta-service" / "index.ts"
+SERVICE_BOUNDARY_PATH = ROOT / "supabase" / "functions" / "_shared" / "privacy-boundary.mjs"
+SERVICE_MIGRATIONS_PATH = ROOT / "supabase" / "migrations"
 EXPECTED_DOMAINS = list("ABCDEFGH")
 EXPECTED_RULES = {
     "R-EVIDENCE-GAP",
@@ -66,7 +66,7 @@ def main() -> None:
         "Assessment content catalogue version does not match catalogue",
     )
     require(
-        content["tool_version"] == "0.4.0-beta"
+        content["tool_version"] == "0.5.0-beta"
         and content["content_version"] == "0.2.0"
         and content["recommendation_rules_version"] == "0.2.0"
         and content["report_generation_version"] == "0.4.0",
@@ -129,7 +129,9 @@ def main() -> None:
     require(
         beta["transport"]["mode"] == "local-with-optional-service"
         and beta["transport"]["remote_collection_enabled"] is False
-        and beta["transport"]["service_base_url"] is None,
+        and beta["transport"]["supabase_publishable_key"] is None
+        and beta["plausible"]["enabled"] is False
+        and beta["transport"]["function_region"] == "eu-west-2",
         "Staging source must keep remote collection disabled until activation review",
     )
     prohibited_event_fields = {
@@ -248,28 +250,39 @@ def main() -> None:
         )
 
     service = SERVICE_PATH.read_text(encoding="utf-8")
-    schema = SERVICE_SCHEMA_PATH.read_text(encoding="utf-8")
-    wrangler = WRANGLER_PATH.read_text(encoding="utf-8")
+    boundary = SERVICE_BOUNDARY_PATH.read_text(encoding="utf-8")
+    schema = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in sorted(SERVICE_MIGRATIONS_PATH.glob("*.sql"))
+    )
     require(
         all(route in service for route in (
-            "/v1/sessions", "/v1/events", "/v1/verification/request",
-            "/v1/verification/confirm", "/v1/feedback", "/v1/privacy/request",
-            "/v1/privacy/confirm", "/v1/privacy/correct", "/v1/admin/summary",
+            'route === "participant"', 'route === "feedback"',
+            'route === "export"', 'route === "correct"', 'route === "delete"',
         )),
         "Thin beta service routes are incomplete",
+    )
+    require(
+        "requirePublishableKey" in service
+        and "forceFunctionRegion" in app
+        and "/auth/v1/otp" in app
+        and "/auth/v1/verify" in app,
+        "Supabase client authentication or London invocation control is incomplete",
     )
     prohibited_schema_terms = {
         "maturity_level", "certainty", "assessment_scope", "rationale",
         "evidence_record", "report_content",
     }
     require(
-        all(term not in schema.lower() for term in prohibited_schema_terms),
+        all(term not in schema.lower() for term in prohibited_schema_terms)
+        and all(term not in boundary.lower() for term in prohibited_schema_terms),
         "Thin-service database schema crosses the assessment-data boundary",
     )
     require(
-        '"observability": { "enabled": false }' in wrangler
-        and '"ENVIRONMENT": "staging"' in wrangler,
-        "Thin service must disable provider logging and define staging separately",
+        "enable row level security" in schema.lower()
+        and "purge_expired_beta_records" in schema
+        and "supabase_publishable_key\": null" in BETA_CONFIG_PATH.read_text(encoding="utf-8"),
+        "Thin service must enforce RLS, retention and an off-by-default public client",
     )
 
     print("Self-assessment prototype validation passed")
@@ -278,7 +291,7 @@ def main() -> None:
         f"HDRL {js_versions['framework']}; catalogue {js_versions['catalogue']}; "
         f"tool {js_versions['tool']}; guidance/rules 0.2.0; report {js_versions['report']}"
     )
-    print("Rapid questions: 8; snapshot/evidence indicators reachable: 64; remote beta transport: feature-flagged off")
+    print("Rapid questions: 8; snapshot/evidence indicators reachable: 64; Supabase and Plausible clients: feature-flagged off")
 
 
 if __name__ == "__main__":

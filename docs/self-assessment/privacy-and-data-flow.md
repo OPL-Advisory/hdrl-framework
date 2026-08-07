@@ -11,15 +11,15 @@ description: Draft privacy model, data-flow assessment, notices, retention and r
 
 The proposed initial controller is **OPL Advisory Ltd**, because it currently administers the framework website and would determine the operational purposes and means of the assessment service. Research Data Scotland would receive no identifiable assessment data by default. If Research Data Scotland or another sponsor jointly determines purposes or access, the parties must document whether the arrangement is joint controllership or controller/processor before launch.
 
-The implemented staging design proposes **Cloudflare, Inc.** as application/CDN, D1 database and recovery processor, with the D1 jurisdiction set to the European Union, and **Resend, Inc.** as transactional-email processor with the sending region set to Ireland. Each requires due diligence, an Article 28 contract, sub-processor review, location/transfer assessment, deletion commitments and incident terms. Cloudflare's current customer DPA includes UK transfer terms. Resend says account and email metadata remain in the United States even when email is sent from Ireland, so its SCC/UK-addendum route and transfer risk must be approved rather than treating the sending region as complete localisation.
+The selected design uses **Supabase, Inc.** for email authentication, London-region Postgres, Edge Functions and recovery; **IONOS** for authenticated email delivery; **Plausible Insights OÜ** for aggregate product events; and GitHub Pages for the static application. Each supplier requires due diligence, an Article 28 arrangement where applicable, sub-processor review, data-location/transfer assessment, deletion commitments, security-log review and incident terms. The database region is West Europe (London), but that does not by itself establish that every support, authentication, log, backup or sub-processor activity stays in the UK.
 
-No separate product-monitoring processor is proposed for the beta: Worker observability is disabled. Cloudflare will still operate proportionate network/security infrastructure logs under its platform terms; their content, access and retention must be confirmed during the processor review. GitHub Pages continues to serve the static assessment application but receives no participant record or assessment content from the application API.
+Operational assessment records remain separate from Plausible. GitHub Pages serves the application but receives no participant record or assessment content from the application API. Supabase and Plausible will inevitably operate proportionate platform/security logs under their terms; content, access and retention must be confirmed before activation.
 
 ## Recommended public-beta boundary
 
 The first public beta should **not** operate a server-side assessment workspace. Levels, certainty, applicability, boundary text, comments, evidence and report contents remain in the user's browser. OPL Advisory receives only the information needed to understand beta adoption, verify report access and receive optional feedback. Server-side assessment storage, team workspaces and benchmarking are later, separately approved features.
 
-This reduces confidentiality and contractual friction but does not remove data-protection obligations: verified participant details, pseudonymous beta-session events, security logs and feedback can still be personal data.
+This reduces confidentiality and contractual friction but does not remove data-protection obligations: verified participant details, security logs and feedback can still be personal data. Plausible's aggregate events must be assessed in context rather than described as legally anonymous without review.
 
 ## Data flow
 
@@ -29,8 +29,8 @@ Public site ──normal link──> browser assessment (IndexedDB)
                                   ├── local levels, certainty, notes, evidence
                                   ├── local HTML report / JSON / CSV / print
                                   │
-                                  ├── allow-listed funnel events ──> beta event store
-                                  │                                  (no results/text)
+                                  ├── allow-listed funnel events ──> Plausible aggregate events
+                                  │                                  (no app/user ID or results/text)
                                   │
                                   ├── report-gate details ──> email OTP + participant store
                                   │                           (no assessment upload)
@@ -38,11 +38,11 @@ Public site ──normal link──> browser assessment (IndexedDB)
                                   └── optional feedback ──> separate feedback store
                                       without contact details OR explicitly contactable
 
-Public-site analytics is disabled on the assessment route. It receives no
-email, beta-session identifier, response, evidence or report information.
+Automatic public-site page views are disabled on the assessment route. Explicit
+beta events receive no email, app/user identifier, response, evidence or report.
 ```
 
-The browser calls the Worker directly over TLS. D1 receives ciphertext participant profiles, keyed email digests, keyed OTP digests, pseudonymous session/event rows and separate feedback rows. Resend receives the verified destination email, sender, one-time-code message and normal email-delivery metadata; it receives no participant profile, assessment response, report or feedback. Administrator access is not a routine application flow and requires a separate secret and audit record.
+The browser calls Supabase Auth and the Edge Function directly over TLS. Supabase Auth receives the email and OTP state; London Postgres receives the minimum participant profile, preferences, feedback and rights/audit records. Plausible receives only allow-listed event names and coarse properties with no Supabase identity. IONOS receives the destination email, sender, one-time-code message and normal delivery metadata; it receives no participant profile, assessment response, report or feedback. Supabase administrator access is not a routine application flow and is protected by account MFA and least privilege.
 
 No patient-level data, personal confidential data, credentials or unnecessarily sensitive operational information is required or permitted.
 
@@ -50,10 +50,10 @@ No patient-level data, personal confidential data, credentials or unnecessarily 
 
 | Purpose | Data | Proposed basis | Review point |
 |:--|:--|:--|:--|
-| Measure beta starts, progress and requested exports | random beta-session identifier, allow-listed event/time, coarse duration and completion counts | Legitimate interests | Complete an LIA; confirm any PECR/storage-access implications and provide a simple objection where required. No assessment values or text. |
+| Measure beta starts, progress and requested exports | allow-listed Plausible event name, tool version, coarse duration and completion counts; no application identifier | Legitimate interests | Complete an LIA; confirm any PECR/storage-access implications and provide a simple objection where required. No assessment values or text. |
 | Verify report access and know who completed the beta | email, role, organisation, optional profile bands, verification/security events | Contract where necessary to deliver the requested report; legitimate interests for proportionate security and beta administration | Confirm that the free-service terms form a suitable contract and test whether role/organisation are genuinely necessary. |
 | Generate and save the assessment/report | browser-only boundary, responses, rationale, evidence references | Processing occurs locally at the user's direction; OPL Advisory does not receive these data in the public-beta model | Confirm that no request, log, analytics event or crash report can capture the content. |
-| Receive feedback without contact details | rating/category/comment and allow-listed coarse tool context | Legitimate interests | Do not promise legal anonymity; exclude participant/session IDs, separate storage and minimise network logs. |
+| Receive feedback without contact details | rating/category/comment and allow-listed coarse tool context | Legitimate interests | Do not promise legal anonymity; exclude participant and analytics identifiers, separate storage and minimise network logs. |
 | Receive contactable feedback | feedback plus explicit participant/contact reference | Legitimate interests for responding to the requested contact; consent if later contact goes beyond that request | Make the choice explicit and separate from report delivery and marketing. |
 | Support access, correction, export and deletion | account and request records | Legal obligation and/or basis used for the service | Define identity-verification and response procedures. |
 | Improve the tool and framework | aggregate funnel measures and feedback deliberately submitted by users | Legitimate interests; separate consent/permission for identifiable quotations or case studies | The public beta has no central result dataset. Future result research requires explicit sharing and new governance. |
@@ -92,7 +92,7 @@ Test whether organisation and role remain proportionate once the beta has enough
 |:--|:--|
 | Unverified OTP/account attempt | 24 hours |
 | OTP | 10 minutes, single use |
-| Pseudonymous beta-session events | Six months after last event, then delete; retain only reviewed aggregate counts if still necessary |
+| Plausible beta events | Use the approved Plausible plan/retention setting; review aggregate product events after six months and retain only while necessary |
 | Verified beta participant | 12 months after the beta or last participant activity, whichever is later; review at six months and provide earlier deletion |
 | Feedback without contact details | 12 months, then delete or retain only a reviewed non-identifying synthesis |
 | Contactable feedback | 12 months after closure of the feedback/follow-up, unless the person separately opts into research contact |
@@ -100,7 +100,7 @@ Test whether organisation and role remain proportionate once the beta has enough
 | Application security/IP logs | Target 30 days; shorten further if the provider supports adequate abuse investigation |
 | Consent/preference record | Until withdrawal plus a proportionate suppression record to honour the withdrawal; review at 24 months |
 | Live data after verified deletion | Remove promptly, target within 24 hours |
-| Backups after deletion | No new live use; expire within D1's documented Time Travel window: seven days on Free or 30 days on Paid. Choose and state the plan before launch. |
+| Backups after deletion | No new live use. Record the actual Supabase Pro backup/recovery schedule and maximum expiry before launch; reconcile any restore against deletions before returning it to service. |
 | Aggregate beta counts | Review annually; retain only while necessary and non-identifying |
 
 If a later server-side assessment workspace is approved, its draft, report, audit and invitation retention requires a separate schedule; it is not covered by the public-beta periods above.
@@ -110,8 +110,8 @@ The ICO requires justified retention rather than a universal period and recommen
 ## Confidentiality and access
 
 - Public-beta assessment responses and reports remain on the user's device and are not visible to OPL Advisory.
-- Beta operations staff can see only the participant, event or feedback fields needed for their role. Routine support must not have access to all three stores.
-- Feedback without contact details has no participant or beta-session foreign key. Contactable feedback is linked only after the user explicitly selects that mode.
+- Beta operations staff can see only the participant or feedback fields needed for their role. Plausible access is separate and contains no Supabase identity.
+- Feedback without contact details has no participant foreign key or Plausible identifier. Contactable feedback is linked only after the user explicitly selects that mode.
 - Administrative access is MFA-protected, just-in-time where practical, time-limited and logged.
 - Individual scores, evidence and reports are not shared with other organisations or users without an explicit owner action.
 - Assessment data are never used for accreditation, funding or participation decisions by the service operator.
@@ -119,7 +119,7 @@ The ICO requires justified retention rather than a universal period and recommen
 
 ## Aggregation and anonymisation
 
-The public beta has no central result dataset, so it cannot generate a maturity benchmark. Pseudonymisation alone does not make beta-session events or participant records anonymous. Any future pipeline using explicitly shared results should:
+The public beta has no central result dataset, so it cannot generate a maturity benchmark. Data minimisation does not make participant or feedback records anonymous. Any future pipeline using explicitly shared results should:
 
 1. select only fields required for an approved analysis;
 2. remove user, workspace, organisation, service, report and evidence identifiers;
@@ -136,7 +136,7 @@ Small-cell rules are contextual rather than magic numbers. ONS advises consideri
 
 ## Analytics separation
 
-- Use a different project, access role and retention policy for public-site analytics.
+- Keep Plausible access, purpose and retention separate from Supabase operational records.
 - Never initialise analytics with email, participant ID, organisation or feedback ID.
 - Never include assessment state in paths, query strings, fragments, event names or referrers.
 - Maintain a versioned allow-list such as `assessment_started`, `snapshot_domain_completed`, `snapshot_completed`, `report_unlocked`, `report_download_requested`, `feedback_submitted` and `feedback_skipped`. Only coarse counts/bands and action types are permitted.
@@ -156,14 +156,14 @@ Small-cell rules are contextual rather than magic numbers. ONS advises consideri
 
 ### Thin-service implementation
 
-- Participant profile JSON is encrypted with AES-GCM using a separately managed 256-bit key. A keyed HMAC supports exact email lookup without storing plaintext email in D1.
-- OTP and receipt secrets are separate from encryption and email-index keys. Production and staging use different keys and administrator tokens, held as Worker secrets rather than repository variables.
-- One-time codes expire in 10 minutes, are single use, permit five attempts and are rate-limited. The application stores a daily keyed digest of the source address for abuse control, not the raw address.
+- Supabase Auth holds the verified email; the public beta tables do not duplicate it. Managed encryption at rest and TLS apply, with Postgres RLS enabled and all `anon`/`authenticated` table grants revoked.
+- The Supabase secret key and HMAC rate-limit secret are available only to the Edge Function. The website eventually receives only the browser-safe publishable key.
+- One-time codes are six digits and expire in 10 minutes. Supabase Auth and the Edge Function apply rate controls; the application stores an expiring HMAC-derived key for abuse control, not the raw source address.
 - JSON request schemas use a top-level and nested allow-list. Unexpected assessment-like fields cause a `400 privacy_boundary_violation`; they are not accepted and stripped later.
-- Feedback without contact details has no participant or session foreign key. Timestamps are reduced to a date for feedback and an hour for operational events.
+- Feedback without contact details has no participant foreign key. Feedback timestamps are reduced to a date; operational events go only to Plausible.
 - A scheduled job applies the published retention periods. Verified access/export, profile correction and deletion requests use the same OTP channel and record completion without retaining request content indefinitely. A verified-email change is handled through the published privacy contact because it requires separate identity checks.
 - Operational endpoints do not put emails, OTPs, session IDs or report data in URLs. Report and export generation remain in the browser.
-- Administrative access is a deliberately narrow interim control for a thin beta, not a general account system. Before production it requires a named operator, MFA-protected Cloudflare account, secret-rotation procedure, access review and independent authorisation test.
+- Administrative access is a deliberately narrow control for a thin beta, not a general account system. Before production it requires named operators, MFA-protected Supabase and Plausible accounts, a secret-rotation procedure, access review and independent authorisation test.
 
 ## Draft privacy notice
 
@@ -175,13 +175,13 @@ OPL Advisory Ltd is proposed to operate the HDRL self-assessment service and act
 
 Your assessment—including levels, certainty, scope, comments, evidence references and report—stays in your browser unless you deliberately download or share it. OPL Advisory cannot see or recover it.
 
-We collect a random beta-session identifier and a limited set of events to understand how many people start, make progress, reach the report and request downloads. Events contain tool versions, coarse time bands and completion counts, but no assessment values or text. At report access we collect a verified email address, role and organisation, plus any optional broad profile information you provide, so we can administer the beta and know who reached the report. We collect feedback only when you submit it.
+We use a limited set of aggregate Plausible events to understand how many people start, make progress, reach the report and request downloads. We do not send an application user/session identifier, email or organisation with those events. Events contain tool versions, coarse time bands and completion counts, but no assessment values or text. At report access we collect a verified email address, role and organisation, plus any optional broad profile information you provide, so we can administer the beta and know who reached the report. We collect feedback only when you submit it.
 
 We do not use assessment data to accredit you, decide funding or participation, advertise to you, profile individuals or sell data. We do not publish identifiable assessment information.
 
 ### Sharing
 
-Participant, event and feedback records are available only to authorised OPL Advisory personnel and suppliers that process them under contract. Feedback submitted without contact details is stored without your email, organisation or beta-session identifier; however, free text or unusual context can still identify you. We do not share individual scores, evidence or reports with another organisation because we do not receive them unless you explicitly create and send a results bundle. Identifiable quotations, case studies and examples require separate permission.
+Participant and feedback records are available only to authorised OPL Advisory personnel and suppliers that process them under contract. Plausible events are held separately. Feedback submitted without contact details is stored without your email, organisation or participant identifier; however, free text or unusual context can still identify you. We do not share individual scores, evidence or reports with another organisation because we do not receive them unless you explicitly create and send a results bundle. Identifiable quotations, case studies and examples require separate permission.
 
 ### Framework improvement
 
@@ -199,7 +199,7 @@ Providing an email address to receive or access a report does not subscribe you 
 
 ### International processing
 
-The proposed D1 database uses Cloudflare's EU jurisdiction. Cloudflare and its sub-processors still require location and transfer review under its [customer DPA](https://www.cloudflare.com/en-gb/cloudflare-customer-dpa/). Transactional emails are proposed to send from Resend's Ireland region, but Resend says account and email metadata are stored in the United States regardless of sending region. Its [DPA](https://resend.com/legal/dpa), SCCs, UK addendum and subprocessors therefore require a documented transfer assessment before activation. See the ICO [international transfers guide](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/international-transfers/a-guide-to-international-transfers/).
+The Supabase database is configured in West Europe (London), and browser requests ask the Edge Function to run in `eu-west-2`. Supabase support, authentication, logs, backups and subprocessors still require a documented location and transfer review. Plausible and IONOS processing must receive the same review; use of an existing account or a UK SMTP hostname is not a substitute for checking the current contracts and subprocessors. See the ICO [international transfers guide](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/international-transfers/a-guide-to-international-transfers/).
 
 ## Just-in-time notices
 
@@ -217,11 +217,11 @@ The proposed D1 database uses Cloudflare's EU jurisdiction. Cloudflare and its s
 
 ### Beta activity
 
-> We record that this beta was started, coarse time and completion bands, and whether report, download and feedback actions were reached. We do not include your levels, certainty, assessment boundary, comments, evidence or report contents. Public-site analytics is disabled on this route. You can stop future beta-activity events for this draft; requested email verification and feedback you deliberately submit will still use the service.
+> If you allow beta analytics, Plausible records that this beta was started, coarse time and completion bands, and whether report, download and feedback actions were reached. We do not send an application identifier, your email or organisation, levels, certainty, assessment boundary, comments, evidence or report contents. Automatic page views are disabled on this route. You can stop future beta events for this draft; requested email verification and feedback you deliberately submit will still use the service.
 
 ### Feedback
 
-> Feedback is optional and can be skipped. “Without contact details” feedback includes a rating/category/comment and limited tool context, but no email, organisation or beta-session identifier. Avoid identifying or sensitive information in free text; wording or unusual context can still identify you.
+> Feedback is optional and can be skipped. “Without contact details” feedback includes a rating/category/comment and limited tool context, but no email, organisation, participant or analytics identifier. Avoid identifying or sensitive information in free text; wording or unusual context can still identify you.
 
 ### Report gate
 
@@ -255,8 +255,9 @@ The proposed D1 database uses Cloudflare's EU jurisdiction. Cloudflare and its s
 - approve controller contact, rights and complaint wording;
 - review DUAA 2025 and current ICO guidance at launch;
 - approve processor contracts, sub-processors, locations and transfer safeguards;
-- confirm the Cloudflare Free/Paid choice and resulting seven-/30-day recovery window;
-- verify `beta.hdrlframework.org`, approve the Resend Ireland sending region and document its US metadata transfer;
+- record approval of the dedicated Supabase London project and its US$10 monthly increment;
+- approve the current Supabase, Plausible and IONOS terms, subprocessors, locations, transfers and recovery/log-retention settings;
+- create and test `report@hdrlframework.org` through IONOS custom SMTP without sharing its password in project records;
 - confirm that `privacy@hdrlframework.org` is monitored, or replace it with the approved rights-contact mailbox;
 - validate retention, backup expiry and deletion evidence;
 - approve statistical disclosure-control protocol;

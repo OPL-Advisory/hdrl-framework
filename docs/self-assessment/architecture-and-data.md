@@ -13,59 +13,57 @@ The framework website is a static MkDocs Material build deployed by GitHub Actio
 
 ### Prototype
 
-Build the interaction inside the existing MkDocs site and store one draft in the browser's IndexedDB. Generate HTML, JSON and CSV locally. The v0.3 prototype includes an optional eight-domain orientation, the complete 64-indicator snapshot and the evidence workspace. It records the proposed beta funnel locally for inspection, but its versioned configuration has no endpoints and refuses to start if remote collection is enabled. Do not send registration fields or assessment content anywhere. Mark the page as a research prototype and keep it out of production search indexing.
+Build the interaction inside the existing MkDocs site and store one draft in the browser's IndexedDB. Generate HTML, JSON and CSV locally. Tool v0.5 includes an optional eight-domain orientation, the complete 64-indicator snapshot and the evidence workspace. Its versioned public-beta configuration has operational collection and Plausible events disabled. It also omits the browser-safe Supabase key, so a configuration mistake cannot activate the service accidentally. Mark the page as a research prototype and keep it out of production search indexing.
 
 ### Recommended public beta: local assessment plus a thin operational service
 
 Keep the assessment, notes, evidence references, report and exports in the browser. Add only a small, separately deployed beta service that can:
 
-- issue a random beta-session identifier and accept allow-listed funnel events;
+- use Plausible to count only versioned, allow-listed funnel events without an application session identifier;
 - verify an email address at report unlock using a short-lived one-time code;
 - store the minimum participant/service metadata needed for beta follow-up;
 - accept feedback through a logically separate endpoint, either without contact details or explicitly contactable; and
 - support access, correction and deletion of the participant record.
 
-The service must never receive maturity levels, certainty, applicability, boundary text, comments, evidence, report content or downloaded files. Report generation remains local after the verification response unlocks the interface. People who start but do not unlock a report are visible only as pseudonymous funnel sessions; report unlockers can be counted and followed up using the verified participant record. This deliberately accepts that OPL Advisory will not know the identity of every person who merely opens or abandons the tool.
+The service must never receive maturity levels, certainty, applicability, boundary text, comments entered as part of the assessment, evidence, report content or downloaded files. Report generation remains local after verification unlocks the interface. People who start but do not unlock a report can be counted in the anonymous aggregate funnel but cannot be identified by OPL Advisory. Report unlockers can be counted and followed up using the separately verified participant record. Plausible events are never joined to that record.
 
-For the thin beta service, the staging implementation selects Cloudflare Workers with an EU-jurisdiction D1 database and Resend transactional email. The small Worker and SQLite-compatible schema are intentionally portable. The repository now contains the complete service, migrations, privacy-boundary tests and an off-by-default browser integration. No cloud account, database or sending domain has been activated by this branch: provider terms, international transfers, controller details and production security still require explicit approval.
+The approved thin-service architecture is a dedicated Supabase Pro project in **West Europe (London)**, IONOS transactional email from `report@hdrlframework.org`, and the existing Plausible account for anonymous aggregate events. The Supabase project, database migrations and Edge Function are deployed in a non-public activation state. The website configuration keeps both remote services off and does not publish the Supabase key. Custom SMTP, controller/processor review, final notices and production security approval remain release gates.
 
 ## Options considered
 
 | Option | Cost and burden | Privacy and control | Lock-in and migration | Decision |
 |:--|:--|:--|:--|:--|
 | Keep everything on GitHub Pages/IndexedDB | Near-zero hosting cost and lowest operational burden. | Strong data minimisation because nothing leaves the device, but OPL Advisory cannot count use or receive feedback unless users send an exported bundle. | Low lock-in; local data are not recoverable by the operator. | Current research prototype. |
-| Thin Cloudflare Workers + D1 beta service | Free tiers are sufficient for a small beta; Workers Paid has a US$5/month minimum. D1 Time Travel is seven days on Free and 30 days on Paid. | Small data model and attack surface; requires a transactional-email processor, endpoint validation, deletion tooling and careful feedback separation. D1 jurisdiction is EU, not specifically UK. | Moderate runtime lock-in; the small SQLite dataset and versioned event contract are portable. | **Selected staging implementation**, subject to processor/privacy approval. |
-| Supabase London + Cloudflare front end | From US$25/month plus SMTP and optional hosting. Lower build and support burden. | UK database region, OTP auth, Postgres, RLS and backups. Pro dashboard access roles and platform-log retention are limited; application audit logging remains necessary. | Moderate. Postgres schema and data are portable; Auth and edge integrations require migration work. | **Recommended for a controlled pilot**, subject to procurement and DPIA. |
+| Thin Cloudflare Workers + D1 beta service | Low entry cost, but adds a second application platform and separate transactional-email API. | A small surface is possible, but email encryption, authentication, rights tooling and operating controls become custom code. | Moderate runtime lock-in; the SQLite data are portable. | Superseded proof of concept; not the activation path. |
+| Dedicated Supabase London project + IONOS SMTP + Plausible | The approved project adds US$10/month to the existing Pro organisation. The existing Plausible account is in trial and the HDRL domain has no IONOS mailbox licence, so both need a separately approved subscription/order. One Supabase dashboard covers Auth, Postgres, Edge Functions and scheduled retention. | London database, managed email OTP, RLS, backups and a narrow Edge API. Assessment data still remain local. Supplier terms, logs and subprocessors require review. | Moderate. Postgres and the small schema are portable; Auth/Edge integration would need adaptation. | **Selected for the beta**, subject to release conditions. |
 | Azure UK South application + PostgreSQL | Typically higher baseline cost and operational complexity; pricing depends on provisioned compute, network and monitoring. | Strong regional and enterprise controls, private networking and established procurement routes. | Moderate-to-high service coupling, but PostgreSQL is portable. | Prefer if an institutional sponsor requires Azure tenancy, central identity or enterprise operations. |
 | AWS London serverless stack | Can be low at small volume but has more services, policies and observability to operate. | Granular control and UK region; greater configuration risk and specialist burden. | Higher architectural coupling across Cognito, API Gateway/Lambda, database and email. | Not justified for the first pilot without an AWS operating team. |
 
-Current vendor facts should be rechecked at procurement: [Cloudflare D1 location](https://developers.cloudflare.com/d1/configuration/data-location/), [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/), [D1 Time Travel](https://developers.cloudflare.com/d1/reference/time-travel/), [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/), [Cloudflare customer DPA](https://www.cloudflare.com/en-gb/cloudflare-customer-dpa/), [Resend pricing](https://resend.com/pricing), [Resend sending regions](https://resend.com/docs/dashboard/domains/regions), [Resend DPA](https://resend.com/legal/dpa), [Supabase regions](https://supabase.com/docs/guides/platform/regions), [Supabase pricing](https://supabase.com/pricing), [Supabase backups](https://supabase.com/docs/guides/platform/backups), [Azure PostgreSQL overview](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/service-overview).
+Current vendor facts should be rechecked at each material renewal or release: [Supabase regions](https://supabase.com/docs/guides/platform/regions), [regional Edge Function invocation](https://supabase.com/docs/guides/functions/regional-invocation), [Supabase pricing](https://supabase.com/pricing), [Supabase backups](https://supabase.com/docs/guides/platform/backups), [Supabase custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp), [Plausible custom events](https://plausible.io/docs/custom-event-goals), [Plausible privacy](https://plausible.io/privacy), [IONOS email-server settings](https://www.ionos.co.uk/help/email/general-topics/settings-for-your-email-programs-imap-pop3/) and [Azure PostgreSQL](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/service-overview).
 
-Resend can send from Ireland, but its documentation says account and email metadata are stored in the United States regardless of sending region. The supplier assessment must therefore cover that restricted transfer and the current DPA/SCC/UK addendum; selecting Ireland is not a claim that all email processing stays in the EEA.
-
-The Supabase, Azure and AWS rows describe a later server-side workspace service, not a prerequisite for the public beta.
+Azure and AWS remain future enterprise-workspace options, not prerequisites for this browser-local beta.
 
 ## Public-beta data boundary
 
 | Stream | May be sent | Must not be sent |
 |:--|:--|:--|
-| Operational funnel | random beta-session ID; tool/framework versions; event/time; coarse active-time band; completed indicator/domain counts; download-request type; feedback submitted/skipped disposition | email; organisation; level; certainty; applicability; assessment title/scope; comments; evidence; report content |
+| Operational funnel | allow-listed event name; tool/framework versions; coarse active-time band; completed indicator/domain counts; download-request type; feedback submitted/skipped disposition | application session or participant ID; email; organisation; level; certainty; applicability; assessment title/scope; comments; evidence; report content |
 | Verified participant | email; role; organisation; individual/team use; broad intended-use category; optional name, region/service type/scale; verification/security state; separate optional contact preferences | assessment results, notes, evidence, report or export |
-| Feedback without contact details | rating/category/comment plus allow-listed tool context and coarse completion/time bands | participant/session ID, email or organisation; exact assessment values; assessment text |
+| Feedback without contact details | rating/category/comment plus allow-listed tool context and coarse completion/time bands | participant or analytics ID, email or organisation; exact assessment values; assessment text |
 | Contactable feedback | the feedback fields above plus an explicit contact reference | assessment results unless separately and explicitly shared |
 | Explicit results share | only categories reviewed and selected by the assessor in the locally created bundle | automatic/background upload of any result |
 
-Feedback “without contact details” is safer wording than an absolute promise of anonymity. Free text can identify its author, and unusual context or network logs can create linkage risk. The feedback endpoint should therefore use no authentication cookie or beta-session identifier, round timestamps, minimise IP/security-log retention and store feedback separately from participant/event tables.
+Feedback “without contact details” is safer wording than an absolute promise of anonymity. Free text can identify its author, and unusual context or network logs can create linkage risk. The feedback endpoint therefore uses no authentication token or analytics identifier, rounds timestamps, minimises IP/security-log retention and stores feedback separately from participant data.
 
 The browser can observe that a download action was requested, but it cannot prove that the user retained or opened the file. Product reporting must use “download requested”, not “download completed”.
 
 ## Integration implications
 
 - The public beta can remain a visually integrated static route on `hdrlframework.org`; it calls the thin service only for allow-listed operational, verification and feedback functions.
-- A strict Content Security Policy limits scripts and connections to the catalogue and approved beta-service origins. Assessment content never appears in requests.
+- A strict Content Security Policy should limit scripts and connections to the catalogue, Supabase and Plausible origins when the beta is enabled. Assessment content never appears in requests.
 - If a later workspace application uses `assess.hdrlframework.org`, cross-navigation uses normal links and authentication cookies are scoped to that subdomain.
 - The public catalogue can be read from `hdrlframework.org`, but each assessment release also stores the verified catalogue hash and an immutable snapshot so old reports remain interpretable.
-- Plausible may receive a page view on the public launch page, but the assessment route keeps public-site analytics disabled. Product learning uses the separate event pipeline and its versioned allow-list. Assessment values and text are never event properties.
+- The assessment route keeps automatic public-site page views disabled. If the beta flag is enabled, Plausible receives only explicit product events from a versioned allow-list. Assessment values, text, email, organisation and Supabase identity are never event properties.
 
 ## Public-beta verification
 
@@ -77,16 +75,17 @@ The browser can observe that a download action was requested, but it cannot prov
 
 ## Implemented thin-service controls
 
-- The browser requests a server-issued random session ID and sends only versioned, allow-listed event names and coarse properties. It does not derive the ID from email or assessment content.
+- Plausible receives only versioned, allow-listed event names and coarse properties. The application sends no session, participant, email or organisation identifier and disables automatic page views for this route.
 - Unexpected top-level fields and event properties are rejected, not silently discarded. This makes an accidental `level`, `certainty`, boundary, evidence or report upload fail closed.
-- Participant profiles are encrypted with AES-GCM. Normalised email addresses are indexed using a keyed HMAC; plaintext email does not appear in D1.
-- OTPs are six digits, expire after 10 minutes, allow five attempts and are stored as keyed digests. Rate-limit keys use a daily keyed digest of the source address; raw IP addresses are not persisted by the application.
-- Feedback without contact details has no participant or beta-session key. Contactable feedback requires the short-lived signed receipt returned after email verification.
-- The Worker exposes verified participant access/export, profile correction and deletion flows, and a daily retention job. A verified-email change uses the published privacy contact rather than silently moving identity to a new address. Deletion removes live participant, preference, linked session/event and contactable-feedback records immediately; the consumed verification challenge is emptied and expires automatically. Provider recovery copies then expire under the approved D1 Time Travel window.
-- Worker observability is disabled in configuration. Administration uses a separate bearer secret, returns only aggregate funnel counts or the minimum participant export, and records administrative actions without request bodies.
-- Remote collection is disabled in the committed website configuration. A service URL and explicit `remote_collection_enabled` flag are both required before a public build can transmit operational data.
+- Supabase Auth stores and verifies the email identity. The beta schema stores the minimum participant profile against the Auth user ID; RLS is enabled and public table grants are revoked.
+- OTPs are six digits and expire after 10 minutes. Endpoint throttling uses an HMAC-derived rate key; the application does not persist raw IP addresses.
+- Feedback without contact details has no participant key. Contactable feedback requires a currently valid user access token held in memory only.
+- The Edge Function exposes participant creation, feedback, verified export, correction and deletion. A scheduled Postgres function applies retention, including deletion of unverified Auth users after 24 hours.
+- The browser supplies the publishable API key, but only the Edge Function holds a secret key. The Function validates origins, requires the API key, authenticates protected actions and records no request body or assessment content in application logs.
+- The browser pins function requests to `eu-west-2`; deployment verification checks the `x-sb-edge-region` response. Database storage is in the London region.
+- Remote collection is disabled in the committed configuration. Enabling the service requires the approved environment, the explicit remote flag, a browser-safe key and separately enabled Plausible configuration.
 
-The beta service does not use browser cookies or local storage for remote telemetry. The assessment draft remains in IndexedDB because local save-and-return is the product function; the interface provides a persistent telemetry objection/disable control while leaving requested verification and deliberately submitted feedback available. Once exercised, remote activity stays off for that draft; a new server session is not silently created to reverse the objection.
+The beta integration does not write remote identifiers to cookies, local storage or session storage. The assessment draft remains in IndexedDB because local save-and-return is the product function; the interface provides a persistent analytics objection/disable control while leaving requested verification and deliberately submitted feedback available.
 
 ## Later workspace authentication and invitations
 
@@ -105,12 +104,14 @@ Email OTP avoids putting invitation or authentication secrets in URLs. Supabase 
 
 | Entity | Essential fields |
 |:--|:--|
-| `beta_sessions` | random id, tool/framework versions, created/last-event dates, retention date; optional participant link only after verified unlock |
-| `beta_events` | session, allow-listed event name, timestamp or time bucket, coarse duration/progress properties, schema version |
-| `beta_participants` | verified email, role, organisation, use mode, intended-use category, optional profile bands, verification/last-seen dates, retention date |
-| `contact_preferences` | participant, purpose, wording version, affirmative action, date, withdrawn date |
-| `feedback` | separate random id, contact mode, rating/category/comment, allow-listed coarse context, received date; nullable explicit contact reference and no beta-session reference |
-| `rights_requests` | participant or feedback reference, request type/date/status, completion evidence |
+| `beta_participants` | Supabase Auth user reference, role, organisation, use mode, intended-use category, optional profile bands, verification/last-seen dates, retention date; email remains in Auth |
+| `beta_contact_preferences` | participant, purpose, wording version, affirmative action, date, withdrawn date |
+| `beta_feedback` | separate random id, contact mode, rating/category/comment, allow-listed coarse context, received date; nullable explicit participant reference |
+| `beta_privacy_requests` | participant, request type/date/status and completion date |
+| `beta_rate_limits` | keyed, expiring abuse-control counters; no raw IP address |
+| `beta_admin_audit` | narrow administrative action metadata without request or assessment content |
+
+Plausible holds the separate aggregate event stream under its own configured retention and access controls. There is deliberately no analytics/event table or join key in the Supabase project.
 
 ### Later server-side assessment workspace
 

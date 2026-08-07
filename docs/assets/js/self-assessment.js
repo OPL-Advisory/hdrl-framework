@@ -7,11 +7,11 @@
   const VERSIONS = {
     framework: "1.0.1",
     catalogue: "1.0.2",
-    tool: "0.4.0-beta",
+    tool: "0.5.0-beta",
     guidance: "0.2.0",
     rules: "0.2.0",
     report: "0.4.0",
-    beta: "0.2.0"
+    beta: "0.3.0"
   };
 
   const DB_NAME = "hdrl-self-assessment-prototype";
@@ -52,7 +52,8 @@
   let saveTimer;
   let lastFocusId = "";
   let lastActivityTick = Date.now();
-  let remoteSyncPromise = null;
+  let authAccessToken = "";
+  let plausibleReady = false;
 
   const esc = (value = "") =>
     String(value)
@@ -93,8 +94,7 @@
       indicators: {},
       domainNotes: {},
       beta: {
-        sessionId: makeId(),
-        remoteSessionId: "",
+        localActivityId: makeId(),
         telemetryEnabled: true,
         telemetryDisabledAt: "",
         remoteLastSyncAt: "",
@@ -232,6 +232,7 @@
     } catch {
       // The in-memory reset below still works when IndexedDB is unavailable.
     }
+    authAccessToken = "";
     state = defaultState();
     render();
     announce("The on-device draft has been deleted.");
@@ -291,45 +292,85 @@
     return "desktop";
   }
 
+  function isLocalPreview() {
+    return ["127.0.0.1", "localhost"].includes(location.hostname) || location.hostname.endsWith(".localhost");
+  }
+
   function serviceBaseUrl() {
-    const configured = betaConfig?.transport?.service_base_url;
-    if (configured) return String(configured).replace(/\/$/, "");
-    const localHost = ["127.0.0.1", "localhost"].includes(location.hostname) || location.hostname.endsWith(".localhost");
-    const previewOverride = new URLSearchParams(location.search).get("beta-api");
-    if (localHost && betaConfig?.transport?.local_preview_override && previewOverride && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(previewOverride)) {
-      return previewOverride.replace(/\/$/, "");
-    }
-    return "";
+    return String(betaConfig?.transport?.service_base_url || "").replace(/\/$/, "");
+  }
+
+  function publishableKey() {
+    return String(betaConfig?.transport?.supabase_publishable_key || "");
   }
 
   function betaServiceAvailable() {
-    const localHost = ["127.0.0.1", "localhost"].includes(location.hostname) || location.hostname.endsWith(".localhost");
-    return Boolean(serviceBaseUrl() && (betaConfig?.transport?.remote_collection_enabled || localHost));
+    const approvedEnvironment = betaConfig?.transport?.remote_collection_enabled
+      || (isLocalPreview() && betaConfig?.transport?.local_preview_enabled);
+    return Boolean(approvedEnvironment && serviceBaseUrl() && publishableKey());
   }
 
   function remoteServiceEnabled() {
-    return Boolean(state?.beta?.telemetryEnabled && betaServiceAvailable());
+    return Boolean(state?.beta?.telemetryEnabled && betaConfig?.plausible?.enabled);
   }
 
-  async function apiRequest(path, body) {
-    const base = serviceBaseUrl();
-    if (!base) throw new Error("The beta service is not enabled.");
+  function initialisePlausible() {
+    if (!remoteServiceEnabled() || plausibleReady) return;
+    plausibleReady = true;
+    globalThis.plausible = globalThis.plausible || function plausibleQueue() {
+      (globalThis.plausible.q = globalThis.plausible.q || []).push(arguments);
+    };
+    globalThis.plausible.init = globalThis.plausible.init || function plausibleInit(options) {
+      globalThis.plausible.o = options || {};
+    };
+    globalThis.plausible.init({
+      autoCapturePageviews: betaConfig.plausible.capture_pageview === true,
+      captureOnLocalhost: false
+    });
+    const scriptUrl = String(betaConfig.plausible.script_url || "");
+    if (scriptUrl && !document.querySelector(`script[src="${scriptUrl}"]`)) {
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = scriptUrl;
+      script.referrerPolicy = "no-referrer";
+      document.head.append(script);
+    }
+  }
+
+  function sendPlausibleEvent(event) {
+    if (!remoteServiceEnabled()) return;
+    initialisePlausible();
+    const eventName = betaConfig.plausible.event_name_map?.[event.name];
+    if (!eventName || typeof globalThis.plausible !== "function") return;
+    const propertyAllowlist = new Set(betaConfig.plausible.property_allowlist || []);
+    const props = {};
+    (betaConfig.event_allowlist[event.name] || []).forEach((key) => {
+      const value = event[key];
+      if (propertyAllowlist.has(key) && ["string", "number", "boolean"].includes(typeof value)) props[key] = value;
+    });
+    globalThis.plausible(eventName, { props, interactive: false });
+    state.beta.remoteLastSyncAt = nowIso();
+  }
+
+  async function requestJson(url, body, { token = "", method = "POST" } = {}) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), Number(betaConfig.transport.request_timeout_ms || 8000));
+    const headers = { "content-type": "application/json", apikey: publishableKey() };
+    if (token) headers.authorization = `Bearer ${token}`;
     try {
-      const response = await fetch(`${base}${path}`, {
-        method: "POST",
+      const response = await fetch(url, {
+        method,
         credentials: "omit",
         cache: "no-store",
         referrerPolicy: "no-referrer",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
+        headers,
+        body: method === "GET" ? undefined : JSON.stringify(body),
         signal: controller.signal
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        const error = new Error(payload.message || "The beta service could not complete the request.");
-        error.code = payload.error || "service_error";
+        const error = new Error(payload.message || payload.msg || "The beta service could not complete the request.");
+        error.code = payload.error || payload.error_code || "service_error";
         error.status = response.status;
         throw error;
       }
@@ -339,62 +380,44 @@
     }
   }
 
-  async function ensureRemoteSession() {
-    if (!betaServiceAvailable()) return "";
-    if (state.beta.remoteSessionId) return state.beta.remoteSessionId;
-    const created = await apiRequest("/v1/sessions", {
-      schema_version: VERSIONS.beta,
-      tool_version: VERSIONS.tool,
-      framework_version: VERSIONS.framework,
-      catalogue_version: VERSIONS.catalogue
-    });
-    state.beta.remoteSessionId = created.session_id;
-    state.beta.remoteLastError = "";
-    scheduleSave();
-    return created.session_id;
+  async function apiRequest(path, body, options = {}) {
+    if (!betaServiceAvailable()) throw new Error("The beta service is not enabled.");
+    const region = encodeURIComponent(betaConfig.transport.function_region || "eu-west-2");
+    return requestJson(`${serviceBaseUrl()}${path}?forceFunctionRegion=${region}`, body, options);
   }
 
-  function transportEvent(event) {
-    const properties = {};
-    (betaConfig.event_allowlist[event.name] || []).forEach((key) => {
-      if (event[key] !== undefined && ["string", "number", "boolean"].includes(typeof event[key])) properties[key] = event[key];
-    });
-    return { id: event.id, name: event.name, at: event.at, properties };
+  async function requestEmailOtp(email) {
+    if (!betaServiceAvailable()) throw new Error("Email verification is not enabled.");
+    return requestJson(`${betaConfig.transport.supabase_url}/auth/v1/otp`, { email, create_user: true });
   }
 
-  async function syncRemoteEvents() {
-    if (!remoteServiceEnabled()) return;
-    if (remoteSyncPromise) return remoteSyncPromise;
-    remoteSyncPromise = Promise.resolve().then(async () => {
-        const pending = state.beta.events.filter((event) => !event.remoteSentAt).slice(0, 25);
-        if (!pending.length) return;
-        const sessionId = await ensureRemoteSession();
-        await apiRequest("/v1/events", { session_id: sessionId, events: pending.map(transportEvent) });
-        const sentAt = nowIso();
-        pending.forEach((event) => { event.remoteSentAt = sentAt; });
-        state.beta.remoteLastSyncAt = sentAt;
-        state.beta.remoteLastError = "";
-        scheduleSave();
-        if (state.beta.events.some((event) => !event.remoteSentAt)) setTimeout(() => { void syncRemoteEvents(); }, 0);
-    }).catch((error) => {
-        state.beta.remoteLastError = error.message || "The beta service is unavailable.";
-        scheduleSave();
-    });
-    const currentSync = remoteSyncPromise;
-    try { return await currentSync; }
-    finally { if (remoteSyncPromise === currentSync) remoteSyncPromise = null; }
+  async function verifyEmailOtp(email, token) {
+    if (!betaServiceAvailable()) throw new Error("Email verification is not enabled.");
+    return requestJson(`${betaConfig.transport.supabase_url}/auth/v1/verify`, { email, token, type: "email" });
+  }
+
+  function registrationPayload() {
+    return {
+      name: state.registration.name,
+      role: state.registration.role,
+      organisation: state.registration.organisation,
+      region: state.registration.region,
+      service_type: state.registration.serviceType,
+      scale: state.registration.scale,
+      use_mode: state.registration.useMode,
+      report_use: state.registration.reportUse,
+      research_contact: state.registration.researchContact,
+      newsletter: state.registration.newsletter,
+      privacy_notice_version: betaConfig.privacy_notice_version,
+      contact_wording_version: betaConfig.contact_wording_version
+    };
   }
 
   async function turnOffRemoteTelemetry() {
-    const sessionId = state.beta.remoteSessionId;
     state.beta.telemetryEnabled = false;
     state.beta.telemetryDisabledAt = state.beta.telemetryDisabledAt || nowIso();
     state.beta.remoteLastError = "";
     scheduleSave();
-    if (sessionId && serviceBaseUrl()) {
-      try { await apiRequest("/v1/telemetry/disable", { session_id: sessionId }); }
-      catch { /* The local preference still prevents further transmission. */ }
-    }
   }
 
   function recordBetaEvent(name, payload = {}) {
@@ -415,7 +438,7 @@
     });
     if (state.beta.events.length > 500) state.beta.events = state.beta.events.slice(-500);
     scheduleSave();
-    void syncRemoteEvents();
+    sendPlausibleEvent(state.beta.events.at(-1));
   }
 
   function hasBetaEvent(name) {
@@ -538,13 +561,13 @@
           <p>A self-assessment cannot validate, accredit or endorse a service. It reflects a stated boundary, the people involved and the evidence available on the assessment date.</p>
         </div>
         <div class="hdrl-assessment-notice">
-          <strong>${remoteServiceEnabled() ? "Privacy-minimised beta activity is on." : "Remote beta activity is off."}</strong>
+          <strong>${remoteServiceEnabled() ? "Anonymous beta activity is on." : "Anonymous beta activity is off."}</strong>
           ${remoteServiceEnabled()
-            ? " We send a random session ID, tool versions, coarse progress and action events. We never send levels, certainty, scope, notes, evidence or report contents."
+            ? " Plausible receives allow-listed event names and coarse progress or time bands. It does not receive a session ID, email, organisation, levels, certainty, scope, notes, evidence or report contents."
             : " Assessment entries and the local diagnostic record stay in this browser."}
           ${state.beta.telemetryEnabled
-            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Use without remote beta activity</button>`
-            : `<span>Remote beta activity remains off for this draft.</span>`}
+            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Use without anonymous beta activity</button>`
+            : `<span>Anonymous beta activity remains off for this draft.</span>`}
         </div>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="${hasDraft ? "resume" : "start"}">${hasDraft ? "Resume draft" : "Set the assessment boundary"}</button>
@@ -1731,9 +1754,9 @@
     const counts = Object.fromEntries(betaConfig.event_allowlist && Object.keys(betaConfig.event_allowlist).map((name) => [name, state.beta.events.filter((event) => event.name === name).length]));
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Beta diagnostics · ${remoteServiceEnabled() ? "operational activity on" : betaServiceAvailable() ? "operational activity off" : "service unavailable"}</div>
+        <div class="hdrl-progress-label">Beta diagnostics · ${remoteServiceEnabled() ? "anonymous aggregate activity on" : "anonymous aggregate activity off"}</div>
         <h2 id="hdrl-view-title" tabindex="-1">What the beta activity record contains</h2>
-        <p class="hdrl-assessment-lede">The same allow-listed event record is kept locally for inspection. When the approved service is active, unsent events are copied to the operational store without assessment answers or text.</p>
+        <p class="hdrl-assessment-lede">The allow-listed event record is kept locally for inspection. When approved analytics is active, selected events are sent to Plausible without an email, organisation, assessment identifier or assessment content.</p>
         <div class="hdrl-data-boundary-grid">
           <article><h3>Operational beta record</h3><ul>${betaConfig.privacy_boundary.operational_by_default.map((item) => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")}</ul></article>
           <article><h3>Always local by default</h3><ul>${betaConfig.privacy_boundary.local_only.map((item) => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")}</ul></article>
@@ -1741,22 +1764,22 @@
         </div>
         <h3>Current activity on this device</h3>
         <div class="hdrl-beta-funnel">
-          ${statCard(counts.assessment_started || 0, "Started", "session event")}
+          ${statCard(counts.assessment_started || 0, "Started", "local event")}
           ${statCard(counts.snapshot_completed || 0, "Snapshot completed", `${s.completed}/64 now`)}
           ${statCard(counts.report_unlocked || 0, "Report unlocked", betaServiceAvailable() ? "verified email code" : "local simulation")}
           ${statCard(counts.report_download_requested || 0, "Download requests", "all formats")}
           ${statCard(counts.feedback_submitted || 0, "Feedback submitted", `${counts.feedback_skipped || 0} skipped`)}
         </div>
         <div class="hdrl-assessment-notice">
-          <strong>${remoteServiceEnabled() ? "Operational activity is on." : betaServiceAvailable() ? "Operational activity is off." : "No beta service is active."}</strong>
+          <strong>${remoteServiceEnabled() ? "Anonymous aggregate activity is on." : "Anonymous aggregate activity is off."}</strong>
           ${remoteServiceEnabled()
-            ? ` ${state.beta.remoteLastSyncAt ? `Last synced ${esc(new Date(state.beta.remoteLastSyncAt).toLocaleString())}.` : "No activity has been synced yet."}${state.beta.remoteLastError ? ` Latest issue: ${esc(state.beta.remoteLastError)}` : ""}`
+            ? ` ${state.beta.remoteLastSyncAt ? `Last event sent ${esc(new Date(state.beta.remoteLastSyncAt).toLocaleString())}.` : "No event has been sent yet."}`
             : betaServiceAvailable()
-              ? " Future allow-listed activity events will not be sent. Email verification and feedback you deliberately submit still use the service; records already received follow the stated retention schedule."
+              ? " Future allow-listed activity events will not be sent. Email verification and feedback you deliberately submit can still use the separate beta service."
               : " Beta activity, identity and feedback remain on this device."}
           ${state.beta.telemetryEnabled
-            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Stop remote beta activity</button>`
-            : `<span>Remote beta activity remains off for this draft.</span>`}
+            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Stop anonymous beta activity</button>`
+            : `<span>Anonymous beta activity remains off for this draft.</span>`}
         </div>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button" data-action="export-beta-activity">Download local beta activity record</button>
@@ -1774,7 +1797,7 @@
         <div class="hdrl-progress-label">About 15 seconds · optional</div>
         <h2 id="hdrl-view-title" tabindex="-1">Help improve the HDRL beta</h2>
         <p class="hdrl-assessment-lede">A quick rating or a specific problem is useful. You can continue without providing feedback.</p>
-        <div class="hdrl-assessment-notice"><strong>${betaServiceAvailable() ? "Optional beta feedback." : "Local prototype."}</strong> ${betaServiceAvailable() ? "Submitted feedback is sent to OPL Advisory through the separate feedback endpoint. Without-contact feedback carries no email, organisation, participant ID or beta-session ID; free text may still identify you." : "Feedback is saved on this device and can be downloaded as a deliberately shareable bundle. It is not transmitted to OPL Advisory."}</div>
+        <div class="hdrl-assessment-notice"><strong>${betaServiceAvailable() ? "Optional beta feedback." : "Local prototype."}</strong> ${betaServiceAvailable() ? "Submitted feedback is sent to OPL Advisory through the separate feedback endpoint. Without-contact feedback carries no email, organisation, participant ID or analytics identifier; free text may still identify you." : "Feedback is saved on this device and can be downloaded as a deliberately shareable bundle. It is not transmitted to OPL Advisory."}</div>
         <form id="hdrl-feedback-form">
           <fieldset class="hdrl-feedback-rating">
             <legend>Overall, how easy was this experience?</legend>
@@ -1788,7 +1811,7 @@
           <fieldset class="hdrl-status-options">
             <legend>How should this feedback be shared?</legend>
             ${radio("feedback-mode", "without_contact", "Without contact details", "Include limited tool context but no email, participant ID or persistent session identifier. Free text may still identify you.", "without_contact")}
-            ${(!betaServiceAvailable() || state.registration.verificationReceipt)
+            ${(!betaServiceAvailable() || authAccessToken)
               ? radio("feedback-mode", "contactable", "With my beta contact details", betaServiceAvailable() ? "Allow OPL Advisory to follow up about this feedback using the address you verified." : "Include beta contact details in a deliberately downloaded local feedback bundle.", "without_contact")
               : `<p class="hdrl-hint">Contactable feedback becomes available after email verification. You can still submit without contact details now.</p>`}
           </fieldset>
@@ -1975,7 +1998,7 @@
     return {
       schema: "hdrl-beta-activity-v0.1.0",
       exported_at: nowIso(),
-      beta_session_id: state.beta.sessionId,
+      local_activity_id: state.beta.localActivityId,
       versions: { ...VERSIONS },
       active_time_band: activeTimeBand(),
       events: state.beta.events,
@@ -2021,8 +2044,7 @@
         .filter((key) => item.context?.[key] !== undefined)
         .map((key) => [key, item.context[key]]))
     };
-    if (item.mode === "contactable") payload.receipt = state.registration.verificationReceipt;
-    await apiRequest("/v1/feedback", payload);
+    await apiRequest("/feedback", payload, { token: item.mode === "contactable" ? authAccessToken : "" });
     item.remoteSentAt = nowIso();
     scheduleSave();
     return true;
@@ -2201,9 +2223,10 @@
         else if (action === "telemetry-off") {
           await turnOffRemoteTelemetry();
           render();
-          announce("Remote beta activity has been turned off for this draft.");
+          announce("Anonymous beta activity has been turned off for this draft.");
         }
         else if (action === "verification-restart") {
+          authAccessToken = "";
           state.registration.challengeId = "";
           state.registration.challengeExpiresAt = "";
           state.registration.developmentCode = "";
@@ -2596,25 +2619,10 @@
       };
       if (betaServiceAvailable()) {
         try {
-          const sessionId = await ensureRemoteSession();
-          const requested = await apiRequest("/v1/verification/request", {
-            session_id: sessionId,
-            email: state.registration.email,
-            name: state.registration.name,
-            role: state.registration.role,
-            organisation: state.registration.organisation,
-            region: state.registration.region,
-            service_type: state.registration.serviceType,
-            scale: state.registration.scale,
-            use_mode: state.registration.useMode,
-            report_use: state.registration.reportUse,
-            research_contact: state.registration.researchContact,
-            newsletter: state.registration.newsletter,
-            privacy_notice_version: betaConfig.privacy_notice_version
-          });
-          state.registration.challengeId = requested.challenge_id;
-          state.registration.challengeExpiresAt = new Date(Date.now() + Number(requested.expires_in_seconds || 600) * 1000).toISOString();
-          state.registration.developmentCode = requested.development_code || "";
+          await requestEmailOtp(state.registration.email);
+          state.registration.challengeId = "supabase-email-otp";
+          state.registration.challengeExpiresAt = new Date(Date.now() + 600 * 1000).toISOString();
+          state.registration.developmentCode = "";
           audit("report_verification_requested", "report", "No assessment data transmitted");
           scheduleSave();
           render();
@@ -2645,9 +2653,12 @@
         return;
       }
       try {
-        const confirmed = await apiRequest("/v1/verification/confirm", { challenge_id: state.registration.challengeId, code });
+        const confirmed = await verifyEmailOtp(state.registration.email, code);
+        if (!confirmed.access_token) throw new Error("The verification response did not include a valid session.");
+        authAccessToken = confirmed.access_token;
+        await apiRequest("/participant", registrationPayload(), { token: authAccessToken });
         state.registration.unlocked = true;
-        state.registration.verificationReceipt = confirmed.receipt;
+        state.registration.verificationReceipt = "verified";
         state.registration.developmentCode = "";
         audit("report_email_verified", "report", "Assessment remained on device");
         if (!hasBetaEvent("report_unlocked")) {
@@ -2700,6 +2711,13 @@
   function migrateDraft(draft, defaults) {
     if (!draft || ![1, 2, 3, 4].includes(draft.schemaVersion)) return defaults;
     if ([2, 3, 4].includes(draft.schemaVersion)) {
+      const {
+        sessionId: discardedLegacySessionId,
+        remoteSessionId: discardedLegacyRemoteSessionId,
+        ...draftBeta
+      } = draft.beta || {};
+      void discardedLegacySessionId;
+      void discardedLegacyRemoteSessionId;
       return {
         ...defaults,
         ...draft,
@@ -2712,7 +2730,8 @@
         indicators: { ...defaults.indicators, ...draft.indicators },
         beta: {
           ...defaults.beta,
-          ...(draft.beta || {}),
+          ...draftBeta,
+          localActivityId: draft.beta?.localActivityId || defaults.beta.localActivityId,
           events: Array.isArray(draft.beta?.events) ? draft.beta.events : [],
           feedback: Array.isArray(draft.beta?.feedback) ? draft.beta.feedback : []
         },
@@ -2780,8 +2799,11 @@
       if (!betaConfig.transport || !["local-only", "local-with-optional-service"].includes(betaConfig.transport.mode)) {
         throw new Error("The beta transport configuration is not recognised");
       }
-      if (betaConfig.transport.remote_collection_enabled && !/^https:\/\//.test(betaConfig.transport.service_base_url || "")) {
-        throw new Error("The enabled beta service must use an HTTPS endpoint");
+      if (betaConfig.transport.remote_collection_enabled
+        && (!/^https:\/\//.test(betaConfig.transport.service_base_url || "")
+          || !/^https:\/\//.test(betaConfig.transport.supabase_url || "")
+          || !/^sb_publishable_[A-Za-z0-9_-]+$/.test(betaConfig.transport.supabase_publishable_key || ""))) {
+        throw new Error("The enabled beta service must use approved HTTPS endpoints and a publishable browser key");
       }
       const defaults = defaultState();
       state = migrateDraft(draft, defaults);
@@ -2806,7 +2828,7 @@
         scheduleSave();
       });
       render();
-      if (remoteServiceEnabled()) void syncRemoteEvents();
+      initialisePlausible();
     } catch (error) {
       root.setAttribute("aria-busy", "false");
       root.innerHTML = `

@@ -22,22 +22,24 @@ The research prototype does not transmit assessment information and must remain 
 ## Deployment approach
 
 1. Build and test the prototype on `codex/self-assessment`.
-2. Use a pull-request preview or local environment only; do not point forms at a live backend.
+2. Use a pull-request preview or local environment; the public configuration must keep remote clients disabled.
 3. Run the MkDocs strict build and catalogue/site/self-assessment checks.
 4. Perform keyboard, screen-reader, 320px reflow, 400% zoom, contrast and reduced-motion testing.
 5. Test representative long indicators, rationale, evidence notes and report tables.
-6. After supplier/legal approval, create the thin beta service in staging with synthetic participant/event/feedback records.
-7. Prove that result fields and request bodies are rejected or redacted, feedback without contact details cannot be joined to participant/session tables, and verification/deletion controls work.
+6. Maintain the dedicated Supabase London project as non-public staging and use only synthetic participant/feedback records until release approval.
+7. Prove that result fields and request bodies are rejected or redacted, feedback without contact details has no participant or analytics key, and verification/deletion controls work.
 8. Pilot with an invited cohort using non-sensitive assessment boundaries.
 9. Review incidents, support demand, funnel loss and user research before any wider launch or server-side assessment feature.
 
 ### Current activation state
 
-The Worker, D1 migration, browser transport and email/rights flows are implemented in `services/beta-service`. The website configuration is intentionally set to `remote_collection_enabled: false` and has no service URL. Local integration uses generated secrets, a local D1 database and a development-only OTP return; these values are ignored by Git and cannot be used in staging.
+The dedicated Supabase project **HDRL Framework Beta** is deployed in West Europe (London). Its versioned Postgres migrations, RLS, least-privilege grants, scheduled retention and `beta-service` Edge Function are live. The project database contains no assessment or report tables and synthetic feedback used for verification has been removed.
 
-External activation is paused at the correct control point. It needs a Cloudflare account session, two EU-jurisdiction D1 database IDs (staging and production), a Resend API key, DNS verification for `beta.hdrlframework.org`, and approval of the controller/privacy/processor items in this document. Staging must be deployed first and tested only with synthetic identities. Production requires a later, explicit change to the public beta configuration.
+The website configuration is intentionally set to `remote_collection_enabled: false`, `plausible.enabled: false` and `supabase_publishable_key: null`. This is a fail-closed non-public state: the service URL may be inspected, but no public form can use Supabase or emit beta events. Assessment answers and reports remain local regardless of later activation.
 
-The smallest operating choice is Cloudflare and Resend Free tiers. A US$5/month Workers Paid plan is optional if the controller prefers a 30-day rather than seven-day D1 Time Travel window. Resend Free currently permits 3,000 emails per month and 100 per day; those limits are likely suitable for an early beta but must be monitored and rechecked at activation.
+The user approved the dedicated project and its additional US$10 monthly charge, plus IONOS delivery from `report@hdrlframework.org` and the monitored `privacy@hdrlframework.org` rights address. The HDRL domain is available in IONOS, but it has no mailbox licence: the next step is a separate paid order and therefore remains an explicit cost decision. After purchase, the mailbox password must be entered directly in Supabase, followed by an end-to-end code test. Supabase's built-in email service is not a beta delivery channel.
+
+The existing Plausible site is currently in its trial period. Seven core event goals are configured: beta started, snapshot domain completed, snapshot completed, report unlocked, report download requested, feedback submitted and feedback skipped. Before launch, choose a paid plan and record the spend. At the current tier covering up to 10,000 monthly pageviews and custom events, Starter is US$9/month and supports the core goal counts; Business is US$19/month and adds the custom properties needed to analyse coarse active-time bands and section context in the dashboard. Do not purchase or enable either without explicit approval. Recheck [Plausible pricing](https://plausible.io/#pricing) at purchase.
 
 ## Security test set
 
@@ -46,8 +48,8 @@ The smallest operating choice is Cloudflare and Resend Free tiers. A US$5/month 
 | Request OTP for registered/unregistered email | Neutral response, same observable timing class, rate limit and no account enumeration. |
 | Reuse or brute-force OTP | Single use, short expiry, throttled attempts and security event without secret logging. |
 | Add `level`, `certainty`, email, scope or free text to an event request | Server rejects the property/request; logs do not reproduce it. |
-| Submit feedback without contact details | Stored without participant/session foreign key or authentication cookie; security metadata uses the approved short retention. |
-| Correlate feedback and event tables | No routine join key; timestamps are coarsened and access roles are separated. |
+| Submit feedback without contact details | Stored without participant foreign key or authentication token; security metadata uses the approved short retention. |
+| Correlate feedback and Plausible events | No application join key; systems and access roles are separated. |
 | Unlock local report | Verification response unlocks browser generation without sending IndexedDB state or report content. |
 | Access another workspace by changing ID | Denied by application and database policy; event recorded. |
 | Change owner/contributor/reviewer role client-side | Server ignores unauthorised claim. |
@@ -74,26 +76,28 @@ Workspace, invitation and role-manipulation tests apply only if the later server
 
 ## Prototype verification record
 
-The following checks were completed against this branch on 7 August 2026 using synthetic content. The third iteration includes migration of both earlier on-device draft schemas and the new public-beta data boundary:
+The following checks were completed against this branch on 7 August 2026 using synthetic content. Tool v0.5 includes migration of earlier on-device draft schemas and the Supabase/Plausible public-beta data boundary:
 
 | Check | Result |
 |:--|:--|
-| JavaScript syntax and release invariant validator | Passed. Framework 1.0.1, catalogue 1.0.2, tool 0.4.0-beta; eight orientation prompts; 64 snapshot and evidence indicators; four same-origin versioned data reads; no file input. Remote collection requires both an endpoint and explicit flag; the committed beta configuration has neither. |
+| JavaScript syntax and release invariant validator | Passed. Framework 1.0.1, catalogue 1.0.2, tool 0.5.0-beta; eight orientation prompts; 64 snapshot and evidence indicators; no file input. Supabase requires the approved environment, endpoint, publishable key and explicit flag; the committed configuration omits the key and disables both remote services. |
 | Existing catalogue and Presentation Kit validators | Passed. 64 indicators, 92 slides and canonical wording/version checks remained intact. |
-| MkDocs strict build and site coherence | Passed. The strict build completed; coherence checked 34 indexed pages, 3,033 internal links/anchors, unique descriptions and the canonical framework download checksum. Prototype design documents are `noindex`. |
+| MkDocs strict build and site coherence | Passed. The strict build completed; coherence checked 34 indexed pages, 3,032 internal links/anchors, unique descriptions and the canonical framework download checksum. Prototype design documents are `noindex`. |
 | New-draft individual journey | Passed from boundary through stage choice, a synthetic snapshot response, partial review, report gate, full local report, optional feedback checkpoint and beta-activity view. The earlier orientation and evidence-led journeys remain available. |
 | Framework fidelity | Both snapshot and evidence workspaces expose all 64 indicators. A.1.1 rendered all five exact catalogue descriptors; evidence-led A.1.1 retains the published minimum-evidence wording. Snapshot and evidence responses remain separate. |
 | Evidence and output safety | Evidence entry now uses references only and omits “level supported” and review-period questions. Three-nation evidence examples are de-identified prompts, not proof. CSV formula-prefix protection is enforced by the release validator. |
 | Reporting | The report rendered the accessible impression-by-certainty matrix, provisional snapshot domain profile, evidence-led Core median and observed range, all 64 evidence-led indicator rows, domain constraints, version provenance, rule traces, limitations and no overall score. JSON and two CSV generation paths are present. Programmatic blob downloads were requested and recorded locally, but the in-app preview did not surface a browser download event; repeat in Safari/Chrome/Firefox before release. |
 | Save and return | Passed across browser reload using the same on-device IndexedDB draft. |
 | Responsive reflow | Rechecked at a 320px viewport: document width equalled viewport width with no page-level horizontal overflow. Beta boundary/funnel cards, snapshot dashboard and long canonical indicator options reflowed to one column; option and action widths remained within the 288px assessment root. The 5-column orientation matrix retains a labelled internal scroll region. |
-| Analytics and indexing | Built prototype contains `noindex, nofollow` and no Plausible script; other site pages retain aggregate analytics. |
+| Analytics and indexing | Prototype contains `noindex, nofollow`; its existing public-site analytics is disabled. The beta Plausible loader is configuration-controlled, disables automatic page views and is off in the committed release. |
 | Progressive interaction and focus | Passed. Snapshot level selection reveals certainty; not known/not assessed/not applicable clear the level and hide certainty. Evidence-led unstarted indicators retain the binary judgement decision. Next-indicator actions focused the new heading and returned the assessment root to the top of the viewport. |
-| Beta privacy contract | Local funnel showed one start, one report unlock, one download request and one feedback submission while the assessment itself contained an L2 selection. Inspection confirmed the operational view exposed counts/actions only and labelled result fields local/explicit-share only. Feedback without contact details excludes participant/session identifiers from its export mapping. |
-| Thin service unit/privacy tests | Passed. Server-issued sessions and allow-listed events were accepted; assessment-like top-level fields were rejected; feedback without contact details could not carry participant/session identifiers; contactable feedback required a signed verified receipt; public CORS and administrative access rules held. |
-| Thin service synthetic integration | Passed against local Worker/D1. Email request and correct/incorrect OTP flows, report unlock, unlinked and contactable feedback, aggregate administration, participant access, live deletion and telemetry disable all worked. Database inspection found only ciphertext/keyed email index for participant data and coarse event properties—no maturity level, certainty or evidence content. |
-| Staging package | Passed `wrangler deploy --dry-run --env=staging`; the full installed dependency tree has no known npm audit vulnerability after pinning patched `undici` 7.29.0 for the local emulator. No real cloud resource was created and no email was sent. |
-| Browser diagnostics | No application errors or warnings during the third-iteration interaction tests. |
+| Beta privacy contract | Local funnel showed one start, one report unlock, one download request and one feedback submission while the assessment itself contained an L2 selection. Inspection confirmed the operational view exposed counts/actions only and labelled result fields local/explicit-share only. Feedback without contact details excludes participant and analytics identifiers from its export mapping. |
+| Thin service unit/privacy tests | Passed. The profile allow-list accepts beta-administration fields only; assessment-like fields are rejected; feedback without contact details cannot carry participant identity. Postgres has RLS on all six beta tables and public grants are revoked. |
+| Thin service synthetic integration | Passed against the London Supabase project. Health returned v0.3.0; a synthetic feedback row was accepted and then deleted; an attempted maturity field was rejected with `privacy_boundary_violation`; requests without the publishable key were rejected. London invocation was confirmed through `x-sb-edge-region`. No feedback rows remain. |
+| Staging package | Supabase migrations and Edge Function are deployed. The public browser key is deliberately not committed and remote/Plausible flags remain off. Custom IONOS SMTP and real-email OTP testing remain release gates. |
+| Supabase security advisor | Passed after revoking public execution on the platform auto-RLS helper: 0 errors and 0 warnings. Six informational notices confirm the deliberate default-deny design—RLS is enabled and no client policies exist because only the least-privilege service role may use the beta tables. |
+| Plausible goal configuration | Seven core beta goals are staged. No assessment property or identifier is configured. The trial/subscription choice and live synthetic event test remain release gates. |
+| Browser diagnostics | No application errors or warnings during the v0.5 interaction checks. |
 
 This is not a substitute for the still-required VoiceOver/NVDA test, independent WCAG audit, tagged-PDF test, usability research, penetration test or production authentication/workspace-isolation testing.
 
@@ -111,14 +115,14 @@ This is not a substitute for the still-required VoiceOver/NVDA test, independent
 For the thin beta, the daily runbook is intentionally small:
 
 1. check `/health` without credentials;
-2. review only aggregate `/v1/admin/summary` counts and failure alerts;
+2. review aggregate Plausible funnel counts and Supabase Auth/Function failure indicators without attempting identity linkage;
 3. investigate verification spikes without copying email/body content into tickets;
 4. export participant details only for an approved beta-administration purpose;
 5. action verified privacy requests and record completion;
 6. confirm the daily retention schedule is running; and
-7. rotate/revoke the Resend key, administrator token, OTP or receipt secret immediately if compromise is suspected; invalidate active codes/receipts as part of the response.
+7. rotate/revoke Supabase secret/publishable keys, the rate-limit secret or IONOS SMTP password if compromise is suspected; invalidate Auth sessions as part of the response where appropriate.
 
-The administrator token is an interim single-operator mechanism. Store it in an approved password manager, never a browser URL or shell history; rotate it after handover or suspected exposure. Cloudflare account MFA is mandatory. Add a second authorised operator and documented break-glass route before a public beta so the service does not depend on one person being available. The encryption and email-index keys cannot be replaced by a simple secret change: rotate them only through a controlled re-encryption/re-index migration, or delete the small beta dataset and restart after an incident. Document which route applies before production.
+Supabase, Plausible and IONOS administrator MFA is mandatory where supported. Store the IONOS mailbox password in an approved password manager and enter it directly into Supabase custom SMTP; never commit it, send it in chat or place it in a URL/shell history. Add a second authorised operator and documented break-glass route before a public beta so the service does not depend on one person being available. Keep the browser-safe publishable key distinct from Supabase secret keys.
 
 If prohibited information is entered, restrict access, contact the workspace owner without repeating the content, agree secure deletion and assess whether an incident or breach has occurred.
 
@@ -153,9 +157,9 @@ The application report is the executable sample for an individual journey. A tea
 ### Legal and data protection
 
 - controller/joint-controller position;
-- thin beta-service and transactional-email processors, operational region and spend;
+- Supabase, Plausible and IONOS roles, operational locations, contracts and approved spend;
 - lawful basis for free report delivery and framework-improvement analysis;
-- LIA/PECR assessment for the pseudonymous event funnel and browser storage/access;
+- LIA/PECR assessment for the aggregate Plausible event funnel and browser storage/access;
 - retention periods and backup treatment;
 - international-transfer safeguards and processor contracts;
 - PECR wording for optional research/newsletter contact;

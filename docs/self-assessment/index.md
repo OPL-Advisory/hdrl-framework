@@ -22,7 +22,7 @@ This prototype explores how people and teams could learn the **Health Data Readi
   class="hdrl-assessment"
   data-catalogue-url="../../data/hdrl-indicators-v1.json"
   data-content-url="../../data/hdrl-assessment-content-v0.2.0.json"
-  data-beta-config-url="../../data/hdrl-assessment-beta-config-v0.2.0.json"
+  data-beta-config-url="../../data/hdrl-assessment-beta-config-v0.3.0.json"
   aria-busy="true"
 >
   <p>Loading the assessment prototype…</p>
