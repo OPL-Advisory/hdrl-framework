@@ -148,7 +148,7 @@ def target_for(current_route: str, href: str) -> tuple[Path, str] | None:
         path = "/" + path
 
     suffix = Path(path).suffix
-    if path.endswith("/") or not suffix:
+    if not raw_path or raw_path.endswith("/") or not suffix:
         target = SITE / path.lstrip("/") / "index.html"
     else:
         target = SITE / path.lstrip("/")

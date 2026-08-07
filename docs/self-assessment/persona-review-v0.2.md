@@ -2,7 +2,6 @@
 title: Rapid-question persona review (v0.2)
 description: Two structured persona passes used to refine the rapid HDRL self-assessment wording.
 status: draft
-robots: noindex, nofollow
 ---
 
 # Rapid-question persona review (v0.2)

@@ -7,10 +7,11 @@
   const VERSIONS = {
     framework: "1.0.1",
     catalogue: "1.0.2",
-    tool: "0.2.0-prototype",
+    tool: "0.3.0-prototype",
     guidance: "0.2.0",
     rules: "0.2.0",
-    report: "0.2.0"
+    report: "0.3.0",
+    beta: "0.1.0"
   };
 
   const DB_NAME = "hdrl-self-assessment-prototype";
@@ -46,9 +47,11 @@
 
   let catalogue;
   let content;
+  let betaConfig;
   let state;
   let saveTimer;
   let lastFocusId = "";
+  let lastActivityTick = Date.now();
 
   const esc = (value = "") =>
     String(value)
@@ -66,12 +69,13 @@
 
   function defaultState() {
     return {
-      schemaVersion: 2,
+      schemaVersion: 3,
       id: makeId(),
       createdAt: nowIso(),
       updatedAt: nowIso(),
       view: "welcome",
       rapidIndex: 0,
+      snapshotIndex: 0,
       activeIndicator: null,
       boundary: {
         title: "",
@@ -84,8 +88,20 @@
         intendedUse: ""
       },
       rapid: {},
+      snapshot: {},
       indicators: {},
       domainNotes: {},
+      beta: {
+        sessionId: makeId(),
+        startedAt: nowIso(),
+        activeSeconds: 0,
+        lastActivityAt: nowIso(),
+        events: [],
+        feedback: [],
+        feedbackCheckpointAnswered: false,
+        feedbackContext: {},
+        pendingExport: ""
+      },
       registration: {
         unlocked: false,
         name: "",
@@ -95,6 +111,8 @@
         region: "",
         serviceType: "",
         scale: "",
+        useMode: "",
+        reportUse: "",
         researchContact: false,
         newsletter: false
       },
@@ -118,6 +136,21 @@
       };
     }
     return state.indicators[ref];
+  }
+
+  function snapshotResponse(ref) {
+    if (!state.snapshot[ref]) {
+      state.snapshot[ref] = {
+        status: "unstarted",
+        level: "",
+        certainty: "",
+        certaintyReasons: [],
+        clarity: "",
+        note: "",
+        updatedAt: null
+      };
+    }
+    return state.snapshot[ref];
   }
 
   function openDb() {
@@ -212,6 +245,85 @@
     if (state.audit.length > 250) state.audit = state.audit.slice(-250);
   }
 
+  function updateActiveTime() {
+    const now = Date.now();
+    const elapsed = Math.max(0, Math.min(60, Math.round((now - lastActivityTick) / 1000)));
+    if (document.visibilityState === "visible") state.beta.activeSeconds += elapsed;
+    lastActivityTick = now;
+    state.beta.lastActivityAt = nowIso();
+  }
+
+  function activeTimeBand() {
+    const minutes = state.beta.activeSeconds / 60;
+    if (minutes < 5) return "under_5_minutes";
+    if (minutes < 15) return "5_to_15_minutes";
+    if (minutes < 30) return "15_to_30_minutes";
+    if (minutes < 60) return "30_to_60_minutes";
+    return "60_minutes_or_more";
+  }
+
+  function snapshotStats() {
+    const responses = catalogue.indicators.map((indicator) => snapshotResponse(indicator.ref));
+    const completed = responses.filter((response) => response.status !== "unstarted").length;
+    const judged = responses.filter((response) => response.status === "rated" && response.level).length;
+    const lowCertainty = responses.filter((response) => response.status === "rated" && response.certainty === "low").length;
+    const clarityFlags = responses.filter((response) => ["some_overlap", "unclear"].includes(response.clarity)).length;
+    const completedDomains = catalogue.domains.filter((domain) => catalogue.indicators
+      .filter((indicator) => indicator.domain === domain.ref)
+      .every((indicator) => snapshotResponse(indicator.ref).status !== "unstarted")).length;
+    return { completed, judged, lowCertainty, clarityFlags, completedDomains };
+  }
+
+  function viewportBand() {
+    if (innerWidth < 480) return "small_mobile";
+    if (innerWidth < 768) return "large_mobile";
+    if (innerWidth < 1100) return "tablet_or_small_desktop";
+    return "desktop";
+  }
+
+  function recordBetaEvent(name, payload = {}) {
+    if (!betaConfig?.feature_flags?.local_beta_events) return;
+    const allowed = betaConfig.event_allowlist[name];
+    if (!allowed) return;
+    updateActiveTime();
+    const clean = {};
+    allowed.forEach((key) => {
+      if (payload[key] !== undefined && ["string", "number", "boolean"].includes(typeof payload[key])) clean[key] = payload[key];
+    });
+    state.beta.events.push({
+      id: makeId(),
+      name,
+      at: nowIso(),
+      active_time_band: activeTimeBand(),
+      ...clean
+    });
+    if (state.beta.events.length > 500) state.beta.events = state.beta.events.slice(-500);
+    scheduleSave();
+  }
+
+  function hasBetaEvent(name) {
+    return state.beta.events.some((event) => event.name === name);
+  }
+
+  function feedbackContext() {
+    const s = snapshotStats();
+    const indicator = ["snapshot", "indicator"].includes(state.view)
+      ? catalogue.indicators.find((item) => item.ref === state.activeIndicator)
+      : null;
+    return {
+      tool_version: VERSIONS.tool,
+      framework_version: VERSIONS.framework,
+      catalogue_version: VERSIONS.catalogue,
+      view: state.view,
+      domain_ref: indicator?.domain || "",
+      indicator_ref: indicator?.ref || "",
+      completed_indicator_count: s.completed,
+      completed_domain_count: s.completedDomains,
+      active_time_band: activeTimeBand(),
+      viewport_band: viewportBand()
+    };
+  }
+
   function setView(view, focusId = "hdrl-view-title") {
     lastFocusId = focusId;
     state.view = view;
@@ -245,13 +357,24 @@
     return `
       <div class="hdrl-stage-grid">
         <article class="hdrl-stage-card">
-          <span class="hdrl-stage-number">Stage 1</span>
-          <h3>Rapid first pass</h3>
+          <span class="hdrl-stage-number">Optional orientation</span>
+          <h3>Eight-domain first impression</h3>
           <p>Eight guided domain impressions based on what you know now.</p>
           <dl>
             <div><dt>Time</dt><dd>About 5–10 minutes</dd></div>
             <div><dt>Evidence</dt><dd>Not required</dd></div>
             <div><dt>Output</dt><dd>Preliminary learning profile</dd></div>
+          </dl>
+        </article>
+        <article class="hdrl-stage-card hdrl-stage-card--snapshot">
+          <span class="hdrl-stage-number">Stage 1</span>
+          <h3>Whole-framework snapshot</h3>
+          <p>Select a canonical level and certainty for every indicator. Comments and wording feedback are optional.</p>
+          <dl>
+            <div><dt>Time</dt><dd>About 30–60 minutes; pause by domain</dd></div>
+            <div><dt>Coverage</dt><dd>All 64 indicators</dd></div>
+            <div><dt>Minimum</dt><dd>Two selections each</dd></div>
+            <div><dt>Output</dt><dd>Provisional readiness profile</dd></div>
           </dl>
         </article>
         <article class="hdrl-stage-card hdrl-stage-card--evidence">
@@ -277,13 +400,17 @@
         || response.improvementNote
     );
     const hasDraft = Boolean(
-      state.boundary.title || Object.keys(state.rapid).length || Object.keys(state.domainNotes).length || hasIndicatorWork
+      state.boundary.title
+      || Object.keys(state.rapid).length
+      || Object.values(state.snapshot).some((response) => response.status !== "unstarted")
+      || Object.keys(state.domainNotes).length
+      || hasIndicatorWork
     );
     return shell(`
       <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
         <span class="hdrl-assessment-kicker">Learn by applying HDRL</span>
-        <h2 id="hdrl-view-title" tabindex="-1">Two passes, one clearer picture</h2>
-        <p class="hdrl-assessment-lede">Start with an honest gut reaction, then return with evidence. The tool keeps preliminary impressions visibly separate from evidence-led judgements.</p>
+        <h2 id="hdrl-view-title" tabindex="-1">Start lightly, deepen when useful</h2>
+        <p class="hdrl-assessment-lede">Get oriented, take a provisional snapshot across all 64 indicators, then gather evidence where deeper assurance or planning would add value.</p>
         ${stageCards()}
         <div class="hdrl-assessment-callout">
           <h3>What this cannot establish</h3>
@@ -292,6 +419,46 @@
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="${hasDraft ? "resume" : "start"}">${hasDraft ? "Resume draft" : "Set the assessment boundary"}</button>
           <button type="button" class="md-button" data-action="sample">Open a sample assessment</button>
+        </div>
+      </section>
+    `);
+  }
+
+  function overviewView() {
+    const rapidCompleted = Object.values(state.rapid).filter((item) => item.impression).length;
+    const snapshot = snapshotStats();
+    const evidence = stats();
+    return shell(`
+      <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
+        <span class="hdrl-assessment-kicker">${esc(state.boundary.title)}</span>
+        <h2 id="hdrl-view-title" tabindex="-1">Assessment overview</h2>
+        <p class="hdrl-assessment-lede">Choose the depth that is useful now. Each layer remains visibly distinct in the report.</p>
+        <div class="hdrl-overview-grid">
+          <article>
+            <span>Optional orientation</span>
+            <h3>Eight-domain first impression</h3>
+            <strong>${rapidCompleted}/8 domains</strong>
+            <p>A brief, non-evidenced introduction to the shape of HDRL.</p>
+            <button type="button" class="md-button" data-action="${rapidCompleted ? "rapid-summary" : "rapid-intro"}">${rapidCompleted ? "Review orientation" : "Start orientation"}</button>
+          </article>
+          <article class="hdrl-overview-card--primary">
+            <span>Stage 1</span>
+            <h3>Whole-framework snapshot</h3>
+            <strong>${snapshot.completed}/64 indicators</strong>
+            <p>Provisional level and certainty across the complete framework.</p>
+            <button type="button" class="md-button md-button--primary" data-action="snapshot-dashboard">${snapshot.completed ? "Continue snapshot" : "Start snapshot"}</button>
+          </article>
+          <article>
+            <span>Stage 2</span>
+            <h3>Evidence workspace</h3>
+            <strong>${evidence.judged}/64 judgements</strong>
+            <p>Rationale, evidence references, gaps and domain constraints.</p>
+            <button type="button" class="md-button" data-action="evidence">Open evidence workspace</button>
+          </article>
+        </div>
+        <div class="hdrl-assessment-actions">
+          <button type="button" class="md-button" data-action="boundary">Edit assessment boundary</button>
+          <button type="button" class="hdrl-link-button" data-action="beta-activity">Review local beta activity</button>
         </div>
       </section>
     `);
@@ -346,7 +513,7 @@
           </div>
           ${textareaField("boundary-use", "Intended use", b.intendedUse, "What decision, conversation or improvement planning should this assessment inform?", true, errors["boundary-use"], 600)}
           <div class="hdrl-assessment-actions">
-            <button type="submit" class="md-button md-button--primary">Continue to the rapid first pass</button>
+            <button type="submit" class="md-button md-button--primary">Save boundary and choose assessment stage</button>
             <button type="button" class="md-button" data-action="welcome">Back</button>
           </div>
         </form>
@@ -542,12 +709,207 @@
           </div>
         </details>
         <div class="hdrl-assessment-callout">
-          <h3>Now test the impression</h3>
-          <p>The evidence-led pass opens all applicable indicators, the exact maturity descriptors and minimum-evidence guidance. You may discover that capability is stronger than its evidence—or that operating capacity is the real constraint.</p>
+          <h3>Now cover the complete framework</h3>
+          <p>The whole-framework snapshot presents every canonical indicator and level. Select the closest description and how certain you are; evidence is not required at this stage.</p>
         </div>
         <div class="hdrl-assessment-actions">
-          <button type="button" class="md-button md-button--primary" data-action="evidence">Start the evidence-led pass</button>
+          <button type="button" class="md-button md-button--primary" data-action="snapshot-dashboard">Start the 64-indicator snapshot</button>
           <button type="button" class="md-button" data-action="rapid-edit-first">Review rapid answers</button>
+        </div>
+      </section>
+    `);
+  }
+
+  function snapshotDomainProgress(domainRef) {
+    const indicators = catalogue.indicators.filter((indicator) => indicator.domain === domainRef);
+    const completed = indicators.filter((indicator) => snapshotResponse(indicator.ref).status !== "unstarted").length;
+    return { completed, total: indicators.length };
+  }
+
+  function nextSnapshotRef(domainRef = "") {
+    const candidates = domainRef
+      ? catalogue.indicators.filter((indicator) => indicator.domain === domainRef)
+      : catalogue.indicators;
+    return candidates.find((indicator) => snapshotResponse(indicator.ref).status === "unstarted")?.ref
+      || candidates[0]?.ref
+      || catalogue.indicators[0].ref;
+  }
+
+  function snapshotDashboardView() {
+    const s = snapshotStats();
+    const percent = Math.round((s.completed / catalogue.indicators.length) * 100);
+    return shell(`
+      <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
+        <div class="hdrl-progress-label">Stage 1 · about 30–60 minutes · save and return</div>
+        <h2 id="hdrl-view-title" tabindex="-1">Whole-framework snapshot</h2>
+        <p class="hdrl-assessment-lede">For each indicator, choose the canonical description that best fits your current understanding and record certainty. No evidence is required and every answer remains provisional.</p>
+        <div class="hdrl-assessment-notice">
+          <strong>Assessment results stay on this device.</strong> Local beta activity records completion counts and timing bands, never the levels, certainty, notes or report contents.
+        </div>
+        <div class="hdrl-progress" aria-label="${s.completed} of 64 snapshot indicators completed">
+          <div class="hdrl-progress__meta"><span>Snapshot progress</span><span>${s.completed} of 64</span></div>
+          <div class="hdrl-progress__track"><span style="width:${percent}%"></span></div>
+        </div>
+        <div class="hdrl-stat-row" aria-label="Snapshot summary">
+          ${statCard(s.completed, "Completed", "of 64")}
+          ${statCard(s.judged, "Level selected", "provisional")}
+          ${statCard(s.lowCertainty, "Low certainty", "review prompts")}
+          ${statCard(s.clarityFlags, "Wording flags", "optional feedback")}
+          ${statCard(s.completedDomains, "Domains complete", "of 8")}
+        </div>
+        <div class="hdrl-assessment-actions">
+          <button type="button" class="md-button md-button--primary" data-action="open-snapshot" data-ref="${nextSnapshotRef()}">${s.completed ? "Continue with next unfinished indicator" : "Start indicator 1 of 64"}</button>
+          ${s.completed ? `<button type="button" class="md-button" data-action="snapshot-review">Review snapshot results</button>` : ""}
+          <button type="button" class="hdrl-link-button" data-action="overview">Assessment overview</button>
+        </div>
+        <div class="hdrl-snapshot-domains">
+          ${catalogue.domains.map((domain) => {
+            const progress = snapshotDomainProgress(domain.ref);
+            const complete = progress.completed === progress.total;
+            return `<article style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}">
+              <span>Domain ${domain.ref}</span>
+              <h3>${esc(domain.name)}</h3>
+              <strong>${progress.completed}/${progress.total} indicators</strong>
+              <div class="hdrl-mini-progress" aria-hidden="true"><span style="width:${Math.round((progress.completed / progress.total) * 100)}%"></span></div>
+              <button type="button" class="md-button" data-action="open-snapshot" data-ref="${nextSnapshotRef(domain.ref)}">${complete ? "Review domain" : progress.completed ? "Continue domain" : "Start domain"}</button>
+              <details>
+                <summary>View indicator list</summary>
+                <ul>${catalogue.indicators.filter((indicator) => indicator.domain === domain.ref).map((indicator) => {
+                  const response = snapshotResponse(indicator.ref);
+                  const result = response.status === "rated" ? response.level : STATUS_LABELS[response.status];
+                  return `<li><button type="button" class="hdrl-link-button" data-action="open-snapshot" data-ref="${indicator.ref}">${indicator.ref} · ${esc(indicator.name)}</button><span>${esc(result)}</span></li>`;
+                }).join("")}</ul>
+              </details>
+            </article>`;
+          }).join("")}
+        </div>
+      </section>
+    `);
+  }
+
+  function snapshotIndicatorView(errors = {}) {
+    const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
+    if (!indicator) return snapshotDashboardView();
+    const response = snapshotResponse(indicator.ref);
+    const domain = catalogue.domains.find((item) => item.ref === indicator.domain);
+    const index = catalogue.indicators.findIndex((item) => item.ref === indicator.ref);
+    const errorSummary = Object.keys(errors).length
+      ? `<div class="hdrl-error-summary" role="alert" tabindex="-1" id="hdrl-snapshot-errors"><h3>Check this snapshot response</h3><ul>${Object.entries(errors).map(([id, message]) => `<li><a href="#${id}">${esc(message)}</a></li>`).join("")}</ul></div>`
+      : "";
+    return shell(`
+      <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
+        <button type="button" class="hdrl-back-link" data-action="snapshot-dashboard">← Back to snapshot overview</button>
+        <div class="hdrl-progress-label">Indicator ${index + 1} of 64 · Domain ${indicator.domain}</div>
+        <span class="hdrl-domain-label" style="--domain-colour:${DOMAIN_COLOURS[indicator.domain]}">${indicator.domain} · ${esc(domain.name)}</span>
+        <h2 id="hdrl-view-title" tabindex="-1">${indicator.ref} · ${esc(indicator.name)}</h2>
+        <p class="hdrl-assessment-lede">Choose the description that best fits your current understanding. This is a provisional snapshot, not an evidence-backed judgement.</p>
+        ${errorSummary}
+        <form id="hdrl-snapshot-form" novalidate>
+          <fieldset class="hdrl-level-options hdrl-snapshot-levels" id="snapshot-levels">
+            <legend>Select the closest canonical description</legend>
+            <p class="hdrl-hint">Use keys 1–5 to select a level. Exact catalogue wording is reproduced below.</p>
+            ${LEVELS.map((level) => `<div class="hdrl-level-option">
+              <input id="snapshot-level-${level}" name="snapshot-level" type="radio" value="${level}" ${response.level === level ? "checked" : ""}>
+              <label for="snapshot-level-${level}"><span><strong>${level} · ${esc(catalogue.maturity_level_names[level])}</strong></span><span>${esc(indicator.maturity_levels[level])}</span></label>
+            </div>`).join("")}
+            <div class="hdrl-snapshot-deferred">
+              <strong>Cannot select a level now</strong>
+              ${radio("snapshot-status", "not_known", "Not known", "I do not know this part of the service well enough.", response.status)}
+              ${radio("snapshot-status", "not_assessed", "Not assessed", "I am intentionally leaving this indicator for later.", response.status)}
+              ${radio("snapshot-status", "not_applicable", "Not applicable", "This indicator is outside the stated assessment boundary.", response.status)}
+            </div>
+          </fieldset>
+          <div id="hdrl-snapshot-certainty-panel" ${response.status === "rated" ? "" : "hidden"}>
+            <fieldset class="hdrl-inline-radios">
+              <legend>How certain are you?</legend>
+              <p class="hdrl-hint">Use H, M or L. This describes confidence in your selection—not the maturity level.</p>
+              ${radio("snapshot-certainty", "high", "High", "I know this area and the description fits clearly.", response.certainty)}
+              ${radio("snapshot-certainty", "medium", "Medium", "Some details could change the selection.", response.certainty)}
+              ${radio("snapshot-certainty", "low", "Low", "This should be checked with another person or evidence.", response.certainty)}
+            </fieldset>
+            <fieldset class="hdrl-certainty-reasons" id="hdrl-certainty-reasons" ${response.certainty === "low" ? "" : "hidden"}>
+              <legend>What contributes to low certainty? <span class="hdrl-optional-label">Optional</span></legend>
+              ${betaConfig.certainty_reasons.map((reason) => `<div class="hdrl-checkbox"><input id="snapshot-reason-${reason.value}" name="snapshot-reason" type="checkbox" value="${reason.value}" ${response.certaintyReasons.includes(reason.value) ? "checked" : ""}><label for="snapshot-reason-${reason.value}">${esc(reason.label)}</label></div>`).join("")}
+            </fieldset>
+            <fieldset class="hdrl-clarity-options">
+              <legend>How clear were the differences between levels? <span class="hdrl-optional-label">Optional</span></legend>
+              ${betaConfig.clarity_options.map((option) => radio("snapshot-clarity", option.value, option.label, option.description, response.clarity)).join("")}
+            </fieldset>
+          </div>
+          <details class="hdrl-snapshot-note" ${response.note ? "open" : ""}>
+            <summary>Add an optional comment or justification</summary>
+            ${textareaField("snapshot-note", "Your note", response.note, "Keep this concise and non-sensitive. It stays on this device unless you explicitly include it in a share bundle.", false, "", 1200)}
+          </details>
+          <div class="hdrl-assessment-actions">
+            <button type="submit" class="md-button md-button--primary">Save and open next indicator</button>
+            <button type="button" class="md-button" data-action="snapshot-dashboard">Return without saving</button>
+          </div>
+        </form>
+      </section>
+    `);
+  }
+
+  function summariseLevelValues(values) {
+    const sorted = values.slice().sort((a, b) => a - b);
+    if (!sorted.length) return { label: "Insufficient completed indicators", median: "—", range: "—", count: 0 };
+    const middle = Math.floor(sorted.length / 2);
+    const low = sorted.length % 2 ? sorted[middle] : sorted[middle - 1];
+    const high = sorted.length % 2 ? sorted[middle] : sorted[middle];
+    const median = low === high ? `L${low}` : `L${low}–L${high}`;
+    const range = `L${sorted[0]}–L${sorted[sorted.length - 1]}`;
+    return { label: low === high ? `${median} · ${catalogue.maturity_level_names[median]}` : `${median} median range`, median, range, count: sorted.length };
+  }
+
+  function snapshotDomainSummary(domainRef) {
+    const values = catalogue.indicators
+      .filter((indicator) => indicator.domain === domainRef && indicator.type === "Core" && indicator.applicability_class !== "Y")
+      .map((indicator) => snapshotResponse(indicator.ref))
+      .filter((response) => response.status === "rated" && LEVELS.includes(response.level))
+      .map((response) => Number(response.level.slice(1)));
+    return summariseLevelValues(values);
+  }
+
+  function snapshotReviewView() {
+    const s = snapshotStats();
+    const revisit = catalogue.indicators.filter((indicator) => {
+      const response = snapshotResponse(indicator.ref);
+      return response.status === "unstarted" || response.certainty === "low" || ["some_overlap", "unclear"].includes(response.clarity);
+    });
+    return shell(`
+      <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
+        <div class="hdrl-progress-label">Stage 1 review · ${s.completed} of 64 indicators completed</div>
+        <h2 id="hdrl-view-title" tabindex="-1">Review the provisional snapshot</h2>
+        <p class="hdrl-assessment-lede">This profile reflects current understanding and certainty. It is not evidence-backed, validated or suitable for benchmarking.</p>
+        <div class="hdrl-stat-row">
+          ${statCard(s.judged, "Level selected", "provisional")}
+          ${statCard(s.lowCertainty, "Low certainty", "investigate")}
+          ${statCard(s.clarityFlags, "Wording flags", "framework feedback")}
+          ${statCard(64 - s.completed, "Not completed", "visible gaps")}
+          ${statCard(s.completedDomains, "Domains complete", "of 8")}
+        </div>
+        <div class="hdrl-report-table-wrap" role="region" aria-label="Provisional snapshot domain profile" tabindex="0">
+          <table class="hdrl-domain-summary-table">
+            <thead><tr><th scope="col">Domain</th><th scope="col">Core median</th><th scope="col">Observed range</th><th scope="col">Completed</th></tr></thead>
+            <tbody>${catalogue.domains.map((domain) => {
+              const summary = snapshotDomainSummary(domain.ref);
+              const progress = snapshotDomainProgress(domain.ref);
+              return `<tr><th scope="row"><span class="hdrl-domain-key" style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}">${domain.ref}</span> ${esc(domain.name)}</th><td><strong>${esc(summary.median)}</strong></td><td>${esc(summary.range)}</td><td>${progress.completed}/${progress.total}</td></tr>`;
+            }).join("")}</tbody>
+          </table>
+        </div>
+        <h3>Indicators to revisit</h3>
+        <div class="hdrl-review-issues">
+          ${revisit.slice(0, 40).map((indicator) => {
+            const response = snapshotResponse(indicator.ref);
+            const reason = response.status === "unstarted" ? "Not completed" : response.certainty === "low" ? "Low certainty" : "Level wording flagged";
+            return `<button type="button" data-action="open-snapshot" data-ref="${indicator.ref}"><span>${esc(reason)}</span><strong>${indicator.ref}</strong><small>${esc(indicator.name)}</small></button>`;
+          }).join("") || `<p class="hdrl-success-panel">No snapshot completeness, low-certainty or wording flags remain.</p>`}
+        </div>
+        ${revisit.length > 40 ? `<p>${revisit.length - 40} additional indicators to revisit remain visible in the snapshot overview and exports.</p>` : ""}
+        <div class="hdrl-assessment-actions">
+          <button type="button" class="md-button md-button--primary" data-action="gate">Prepare report and exports</button>
+          <button type="button" class="md-button" data-action="evidence">Start evidence gathering</button>
+          <button type="button" class="hdrl-link-button" data-action="snapshot-dashboard">Return to snapshot overview</button>
         </div>
       </section>
     `);
@@ -585,7 +947,7 @@
     });
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Stage 2 of 2 · save and return at any time</div>
+        <div class="hdrl-progress-label">Stage 2 · evidence gathering · save and return</div>
         <h2 id="hdrl-view-title" tabindex="-1">Evidence-led indicator review</h2>
         <p class="hdrl-assessment-lede">All 64 indicators remain available. Scope tags are prompts, not automatic exclusions.</p>
         <div class="hdrl-assessment-notice">
@@ -704,6 +1066,7 @@
       : ["not_known", "not_assessed", "not_applicable"].includes(response.status)
         ? "not_judged"
         : "");
+    const snapshot = snapshotResponse(indicator.ref);
     const errorSummary = Object.keys(errors).length
       ? `<div class="hdrl-error-summary" role="alert" tabindex="-1" id="hdrl-indicator-errors">
           <h3>Check this indicator response</h3>
@@ -720,6 +1083,7 @@
         </div>
         <h2 id="hdrl-view-title" tabindex="-1">${esc(indicator.name)}</h2>
         <p class="hdrl-assessment-lede"><strong>What this establishes:</strong> the maturity and evidence for ${esc(indicator.name.toLowerCase())} within ${esc(domain.name.toLowerCase())}.</p>
+        ${snapshot.status !== "unstarted" ? `<div class="hdrl-snapshot-reference"><strong>Provisional snapshot:</strong> ${esc(snapshot.status === "rated" ? `${snapshot.level} · ${certaintyLabel(snapshot.certainty)}` : STATUS_LABELS[snapshot.status])}. Review it against evidence rather than silently carrying it forward.</div>` : ""}
         <p><span class="hdrl-assessment-chip">${esc(relevance(indicator))}</span> This is a scope suggestion only. Record your applicability decision below.</p>
         <details class="hdrl-guidance">
           <summary>Why it matters, common mistakes and dependencies</summary>
@@ -935,6 +1299,7 @@
   function gateView(errors = {}) {
     const r = state.registration;
     const s = stats();
+    const snapshot = snapshotStats();
     const errorSummary = Object.keys(errors).length
       ? `<div class="hdrl-error-summary" role="alert" tabindex="-1" id="hdrl-gate-errors"><h3>Check the report information</h3><ul>${Object.entries(errors).map(([id, message]) => `<li><a href="#${id}">${esc(message)}</a></li>`).join("")}</ul></div>`
       : "";
@@ -944,9 +1309,9 @@
         <h2 id="hdrl-view-title" tabindex="-1">Your assessment is ready to report</h2>
         <div class="hdrl-limited-summary">
           <div><strong>${Object.values(state.rapid).filter((item) => item.impression).length}/8</strong><span>rapid impressions</span></div>
+          <div><strong>${snapshot.completed}/64</strong><span>snapshot indicators</span></div>
           <div><strong>${s.judged}/64</strong><span>indicator judgements</span></div>
           <div><strong>${s.evidenceLinked}/64</strong><span>with evidence references</span></div>
-          <div><strong>${s.unknown + s.notAssessed}</strong><span>unknown or not assessed</span></div>
         </div>
         <div class="hdrl-assessment-notice">
           <strong>Prototype gate.</strong> Nothing is emailed or transmitted. These fields test the minimum report-access journey and stay on this device. Use sample contact information if preferred.
@@ -954,13 +1319,13 @@
         ${errorSummary}
         <form id="hdrl-gate-form" novalidate>
           <div class="hdrl-form-grid">
-            ${textField("gate-name", "Name", r.name, "Identifies the report recipient and assessment perspective.", true, errors["gate-name"], 120, "text", "name")}
-            ${textField("gate-email", "Email address", r.email, "Production would verify access and deliver a report link. It is not marketing consent.", true, errors["gate-email"], 200, "email", "email")}
-            ${textField("gate-role", "Role", r.role, "Helps readers understand the perspective behind the self-assessment.", true, errors["gate-role"], 120, "text", "organization-title")}
-            ${textField("gate-organisation", "Organisation", r.organisation, "Provides the organisational context for the named service or ecosystem.", true, errors["gate-organisation"], 180, "text", "organization")}
-            ${textField("gate-region", "Country or region", r.region, "Helps interpret the legal and operating context and route privacy rights.", true, errors["gate-region"], 120, "text", "country-name")}
+            ${textField("gate-name", "Name (optional)", r.name, "Used only if you choose contactable feedback or follow-up; it is not shown in the assessment report.", false, errors["gate-name"], 120, "text", "name")}
+            ${textField("gate-email", "Email address", r.email, "A public beta would verify this address before unlocking the locally generated report. It is not marketing consent.", true, errors["gate-email"], 200, "email", "email")}
+            ${textField("gate-role", "Role", r.role, "Helps OPL Advisory understand which professional perspectives the beta is reaching; it is not shown in the assessment report.", true, errors["gate-role"], 120, "text", "organization-title")}
+            ${textField("gate-organisation", "Organisation", r.organisation, "Lets OPL Advisory administer beta participation and avoid treating repeat use as separate organisations; it is not shown in the assessment report.", true, errors["gate-organisation"], 180, "text", "organization")}
+            ${textField("gate-region", "Country or region (optional)", r.region, "Provides broad operating context without requiring a precise location.", false, errors["gate-region"], 120, "text", "country-name")}
             <div class="hdrl-field ${errors["gate-service-type"] ? "hdrl-field--error" : ""}">
-              <label for="gate-service-type">Type of service <span aria-hidden="true">*</span></label>
+              <label for="gate-service-type">Type of service (optional)</label>
               <p class="hdrl-hint" id="gate-service-type-hint">A broad category is enough for interpretation.</p>
               <select id="gate-service-type" aria-describedby="gate-service-type-hint${errors["gate-service-type"] ? " gate-service-type-error" : ""}">
                 <option value="">Choose a broad type</option>
@@ -969,13 +1334,31 @@
               ${fieldError(errors["gate-service-type"], "gate-service-type")}
             </div>
             <div class="hdrl-field ${errors["gate-scale"] ? "hdrl-field--error" : ""}">
-              <label for="gate-scale">Approximate scale <span aria-hidden="true">*</span></label>
+              <label for="gate-scale">Approximate scale (optional)</label>
               <p class="hdrl-hint" id="gate-scale-hint">Use a broad band; do not enter an exact patient population.</p>
               <select id="gate-scale" aria-describedby="gate-scale-hint${errors["gate-scale"] ? " gate-scale-error" : ""}">
                 <option value="">Choose a broad band</option>
                 ${["Single team or local service", "Multi-team or regional service", "Multi-organisation or national service", "Cross-border or international ecosystem", "Prefer not to categorise"].map((value) => `<option ${r.scale === value ? "selected" : ""}>${value}</option>`).join("")}
               </select>
               ${fieldError(errors["gate-scale"], "gate-scale")}
+            </div>
+            <div class="hdrl-field ${errors["gate-use-mode"] ? "hdrl-field--error" : ""}">
+              <label for="gate-use-mode">Individual or team use <span aria-hidden="true">*</span></label>
+              <p class="hdrl-hint" id="gate-use-mode-hint">Helps OPL Advisory understand whether the beta is supporting individual reflection or an internal team exercise.</p>
+              <select id="gate-use-mode" required aria-describedby="gate-use-mode-hint${errors["gate-use-mode"] ? " gate-use-mode-error" : ""}">
+                <option value="">Choose one</option>
+                ${["Individual exploration", "Several independent team responses", "Facilitated team discussion", "Another approach"].map((value) => `<option ${r.useMode === value ? "selected" : ""}>${value}</option>`).join("")}
+              </select>
+              ${fieldError(errors["gate-use-mode"], "gate-use-mode")}
+            </div>
+            <div class="hdrl-field ${errors["gate-report-use"] ? "hdrl-field--error" : ""}">
+              <label for="gate-report-use">Main intended use <span aria-hidden="true">*</span></label>
+              <p class="hdrl-hint" id="gate-report-use-hint">A broad category is enough; do not describe sensitive plans.</p>
+              <select id="gate-report-use" required aria-describedby="gate-report-use-hint${errors["gate-report-use"] ? " gate-report-use-error" : ""}">
+                <option value="">Choose one</option>
+                ${["Learn about HDRL", "Internal readiness discussion", "Improvement planning", "Team calibration", "Prepare for an evidence review", "Test and give beta feedback", "Another use"].map((value) => `<option ${r.reportUse === value ? "selected" : ""}>${value}</option>`).join("")}
+              </select>
+              ${fieldError(errors["gate-report-use"], "gate-report-use")}
             </div>
           </div>
           <fieldset class="hdrl-optional-consents">
@@ -992,7 +1375,7 @@
           </fieldset>
           <div class="hdrl-assessment-actions">
             <button type="submit" class="md-button md-button--primary">Unlock the on-device report</button>
-            <button type="button" class="md-button" data-action="review">Back to review</button>
+            <button type="button" class="md-button" data-action="overview">Back to assessment overview</button>
           </div>
         </form>
       </section>
@@ -1063,7 +1446,10 @@
         <div class="hdrl-report-actions">
           <button type="button" class="md-button md-button--primary" data-action="print">Print or save PDF</button>
           <button type="button" class="md-button" data-action="export-json">Download JSON</button>
-          <button type="button" class="md-button" data-action="export-csv">Download CSV</button>
+          <button type="button" class="md-button" data-action="export-snapshot-csv">Download snapshot CSV</button>
+          <button type="button" class="md-button" data-action="export-csv">Download evidence CSV</button>
+          <button type="button" class="md-button" data-action="feedback">Share feedback</button>
+          <button type="button" class="md-button" data-action="share-results">Create optional share bundle</button>
           <button type="button" class="md-button" data-action="review">Revise assessment</button>
         </div>
         <section>
@@ -1083,6 +1469,25 @@
           <h3>Rapid first pass</h3>
           <p>These are preliminary domain impressions based on current knowledge. They are not evidence-led HDRL scores.</p>
           ${rapidProfileMatrix({ interactive: false, id: "report-rapid-profile" })}
+        </section>
+        <section>
+          <h3>Whole-framework snapshot</h3>
+          <p>These are provisional selections made without an evidence requirement. They show current understanding and certainty, not validated maturity.</p>
+          <div class="hdrl-report-table-wrap" role="region" aria-label="Provisional snapshot domain profile" tabindex="0">
+            <table class="hdrl-domain-summary-table">
+              <thead><tr><th scope="col">Domain</th><th scope="col">Core median</th><th scope="col">Observed range</th><th scope="col">Completed</th></tr></thead>
+              <tbody>${catalogue.domains.map((domain) => {
+                const summary = snapshotDomainSummary(domain.ref);
+                const progress = snapshotDomainProgress(domain.ref);
+                return `<tr><th scope="row"><span class="hdrl-domain-key" style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}">${domain.ref}</span> ${esc(domain.name)}</th><td><strong>${esc(summary.median)}</strong></td><td>${esc(summary.range)}</td><td>${progress.completed}/${progress.total}</td></tr>`;
+              }).join("")}</tbody>
+            </table>
+          </div>
+          <ul>
+            <li>${snapshotStats().lowCertainty} rated indicators have low certainty.</li>
+            <li>${snapshotStats().clarityFlags} indicators have optional wording or level-distinction flags.</li>
+            <li>${64 - snapshotStats().completed} indicators were not completed.</li>
+          </ul>
         </section>
         <section>
           <h3>Evidence-led domain profile</h3>
@@ -1163,6 +1568,95 @@
     `;
   }
 
+  function betaActivityView() {
+    const s = snapshotStats();
+    const counts = Object.fromEntries(betaConfig.event_allowlist && Object.keys(betaConfig.event_allowlist).map((name) => [name, state.beta.events.filter((event) => event.name === name).length]));
+    return shell(`
+      <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
+        <div class="hdrl-progress-label">Local beta diagnostics · no remote collection</div>
+        <h2 id="hdrl-view-title" tabindex="-1">What the beta activity record contains</h2>
+        <p class="hdrl-assessment-lede">This prototype records a privacy-minimised event funnel on this device so the proposed contract can be inspected before any backend is selected.</p>
+        <div class="hdrl-data-boundary-grid">
+          <article><h3>Operational beta record</h3><ul>${betaConfig.privacy_boundary.operational_by_default.map((item) => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")}</ul></article>
+          <article><h3>Always local by default</h3><ul>${betaConfig.privacy_boundary.local_only.map((item) => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")}</ul></article>
+          <article><h3>Explicit sharing only</h3><ul>${betaConfig.privacy_boundary.explicit_share_only.map((item) => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")}</ul></article>
+        </div>
+        <h3>Current local funnel</h3>
+        <div class="hdrl-beta-funnel">
+          ${statCard(counts.assessment_started || 0, "Started", "session event")}
+          ${statCard(counts.snapshot_completed || 0, "Snapshot completed", `${s.completed}/64 now`)}
+          ${statCard(counts.report_unlocked || 0, "Report unlocked", "verified gate simulation")}
+          ${statCard(counts.report_download_requested || 0, "Download requests", "all formats")}
+          ${statCard(counts.feedback_submitted || 0, "Feedback submitted", `${counts.feedback_skipped || 0} skipped`)}
+        </div>
+        <div class="hdrl-assessment-notice"><strong>No event transport is active.</strong> No beta activity, identity, feedback or assessment data leave this device in v0.3 until a provider, notice, retention rule and production security review are approved.</div>
+        <div class="hdrl-assessment-actions">
+          <button type="button" class="md-button" data-action="export-beta-activity">Download local beta activity record</button>
+          ${state.beta.feedback.length ? `<button type="button" class="md-button" data-action="export-feedback">Download saved feedback bundle</button>` : ""}
+          <button type="button" class="md-button" data-action="overview">Return to assessment overview</button>
+        </div>
+      </section>
+    `);
+  }
+
+  function feedbackView() {
+    const context = Object.keys(state.beta.feedbackContext || {}).length ? state.beta.feedbackContext : feedbackContext();
+    return shell(`
+      <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
+        <div class="hdrl-progress-label">About 15 seconds · optional</div>
+        <h2 id="hdrl-view-title" tabindex="-1">Help improve the HDRL beta</h2>
+        <p class="hdrl-assessment-lede">A quick rating or a specific problem is useful. You can continue without providing feedback.</p>
+        <div class="hdrl-assessment-notice"><strong>Local prototype.</strong> Feedback is saved on this device and can be downloaded as a deliberately shareable bundle. It is not transmitted to OPL Advisory yet.</div>
+        <form id="hdrl-feedback-form">
+          <fieldset class="hdrl-feedback-rating">
+            <legend>Overall, how easy was this experience?</legend>
+            ${[[1,"Very difficult"],[2,"Difficult"],[3,"Mixed"],[4,"Easy"],[5,"Very easy"]].map(([value,label]) => radio("feedback-rating", String(value), String(value), label, "")).join("")}
+          </fieldset>
+          <div class="hdrl-field">
+            <label for="feedback-category">What is this feedback mainly about?</label>
+            <select id="feedback-category" name="feedback-category"><option value="">Choose a category</option>${betaConfig.feedback_categories.map((category) => `<option value="${category}">${esc(category.replaceAll("_", " "))}</option>`).join("")}</select>
+          </div>
+          ${textareaField("feedback-comment", "Optional comment", "", "Do not include assessment results or unnecessarily identifying or sensitive information.", false, "", 1600)}
+          <fieldset class="hdrl-status-options">
+            <legend>How should this feedback be shared?</legend>
+            ${radio("feedback-mode", "without_contact", "Without contact details", "Include limited tool context but no email, participant ID or persistent session identifier. Free text may still identify you.", "without_contact")}
+            ${radio("feedback-mode", "contactable", "With my beta contact details", "Allow OPL Advisory to follow up about this feedback after remote submission is approved.", "without_contact")}
+          </fieldset>
+          <details class="hdrl-guidance">
+            <summary>Context that would accompany feedback without contact details</summary>
+            <dl class="hdrl-report-definition">${Object.entries(context).filter(([,value]) => value !== "").map(([key,value]) => `<div><dt>${esc(key.replaceAll("_", " "))}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>
+            <p>No selected level, certainty, assessment title, scope, note, evidence or report content is included.</p>
+          </details>
+          <div class="hdrl-assessment-actions">
+            <button type="submit" class="md-button md-button--primary">Save feedback and continue</button>
+            <button type="button" class="md-button" data-action="skip-feedback">Not now—continue</button>
+          </div>
+        </form>
+      </section>
+    `);
+  }
+
+  function shareResultsView() {
+    return shell(`
+      <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
+        <div class="hdrl-progress-label">Explicit sharing · local file only</div>
+        <h2 id="hdrl-view-title" tabindex="-1">Create a results share bundle</h2>
+        <p class="hdrl-assessment-lede">Nothing is selected by default. Review each category and include only what the intended recipient needs.</p>
+        <div class="hdrl-assessment-callout"><h3>Business-sensitive information</h3><p>A share bundle may reveal perceived strengths, gaps and uncertainty. It is downloaded to this device and is never sent automatically. Use an organisation-approved transfer route.</p></div>
+        <form id="hdrl-share-form">
+          <fieldset class="hdrl-share-options">
+            <legend>Choose information to include</legend>
+            <div class="hdrl-checkbox"><input id="share-snapshot" name="share-snapshot" type="checkbox"><label for="share-snapshot"><strong>Whole-framework snapshot</strong><span>Indicator status, level, certainty and clarity flag.</span></label></div>
+            <div class="hdrl-checkbox"><input id="share-evidence-results" name="share-evidence-results" type="checkbox"><label for="share-evidence-results"><strong>Evidence-led results</strong><span>Status, level, certainty and evidence counts.</span></label></div>
+            <div class="hdrl-checkbox"><input id="share-comments" name="share-comments" type="checkbox"><label for="share-comments"><strong>Comments and rationale</strong><span>Snapshot notes, evidence-led rationale and improvement notes.</span></label></div>
+            <div class="hdrl-checkbox"><input id="share-evidence-records" name="share-evidence-records" type="checkbox"><label for="share-evidence-records"><strong>Evidence reference details</strong><span>Titles, references, owners, notes and limitations.</span></label></div>
+          </fieldset>
+          <div class="hdrl-assessment-actions"><button type="submit" class="md-button md-button--primary">Review and download bundle</button><button type="button" class="md-button" data-action="report">Return to report</button></div>
+        </form>
+      </section>
+    `);
+  }
+
   function sampleState() {
     const sample = defaultState();
     sample.boundary = {
@@ -1180,6 +1674,17 @@
         impression: ["developing", "defined", "defined", "developing", "managed", "developing", "defined", "managed"][index],
         certainty: index % 3 === 0 ? "low" : "medium",
         note: "Synthetic example impression."
+      };
+    });
+    catalogue.indicators.forEach((indicator, index) => {
+      sample.snapshot[indicator.ref] = {
+        status: "rated",
+        level: `L${(index % 4) + 2}`,
+        certainty: index % 7 === 0 ? "low" : index % 3 === 0 ? "high" : "medium",
+        certaintyReasons: index % 7 === 0 ? ["knowledge_gap", "evidence_gap"] : [],
+        clarity: index % 9 === 0 ? "some_overlap" : index % 13 === 0 ? "unclear" : "clear",
+        note: index % 11 === 0 ? "Synthetic snapshot note; no real service is represented." : "",
+        updatedAt: nowIso()
       };
     });
     catalogue.domains.forEach((domain, index) => {
@@ -1217,16 +1722,19 @@
       region: "United Kingdom",
       serviceType: "Secure data environment or TRE",
       scale: "Multi-team or regional service",
+      useMode: "Individual exploration",
+      reportUse: "Learn about HDRL",
       researchContact: false,
       newsletter: false
     };
+    sample.beta.events = [{ id: makeId(), name: "assessment_started", at: nowIso(), active_time_band: "15_to_30_minutes", entry_point: "synthetic_sample" }, { id: makeId(), name: "snapshot_completed", at: nowIso(), active_time_band: "15_to_30_minutes", completed_indicator_count: 64, completed_domain_count: 8 }];
     sample.view = "report";
     return sample;
   }
 
   function exportPayload() {
     return {
-      export_schema: "hdrl-self-assessment-export-v0.2.0",
+      export_schema: "hdrl-self-assessment-export-v0.3.0",
       exported_at: nowIso(),
       versions: { ...VERSIONS },
       assessment: {
@@ -1235,17 +1743,20 @@
         updated_at: state.updatedAt,
         boundary: state.boundary,
         rapid_first_pass: state.rapid,
+        whole_framework_snapshot: state.snapshot,
         domain_capacity_notes: state.domainNotes,
         evidence_led_responses: state.indicators,
         audit: state.audit
       },
       derived: {
+        snapshot_domain_summaries: Object.fromEntries(catalogue.domains.map((domain) => [domain.ref, snapshotDomainSummary(domain.ref)])),
         domain_summaries: Object.fromEntries(catalogue.domains.map((domain) => [domain.ref, domainSummary(domain.ref)])),
         findings: derivedFindings()
       },
       limitations: [
         "Self-assessment; not validation, accreditation or endorsement.",
         "Rapid impressions are not HDRL indicator scores.",
+        "Whole-framework snapshot selections are provisional and not evidence-backed.",
         "Evidence references are not independently verified.",
         "No overall HDRL score is calculated."
       ]
@@ -1254,11 +1765,6 @@
 
   function csvPayload() {
     const columns = ["indicator_ref", "indicator_name", "domain", "status", "level", "certainty", "rationale", "domain_capacity_note", "improvement_note", "status_reason", "evidence_count", "evidence_titles"];
-    const cell = (value) => {
-      let safe = String(value ?? "");
-      if (/^[=+\-@\t\r]/.test(safe)) safe = `'${safe}`;
-      return `"${safe.replaceAll('"', '""')}"`;
-    };
     const rows = catalogue.indicators.map((indicator) => {
       const response = indicatorResponse(indicator.ref);
       return [
@@ -1274,9 +1780,122 @@
         response.statusReason,
         response.evidence.length,
         response.evidence.map((item) => item.title).join("; ")
-      ].map(cell).join(",");
+      ].map(csvCell).join(",");
     });
     return [columns.join(","), ...rows].join("\n");
+  }
+
+  function csvCell(value) {
+    let safe = String(value ?? "");
+    if (/^[=+\-@\t\r]/.test(safe)) safe = `'${safe}`;
+    return `"${safe.replaceAll('"', '""')}"`;
+  }
+
+  function snapshotCsvPayload() {
+    const columns = ["indicator_ref", "indicator_name", "domain", "status", "level", "certainty", "certainty_reasons", "level_clarity", "optional_note"];
+    const rows = catalogue.indicators.map((indicator) => {
+      const response = snapshotResponse(indicator.ref);
+      return [indicator.ref, indicator.name, indicator.domain, response.status, response.level, response.certainty, response.certaintyReasons.join("; "), response.clarity, response.note].map(csvCell).join(",");
+    });
+    return [columns.join(","), ...rows].join("\n");
+  }
+
+  function betaActivityPayload() {
+    updateActiveTime();
+    return {
+      schema: "hdrl-beta-activity-v0.1.0",
+      exported_at: nowIso(),
+      beta_session_id: state.beta.sessionId,
+      versions: { ...VERSIONS },
+      active_time_band: activeTimeBand(),
+      events: state.beta.events,
+      statement: "Contains operational beta events only. No maturity level, certainty, assessment text, evidence or report content is included."
+    };
+  }
+
+  function feedbackBundlePayload() {
+    return {
+      schema: "hdrl-beta-feedback-v0.1.0",
+      exported_at: nowIso(),
+      feedback: state.beta.feedback.map((item) => {
+        const exported = {
+          mode: item.mode,
+          rating: item.rating,
+          category: item.category,
+          comment: item.comment,
+          context: Object.fromEntries(betaConfig.feedback_context_allowlist
+            .filter((key) => item.context?.[key] !== undefined)
+            .map((key) => [key, item.context[key]])),
+          received_date: String(item.at || today()).slice(0, 10)
+        };
+        if (item.mode === "contactable") exported.beta_contact = {
+          name: state.registration.name,
+          email: state.registration.email,
+          role: state.registration.role,
+          organisation: state.registration.organisation
+        };
+        return exported;
+      }),
+      statement: "Entries without contact details exclude the beta session identifier and report or assessment results. Free text may still identify its author."
+    };
+  }
+
+  function shareBundlePayload(options) {
+    const payload = {
+      schema: "hdrl-explicit-results-share-v0.1.0",
+      created_at: nowIso(),
+      versions: { ...VERSIONS },
+      boundary_summary: { assessment_date: state.boundary.assessmentDate, unit: state.boundary.unit },
+      included: options,
+      limitations: ["Explicitly created by the assessor", "Self-assessment; not validation, accreditation or endorsement", "May contain business-sensitive information"]
+    };
+    if (options.snapshot) payload.snapshot = Object.fromEntries(catalogue.indicators.map((indicator) => {
+      const response = snapshotResponse(indicator.ref);
+      const result = { status: response.status, level: response.level, certainty: response.certainty, clarity: response.clarity };
+      if (options.comments) result.note = response.note;
+      return [indicator.ref, result];
+    }));
+    if (options.evidenceResults) payload.evidence_led = Object.fromEntries(catalogue.indicators.map((indicator) => {
+      const response = indicatorResponse(indicator.ref);
+      const result = { status: response.status, level: response.level, certainty: response.certainty, evidence_count: response.evidence.length };
+      if (options.comments) Object.assign(result, { rationale: response.rationale, improvement_note: response.improvementNote, status_reason: response.statusReason });
+      if (options.evidenceRecords) result.evidence = response.evidence;
+      return [indicator.ref, result];
+    }));
+    return payload;
+  }
+
+  function performExport(action) {
+    if (action === "print") window.print();
+    else if (action === "export-json") download(`hdrl-assessment-${today()}.json`, "application/json", JSON.stringify(exportPayload(), null, 2));
+    else if (action === "export-snapshot-csv") download(`hdrl-snapshot-${today()}.csv`, "text/csv;charset=utf-8", snapshotCsvPayload());
+    else if (action === "export-csv") download(`hdrl-evidence-led-${today()}.csv`, "text/csv;charset=utf-8", csvPayload());
+    else return;
+    recordBetaEvent("report_download_requested", { download_type: action.replace("export-", ""), completed_indicator_count: snapshotStats().completed });
+    audit("assessment_exported", action);
+  }
+
+  function requestExport(action) {
+    if (betaConfig.feature_flags.feedback_checkpoint && !state.beta.feedbackCheckpointAnswered) {
+      state.beta.pendingExport = action;
+      state.beta.feedbackContext = feedbackContext();
+      recordBetaEvent("feedback_prompt_seen", { context: state.view });
+      setView("feedback");
+      return;
+    }
+    performExport(action);
+  }
+
+  function continueAfterFeedback() {
+    const pending = state.beta.pendingExport;
+    state.beta.pendingExport = "";
+    state.beta.feedbackCheckpointAnswered = true;
+    if (pending === "share-results") {
+      setView("share-results");
+      return;
+    }
+    setView("report");
+    if (pending && pending !== "none") setTimeout(() => performExport(pending), 0);
   }
 
   function download(filename, type, data) {
@@ -1288,7 +1907,7 @@
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   function validateBoundary(form) {
@@ -1300,6 +1919,32 @@
     if (!form.elements["boundary-date"].value) errors["boundary-date"] = "Enter the assessment date.";
     if (!form.elements["boundary-unit"].value) errors["boundary-unit"] = "Choose a unit of assessment.";
     if (!form.elements["boundary-use"].value.trim()) errors["boundary-use"] = "Describe the intended use.";
+    return errors;
+  }
+
+  function saveSnapshotForm(form) {
+    const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
+    const response = snapshotResponse(indicator.ref);
+    const previous = JSON.stringify(response);
+    const level = form.elements["snapshot-level"].value;
+    response.status = level ? "rated" : (form.elements["snapshot-status"].value || "unstarted");
+    response.level = level;
+    response.certainty = level ? form.elements["snapshot-certainty"].value : "";
+    response.certaintyReasons = response.certainty === "low" ? [...form.querySelectorAll('input[name="snapshot-reason"]:checked')].map((input) => input.value) : [];
+    response.clarity = level ? form.elements["snapshot-clarity"].value : "";
+    response.note = form.elements["snapshot-note"].value.trim();
+    response.updatedAt = nowIso();
+    if (JSON.stringify(response) !== previous) audit("snapshot_response_changed", indicator.ref, "Prototype user edit");
+    scheduleSave();
+    return response;
+  }
+
+  function validateSnapshot(form) {
+    const errors = {};
+    const level = form.elements["snapshot-level"].value;
+    const status = form.elements["snapshot-status"].value;
+    if (!level && !status) errors["snapshot-levels"] = "Choose a level, not known, not assessed or not applicable.";
+    if (level && !form.elements["snapshot-certainty"].value) errors["hdrl-snapshot-certainty-panel"] = "Choose high, medium or low certainty.";
     return errors;
   }
 
@@ -1343,19 +1988,17 @@
   function validateGate() {
     const errors = {};
     const required = {
-      "gate-name": "Enter a name.",
       "gate-email": "Enter an email address.",
       "gate-role": "Enter a role.",
       "gate-organisation": "Enter an organisation.",
-      "gate-region": "Enter a country or region."
+      "gate-use-mode": "Choose whether this is individual or team use.",
+      "gate-report-use": "Choose the main intended use."
     };
     Object.entries(required).forEach(([id, message]) => {
       if (!document.getElementById(id).value.trim()) errors[id] = message;
     });
     const email = document.getElementById("gate-email").value.trim();
     if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors["gate-email"] = "Enter an email address in the correct format.";
-    if (!document.getElementById("gate-service-type").value) errors["gate-service-type"] = "Choose a broad service type.";
-    if (!document.getElementById("gate-scale").value) errors["gate-scale"] = "Choose an approximate scale.";
     return errors;
   }
 
@@ -1368,14 +2011,15 @@
           if (confirm("Delete the entire on-device assessment draft? This cannot be undone.")) await clearDraft();
         } else if (action === "welcome") setView("welcome");
         else if (action === "start" || action === "boundary") setView("boundary");
-        else if (action === "resume") setView(state.view === "welcome" ? "boundary" : state.view);
+        else if (action === "resume") setView(state.view === "welcome" ? (state.boundary.title ? "overview" : "boundary") : state.view);
         else if (action === "sample") {
           if (confirm("Replace the current on-device draft with a synthetic sample?")) {
             state = sampleState();
             await persist();
             render();
           }
-        } else if (action === "dashboard") setView(state.boundary.title ? "rapid-summary" : "boundary");
+        } else if (action === "dashboard" || action === "overview") setView(state.boundary.title ? "overview" : "boundary");
+        else if (action === "rapid-intro") setView("rapid-intro");
         else if (action === "rapid-start") {
           state.rapidIndex = 0;
           setView("rapid");
@@ -1389,7 +2033,19 @@
             ? 0
             : content.rapid_questions.findIndex((item) => item.domain === target.dataset.domain);
           setView("rapid");
-        } else if (action === "evidence") setView("evidence");
+        } else if (action === "snapshot-dashboard") {
+          if (!hasBetaEvent("assessment_started")) recordBetaEvent("assessment_started", { entry_point: "resumed_snapshot" });
+          if (!hasBetaEvent("snapshot_started")) recordBetaEvent("snapshot_started", { entry_point: state.view });
+          setView("snapshot-dashboard");
+        } else if (action === "open-snapshot") {
+          state.activeIndicator = target.dataset.ref;
+          setView("snapshot");
+        } else if (action === "snapshot-review") setView("snapshot-review");
+        else if (action === "evidence") {
+          if (!hasBetaEvent("assessment_started")) recordBetaEvent("assessment_started", { entry_point: "resumed_evidence" });
+          if (!hasBetaEvent("evidence_workspace_started")) recordBetaEvent("evidence_workspace_started", { entry_point: state.view });
+          setView("evidence");
+        }
         else if (action === "open-indicator") {
           try {
             state.activeIndicator = target.dataset.ref;
@@ -1400,15 +2056,29 @@
           }
         } else if (action === "review") setView("review");
         else if (action === "gate") setView("gate");
-        else if (action === "print") window.print();
-        else if (action === "export-json") {
-          download(`hdrl-assessment-${today()}.json`, "application/json", JSON.stringify(exportPayload(), null, 2));
-          audit("assessment_exported", "json");
-          scheduleSave();
-        } else if (action === "export-csv") {
-          download(`hdrl-assessment-indicators-${today()}.csv`, "text/csv;charset=utf-8", csvPayload());
-          audit("assessment_exported", "csv");
-          scheduleSave();
+        else if (action === "report") setView("report");
+        else if (["print", "export-json", "export-snapshot-csv", "export-csv"].includes(action)) requestExport(action);
+        else if (action === "feedback") {
+          state.beta.pendingExport = "none";
+          state.beta.feedbackContext = feedbackContext();
+          recordBetaEvent("feedback_prompt_seen", { context: state.view });
+          setView("feedback");
+        } else if (action === "skip-feedback") {
+          recordBetaEvent("feedback_skipped", { context: state.beta.feedbackContext?.view || state.view });
+          continueAfterFeedback();
+        } else if (action === "share-results") {
+          if (betaConfig.feature_flags.feedback_checkpoint && !state.beta.feedbackCheckpointAnswered) {
+            state.beta.pendingExport = "share-results";
+            state.beta.feedbackContext = feedbackContext();
+            recordBetaEvent("feedback_prompt_seen", { context: state.view });
+            setView("feedback");
+          } else setView("share-results");
+        }
+        else if (action === "beta-activity") setView("beta-activity");
+        else if (action === "export-beta-activity") {
+          download(`hdrl-beta-activity-${today()}.json`, "application/json", JSON.stringify(betaActivityPayload(), null, 2));
+        } else if (action === "export-feedback") {
+          download(`hdrl-beta-feedback-${today()}.json`, "application/json", JSON.stringify(feedbackBundlePayload(), null, 2));
         } else if (action === "remove-evidence") {
           const response = indicatorResponse(state.activeIndicator);
           const removed = response.evidence.splice(Number(target.dataset.index), 1)[0];
@@ -1488,7 +2158,8 @@
         intendedUse: boundaryForm.elements["boundary-use"].value.trim()
       };
       audit("assessment_boundary_saved", "boundary");
-      setView("rapid-intro");
+      if (!hasBetaEvent("assessment_started")) recordBetaEvent("assessment_started", { entry_point: "boundary_completed" });
+      setView("overview");
     });
 
     const rapidForm = document.getElementById("hdrl-rapid-form");
@@ -1521,13 +2192,79 @@
         note: rapidForm.elements["rapid-note"].value.trim()
       };
       audit("rapid_response_saved", domain);
-      if (state.rapidIndex === 7) setView("rapid-summary");
+      if (state.rapidIndex === 7) {
+        if (!hasBetaEvent("domain_orientation_completed")) recordBetaEvent("domain_orientation_completed", { completed_domain_count: Object.keys(state.rapid).length });
+        setView("rapid-summary");
+      }
       else {
         state.rapidIndex += 1;
         scheduleSave();
         lastFocusId = "hdrl-view-title";
         render();
       }
+    });
+
+    const snapshotForm = document.getElementById("hdrl-snapshot-form");
+    snapshotForm?.querySelectorAll('input[name="snapshot-level"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        snapshotForm.querySelectorAll('input[name="snapshot-status"]').forEach((choice) => { choice.checked = false; });
+        document.getElementById("hdrl-snapshot-certainty-panel").hidden = false;
+      });
+    });
+    snapshotForm?.querySelectorAll('input[name="snapshot-status"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        snapshotForm.querySelectorAll('input[name="snapshot-level"]').forEach((choice) => { choice.checked = false; });
+        document.getElementById("hdrl-snapshot-certainty-panel").hidden = true;
+      });
+    });
+    snapshotForm?.querySelectorAll('input[name="snapshot-certainty"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        document.getElementById("hdrl-certainty-reasons").hidden = input.value !== "low";
+      });
+    });
+    snapshotForm?.addEventListener("keydown", (event) => {
+      if (event.target.matches("textarea, select, input:not([type=radio])")) return;
+      const level = /^[1-5]$/.test(event.key) ? `L${event.key}` : "";
+      const certainty = { h: "high", m: "medium", l: "low" }[event.key.toLowerCase()];
+      const choice = level
+        ? snapshotForm.querySelector(`input[name="snapshot-level"][value="${level}"]`)
+        : certainty && !document.getElementById("hdrl-snapshot-certainty-panel").hidden
+          ? snapshotForm.querySelector(`input[name="snapshot-certainty"][value="${certainty}"]`)
+          : null;
+      if (choice) {
+        event.preventDefault();
+        choice.click();
+      }
+    });
+    snapshotForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const errors = validateSnapshot(snapshotForm);
+      if (Object.keys(errors).length) {
+        root.innerHTML = snapshotIndicatorView(errors);
+        bind();
+        document.getElementById("hdrl-snapshot-errors")?.focus();
+        return;
+      }
+      const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
+      const domainProgressBefore = snapshotDomainProgress(indicator.domain);
+      saveSnapshotForm(snapshotForm);
+      const domainProgressAfter = snapshotDomainProgress(indicator.domain);
+      if (domainProgressBefore.completed < domainProgressBefore.total && domainProgressAfter.completed === domainProgressAfter.total
+        && !state.beta.events.some((item) => item.name === "snapshot_domain_completed" && item.domain_ref === indicator.domain)) {
+        recordBetaEvent("snapshot_domain_completed", { domain_ref: indicator.domain, completed_indicator_count: snapshotStats().completed });
+      }
+      const snapshotProgress = snapshotStats();
+      if (snapshotProgress.completed === catalogue.indicators.length && !hasBetaEvent("snapshot_completed")) {
+        recordBetaEvent("snapshot_completed", { completed_indicator_count: snapshotProgress.completed, completed_domain_count: snapshotProgress.completedDomains });
+      }
+      const currentIndex = catalogue.indicators.findIndex((item) => item.ref === indicator.ref);
+      const next = catalogue.indicators.slice(currentIndex + 1).find((item) => snapshotResponse(item.ref).status === "unstarted")
+        || catalogue.indicators.find((item) => snapshotResponse(item.ref).status === "unstarted");
+      if (next) {
+        state.activeIndicator = next.ref;
+        lastFocusId = "hdrl-view-title";
+        render();
+      } else setView("snapshot-review");
     });
 
     const indicatorForm = document.getElementById("hdrl-indicator-form");
@@ -1577,6 +2314,49 @@
       document.getElementById("filter-search")?.focus();
     });
 
+    const feedbackForm = document.getElementById("hdrl-feedback-form");
+    feedbackForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const rating = feedbackForm.elements["feedback-rating"].value;
+      const category = feedbackForm.elements["feedback-category"].value;
+      const comment = feedbackForm.elements["feedback-comment"].value.trim();
+      if (!rating && !category && !comment) {
+        announce("Add a quick rating, choose a category or enter a comment before saving feedback.", true);
+        feedbackForm.elements["feedback-rating"][0].focus();
+        return;
+      }
+      const mode = feedbackForm.elements["feedback-mode"].value || "without_contact";
+      const context = Object.keys(state.beta.feedbackContext || {}).length ? state.beta.feedbackContext : feedbackContext();
+      state.beta.feedback.push({ id: makeId(), mode, rating: rating ? Number(rating) : null, category, comment, context, at: nowIso() });
+      recordBetaEvent("feedback_submitted", { feedback_mode: mode, feedback_category: category || "not_selected", context: context.view || "unknown" });
+      continueAfterFeedback();
+    });
+
+    const shareForm = document.getElementById("hdrl-share-form");
+    shareForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const options = {
+        snapshot: shareForm.elements["share-snapshot"].checked,
+        evidenceResults: shareForm.elements["share-evidence-results"].checked,
+        comments: shareForm.elements["share-comments"].checked,
+        evidenceRecords: shareForm.elements["share-evidence-records"].checked
+      };
+      if (!options.snapshot && !options.evidenceResults) {
+        announce("Choose the snapshot, evidence-led results or both before creating a share bundle.", true);
+        shareForm.elements["share-snapshot"].focus();
+        return;
+      }
+      if (options.evidenceRecords && !options.evidenceResults) {
+        announce("Select evidence-led results before including evidence reference details.", true);
+        shareForm.elements["share-evidence-results"].focus();
+        return;
+      }
+      download(`hdrl-explicit-share-${today()}.json`, "application/json", JSON.stringify(shareBundlePayload(options), null, 2));
+      recordBetaEvent("share_bundle_created", { bundle_scope: Object.entries(options).filter(([, included]) => included).map(([name]) => name).join(",") });
+      audit("explicit_share_bundle_created", "local_download");
+      setView("report");
+    });
+
     const gateForm = document.getElementById("hdrl-gate-form");
     gateForm?.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -1596,10 +2376,16 @@
         region: document.getElementById("gate-region").value.trim(),
         serviceType: document.getElementById("gate-service-type").value,
         scale: document.getElementById("gate-scale").value,
+        useMode: document.getElementById("gate-use-mode").value,
+        reportUse: document.getElementById("gate-report-use").value,
         researchContact: document.getElementById("gate-research").checked,
         newsletter: document.getElementById("gate-newsletter").checked
       };
       audit("prototype_report_gate_unlocked", "report", "No data transmitted");
+      if (!hasBetaEvent("report_unlocked")) {
+        const s = snapshotStats();
+        recordBetaEvent("report_unlocked", { completed_indicator_count: s.completed, completed_domain_count: s.completedDomains });
+      }
       setView("report");
     });
   }
@@ -1608,14 +2394,21 @@
     const views = {
       welcome: welcomeView,
       boundary: boundaryView,
+      overview: overviewView,
       "rapid-intro": rapidIntroView,
       rapid: rapidView,
       "rapid-summary": rapidSummaryView,
+      "snapshot-dashboard": snapshotDashboardView,
+      snapshot: snapshotIndicatorView,
+      "snapshot-review": snapshotReviewView,
       evidence: evidenceDashboardView,
       indicator: indicatorView,
       review: reviewView,
       gate: gateView,
-      report: reportView
+      report: reportView,
+      feedback: feedbackView,
+      "share-results": shareResultsView,
+      "beta-activity": betaActivityView
     };
     root.innerHTML = (views[state.view] || welcomeView)();
     root.setAttribute("aria-busy", "false");
@@ -1631,14 +2424,24 @@
   }
 
   function migrateDraft(draft, defaults) {
-    if (!draft || ![1, 2].includes(draft.schemaVersion)) return defaults;
-    if (draft.schemaVersion === 2) {
+    if (!draft || ![1, 2, 3].includes(draft.schemaVersion)) return defaults;
+    if ([2, 3].includes(draft.schemaVersion)) {
       return {
         ...defaults,
         ...draft,
+        schemaVersion: 3,
         boundary: { ...defaults.boundary, ...draft.boundary },
         registration: { ...defaults.registration, ...draft.registration },
         domainNotes: { ...defaults.domainNotes, ...draft.domainNotes },
+        rapid: { ...defaults.rapid, ...draft.rapid },
+        snapshot: { ...defaults.snapshot, ...draft.snapshot },
+        indicators: { ...defaults.indicators, ...draft.indicators },
+        beta: {
+          ...defaults.beta,
+          ...(draft.beta || {}),
+          events: Array.isArray(draft.beta?.events) ? draft.beta.events : [],
+          feedback: Array.isArray(draft.beta?.feedback) ? draft.beta.feedback : []
+        },
         versions: { ...VERSIONS }
       };
     }
@@ -1670,32 +2473,61 @@
     return {
       ...defaults,
       ...draft,
-      schemaVersion: 2,
+      schemaVersion: 3,
       boundary: { ...defaults.boundary, ...draft.boundary },
       registration: { ...defaults.registration, ...draft.registration },
       rapid,
+      snapshot: {},
       indicators,
       domainNotes,
+      beta: { ...defaults.beta },
       versions: { ...VERSIONS }
     };
   }
 
   async function init() {
     try {
-      const [catalogueResponse, contentResponse, draft] = await Promise.all([
+      const [catalogueResponse, contentResponse, betaResponse, draft] = await Promise.all([
         fetch(root.dataset.catalogueUrl, { credentials: "same-origin" }),
         fetch(root.dataset.contentUrl, { credentials: "same-origin" }),
+        fetch(root.dataset.betaConfigUrl, { credentials: "same-origin" }),
         loadDraft()
       ]);
-      if (!catalogueResponse.ok || !contentResponse.ok) throw new Error("Assessment data failed to load");
+      if (!catalogueResponse.ok || !contentResponse.ok || !betaResponse.ok) throw new Error("Assessment data failed to load");
       catalogue = await catalogueResponse.json();
       content = await contentResponse.json();
+      betaConfig = await betaResponse.json();
       if (catalogue.framework.version !== VERSIONS.framework || catalogue.catalogue_version !== VERSIONS.catalogue || catalogue.indicator_count !== 64) {
         throw new Error("The prototype and canonical catalogue versions do not match");
       }
+      if (betaConfig.config_version !== VERSIONS.beta || betaConfig.tool_version !== VERSIONS.tool) {
+        throw new Error("The beta configuration and assessment tool versions do not match");
+      }
+      if (betaConfig.transport.remote_collection_enabled || betaConfig.transport.mode !== "local-only") {
+        throw new Error("Remote beta collection cannot be enabled in this local prototype");
+      }
       const defaults = defaultState();
       state = migrateDraft(draft, defaults);
-      catalogue.indicators.forEach((indicator) => indicatorResponse(indicator.ref));
+      catalogue.indicators.forEach((indicator) => {
+        indicatorResponse(indicator.ref);
+        const existing = snapshotResponse(indicator.ref);
+        state.snapshot[indicator.ref] = {
+          status: "unstarted",
+          level: "",
+          certainty: "",
+          certaintyReasons: [],
+          clarity: "",
+          note: "",
+          updatedAt: null,
+          ...existing,
+          certaintyReasons: Array.isArray(existing.certaintyReasons) ? existing.certaintyReasons : []
+        };
+      });
+      lastActivityTick = Date.now();
+      document.addEventListener("visibilitychange", () => {
+        updateActiveTime();
+        scheduleSave();
+      });
       render();
     } catch (error) {
       root.setAttribute("aria-busy", "false");

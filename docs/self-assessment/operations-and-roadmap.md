@@ -13,7 +13,7 @@ The research prototype does not transmit assessment information and must remain 
 - approved privacy notice, just-in-time notices, retention and rights process;
 - DPIA and legitimate-interest assessments;
 - production architecture and supplier spend approval;
-- authentication, workspace-isolation and deletion tests;
+- verification, event/feedback separation, allow-list enforcement and deletion tests;
 - accessibility audit including assistive-technology testing;
 - incident, backup and recovery exercise;
 - public-contributor and user review; and
@@ -26,10 +26,10 @@ The research prototype does not transmit assessment information and must remain 
 3. Run the MkDocs strict build and catalogue/site/self-assessment checks.
 4. Perform keyboard, screen-reader, 320px reflow, 400% zoom, contrast and reduced-motion testing.
 5. Test representative long indicators, rationale, evidence notes and report tables.
-6. After supplier/legal approval, create a separate staging application and synthetic test accounts.
-7. Complete isolation and security testing in staging.
+6. After supplier/legal approval, create the thin beta service in staging with synthetic participant/event/feedback records.
+7. Prove that result fields and request bodies are rejected or redacted, feedback without contact details cannot be joined to participant/session tables, and verification/deletion controls work.
 8. Pilot with an invited cohort using non-sensitive assessment boundaries.
-9. Review incidents, support demand and user research before any wider launch.
+9. Review incidents, support demand, funnel loss and user research before any wider launch or server-side assessment feature.
 
 ## Security test set
 
@@ -37,6 +37,10 @@ The research prototype does not transmit assessment information and must remain 
 |:--|:--|
 | Request OTP for registered/unregistered email | Neutral response, same observable timing class, rate limit and no account enumeration. |
 | Reuse or brute-force OTP | Single use, short expiry, throttled attempts and security event without secret logging. |
+| Add `level`, `certainty`, email, scope or free text to an event request | Server rejects the property/request; logs do not reproduce it. |
+| Submit feedback without contact details | Stored without participant/session foreign key or authentication cookie; security metadata uses the approved short retention. |
+| Correlate feedback and event tables | No routine join key; timestamps are coarsened and access roles are separated. |
+| Unlock local report | Verification response unlocks browser generation without sending IndexedDB state or report content. |
 | Access another workspace by changing ID | Denied by application and database policy; event recorded. |
 | Change owner/contributor/reviewer role client-side | Server ignores unauthorised claim. |
 | Inject HTML/script in rationale/evidence fields | Stored and rendered as inert text; report/export remains safe. |
@@ -45,6 +49,8 @@ The research prototype does not transmit assessment information and must remain 
 | Delete workspace | Live records removed, access revoked, export no longer available, backup-expiry date recorded. |
 | Restore backup | Original permissions and deletion reconciliation reapplied before service. |
 | Automated registrations/invitations | Rate limiting, abuse controls, quotas and alerting operate. |
+
+Workspace, invitation and role-manipulation tests apply only if the later server-side assessment service is approved; the thin public beta has no workspace/result API.
 
 ## Accessibility test set
 
@@ -60,22 +66,23 @@ The research prototype does not transmit assessment information and must remain 
 
 ## Prototype verification record
 
-The following checks were completed against this branch on 6 August 2026 using synthetic content. The second-iteration checks include migration of the earlier on-device draft schema:
+The following checks were completed against this branch on 7 August 2026 using synthetic content. The third iteration includes migration of both earlier on-device draft schemas and the new public-beta data boundary:
 
 | Check | Result |
 |:--|:--|
-| JavaScript syntax and release invariant validator | Passed. Framework 1.0.1, catalogue 1.0.2, tool 0.2.0-prototype; eight rapid prompts; 64 reachable indicators; two same-origin data reads; no file input or external submission. |
+| JavaScript syntax and release invariant validator | Passed. Framework 1.0.1, catalogue 1.0.2, tool 0.3.0-prototype; eight orientation prompts; 64 snapshot and evidence indicators; three same-origin versioned data reads; no file input or external submission. The beta configuration has no endpoints and remote collection is false. |
 | Existing catalogue and Presentation Kit validators | Passed. 64 indicators, 92 slides and canonical wording/version checks remained intact. |
 | MkDocs strict build and site coherence | Passed. The strict build completed; coherence checked 32 indexed pages, 2,797 internal links/anchors, unique descriptions and the canonical framework download checksum. Prototype design documents are `noindex`. |
-| New-draft individual journey | Passed from boundary validation through eight rapid prompts, evidence-led review, report gate and full report. |
-| Framework fidelity | The workspace rendered 64 indicator tasks; A.1.1 rendered all five exact catalogue descriptors and its published minimum-evidence wording. |
+| New-draft individual journey | Passed from boundary through stage choice, a synthetic snapshot response, partial review, report gate, full local report, optional feedback checkpoint and beta-activity view. The earlier orientation and evidence-led journeys remain available. |
+| Framework fidelity | Both snapshot and evidence workspaces expose all 64 indicators. A.1.1 rendered all five exact catalogue descriptors; evidence-led A.1.1 retains the published minimum-evidence wording. Snapshot and evidence responses remain separate. |
 | Evidence and output safety | Evidence entry now uses references only and omits “level supported” and review-period questions. Three-nation evidence examples are de-identified prompts, not proof. CSV formula-prefix protection is enforced by the release validator. |
-| Reporting | The report rendered the accessible impression-by-certainty matrix, domain Core median and observed range, all 64 indicator rows, domain constraints, version provenance, rule traces, limitations and no overall score. JSON and CSV generation paths are present; browser download-event capture still needs a normal-browser regression check. |
+| Reporting | The report rendered the accessible impression-by-certainty matrix, provisional snapshot domain profile, evidence-led Core median and observed range, all 64 evidence-led indicator rows, domain constraints, version provenance, rule traces, limitations and no overall score. JSON and two CSV generation paths are present. Programmatic blob downloads were requested and recorded locally, but the in-app preview did not surface a browser download event; repeat in Safari/Chrome/Firefox before release. |
 | Save and return | Passed across browser reload using the same on-device IndexedDB draft. |
-| Responsive reflow | Rechecked at a 320px embedded viewport: document width equalled viewport width with no page-level horizontal overflow. The 5-column profile matrix uses a labelled internal scroll region (240px viewport, 660px table) and the fallback domain list reflows to one column. |
+| Responsive reflow | Rechecked at a 320px viewport: document width equalled viewport width with no page-level horizontal overflow. Beta boundary/funnel cards, snapshot dashboard and long canonical indicator options reflowed to one column; option and action widths remained within the 288px assessment root. The 5-column orientation matrix retains a labelled internal scroll region. |
 | Analytics and indexing | Built prototype contains `noindex, nofollow` and no Plausible script; other site pages retain aggregate analytics. |
-| Progressive interaction and focus | Passed. Deferred rapid choices hide certainty; unstarted indicators show only the binary decision; the three no-judgement reasons and short explanation reveal together; judgement, certainty and evidence reveal only when relevant. Next-domain and next-indicator actions put the new heading in focus and return the assessment root to the top of the viewport. |
-| Browser diagnostics | No application errors or warnings during the second-iteration interaction tests. |
+| Progressive interaction and focus | Passed. Snapshot level selection reveals certainty; not known/not assessed/not applicable clear the level and hide certainty. Evidence-led unstarted indicators retain the binary judgement decision. Next-indicator actions focused the new heading and returned the assessment root to the top of the viewport. |
+| Beta privacy contract | Local funnel showed one start, one report unlock, one download request and one feedback submission while the assessment itself contained an L2 selection. Inspection confirmed the operational view exposed counts/actions only and labelled result fields local/explicit-share only. Feedback without contact details excludes participant/session identifiers from its export mapping. |
+| Browser diagnostics | No application errors or warnings during the third-iteration interaction tests. |
 
 This is not a substitute for the still-required VoiceOver/NVDA test, independent WCAG audit, tagged-PDF test, usability research, penetration test or production authentication/workspace-isolation testing.
 
@@ -108,20 +115,24 @@ The application report is the executable sample for an individual journey. A tea
 ## Handover: keeping HDRL within its evidence boundaries
 
 - The canonical catalogue is the source for indicator names, descriptors and minimum evidence. Product guidance never silently edits it.
-- Rapid impressions teach the eight-domain shape and are not HDRL scores.
+- Optional orientation impressions teach the eight-domain shape and are not HDRL scores.
+- The whole-framework snapshot uses exact canonical level wording but remains provisional and visibly separate from the evidence-led record.
 - Evidence-led results describe the evidence available at a date within a stated boundary.
 - The report shows missing evidence, low certainty and unassessed scope rather than imputing optimistic values.
 - Rules generate questions and carry forward user actions; they do not invent authoritative recommendations.
 - No overall score, rank, badge, pass/fail or participation decision is produced.
 - Team distributions remain visible after calibration.
 - Reports identify method and versions and invite critique and further validation.
+- The public-beta operating model keeps assessment results on the user's device. OPL Advisory receives only a minimum participant record, allow-listed funnel events and feedback the user submits; sharing results is a separate explicit action.
 
 ## Open issues for review
 
 ### Legal and data protection
 
 - controller/joint-controller position;
+- thin beta-service and transactional-email processors, operational region and spend;
 - lawful basis for free report delivery and framework-improvement analysis;
+- LIA/PECR assessment for the pseudonymous event funnel and browser storage/access;
 - retention periods and backup treatment;
 - international-transfer safeguards and processor contracts;
 - PECR wording for optional research/newsletter contact;
@@ -141,10 +152,14 @@ The application report is the executable sample for an individual journey. A tea
 ### User research
 
 - 5–10 minute completion target;
+- 30–60 minute target for the 64-indicator snapshot and whether domain pauses feel manageable;
 - whether users distinguish rapid impressions from HDRL levels;
+- whether users distinguish provisional snapshot selections from evidence-led judgements;
 - indicator-task-list usability across 64 items;
 - mobile evidence entry;
 - usefulness of the gate and minimum required fields;
+- whether verified report unlock is an acceptable exchange for beta participation, and how many people abandon before it;
+- comprehension of feedback “without contact details” and the explicit results share bundle;
 - team blind-round and disagreement workflow;
 - deletion/export comprehension; and
 - accessibility with real assistive-technology users.

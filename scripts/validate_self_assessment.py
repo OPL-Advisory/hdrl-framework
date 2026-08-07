@@ -13,6 +13,9 @@ CATALOGUE_PATH = ROOT / "docs" / "data" / "hdrl-indicators-v1.json"
 CONTENT_PATH = (
     ROOT / "docs" / "data" / "hdrl-assessment-content-v0.2.0.json"
 )
+BETA_CONFIG_PATH = (
+    ROOT / "docs" / "data" / "hdrl-assessment-beta-config-v0.1.0.json"
+)
 APP_PATH = ROOT / "docs" / "assets" / "js" / "self-assessment.js"
 PAGE_PATH = ROOT / "docs" / "self-assessment" / "index.md"
 MKDOCS_PATH = ROOT / "mkdocs.yml"
@@ -40,6 +43,7 @@ def version_from_js(source: str, key: str) -> str:
 def main() -> None:
     catalogue = json.loads(CATALOGUE_PATH.read_text(encoding="utf-8"))
     content = json.loads(CONTENT_PATH.read_text(encoding="utf-8"))
+    beta = json.loads(BETA_CONFIG_PATH.read_text(encoding="utf-8"))
     app = APP_PATH.read_text(encoding="utf-8")
     page = PAGE_PATH.read_text(encoding="utf-8")
     mkdocs = MKDOCS_PATH.read_text(encoding="utf-8")
@@ -59,10 +63,10 @@ def main() -> None:
         "Assessment content catalogue version does not match catalogue",
     )
     require(
-        content["tool_version"] == "0.2.0-prototype"
+        content["tool_version"] == "0.3.0-prototype"
         and content["content_version"] == "0.2.0"
         and content["recommendation_rules_version"] == "0.2.0"
-        and content["report_generation_version"] == "0.2.0",
+        and content["report_generation_version"] == "0.3.0",
         "Assessment content release versions are unexpected",
     )
 
@@ -99,6 +103,7 @@ def main() -> None:
         "guidance": version_from_js(app, "guidance"),
         "rules": version_from_js(app, "rules"),
         "report": version_from_js(app, "report"),
+        "beta": version_from_js(app, "beta"),
     }
     require(js_versions["framework"] == content["framework_version"], "JS framework version mismatch")
     require(js_versions["catalogue"] == content["catalogue_version"], "JS catalogue version mismatch")
@@ -112,15 +117,44 @@ def main() -> None:
         js_versions["report"] == content["report_generation_version"],
         "JS report version mismatch",
     )
+    require(
+        js_versions["beta"] == beta["config_version"]
+        and js_versions["tool"] == beta["tool_version"],
+        "JS beta configuration version mismatch",
+    )
+
+    require(
+        beta["transport"]["mode"] == "local-only"
+        and beta["transport"]["remote_collection_enabled"] is False
+        and all(
+            beta["transport"][key] is None
+            for key in ("event_endpoint", "feedback_endpoint", "identity_endpoint")
+        ),
+        "Research prototype must not configure remote collection",
+    )
+    prohibited_event_fields = {
+        "level", "score", "certainty", "email", "comment", "rationale",
+        "evidence", "assessment_title", "scope", "report",
+    }
+    configured_event_fields = {
+        field
+        for fields in beta["event_allowlist"].values()
+        for field in fields
+    }
+    require(
+        prohibited_event_fields.isdisjoint(configured_event_fields),
+        "Beta event allow-list contains assessment content or direct identifiers",
+    )
 
     require("localStorage" not in app and "sessionStorage" not in app, "Disallowed web storage found")
     require('type="file"' not in app and "type='file'" not in app, "File upload input found")
     require(
-        app.count("fetch(") == 2
+        app.count("fetch(") == 3
         and "root.dataset.catalogueUrl" in app
         and "root.dataset.contentUrl" in app,
-        "Prototype may fetch only its two same-origin versioned data files",
+        "Prototype may fetch only its three same-origin versioned data files",
     )
+    require("root.dataset.betaConfigUrl" in app, "Versioned beta configuration is not loaded")
     require(
         not re.search(r'fetch\(\s*["\']https?://', app),
         "Prototype contains an external fetch",
@@ -147,6 +181,27 @@ def main() -> None:
         "Progressive indicator decision and certainty controls are missing",
     )
     require(
+        'name="snapshot-level"' in app
+        and 'name="snapshot-certainty"' in app
+        and 'name="snapshot-status"' in app
+        and "indicator.maturity_levels[level]" in app
+        and "snapshot_completed" in app,
+        "Whole-framework snapshot journey is incomplete",
+    )
+    require(
+        'id="hdrl-feedback-form"' in app
+        and '"feedback-mode", "without_contact"' in app
+        and "feedback_skipped" in app
+        and 'id="hdrl-share-form"' in app,
+        "Beta feedback or explicit result-sharing controls are incomplete",
+    )
+    require(
+        'id="gate-use-mode"' in app
+        and 'id="gate-report-use"' in app
+        and '"gate-email"' in app,
+        "Minimum beta-participant gate fields are incomplete",
+    )
+    require(
         "domain_evidence_examples" in app
         and "indicatorEvidenceIdeas" in app
         and "evidence-review-period" not in app
@@ -162,6 +217,7 @@ def main() -> None:
 
     require("robots: noindex, nofollow" in page, "Prototype page must remain noindex")
     require("analytics: false" in page, "Prototype page must disable public-site analytics")
+    require("data-beta-config-url" in page, "Prototype beta configuration is not wired")
     require("Research prototype — not a live assessment service." in page, "Prototype warning is missing")
     require("There is no file upload." in page, "No-upload notice is missing")
     require(
@@ -194,9 +250,9 @@ def main() -> None:
     print(
         "Versions: "
         f"HDRL {js_versions['framework']}; catalogue {js_versions['catalogue']}; "
-        f"tool {js_versions['tool']}; guidance/rules/report 0.2.0"
+        f"tool {js_versions['tool']}; guidance/rules 0.2.0; report {js_versions['report']}"
     )
-    print("Rapid questions: 8; canonical indicators reachable: 64; external data submissions: 0")
+    print("Rapid questions: 8; snapshot/evidence indicators reachable: 64; external data submissions: 0")
 
 
 if __name__ == "__main__":

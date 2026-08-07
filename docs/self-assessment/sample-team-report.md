@@ -17,9 +17,11 @@ description: A synthetic team report showing independent distributions, calibrat
 | Boundary | The service’s current operational capability; national policy is inherited context |
 | Independent round | Four contributors submitted before seeing one another’s answers |
 | Calibration | Facilitated meeting with the owner, three contributors and one read-only reviewer |
-| Versions | HDRL Framework 1.0.1 · catalogue 1.0.2 · tool/team-workflow design 0.2.0 · guidance 0.2.0 · rules 0.2.0 · report 0.2.0 |
+| Versions | HDRL Framework 1.0.1 · catalogue 1.0.2 · tool/team-workflow design 0.3.0-prototype · guidance 0.2.0 · rules 0.2.0 · report 0.3.0 |
 
 The independent distributions are evidence about differing knowledge and interpretation. The consensus column is a facilitated working judgement, not an average or objective truth.
+
+For the public beta, participants can each complete a local whole-framework snapshot and deliberately share the resulting CSV inside their organisation for calibration. OPL Advisory does not receive those results. Secure invitations, hidden rounds and a central audit trail remain a later workspace design and must not be implied by the on-device prototype.
 
 ## Calibration overview
 

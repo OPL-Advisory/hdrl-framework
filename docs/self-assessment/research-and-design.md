@@ -21,7 +21,7 @@ These categories must remain distinct. The legal interpretation needs formal UK 
 |:--|:--|
 | Legal and regulatory requirements | Establish a controller and processors; identify purposes and lawful bases; provide transparent information; minimise and secure personal data; honour applicable rights; document processor terms and restricted transfers; define and enforce retention; manage breaches; and comply with PECR where electronic contact is direct marketing. A requested report email does not itself authorise marketing. |
 | Recognised good practice | Complete a DPIA and legitimate-interests assessments before the pilot; use privacy by design, least privilege, independent access-control testing, backup/deletion reconciliation, separate analytics, blind team scoring before calibration, disclosure-risk review and public-contributor review. |
-| Product-design choices | Use eight non-scoring rapid prompts; keep all 64 indicators available in the evidence-led pass; accept evidence references but no files; use emailed OTP rather than secrets in links; do not benchmark; keep AI off; make HTML the accessible report; and apply provisional internal `k ≥ 10` and public `k ≥ 20` aggregation gates pending disclosure-control review. |
+| Product-design choices | Offer eight non-scoring orientation prompts, a provisional 64-indicator canonical snapshot and a separate evidence-led pass; keep results local in the public beta; collect only allow-listed funnel events and optional feedback; accept evidence references but no files; use emailed OTP rather than secrets in links; do not benchmark; keep AI off; make HTML the accessible report; and apply provisional internal `k ≥ 10` and public `k ≥ 20` gates to any later result aggregation pending disclosure-control review. |
 
 ## Comparator landscape
 
@@ -39,7 +39,7 @@ These categories must remain distinct. The legal interpretation needs formal UK 
 
 ## What HDRL should learn
 
-1. **Two visibly different methods.** The rapid pass is eight domain-level impressions and takes about 5–10 minutes. It teaches the scope of HDRL but does not produce indicator scores or a single maturity number. The evidence-led pass uses all applicable canonical indicators.
+1. **Three visibly different depths.** The optional orientation is eight domain-level impressions and takes about 5–10 minutes. The whole-framework snapshot uses all 64 canonical indicators with level/status and certainty but no evidence requirement. The evidence-led pass adds rationale and evidence. None produces a single maturity number.
 2. **A matrix, not a verdict.** Show impression, certainty, evidence gaps and dependencies. Never calculate an overall HDRL score in the product.
 3. **Scope before score.** Record the service or ecosystem, unit of assessment, organisations/capabilities included, time boundary, intended use and local scoring conventions.
 4. **Evidence beside judgement.** A response starts with a binary decision to make a judgement or explain why not. Judgements have a canonical level, rationale, certainty and lightweight evidence references. Operating capacity is recorded once at domain level rather than repeated for every indicator.
@@ -57,13 +57,13 @@ These categories must remain distinct. The legal interpretation needs formal UK 
 | Assessment facilitator | Obtain independent perspectives and run fair calibration. | Blind initial round, disagreement view, consensus record and audit trail. |
 | Reviewer or assurer | Check derivation, evidence coverage and material changes. | Read-only review, change history, evidence status and version provenance. |
 | Researcher or public contributor | Understand the method and challenge interpretations. | Plain-language guidance, accessible report and explicit invitation to critique. |
-| Framework steward | Learn which indicators are unclear or difficult to evidence. | De-identified, thresholded pattern analysis separated from identifiable workspaces. |
+| Framework steward | Learn which indicators and tool interactions are unclear without deterring use. | Allow-listed funnel events, optional feedback without contact details and explicitly shared result research only; no central result dataset by default. |
 
 ## Critical journeys
 
 ### Individual
 
-`Understand limits → define boundary → rapid domain impressions → limited summary → evidence-led indicator review → completeness review → report-information gate → accessible report and exports → revise or delete`
+`Understand limits → define boundary → optional domain orientation → 64-indicator provisional snapshot → review → report-information gate → accessible local report and exports → optional evidence-led deepening → revise or delete`
 
 ### Team
 
@@ -82,7 +82,8 @@ The prototype follows [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and uses native 
 | False precision | No overall score; rapid pass uses non-numeric impression bands; even-number domain medians are displayed as a range. |
 | Premature benchmarking | No peer percentile, rank, target or normative comparison in MVP; comparison requires a future validated protocol. |
 | Unsupported high maturity | Report distinguishes linked evidence from unsubstantiated judgement and reproduces catalogue minimum-evidence expectations. |
-| Assessment fatigue | Eight-question rapid pass; domain task list; filters; save and return; no forced completion of non-applicable indicators. |
+| Assessment fatigue | Optional eight-question orientation; two-selection minimum per snapshot indicator; domain pauses; save and return; evidence task list and filters; no forced maturity judgement where not known/not assessed/not applicable. |
+| Confidentiality deters beta participation | Results remain in the browser; OPL Advisory receives only minimum participant details, coarse operational events and feedback the user submits. Result sharing is separate and explicit. |
 | Anchoring in teams | Independent answers remain hidden until the owner closes the round. |
 | Average presented as truth | Show count and distribution; consensus is a separate recorded decision; never average ordinal judgements. |
 | Sensitive evidence | MVP accepts references and notes only, not file uploads; persistent warning against patient data, credentials and unnecessarily sensitive information. |
@@ -93,11 +94,14 @@ The prototype follows [WCAG 2.2](https://www.w3.org/TR/WCAG22/) and uses native 
 
 - Can eight domain prompts be completed comfortably in 5–10 minutes and still teach the scope accurately?
 - Do users understand that an impression band is not an HDRL maturity level?
+- Can users complete the 64-indicator snapshot in 30–60 minutes, pause comfortably by domain and distinguish it from an evidence-led assessment?
 - Which indicator guidance needs indicator-specific examples rather than domain-level guidance?
 - How do system, service and dual scopes affect applicability in real cases?
 - What evidence statuses and review roles are meaningful without becoming an assurance claim?
 - Can teams complete independent scoring without creating excessive burden?
 - Which disagreement presentation supports learning without implying poor performance?
 - What registration information is genuinely necessary to deliver and interpret a report?
+- Does delayed email verification preserve willingness to start while giving enough beta-participant visibility at report unlock?
+- Is feedback without contact details trusted and useful when it carries only coarse tool context?
 - Will users enter sensitive operational material despite warnings and a reference-only evidence model?
 - What public and contributor oversight is appropriate for future aggregate research?

@@ -18,22 +18,28 @@ description: A synthetic example showing how an individual HDRL self-assessment 
 | Assessment date | 30 July 2026 |
 | Method | Individual self-assessment |
 | Intended use | Identify questions for a multidisciplinary evidence workshop |
-| Versions | HDRL Framework 1.0.1 · catalogue 1.0.2 · tool 0.2.0-prototype · guidance 0.2.0 · rules 0.2.0 · report 0.2.0 |
+| Versions | HDRL Framework 1.0.1 · catalogue 1.0.2 · tool 0.3.0-prototype · guidance 0.2.0 · rules 0.2.0 · report 0.3.0 |
 
 ## Rapid first pass
 
 These eight impressions were recorded before evidence review. They are not HDRL indicator scores and are not combined with the evidence-led profile.
 
-| Domain | Initial impression | Uncertainty | What to check |
+| Domain | Initial impression | Certainty | What to check |
 |:--|:--|:--|:--|
-| A · Data Coverage & Federation | Developing | High | Actual refresh performance and coverage denominators |
+| A · Data Coverage & Federation | Developing | Low | Actual refresh performance and coverage denominators |
 | B · Data Semantics & Quality | Defined | Medium | Whether quality monitoring is routine across all datasets |
 | C · Governance & Access | Defined | Medium | End-to-end decision times rather than policy alone |
-| D · Research Integration & Market Use | Developing | High | Active-user and delivery evidence |
+| D · Research Integration & Market Use | Developing | Low | Active-user and delivery evidence |
 | E · Public Trust & Transparency | Managed | Medium | Whether published information is useful to public readers |
-| F · Sustainability | Developing | High | Funding horizon and lifecycle liabilities |
+| F · Sustainability | Developing | Low | Funding horizon and lifecycle liabilities |
 | G · Workforce & Culture | Defined | Medium | Specialist headroom at expected demand |
 | H · Infrastructure & Compute Capacity | Managed | Medium | Resilience and capacity evidence under realistic load |
+
+## Whole-framework snapshot
+
+The synthetic first pass then selects a canonical descriptor or deferred status for all 64 indicators and records high, medium or low certainty. It is a complete view of current understanding, but it is still provisional: no evidence was required and no result was validated. Low-certainty and unclear-wording flags identify indicators for another team member or the evidence-led pass; they are not a penalty.
+
+The report presents domain Core medians as observed levels/ranges, completion coverage and every applicable indicator result. It does not calculate a cross-domain score, rank or benchmark.
 
 ## Evidence-led profile
 

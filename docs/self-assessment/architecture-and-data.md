@@ -13,44 +13,67 @@ The framework website is a static MkDocs Material build deployed by GitHub Actio
 
 ### Prototype
 
-Build the interaction inside the existing MkDocs site and store one draft in the browser's IndexedDB. Generate HTML, JSON and CSV locally. Do not send registration fields or assessment content anywhere. Mark the page as a research prototype and keep it out of production search indexing.
+Build the interaction inside the existing MkDocs site and store one draft in the browser's IndexedDB. Generate HTML, JSON and CSV locally. The v0.3 prototype includes an optional eight-domain orientation, the complete 64-indicator snapshot and the evidence workspace. It records the proposed beta funnel locally for inspection, but its versioned configuration has no endpoints and refuses to start if remote collection is enabled. Do not send registration fields or assessment content anywhere. Mark the page as a research prototype and keep it out of production search indexing.
 
-### Recommended production pilot
+### Recommended public beta: local assessment plus a thin operational service
 
-Use a separate application at a subdomain such as `assess.hdrlframework.org`, visually linked to the main site:
+Keep the assessment, notes, evidence references, report and exports in the browser. Add only a small, separately deployed beta service that can:
 
-- static or server-rendered TypeScript application on Cloudflare Pages/Workers;
-- Supabase Postgres and Auth in **AWS London (`eu-west-2`)**;
-- email one-time passcodes rather than magic-link tokens in URLs;
-- Postgres row-level security plus explicit application checks for every workspace operation;
-- an application-owned immutable audit table;
-- reports generated as accessible HTML, with print/PDF and structured exports;
-- custom SMTP in an approved region; and
-- no object store in MVP because evidence documents are not uploaded.
+- issue a random beta-session identifier and accept allow-listed funnel events;
+- verify an email address at report unlock using a short-lived one-time code;
+- store the minimum participant/service metadata needed for beta follow-up;
+- accept feedback through a logically separate endpoint, either without contact details or explicitly contactable; and
+- support access, correction and deletion of the participant record.
 
-Supabase currently lists London as a specific region, offers a production plan from **US$25/month**, seven days of daily backups and Postgres row-level security. A custom SMTP service and front-end hosting add a small variable cost. Before procurement, confirm sterling cost, taxes, sub-processors, support terms, transfer arrangements, deletion behaviour and security evidence.
+The service must never receive maturity levels, certainty, applicability, boundary text, comments, evidence, report content or downloaded files. Report generation remains local after the verification response unlocks the interface. People who start but do not unlock a report are visible only as pseudonymous funnel sessions; report unlockers can be counted and followed up using the verified participant record. This deliberately accepts that OPL Advisory will not know the identity of every person who merely opens or abandons the tool.
+
+For the thin beta service, Cloudflare Workers plus D1 is the leading low-burden option; Supabase is the leading option if authenticated workspaces are likely soon. The final provider, email service, region, spend and processor terms require explicit approval before implementation. No provider has been activated by this branch.
 
 ## Options considered
 
 | Option | Cost and burden | Privacy and control | Lock-in and migration | Decision |
 |:--|:--|:--|:--|:--|
-| Keep everything on GitHub Pages/IndexedDB | Near-zero hosting cost and lowest operational burden. | Strong data minimisation because nothing leaves the device, but no multi-device return, team workspace, account recovery or service-side deletion/export. | Low lock-in; data are hard to support or recover. | Research prototype only. |
-| Cloudflare Workers + D1 | Workers Paid starts at US$5/month; D1 scales to zero and includes substantial usage. EU jurisdiction is available and Time Travel provides 30 days on paid plans. | Small attack surface and simple deployment, but authentication, email, workspace authorisation and operational tooling must be built carefully. D1 jurisdiction is EU, not specifically UK. | Moderate platform lock-in; SQLite is portable but runtime APIs are specific. | Credible low-cost alternative if a dedicated engineering owner accepts the auth burden. |
+| Keep everything on GitHub Pages/IndexedDB | Near-zero hosting cost and lowest operational burden. | Strong data minimisation because nothing leaves the device, but OPL Advisory cannot count use or receive feedback unless users send an exported bundle. | Low lock-in; local data are not recoverable by the operator. | Current research prototype. |
+| Thin Cloudflare Workers + D1 beta service | Workers Paid starts at US$5/month; D1 scales to zero and includes substantial usage. EU jurisdiction is available and Time Travel provides 30 days on paid plans. | Small data model and attack surface; requires a transactional-email processor, endpoint validation, deletion tooling and careful feedback separation. D1 jurisdiction is EU, not specifically UK. | Moderate runtime lock-in; the small SQLite dataset and versioned event contract are portable. | **Leading public-beta option**, subject to provider/privacy approval. |
 | Supabase London + Cloudflare front end | From US$25/month plus SMTP and optional hosting. Lower build and support burden. | UK database region, OTP auth, Postgres, RLS and backups. Pro dashboard access roles and platform-log retention are limited; application audit logging remains necessary. | Moderate. Postgres schema and data are portable; Auth and edge integrations require migration work. | **Recommended for a controlled pilot**, subject to procurement and DPIA. |
 | Azure UK South application + PostgreSQL | Typically higher baseline cost and operational complexity; pricing depends on provisioned compute, network and monitoring. | Strong regional and enterprise controls, private networking and established procurement routes. | Moderate-to-high service coupling, but PostgreSQL is portable. | Prefer if an institutional sponsor requires Azure tenancy, central identity or enterprise operations. |
 | AWS London serverless stack | Can be low at small volume but has more services, policies and observability to operate. | Granular control and UK region; greater configuration risk and specialist burden. | Higher architectural coupling across Cognito, API Gateway/Lambda, database and email. | Not justified for the first pilot without an AWS operating team. |
 
 Current vendor facts should be rechecked at procurement: [Cloudflare D1 location](https://developers.cloudflare.com/d1/configuration/data-location/), [D1 pricing](https://developers.cloudflare.com/d1/platform/pricing/), [Workers pricing](https://developers.cloudflare.com/workers/platform/pricing/), [Supabase regions](https://supabase.com/docs/guides/platform/regions), [Supabase pricing](https://supabase.com/pricing), [Supabase backups](https://supabase.com/docs/guides/platform/backups), [Azure PostgreSQL overview](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/service-overview).
 
+The Supabase, Azure and AWS rows describe a later server-side workspace service, not a prerequisite for the public beta.
+
+## Public-beta data boundary
+
+| Stream | May be sent | Must not be sent |
+|:--|:--|:--|
+| Operational funnel | random beta-session ID; tool/framework versions; event/time; coarse active-time band; completed indicator/domain counts; download-request type; feedback submitted/skipped disposition | email; organisation; level; certainty; applicability; assessment title/scope; comments; evidence; report content |
+| Verified participant | email; role; organisation; individual/team use; broad intended-use category; optional name, region/service type/scale; verification/security state; separate optional contact preferences | assessment results, notes, evidence, report or export |
+| Feedback without contact details | rating/category/comment plus allow-listed tool context and coarse completion/time bands | participant/session ID, email or organisation; exact assessment values; assessment text |
+| Contactable feedback | the feedback fields above plus an explicit contact reference | assessment results unless separately and explicitly shared |
+| Explicit results share | only categories reviewed and selected by the assessor in the locally created bundle | automatic/background upload of any result |
+
+Feedback “without contact details” is safer wording than an absolute promise of anonymity. Free text can identify its author, and unusual context or network logs can create linkage risk. The feedback endpoint should therefore use no authentication cookie or beta-session identifier, round timestamps, minimise IP/security-log retention and store feedback separately from participant/event tables.
+
+The browser can observe that a download action was requested, but it cannot prove that the user retained or opened the file. Product reporting must use “download requested”, not “download completed”.
+
 ## Integration implications
 
-- The public framework remains at `hdrlframework.org`; the application uses the same header, typography, colours and content provenance but has an explicit “Assessment workspace” identity.
-- Cross-navigation uses normal links. Authentication cookies are scoped to the assessment subdomain and are not shared with the public site.
-- A strict Content Security Policy limits scripts and connections to the application, catalogue origin, authentication/database endpoint and approved error reporting.
+- The public beta can remain a visually integrated static route on `hdrlframework.org`; it calls the thin service only for allow-listed operational, verification and feedback functions.
+- A strict Content Security Policy limits scripts and connections to the catalogue and approved beta-service origins. Assessment content never appears in requests.
+- If a later workspace application uses `assess.hdrlframework.org`, cross-navigation uses normal links and authentication cookies are scoped to that subdomain.
 - The public catalogue can be read from `hdrlframework.org`, but each assessment release also stores the verified catalogue hash and an immutable snapshot so old reports remain interpretable.
-- Plausible may receive a page view on the public launch page, but the authenticated application must either have no product analytics in MVP or use a separate event pipeline containing only allow-listed operational events. Assessment values and text are never event properties.
+- Plausible may receive a page view on the public launch page, but the assessment route keeps public-site analytics disabled. Product learning uses the separate event pipeline and its versioned allow-list. Assessment values and text are never event properties.
 
-## Authentication and invitations
+## Public-beta verification
+
+1. A person can start and complete the local snapshot without registration.
+2. Before viewing the full report or making the first export, the service requests email, role and organisation; other profile fields are optional.
+3. The service sends a six-digit one-time code. The code expires quickly, is single-use and is never placed in a URL.
+4. Successful verification unlocks local report generation and records that the participant reached the report gate; it does not upload assessment state.
+5. Research contact and newsletter preferences are separate, optional and unchecked. Report access is not marketing consent.
+
+## Later workspace authentication and invitations
 
 1. User enters an email address.
 2. Service sends a six-digit OTP; the login page contains no secret URL parameter.
@@ -62,6 +85,19 @@ Current vendor facts should be rechecked at procurement: [Cloudflare D1 location
 Email OTP avoids putting invitation or authentication secrets in URLs. Supabase documents [email OTP](https://supabase.com/docs/guides/auth/auth-email-passwordless), [rate limits](https://supabase.com/docs/guides/auth/rate-limits) and [RLS](https://supabase.com/docs/guides/api/securing-your-api). NCSC advises choosing authentication methods in proportion to the user and service risk.
 
 ## Data model
+
+### Thin public-beta service
+
+| Entity | Essential fields |
+|:--|:--|
+| `beta_sessions` | random id, tool/framework versions, created/last-event dates, retention date; optional participant link only after verified unlock |
+| `beta_events` | session, allow-listed event name, timestamp or time bucket, coarse duration/progress properties, schema version |
+| `beta_participants` | verified email, role, organisation, use mode, intended-use category, optional profile bands, verification/last-seen dates, retention date |
+| `contact_preferences` | participant, purpose, wording version, affirmative action, date, withdrawn date |
+| `feedback` | separate random id, contact mode, rating/category/comment, allow-listed coarse context, received date; nullable explicit contact reference and no beta-session reference |
+| `rights_requests` | participant or feedback reference, request type/date/status, completion evidence |
+
+### Later server-side assessment workspace
 
 | Entity | Essential fields |
 |:--|:--|

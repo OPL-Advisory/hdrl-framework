@@ -13,26 +13,31 @@ The proposed initial controller is **OPL Advisory Ltd**, because it currently ad
 
 Proposed processors are the approved application host/CDN, managed database/authentication provider, transactional email provider, monitoring provider and backup provider. Each requires due diligence, an Article 28 contract, sub-processor review, location/transfer assessment, deletion commitments and incident terms.
 
+## Recommended public-beta boundary
+
+The first public beta should **not** operate a server-side assessment workspace. Levels, certainty, applicability, boundary text, comments, evidence and report contents remain in the user's browser. OPL Advisory receives only the information needed to understand beta adoption, verify report access and receive optional feedback. Server-side assessment storage, team workspaces and benchmarking are later, separately approved features.
+
+This reduces confidentiality and contractual friction but does not remove data-protection obligations: verified participant details, pseudonymous beta-session events, security logs and feedback can still be personal data.
+
 ## Data flow
 
 ```text
-Public site ──normal link──> Assessment application
-                                 │
-                   email OTP ────┼────> transactional email processor
-                                 │
-User browser ──TLS──> application/API ──> UK-region operational database
-                                 │                    │
-                                 │                    ├─ encrypted backup
-                                 │                    └─ application audit log
-                                 │
-                                 ├─> accessible report/export for authorised user
-                                 │
-                                 └─> scheduled de-identification pipeline
-                                              │
-                                              └─ thresholded aggregate store
+Public site ──normal link──> browser assessment (IndexedDB)
+                                  │
+                                  ├── local levels, certainty, notes, evidence
+                                  ├── local HTML report / JSON / CSV / print
+                                  │
+                                  ├── allow-listed funnel events ──> beta event store
+                                  │                                  (no results/text)
+                                  │
+                                  ├── report-gate details ──> email OTP + participant store
+                                  │                           (no assessment upload)
+                                  │
+                                  └── optional feedback ──> separate feedback store
+                                      without contact details OR explicitly contactable
 
-Plausible website analytics is separate and receives no assessment values,
-email addresses, evidence, report content, workspace IDs or authentication events.
+Public-site analytics is disabled on the assessment route. It receives no
+email, beta-session identifier, response, evidence or report information.
 ```
 
 No patient-level data, personal confidential data, credentials or unnecessarily sensitive operational information is required or permitted.
@@ -41,10 +46,13 @@ No patient-level data, personal confidential data, credentials or unnecessarily 
 
 | Purpose | Data | Proposed basis | Review point |
 |:--|:--|:--|:--|
-| Authenticate, isolate and secure a workspace | email, session/security events, membership | Contract where necessary to deliver the user-requested service; legitimate interests for proportionate security and abuse prevention | Confirm that the free-service terms form a suitable contract; otherwise document an LIA. |
-| Save an assessment and deliver its report | boundary, responses, rationale, evidence references, contact details | Contract or legitimate interests | Confirm necessity of every registration field. |
+| Measure beta starts, progress and requested exports | random beta-session identifier, allow-listed event/time, coarse duration and completion counts | Legitimate interests | Complete an LIA; confirm any PECR/storage-access implications and provide a simple objection where required. No assessment values or text. |
+| Verify report access and know who completed the beta | email, role, organisation, optional profile bands, verification/security events | Contract where necessary to deliver the requested report; legitimate interests for proportionate security and beta administration | Confirm that the free-service terms form a suitable contract and test whether role/organisation are genuinely necessary. |
+| Generate and save the assessment/report | browser-only boundary, responses, rationale, evidence references | Processing occurs locally at the user's direction; OPL Advisory does not receive these data in the public-beta model | Confirm that no request, log, analytics event or crash report can capture the content. |
+| Receive feedback without contact details | rating/category/comment and allow-listed coarse tool context | Legitimate interests | Do not promise legal anonymity; exclude participant/session IDs, separate storage and minimise network logs. |
+| Receive contactable feedback | feedback plus explicit participant/contact reference | Legitimate interests for responding to the requested contact; consent if later contact goes beyond that request | Make the choice explicit and separate from report delivery and marketing. |
 | Support access, correction, export and deletion | account and request records | Legal obligation and/or basis used for the service | Define identity-verification and response procedures. |
-| Improve the tool and framework using de-identified patterns | operational source data transformed into a separate aggregate dataset | Legitimate interests for the transformation; anonymous outputs fall outside UK GDPR only if identifiability risk is sufficiently remote | Complete LIA, DPIA and anonymisation review; allow objection where applicable. |
+| Improve the tool and framework | aggregate funnel measures and feedback deliberately submitted by users | Legitimate interests; separate consent/permission for identifiable quotations or case studies | The public beta has no central result dataset. Future result research requires explicit sharing and new governance. |
 | Invite optional research contact | email and preference record | Consent; PECR consent where the message is electronic direct marketing | Separate, specific, unbundled, recorded and withdrawable. |
 | Newsletter or promotional updates | email and preference record | Consent unless a reviewed PECR exception genuinely applies | Do not infer from report delivery or research participation. |
 
@@ -54,7 +62,7 @@ The Data (Use and Access) Act 2025 is fully in force. ICO guidance continues to 
 
 ## Data minimisation
 
-### Required at onboarding
+### Required locally at onboarding (not transmitted)
 
 - assessment title;
 - service or ecosystem name;
@@ -63,14 +71,16 @@ The Data (Use and Access) Act 2025 is fully in force. ICO guidance continues to 
 - individual or team method; and
 - intended use.
 
-### Required at report gate
+### Report gate for the public beta
 
-- name and email: identify the recipient and secure report access;
-- role and organisation: interpret the perspective and authority behind the assessment;
-- country or region: interpret governance context and route privacy rights;
-- service type and approximate scale: interpret scope without collecting detailed organisational data.
+- email: verify the beta participant and unlock the requested report;
+- role and organisation: give minimum context for beta follow-up and interpretation;
+- individual/team use and a broad intended-use category: show how people are applying the beta without collecting detailed plans;
+- name: optional personalisation;
+- country or region: optional broad operating context; and
+- service type and approximate scale: optional broad bands without exact populations or staff counts.
 
-Test whether name, organisation and role can be optional for an individual exploratory report. Do not require phone number, postal address, exact staff count, patient population, date of birth or demographic information.
+Test whether organisation and role remain proportionate once the beta has enough learning. Do not require phone number, postal address, exact staff count, patient population, date of birth or demographic information. Providing an email for report access is not consent to marketing or general research contact.
 
 ## Retention and deletion proposal
 
@@ -78,33 +88,34 @@ Test whether name, organisation and role can be optional for an individual explo
 |:--|:--|
 | Unverified OTP/account attempt | 24 hours |
 | OTP | 10 minutes, single use |
-| Pending invitation | 14 days |
-| In-progress workspace | Delete after 12 months of inactivity, with warning at 9 and 11 months |
-| Completed assessment/report | 24 months after completion or last owner activity; offer renewal and immediate owner deletion |
+| Pseudonymous beta-session events | Six months after last event, then delete; retain only reviewed aggregate counts if still necessary |
+| Verified beta participant | 12 months after the beta or last participant activity, whichever is later; review at six months and provide earlier deletion |
+| Feedback without contact details | 12 months, then delete or retain only a reviewed non-identifying synthesis |
+| Contactable feedback | 12 months after closure of the feedback/follow-up, unless the person separately opts into research contact |
 | Transactional email delivery logs | 30 days unless needed for a live support/security issue |
-| Application security logs | 90 days |
-| Material assessment audit trail | Same life as workspace; include in export and deletion |
+| Application security/IP logs | Target 30 days; shorten further if the provider supports adequate abuse investigation |
 | Consent/preference record | Until withdrawal plus a proportionate suppression record to honour the withdrawal; review at 24 months |
 | Live data after verified deletion | Remove promptly, target within 24 hours |
 | Backups after deletion | No new live use; expire within the provider's documented backup window, target no more than 30 days |
-| De-identified aggregate | Review annually; retain only while it remains necessary, useful and demonstrably anonymous |
+| Aggregate beta counts | Review annually; retain only while necessary and non-identifying |
+
+If a later server-side assessment workspace is approved, its draft, report, audit and invitation retention requires a separate schedule; it is not covered by the public-beta periods above.
 
 The ICO requires justified retention rather than a universal period and recommends erasure or anonymisation when data are no longer needed: [storage limitation](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/storage-limitation/).
 
 ## Confidentiality and access
 
-- Workspace data are visible only to authorised members.
-- Owners manage membership, export, report access and deletion.
-- Contributors see only the workspace/rounds allocated to them.
-- Reviewers are read-only except for review status/comments.
-- Independent team answers remain hidden from other participants until the round closes.
-- Support access is just-in-time, time-limited, approved, logged and never used for routine browsing.
+- Public-beta assessment responses and reports remain on the user's device and are not visible to OPL Advisory.
+- Beta operations staff can see only the participant, event or feedback fields needed for their role. Routine support must not have access to all three stores.
+- Feedback without contact details has no participant or beta-session foreign key. Contactable feedback is linked only after the user explicitly selects that mode.
+- Administrative access is MFA-protected, just-in-time where practical, time-limited and logged.
 - Individual scores, evidence and reports are not shared with other organisations or users without an explicit owner action.
 - Assessment data are never used for accreditation, funding or participation decisions by the service operator.
+- A later team workspace must preserve independent hidden submissions and role-based access, but those controls are outside the public-beta data model.
 
 ## Aggregation and anonymisation
 
-Pseudonymisation alone does not make data anonymous. The source workspace remains personal/confidential data. A separate pipeline should:
+The public beta has no central result dataset, so it cannot generate a maturity benchmark. Pseudonymisation alone does not make beta-session events or participant records anonymous. Any future pipeline using explicitly shared results should:
 
 1. select only fields required for an approved analysis;
 2. remove user, workspace, organisation, service, report and evidence identifiers;
@@ -122,10 +133,11 @@ Small-cell rules are contextual rather than magic numbers. ONS advises consideri
 ## Analytics separation
 
 - Use a different project, access role and retention policy for public-site analytics.
-- Never initialise analytics with email, user/workspace ID or organisation.
+- Never initialise analytics with email, participant ID, organisation or feedback ID.
 - Never include assessment state in paths, query strings, fragments, event names or referrers.
-- Maintain an allow-list of events such as `assessment_started`, `stage_completed` and `delete_completed`; values and text are prohibited.
-- Prefer server-side aggregate operational counters or no product analytics in the first pilot.
+- Maintain a versioned allow-list such as `assessment_started`, `snapshot_domain_completed`, `snapshot_completed`, `report_unlocked`, `report_download_requested`, `feedback_submitted` and `feedback_skipped`. Only coarse counts/bands and action types are permitted.
+- Store feedback text outside the event store. A funnel event may say that feedback was submitted or skipped, never what it said.
+- Do not claim that `report_download_requested` proves that a file was saved, retained or opened.
 - If storage/access technologies are introduced, review the ICO's April 2026 [storage and access technology guidance](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/), including the statistical-purpose exception and simple objection requirement.
 
 ## Security, backup and incidents
@@ -146,21 +158,25 @@ OPL Advisory Ltd is proposed to operate the HDRL self-assessment service and act
 
 ### What we collect and why
 
-We collect the account and service information needed to secure your workspace, save your assessment, generate your report and respond to your requests. Your assessment may contain maturity judgements, certainty, rationale, domain-level capacity notes, improvement notes and references to evidence. Do not enter patient-level data, personal confidential data, credentials or information that is more sensitive than needed.
+Your assessment—including levels, certainty, scope, comments, evidence references and report—stays in your browser unless you deliberately download or share it. OPL Advisory cannot see or recover it.
+
+We collect a random beta-session identifier and a limited set of events to understand how many people start, make progress, reach the report and request downloads. Events contain tool versions, coarse time bands and completion counts, but no assessment values or text. At report access we collect a verified email address, role and organisation, plus any optional broad profile information you provide, so we can administer the beta and know who reached the report. We collect feedback only when you submit it.
 
 We do not use assessment data to accredit you, decide funding or participation, advertise to you, profile individuals or sell data. We do not publish identifiable assessment information.
 
 ### Sharing
 
-Your workspace is shared only with people you or another authorised owner invite and with suppliers that process data for the service under contract. We do not share individual scores, evidence or reports with another organisation without your explicit instruction. Identifiable quotations, case studies and examples require separate permission.
+Participant, event and feedback records are available only to authorised OPL Advisory personnel and suppliers that process them under contract. Feedback submitted without contact details is stored without your email, organisation or beta-session identifier; however, free text or unusual context can still identify you. We do not share individual scores, evidence or reports with another organisation because we do not receive them unless you explicitly create and send a results bundle. Identifiable quotations, case studies and examples require separate permission.
 
 ### Framework improvement
 
-We may analyse suitably aggregated and de-identified patterns to understand how the framework and tool are used and where guidance is unclear. Free text, evidence references, emails, names, organisations and service names are excluded. We apply minimum group sizes, suppression and disclosure-risk review. Individual inputs may therefore influence future guidance indirectly, but they will not be published as individual results.
+We analyse aggregate funnel measures and the feedback people choose to submit to understand how the framework and tool are used and where guidance is unclear. The public beta does not provide OPL Advisory with a result dataset and will not produce maturity benchmarking. Individual feedback may influence future guidance indirectly, but identifiable quotations, case studies or examples need separate permission.
+
+If a user explicitly shares results for beta support, that does not silently enrol the results in research or benchmarking. Any future analysis of suitably aggregated and de-identified assessment results needs a defined research purpose, new notice/lawful-basis review, controlled ingestion, disclosure-risk assessment and an explicit sharing route. Scores, comments and evidence must never be harvested from local browser data or report downloads.
 
 ### Retention and rights
 
-Retention periods are defined for each record and are not indefinite. You can export or delete a workspace through the service. Depending on the circumstances, you may ask for access, correction, erasure, restriction or portability, or object to processing. The production notice will provide a controller address, privacy email, complaint route and ICO details.
+Retention periods are defined for each record and are not indefinite. You can delete the local draft in the tool. Depending on the circumstances, you may ask for access, correction or deletion of your participant/contactable-feedback record, or object to processing. Feedback submitted without contact details may be impossible to locate reliably without collecting more identifying information. The production notice will provide a controller address, privacy email, complaint route and ICO details.
 
 ### Marketing and contact
 
@@ -168,7 +184,7 @@ Providing an email address to receive or access a report does not subscribe you 
 
 ### International processing
 
-The proposed operational database is in the UK. Some suppliers or support functions may involve restricted transfers. These will be identified, assessed and protected using an applicable adequacy route or safeguard before launch. See the ICO [international transfers guide](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/international-transfers/a-guide-to-international-transfers/).
+The operational region and suppliers have not yet been approved. Before launch, locations and any restricted transfers will be identified, assessed and protected using an applicable adequacy route or safeguard. See the ICO [international transfers guide](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/international-transfers/a-guide-to-international-transfers/).
 
 ## Just-in-time notices
 
@@ -182,11 +198,23 @@ The proposed operational database is in the UK. Some suppliers or support functi
 
 ### Save and return
 
-> Production: your draft is encrypted and visible only to authorised workspace members. Prototype: the draft is saved only in this browser on this device. Clearing browser data will remove it.
+> Your draft is saved only in this browser on this device. OPL Advisory cannot see or recover it. Clearing browser data will remove it; use an export if you need a separate copy.
+
+### Beta activity
+
+> We record that this beta was started, coarse time and completion bands, and whether report, download and feedback actions were reached. We do not include your levels, certainty, assessment boundary, comments, evidence or report contents. Public-site analytics is disabled on this route.
+
+### Feedback
+
+> Feedback is optional and can be skipped. “Without contact details” feedback includes a rating/category/comment and limited tool context, but no email, organisation or beta-session identifier. Avoid identifying or sensitive information in free text; wording or unusual context can still identify you.
 
 ### Report gate
 
-> We need these details to secure and interpret your report. Report delivery is a service message, not marketing. The two optional contact choices below are separate and unchecked.
+> We use your verified email, role and organisation to unlock the locally generated report and administer the beta. Your assessment and report are not uploaded. Report access is a service message, not marketing. The two optional contact choices below are separate and unchecked.
+
+### Result sharing
+
+> Assessment results stay on this device. If you create a results share bundle, nothing is selected by default. Review the included categories and use an organisation-approved transfer route; the bundle may contain business-sensitive information.
 
 ### Optional research contact
 
