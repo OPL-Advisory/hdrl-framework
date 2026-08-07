@@ -1,0 +1,12 @@
+# Generate independent secrets; never reuse these values in staging or production.
+DATA_ENCRYPTION_KEY_BASE64="replace-with-32-random-bytes-as-base64"
+HASH_SECRET="replace-with-a-long-random-secret"
+OTP_SECRET="replace-with-a-different-long-random-secret"
+RECEIPT_SECRET="replace-with-another-long-random-secret"
+ADMIN_TOKEN="replace-with-an-admin-token-of-at-least-32-characters"
+RESEND_API_KEY="replace-with-a-provider-key-in-staging-or-production"
+
+# Local integration testing only. The OTP is returned in the JSON response.
+EMAIL_PROVIDER="development"
+ALLOW_DEVELOPMENT_OTP_RETURN="true"
+PRIVACY_CONTACT_EMAIL="privacy@example.org"

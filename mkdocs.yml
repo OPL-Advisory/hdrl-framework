@@ -94,6 +94,7 @@ nav:
     - Rapid-question persona review: self-assessment/persona-review-v0.2.md
     - Product requirements: self-assessment/product-requirements.md
     - Architecture & data model: self-assessment/architecture-and-data.md
+    - Thin beta service decision: self-assessment/adr-thin-beta-service.md
     - Privacy & data flow: self-assessment/privacy-and-data-flow.md
     - Sample reports:
       - Individual: self-assessment/sample-individual-report.md

@@ -14,11 +14,14 @@ CONTENT_PATH = (
     ROOT / "docs" / "data" / "hdrl-assessment-content-v0.2.0.json"
 )
 BETA_CONFIG_PATH = (
-    ROOT / "docs" / "data" / "hdrl-assessment-beta-config-v0.1.0.json"
+    ROOT / "docs" / "data" / "hdrl-assessment-beta-config-v0.2.0.json"
 )
 APP_PATH = ROOT / "docs" / "assets" / "js" / "self-assessment.js"
 PAGE_PATH = ROOT / "docs" / "self-assessment" / "index.md"
 MKDOCS_PATH = ROOT / "mkdocs.yml"
+SERVICE_PATH = ROOT / "services" / "beta-service" / "src" / "index.js"
+SERVICE_SCHEMA_PATH = ROOT / "services" / "beta-service" / "migrations" / "0001_initial.sql"
+WRANGLER_PATH = ROOT / "services" / "beta-service" / "wrangler.jsonc"
 EXPECTED_DOMAINS = list("ABCDEFGH")
 EXPECTED_RULES = {
     "R-EVIDENCE-GAP",
@@ -63,10 +66,10 @@ def main() -> None:
         "Assessment content catalogue version does not match catalogue",
     )
     require(
-        content["tool_version"] == "0.3.0-prototype"
+        content["tool_version"] == "0.4.0-beta"
         and content["content_version"] == "0.2.0"
         and content["recommendation_rules_version"] == "0.2.0"
-        and content["report_generation_version"] == "0.3.0",
+        and content["report_generation_version"] == "0.4.0",
         "Assessment content release versions are unexpected",
     )
 
@@ -124,13 +127,10 @@ def main() -> None:
     )
 
     require(
-        beta["transport"]["mode"] == "local-only"
+        beta["transport"]["mode"] == "local-with-optional-service"
         and beta["transport"]["remote_collection_enabled"] is False
-        and all(
-            beta["transport"][key] is None
-            for key in ("event_endpoint", "feedback_endpoint", "identity_endpoint")
-        ),
-        "Research prototype must not configure remote collection",
+        and beta["transport"]["service_base_url"] is None,
+        "Staging source must keep remote collection disabled until activation review",
     )
     prohibited_event_fields = {
         "level", "score", "certainty", "email", "comment", "rationale",
@@ -149,10 +149,10 @@ def main() -> None:
     require("localStorage" not in app and "sessionStorage" not in app, "Disallowed web storage found")
     require('type="file"' not in app and "type='file'" not in app, "File upload input found")
     require(
-        app.count("fetch(") == 3
+        app.count("fetch(") == 4
         and "root.dataset.catalogueUrl" in app
         and "root.dataset.contentUrl" in app,
-        "Prototype may fetch only its three same-origin versioned data files",
+        "Beta client may fetch only its three versioned data files and the configured service",
     )
     require("root.dataset.betaConfigUrl" in app, "Versioned beta configuration is not loaded")
     require(
@@ -218,7 +218,7 @@ def main() -> None:
     require("robots: noindex, nofollow" in page, "Prototype page must remain noindex")
     require("analytics: false" in page, "Prototype page must disable public-site analytics")
     require("data-beta-config-url" in page, "Prototype beta configuration is not wired")
-    require("Research prototype — not a live assessment service." in page, "Prototype warning is missing")
+    require("Staging prototype — not yet collecting public-beta data." in page, "Staging warning is missing")
     require("There is no file upload." in page, "No-upload notice is missing")
     require(
         "patient-level data" in page and "access tokens" in page,
@@ -236,6 +236,7 @@ def main() -> None:
         "persona-review-v0.2.md",
         "product-requirements.md",
         "architecture-and-data.md",
+        "adr-thin-beta-service.md",
         "privacy-and-data-flow.md",
         "sample-individual-report.md",
         "sample-team-report.md",
@@ -246,13 +247,38 @@ def main() -> None:
             f"Required self-assessment deliverable is missing: {filename}",
         )
 
+    service = SERVICE_PATH.read_text(encoding="utf-8")
+    schema = SERVICE_SCHEMA_PATH.read_text(encoding="utf-8")
+    wrangler = WRANGLER_PATH.read_text(encoding="utf-8")
+    require(
+        all(route in service for route in (
+            "/v1/sessions", "/v1/events", "/v1/verification/request",
+            "/v1/verification/confirm", "/v1/feedback", "/v1/privacy/request",
+            "/v1/privacy/confirm", "/v1/privacy/correct", "/v1/admin/summary",
+        )),
+        "Thin beta service routes are incomplete",
+    )
+    prohibited_schema_terms = {
+        "maturity_level", "certainty", "assessment_scope", "rationale",
+        "evidence_record", "report_content",
+    }
+    require(
+        all(term not in schema.lower() for term in prohibited_schema_terms),
+        "Thin-service database schema crosses the assessment-data boundary",
+    )
+    require(
+        '"observability": { "enabled": false }' in wrangler
+        and '"ENVIRONMENT": "staging"' in wrangler,
+        "Thin service must disable provider logging and define staging separately",
+    )
+
     print("Self-assessment prototype validation passed")
     print(
         "Versions: "
         f"HDRL {js_versions['framework']}; catalogue {js_versions['catalogue']}; "
         f"tool {js_versions['tool']}; guidance/rules 0.2.0; report {js_versions['report']}"
     )
-    print("Rapid questions: 8; snapshot/evidence indicators reachable: 64; external data submissions: 0")
+    print("Rapid questions: 8; snapshot/evidence indicators reachable: 64; remote beta transport: feature-flagged off")
 
 
 if __name__ == "__main__":

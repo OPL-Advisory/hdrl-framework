@@ -11,7 +11,9 @@ description: Draft privacy model, data-flow assessment, notices, retention and r
 
 The proposed initial controller is **OPL Advisory Ltd**, because it currently administers the framework website and would determine the operational purposes and means of the assessment service. Research Data Scotland would receive no identifiable assessment data by default. If Research Data Scotland or another sponsor jointly determines purposes or access, the parties must document whether the arrangement is joint controllership or controller/processor before launch.
 
-Proposed processors are the approved application host/CDN, managed database/authentication provider, transactional email provider, monitoring provider and backup provider. Each requires due diligence, an Article 28 contract, sub-processor review, location/transfer assessment, deletion commitments and incident terms.
+The implemented staging design proposes **Cloudflare, Inc.** as application/CDN, D1 database and recovery processor, with the D1 jurisdiction set to the European Union, and **Resend, Inc.** as transactional-email processor with the sending region set to Ireland. Each requires due diligence, an Article 28 contract, sub-processor review, location/transfer assessment, deletion commitments and incident terms. Cloudflare's current customer DPA includes UK transfer terms. Resend says account and email metadata remain in the United States even when email is sent from Ireland, so its SCC/UK-addendum route and transfer risk must be approved rather than treating the sending region as complete localisation.
+
+No separate product-monitoring processor is proposed for the beta: Worker observability is disabled. Cloudflare will still operate proportionate network/security infrastructure logs under its platform terms; their content, access and retention must be confirmed during the processor review. GitHub Pages continues to serve the static assessment application but receives no participant record or assessment content from the application API.
 
 ## Recommended public-beta boundary
 
@@ -39,6 +41,8 @@ Public site ──normal link──> browser assessment (IndexedDB)
 Public-site analytics is disabled on the assessment route. It receives no
 email, beta-session identifier, response, evidence or report information.
 ```
+
+The browser calls the Worker directly over TLS. D1 receives ciphertext participant profiles, keyed email digests, keyed OTP digests, pseudonymous session/event rows and separate feedback rows. Resend receives the verified destination email, sender, one-time-code message and normal email-delivery metadata; it receives no participant profile, assessment response, report or feedback. Administrator access is not a routine application flow and requires a separate secret and audit record.
 
 No patient-level data, personal confidential data, credentials or unnecessarily sensitive operational information is required or permitted.
 
@@ -96,7 +100,7 @@ Test whether organisation and role remain proportionate once the beta has enough
 | Application security/IP logs | Target 30 days; shorten further if the provider supports adequate abuse investigation |
 | Consent/preference record | Until withdrawal plus a proportionate suppression record to honour the withdrawal; review at 24 months |
 | Live data after verified deletion | Remove promptly, target within 24 hours |
-| Backups after deletion | No new live use; expire within the provider's documented backup window, target no more than 30 days |
+| Backups after deletion | No new live use; expire within D1's documented Time Travel window: seven days on Free or 30 days on Paid. Choose and state the plan before launch. |
 | Aggregate beta counts | Review annually; retain only while necessary and non-identifying |
 
 If a later server-side assessment workspace is approved, its draft, report, audit and invitation retention requires a separate schedule; it is not covered by the public-beta periods above.
@@ -150,6 +154,17 @@ Small-cell rules are contextual rather than magic numbers. ONS advises consideri
 - Incident plan covers triage, containment, affected records, processor coordination, notification and lessons learned.
 - Record all personal-data breaches; where required, notify the ICO within 72 hours and affected people without undue delay when high risk. See [ICO breach guidance](https://ico.org.uk/for-organisations/report-a-breach/personal-data-breach/personal-data-breaches-a-guide/).
 
+### Thin-service implementation
+
+- Participant profile JSON is encrypted with AES-GCM using a separately managed 256-bit key. A keyed HMAC supports exact email lookup without storing plaintext email in D1.
+- OTP and receipt secrets are separate from encryption and email-index keys. Production and staging use different keys and administrator tokens, held as Worker secrets rather than repository variables.
+- One-time codes expire in 10 minutes, are single use, permit five attempts and are rate-limited. The application stores a daily keyed digest of the source address for abuse control, not the raw address.
+- JSON request schemas use a top-level and nested allow-list. Unexpected assessment-like fields cause a `400 privacy_boundary_violation`; they are not accepted and stripped later.
+- Feedback without contact details has no participant or session foreign key. Timestamps are reduced to a date for feedback and an hour for operational events.
+- A scheduled job applies the published retention periods. Verified access/export, profile correction and deletion requests use the same OTP channel and record completion without retaining request content indefinitely. A verified-email change is handled through the published privacy contact because it requires separate identity checks.
+- Operational endpoints do not put emails, OTPs, session IDs or report data in URLs. Report and export generation remain in the browser.
+- Administrative access is a deliberately narrow interim control for a thin beta, not a general account system. Before production it requires a named operator, MFA-protected Cloudflare account, secret-rotation procedure, access review and independent authorisation test.
+
 ## Draft privacy notice
 
 ### Who we are
@@ -184,7 +199,7 @@ Providing an email address to receive or access a report does not subscribe you 
 
 ### International processing
 
-The operational region and suppliers have not yet been approved. Before launch, locations and any restricted transfers will be identified, assessed and protected using an applicable adequacy route or safeguard. See the ICO [international transfers guide](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/international-transfers/a-guide-to-international-transfers/).
+The proposed D1 database uses Cloudflare's EU jurisdiction. Cloudflare and its sub-processors still require location and transfer review under its [customer DPA](https://www.cloudflare.com/en-gb/cloudflare-customer-dpa/). Transactional emails are proposed to send from Resend's Ireland region, but Resend says account and email metadata are stored in the United States regardless of sending region. Its [DPA](https://resend.com/legal/dpa), SCCs, UK addendum and subprocessors therefore require a documented transfer assessment before activation. See the ICO [international transfers guide](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/international-transfers/a-guide-to-international-transfers/).
 
 ## Just-in-time notices
 
@@ -202,7 +217,7 @@ The operational region and suppliers have not yet been approved. Before launch, 
 
 ### Beta activity
 
-> We record that this beta was started, coarse time and completion bands, and whether report, download and feedback actions were reached. We do not include your levels, certainty, assessment boundary, comments, evidence or report contents. Public-site analytics is disabled on this route.
+> We record that this beta was started, coarse time and completion bands, and whether report, download and feedback actions were reached. We do not include your levels, certainty, assessment boundary, comments, evidence or report contents. Public-site analytics is disabled on this route. You can stop future beta-activity events for this draft; requested email verification and feedback you deliberately submit will still use the service.
 
 ### Feedback
 
@@ -240,6 +255,9 @@ The operational region and suppliers have not yet been approved. Before launch, 
 - approve controller contact, rights and complaint wording;
 - review DUAA 2025 and current ICO guidance at launch;
 - approve processor contracts, sub-processors, locations and transfer safeguards;
+- confirm the Cloudflare Free/Paid choice and resulting seven-/30-day recovery window;
+- verify `beta.hdrlframework.org`, approve the Resend Ireland sending region and document its US metadata transfer;
+- confirm that `privacy@hdrlframework.org` is monitored, or replace it with the approved rights-contact mailbox;
 - validate retention, backup expiry and deletion evidence;
 - approve statistical disclosure-control protocol;
 - review optional-contact wording and preference records under PECR;

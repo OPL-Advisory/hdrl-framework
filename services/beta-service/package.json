@@ -1,0 +1,21 @@
+{
+  "name": "hdrl-beta-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --local --port 8787",
+    "check": "node --check src/index.js && node --test test/*.test.js",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:staging": "wrangler d1 migrations apply DB --remote --env staging",
+    "db:migrate:production": "wrangler d1 migrations apply DB --remote --env production"
+  },
+  "devDependencies": {
+    "wrangler": "4.119.0"
+  },
+  "overrides": {
+    "undici": "7.29.0"
+  }
+}

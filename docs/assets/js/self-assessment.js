@@ -7,11 +7,11 @@
   const VERSIONS = {
     framework: "1.0.1",
     catalogue: "1.0.2",
-    tool: "0.3.0-prototype",
+    tool: "0.4.0-beta",
     guidance: "0.2.0",
     rules: "0.2.0",
-    report: "0.3.0",
-    beta: "0.1.0"
+    report: "0.4.0",
+    beta: "0.2.0"
   };
 
   const DB_NAME = "hdrl-self-assessment-prototype";
@@ -52,6 +52,7 @@
   let saveTimer;
   let lastFocusId = "";
   let lastActivityTick = Date.now();
+  let remoteSyncPromise = null;
 
   const esc = (value = "") =>
     String(value)
@@ -69,7 +70,7 @@
 
   function defaultState() {
     return {
-      schemaVersion: 3,
+      schemaVersion: 4,
       id: makeId(),
       createdAt: nowIso(),
       updatedAt: nowIso(),
@@ -93,6 +94,11 @@
       domainNotes: {},
       beta: {
         sessionId: makeId(),
+        remoteSessionId: "",
+        telemetryEnabled: true,
+        telemetryDisabledAt: "",
+        remoteLastSyncAt: "",
+        remoteLastError: "",
         startedAt: nowIso(),
         activeSeconds: 0,
         lastActivityAt: nowIso(),
@@ -104,6 +110,10 @@
       },
       registration: {
         unlocked: false,
+        challengeId: "",
+        challengeExpiresAt: "",
+        verificationReceipt: "",
+        developmentCode: "",
         name: "",
         email: "",
         role: "",
@@ -281,6 +291,112 @@
     return "desktop";
   }
 
+  function serviceBaseUrl() {
+    const configured = betaConfig?.transport?.service_base_url;
+    if (configured) return String(configured).replace(/\/$/, "");
+    const localHost = ["127.0.0.1", "localhost"].includes(location.hostname) || location.hostname.endsWith(".localhost");
+    const previewOverride = new URLSearchParams(location.search).get("beta-api");
+    if (localHost && betaConfig?.transport?.local_preview_override && previewOverride && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(previewOverride)) {
+      return previewOverride.replace(/\/$/, "");
+    }
+    return "";
+  }
+
+  function betaServiceAvailable() {
+    const localHost = ["127.0.0.1", "localhost"].includes(location.hostname) || location.hostname.endsWith(".localhost");
+    return Boolean(serviceBaseUrl() && (betaConfig?.transport?.remote_collection_enabled || localHost));
+  }
+
+  function remoteServiceEnabled() {
+    return Boolean(state?.beta?.telemetryEnabled && betaServiceAvailable());
+  }
+
+  async function apiRequest(path, body) {
+    const base = serviceBaseUrl();
+    if (!base) throw new Error("The beta service is not enabled.");
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), Number(betaConfig.transport.request_timeout_ms || 8000));
+    try {
+      const response = await fetch(`${base}${path}`, {
+        method: "POST",
+        credentials: "omit",
+        cache: "no-store",
+        referrerPolicy: "no-referrer",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(payload.message || "The beta service could not complete the request.");
+        error.code = payload.error || "service_error";
+        error.status = response.status;
+        throw error;
+      }
+      return payload;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async function ensureRemoteSession() {
+    if (!betaServiceAvailable()) return "";
+    if (state.beta.remoteSessionId) return state.beta.remoteSessionId;
+    const created = await apiRequest("/v1/sessions", {
+      schema_version: VERSIONS.beta,
+      tool_version: VERSIONS.tool,
+      framework_version: VERSIONS.framework,
+      catalogue_version: VERSIONS.catalogue
+    });
+    state.beta.remoteSessionId = created.session_id;
+    state.beta.remoteLastError = "";
+    scheduleSave();
+    return created.session_id;
+  }
+
+  function transportEvent(event) {
+    const properties = {};
+    (betaConfig.event_allowlist[event.name] || []).forEach((key) => {
+      if (event[key] !== undefined && ["string", "number", "boolean"].includes(typeof event[key])) properties[key] = event[key];
+    });
+    return { id: event.id, name: event.name, at: event.at, properties };
+  }
+
+  async function syncRemoteEvents() {
+    if (!remoteServiceEnabled()) return;
+    if (remoteSyncPromise) return remoteSyncPromise;
+    remoteSyncPromise = Promise.resolve().then(async () => {
+        const pending = state.beta.events.filter((event) => !event.remoteSentAt).slice(0, 25);
+        if (!pending.length) return;
+        const sessionId = await ensureRemoteSession();
+        await apiRequest("/v1/events", { session_id: sessionId, events: pending.map(transportEvent) });
+        const sentAt = nowIso();
+        pending.forEach((event) => { event.remoteSentAt = sentAt; });
+        state.beta.remoteLastSyncAt = sentAt;
+        state.beta.remoteLastError = "";
+        scheduleSave();
+        if (state.beta.events.some((event) => !event.remoteSentAt)) setTimeout(() => { void syncRemoteEvents(); }, 0);
+    }).catch((error) => {
+        state.beta.remoteLastError = error.message || "The beta service is unavailable.";
+        scheduleSave();
+    });
+    const currentSync = remoteSyncPromise;
+    try { return await currentSync; }
+    finally { if (remoteSyncPromise === currentSync) remoteSyncPromise = null; }
+  }
+
+  async function turnOffRemoteTelemetry() {
+    const sessionId = state.beta.remoteSessionId;
+    state.beta.telemetryEnabled = false;
+    state.beta.telemetryDisabledAt = state.beta.telemetryDisabledAt || nowIso();
+    state.beta.remoteLastError = "";
+    scheduleSave();
+    if (sessionId && serviceBaseUrl()) {
+      try { await apiRequest("/v1/telemetry/disable", { session_id: sessionId }); }
+      catch { /* The local preference still prevents further transmission. */ }
+    }
+  }
+
   function recordBetaEvent(name, payload = {}) {
     if (!betaConfig?.feature_flags?.local_beta_events) return;
     const allowed = betaConfig.event_allowlist[name];
@@ -299,6 +415,7 @@
     });
     if (state.beta.events.length > 500) state.beta.events = state.beta.events.slice(-500);
     scheduleSave();
+    void syncRemoteEvents();
   }
 
   function hasBetaEvent(name) {
@@ -310,18 +427,21 @@
     const indicator = ["snapshot", "indicator"].includes(state.view)
       ? catalogue.indicators.find((item) => item.ref === state.activeIndicator)
       : null;
-    return {
+    const context = {
       tool_version: VERSIONS.tool,
       framework_version: VERSIONS.framework,
       catalogue_version: VERSIONS.catalogue,
       view: state.view,
-      domain_ref: indicator?.domain || "",
-      indicator_ref: indicator?.ref || "",
       completed_indicator_count: s.completed,
       completed_domain_count: s.completedDomains,
       active_time_band: activeTimeBand(),
       viewport_band: viewportBand()
     };
+    if (indicator) {
+      context.domain_ref = indicator.domain;
+      context.indicator_ref = indicator.ref;
+    }
+    return context;
   }
 
   function setView(view, focusId = "hdrl-view-title") {
@@ -337,11 +457,12 @@
 
   function shell(body) {
     const boundaryReady = Boolean(state.boundary.title);
+    const serviceActive = betaServiceAvailable();
     return `
       <div id="hdrl-assessment-status" class="hdrl-assessment-sr" role="status" aria-live="polite"></div>
       <div class="hdrl-assessment-toolbar">
         <div>
-          <span class="hdrl-assessment-chip">Prototype · on-device only</span>
+          <span class="hdrl-assessment-chip">${serviceActive ? "Staging beta · results on device" : "Prototype · remote service off"}</span>
           <span class="hdrl-assessment-version">Framework ${VERSIONS.framework} · catalogue ${VERSIONS.catalogue} · tool ${VERSIONS.tool}</span>
         </div>
         <div class="hdrl-assessment-toolbar__actions">
@@ -415,6 +536,15 @@
         <div class="hdrl-assessment-callout">
           <h3>What this cannot establish</h3>
           <p>A self-assessment cannot validate, accredit or endorse a service. It reflects a stated boundary, the people involved and the evidence available on the assessment date.</p>
+        </div>
+        <div class="hdrl-assessment-notice">
+          <strong>${remoteServiceEnabled() ? "Privacy-minimised beta activity is on." : "Remote beta activity is off."}</strong>
+          ${remoteServiceEnabled()
+            ? " We send a random session ID, tool versions, coarse progress and action events. We never send levels, certainty, scope, notes, evidence or report contents."
+            : " Assessment entries and the local diagnostic record stay in this browser."}
+          ${state.beta.telemetryEnabled
+            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Use without remote beta activity</button>`
+            : `<span>Remote beta activity remains off for this draft.</span>`}
         </div>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="${hasDraft ? "resume" : "start"}">${hasDraft ? "Resume draft" : "Set the assessment boundary"}</button>
@@ -1300,8 +1430,32 @@
     const r = state.registration;
     const s = stats();
     const snapshot = snapshotStats();
+    if (r.challengeId && !r.unlocked) {
+      return shell(`
+        <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
+          <div class="hdrl-progress-label">Email verification · code expires after 10 minutes</div>
+          <h2 id="hdrl-view-title" tabindex="-1">Enter the six-digit code</h2>
+          <p class="hdrl-assessment-lede">We sent a service email to <strong>${esc(r.email)}</strong>. It unlocks the report generated on this device; your assessment answers have not been uploaded.</p>
+          ${errors.__service ? `<div class="hdrl-error-summary" role="alert" tabindex="-1" id="hdrl-gate-errors"><h3>The code could not be confirmed</h3><p>${esc(errors.__service)}</p></div>` : ""}
+          ${r.developmentCode ? `<div class="hdrl-assessment-notice"><strong>Local synthetic test code:</strong> ${esc(r.developmentCode)}. A deployed service never returns the code in the browser response.</div>` : ""}
+          <form id="hdrl-verification-form" novalidate>
+            <div class="hdrl-field ${errors["gate-code"] ? "hdrl-field--error" : ""}">
+              <label for="gate-code">Verification code <span aria-hidden="true">*</span></label>
+              <p class="hdrl-hint" id="gate-code-hint">Six digits from the HDRL beta service email. The code is single-use.</p>
+              <input id="gate-code" name="gate-code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required aria-describedby="gate-code-hint${errors["gate-code"] ? " gate-code-error" : ""}">
+              ${fieldError(errors["gate-code"], "gate-code")}
+            </div>
+            <div class="hdrl-assessment-actions">
+              <button type="submit" class="md-button md-button--primary">Confirm and open report</button>
+              <button type="button" class="md-button" data-action="verification-restart">Change details or request another code</button>
+            </div>
+          </form>
+        </section>
+      `);
+    }
+    const fieldErrors = Object.entries(errors).filter(([id]) => id !== "__service");
     const errorSummary = Object.keys(errors).length
-      ? `<div class="hdrl-error-summary" role="alert" tabindex="-1" id="hdrl-gate-errors"><h3>Check the report information</h3><ul>${Object.entries(errors).map(([id, message]) => `<li><a href="#${id}">${esc(message)}</a></li>`).join("")}</ul></div>`
+      ? `<div class="hdrl-error-summary" role="alert" tabindex="-1" id="hdrl-gate-errors"><h3>${errors.__service ? "The verification service could not complete the request" : "Check the report information"}</h3>${errors.__service ? `<p>${esc(errors.__service)}</p>` : ""}${fieldErrors.length ? `<ul>${fieldErrors.map(([id, message]) => `<li><a href="#${id}">${esc(message)}</a></li>`).join("")}</ul>` : ""}</div>`
       : "";
     return shell(`
       <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
@@ -1314,13 +1468,16 @@
           <div><strong>${s.evidenceLinked}/64</strong><span>with evidence references</span></div>
         </div>
         <div class="hdrl-assessment-notice">
-          <strong>Prototype gate.</strong> Nothing is emailed or transmitted. These fields test the minimum report-access journey and stay on this device. Use sample contact information if preferred.
+          <strong>${betaServiceAvailable() ? "What is sent at this step." : "Prototype gate—remote verification is off."}</strong>
+          ${betaServiceAvailable()
+            ? " Email, role, organisation, individual/team use, broad intended use and any optional profile fields below are sent to verify report access and administer the beta. Levels, certainty, boundary, notes, evidence and report contents remain on this device."
+            : " These fields stay on this device and locally simulate the report-access journey. Use sample contact information if preferred."}
         </div>
         ${errorSummary}
         <form id="hdrl-gate-form" novalidate>
           <div class="hdrl-form-grid">
             ${textField("gate-name", "Name (optional)", r.name, "Used only if you choose contactable feedback or follow-up; it is not shown in the assessment report.", false, errors["gate-name"], 120, "text", "name")}
-            ${textField("gate-email", "Email address", r.email, "A public beta would verify this address before unlocking the locally generated report. It is not marketing consent.", true, errors["gate-email"], 200, "email", "email")}
+            ${textField("gate-email", "Email address", r.email, betaServiceAvailable() ? "We send a single-use code to unlock the locally generated report. This service message is not marketing consent." : "A public beta would verify this address before unlocking the locally generated report. It is not marketing consent.", true, errors["gate-email"], 200, "email", "email")}
             ${textField("gate-role", "Role", r.role, "Helps OPL Advisory understand which professional perspectives the beta is reaching; it is not shown in the assessment report.", true, errors["gate-role"], 120, "text", "organization-title")}
             ${textField("gate-organisation", "Organisation", r.organisation, "Lets OPL Advisory administer beta participation and avoid treating repeat use as separate organisations; it is not shown in the assessment report.", true, errors["gate-organisation"], 180, "text", "organization")}
             ${textField("gate-region", "Country or region (optional)", r.region, "Provides broad operating context without requiring a precise location.", false, errors["gate-region"], 120, "text", "country-name")}
@@ -1373,8 +1530,9 @@
               <label for="gate-newsletter">OPL Advisory may email me occasional HDRL updates. I can unsubscribe at any time.</label>
             </div>
           </fieldset>
+          <p class="hdrl-hint">By continuing, you acknowledge the <a href="privacy-and-data-flow/" target="_blank" rel="noopener">beta privacy information</a>. Report delivery is separate from the two optional contact choices above.</p>
           <div class="hdrl-assessment-actions">
-            <button type="submit" class="md-button md-button--primary">Unlock the on-device report</button>
+            <button type="submit" class="md-button md-button--primary">${betaServiceAvailable() ? "Send verification code" : "Unlock the on-device report"}</button>
             <button type="button" class="md-button" data-action="overview">Back to assessment overview</button>
           </div>
         </form>
@@ -1573,23 +1731,33 @@
     const counts = Object.fromEntries(betaConfig.event_allowlist && Object.keys(betaConfig.event_allowlist).map((name) => [name, state.beta.events.filter((event) => event.name === name).length]));
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Local beta diagnostics · no remote collection</div>
+        <div class="hdrl-progress-label">Beta diagnostics · ${remoteServiceEnabled() ? "operational activity on" : betaServiceAvailable() ? "operational activity off" : "service unavailable"}</div>
         <h2 id="hdrl-view-title" tabindex="-1">What the beta activity record contains</h2>
-        <p class="hdrl-assessment-lede">This prototype records a privacy-minimised event funnel on this device so the proposed contract can be inspected before any backend is selected.</p>
+        <p class="hdrl-assessment-lede">The same allow-listed event record is kept locally for inspection. When the approved service is active, unsent events are copied to the operational store without assessment answers or text.</p>
         <div class="hdrl-data-boundary-grid">
           <article><h3>Operational beta record</h3><ul>${betaConfig.privacy_boundary.operational_by_default.map((item) => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")}</ul></article>
           <article><h3>Always local by default</h3><ul>${betaConfig.privacy_boundary.local_only.map((item) => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")}</ul></article>
           <article><h3>Explicit sharing only</h3><ul>${betaConfig.privacy_boundary.explicit_share_only.map((item) => `<li>${esc(item.replaceAll("_", " "))}</li>`).join("")}</ul></article>
         </div>
-        <h3>Current local funnel</h3>
+        <h3>Current activity on this device</h3>
         <div class="hdrl-beta-funnel">
           ${statCard(counts.assessment_started || 0, "Started", "session event")}
           ${statCard(counts.snapshot_completed || 0, "Snapshot completed", `${s.completed}/64 now`)}
-          ${statCard(counts.report_unlocked || 0, "Report unlocked", "verified gate simulation")}
+          ${statCard(counts.report_unlocked || 0, "Report unlocked", betaServiceAvailable() ? "verified email code" : "local simulation")}
           ${statCard(counts.report_download_requested || 0, "Download requests", "all formats")}
           ${statCard(counts.feedback_submitted || 0, "Feedback submitted", `${counts.feedback_skipped || 0} skipped`)}
         </div>
-        <div class="hdrl-assessment-notice"><strong>No event transport is active.</strong> No beta activity, identity, feedback or assessment data leave this device in v0.3 until a provider, notice, retention rule and production security review are approved.</div>
+        <div class="hdrl-assessment-notice">
+          <strong>${remoteServiceEnabled() ? "Operational activity is on." : betaServiceAvailable() ? "Operational activity is off." : "No beta service is active."}</strong>
+          ${remoteServiceEnabled()
+            ? ` ${state.beta.remoteLastSyncAt ? `Last synced ${esc(new Date(state.beta.remoteLastSyncAt).toLocaleString())}.` : "No activity has been synced yet."}${state.beta.remoteLastError ? ` Latest issue: ${esc(state.beta.remoteLastError)}` : ""}`
+            : betaServiceAvailable()
+              ? " Future allow-listed activity events will not be sent. Email verification and feedback you deliberately submit still use the service; records already received follow the stated retention schedule."
+              : " Beta activity, identity and feedback remain on this device."}
+          ${state.beta.telemetryEnabled
+            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Stop remote beta activity</button>`
+            : `<span>Remote beta activity remains off for this draft.</span>`}
+        </div>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button" data-action="export-beta-activity">Download local beta activity record</button>
           ${state.beta.feedback.length ? `<button type="button" class="md-button" data-action="export-feedback">Download saved feedback bundle</button>` : ""}
@@ -1606,7 +1774,7 @@
         <div class="hdrl-progress-label">About 15 seconds · optional</div>
         <h2 id="hdrl-view-title" tabindex="-1">Help improve the HDRL beta</h2>
         <p class="hdrl-assessment-lede">A quick rating or a specific problem is useful. You can continue without providing feedback.</p>
-        <div class="hdrl-assessment-notice"><strong>Local prototype.</strong> Feedback is saved on this device and can be downloaded as a deliberately shareable bundle. It is not transmitted to OPL Advisory yet.</div>
+        <div class="hdrl-assessment-notice"><strong>${betaServiceAvailable() ? "Optional beta feedback." : "Local prototype."}</strong> ${betaServiceAvailable() ? "Submitted feedback is sent to OPL Advisory through the separate feedback endpoint. Without-contact feedback carries no email, organisation, participant ID or beta-session ID; free text may still identify you." : "Feedback is saved on this device and can be downloaded as a deliberately shareable bundle. It is not transmitted to OPL Advisory."}</div>
         <form id="hdrl-feedback-form">
           <fieldset class="hdrl-feedback-rating">
             <legend>Overall, how easy was this experience?</legend>
@@ -1620,7 +1788,9 @@
           <fieldset class="hdrl-status-options">
             <legend>How should this feedback be shared?</legend>
             ${radio("feedback-mode", "without_contact", "Without contact details", "Include limited tool context but no email, participant ID or persistent session identifier. Free text may still identify you.", "without_contact")}
-            ${radio("feedback-mode", "contactable", "With my beta contact details", "Allow OPL Advisory to follow up about this feedback after remote submission is approved.", "without_contact")}
+            ${(!betaServiceAvailable() || state.registration.verificationReceipt)
+              ? radio("feedback-mode", "contactable", "With my beta contact details", betaServiceAvailable() ? "Allow OPL Advisory to follow up about this feedback using the address you verified." : "Include beta contact details in a deliberately downloaded local feedback bundle.", "without_contact")
+              : `<p class="hdrl-hint">Contactable feedback becomes available after email verification. You can still submit without contact details now.</p>`}
           </fieldset>
           <details class="hdrl-guidance">
             <summary>Context that would accompany feedback without contact details</summary>
@@ -1628,7 +1798,7 @@
             <p>No selected level, certainty, assessment title, scope, note, evidence or report content is included.</p>
           </details>
           <div class="hdrl-assessment-actions">
-            <button type="submit" class="md-button md-button--primary">Save feedback and continue</button>
+            <button type="submit" class="md-button md-button--primary">${betaServiceAvailable() ? "Submit feedback and continue" : "Save feedback and continue"}</button>
             <button type="button" class="md-button" data-action="skip-feedback">Not now—continue</button>
           </div>
         </form>
@@ -1840,6 +2010,24 @@
     };
   }
 
+  async function submitRemoteFeedback(item) {
+    if (!betaServiceAvailable()) return false;
+    const payload = {
+      mode: item.mode,
+      rating: item.rating,
+      category: item.category,
+      comment: item.comment,
+      context: Object.fromEntries(betaConfig.feedback_context_allowlist
+        .filter((key) => item.context?.[key] !== undefined)
+        .map((key) => [key, item.context[key]]))
+    };
+    if (item.mode === "contactable") payload.receipt = state.registration.verificationReceipt;
+    await apiRequest("/v1/feedback", payload);
+    item.remoteSentAt = nowIso();
+    scheduleSave();
+    return true;
+  }
+
   function shareBundlePayload(options) {
     const payload = {
       schema: "hdrl-explicit-results-share-v0.1.0",
@@ -2010,6 +2198,18 @@
         if (action === "clear") {
           if (confirm("Delete the entire on-device assessment draft? This cannot be undone.")) await clearDraft();
         } else if (action === "welcome") setView("welcome");
+        else if (action === "telemetry-off") {
+          await turnOffRemoteTelemetry();
+          render();
+          announce("Remote beta activity has been turned off for this draft.");
+        }
+        else if (action === "verification-restart") {
+          state.registration.challengeId = "";
+          state.registration.challengeExpiresAt = "";
+          state.registration.developmentCode = "";
+          scheduleSave();
+          render();
+        }
         else if (action === "start" || action === "boundary") setView("boundary");
         else if (action === "resume") setView(state.view === "welcome" ? (state.boundary.title ? "overview" : "boundary") : state.view);
         else if (action === "sample") {
@@ -2315,7 +2515,7 @@
     });
 
     const feedbackForm = document.getElementById("hdrl-feedback-form");
-    feedbackForm?.addEventListener("submit", (event) => {
+    feedbackForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
       const rating = feedbackForm.elements["feedback-rating"].value;
       const category = feedbackForm.elements["feedback-category"].value;
@@ -2327,8 +2527,17 @@
       }
       const mode = feedbackForm.elements["feedback-mode"].value || "without_contact";
       const context = Object.keys(state.beta.feedbackContext || {}).length ? state.beta.feedbackContext : feedbackContext();
-      state.beta.feedback.push({ id: makeId(), mode, rating: rating ? Number(rating) : null, category, comment, context, at: nowIso() });
-      recordBetaEvent("feedback_submitted", { feedback_mode: mode, feedback_category: category || "not_selected", context: context.view || "unknown" });
+      const item = { id: makeId(), mode, rating: rating ? Number(rating) : null, category, comment, context, at: nowIso() };
+      state.beta.feedback.push(item);
+      if (betaServiceAvailable()) {
+        try { await submitRemoteFeedback(item); }
+        catch (error) {
+          item.remoteError = error.message || "Feedback could not be sent.";
+          scheduleSave();
+          announce("Your feedback is saved on this device but could not be sent. You can continue.", true);
+        }
+      }
+      recordBetaEvent("feedback_submitted");
       continueAfterFeedback();
     });
 
@@ -2358,7 +2567,7 @@
     });
 
     const gateForm = document.getElementById("hdrl-gate-form");
-    gateForm?.addEventListener("submit", (event) => {
+    gateForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
       const errors = validateGate();
       if (Object.keys(errors).length) {
@@ -2368,7 +2577,11 @@
         return;
       }
       state.registration = {
-        unlocked: true,
+        ...state.registration,
+        unlocked: false,
+        challengeId: "",
+        challengeExpiresAt: "",
+        developmentCode: "",
         name: document.getElementById("gate-name").value.trim(),
         email: document.getElementById("gate-email").value.trim(),
         role: document.getElementById("gate-role").value.trim(),
@@ -2381,12 +2594,73 @@
         researchContact: document.getElementById("gate-research").checked,
         newsletter: document.getElementById("gate-newsletter").checked
       };
-      audit("prototype_report_gate_unlocked", "report", "No data transmitted");
+      if (betaServiceAvailable()) {
+        try {
+          const sessionId = await ensureRemoteSession();
+          const requested = await apiRequest("/v1/verification/request", {
+            session_id: sessionId,
+            email: state.registration.email,
+            name: state.registration.name,
+            role: state.registration.role,
+            organisation: state.registration.organisation,
+            region: state.registration.region,
+            service_type: state.registration.serviceType,
+            scale: state.registration.scale,
+            use_mode: state.registration.useMode,
+            report_use: state.registration.reportUse,
+            research_contact: state.registration.researchContact,
+            newsletter: state.registration.newsletter,
+            privacy_notice_version: betaConfig.privacy_notice_version
+          });
+          state.registration.challengeId = requested.challenge_id;
+          state.registration.challengeExpiresAt = new Date(Date.now() + Number(requested.expires_in_seconds || 600) * 1000).toISOString();
+          state.registration.developmentCode = requested.development_code || "";
+          audit("report_verification_requested", "report", "No assessment data transmitted");
+          scheduleSave();
+          render();
+        } catch (error) {
+          root.innerHTML = gateView({ __service: error.message || "The verification service is unavailable." });
+          bind();
+          document.getElementById("hdrl-gate-errors")?.focus();
+        }
+        return;
+      }
+      state.registration.unlocked = true;
+      audit("prototype_report_gate_unlocked", "report", "Remote verification disabled");
       if (!hasBetaEvent("report_unlocked")) {
-        const s = snapshotStats();
-        recordBetaEvent("report_unlocked", { completed_indicator_count: s.completed, completed_domain_count: s.completedDomains });
+        const summary = snapshotStats();
+        recordBetaEvent("report_unlocked", { completed_indicator_count: summary.completed, completed_domain_count: summary.completedDomains });
       }
       setView("report");
+    });
+
+    const verificationForm = document.getElementById("hdrl-verification-form");
+    verificationForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const code = verificationForm.elements["gate-code"].value.trim();
+      if (!/^\d{6}$/.test(code)) {
+        root.innerHTML = gateView({ "gate-code": "Enter the six-digit code." });
+        bind();
+        document.getElementById("gate-code")?.focus();
+        return;
+      }
+      try {
+        const confirmed = await apiRequest("/v1/verification/confirm", { challenge_id: state.registration.challengeId, code });
+        state.registration.unlocked = true;
+        state.registration.verificationReceipt = confirmed.receipt;
+        state.registration.developmentCode = "";
+        audit("report_email_verified", "report", "Assessment remained on device");
+        if (!hasBetaEvent("report_unlocked")) {
+          const summary = snapshotStats();
+          recordBetaEvent("report_unlocked", { completed_indicator_count: summary.completed, completed_domain_count: summary.completedDomains });
+        }
+        scheduleSave();
+        setView("report");
+      } catch (error) {
+        root.innerHTML = gateView({ __service: error.message || "The code could not be confirmed." });
+        bind();
+        document.getElementById("hdrl-gate-errors")?.focus();
+      }
     });
   }
 
@@ -2424,12 +2698,12 @@
   }
 
   function migrateDraft(draft, defaults) {
-    if (!draft || ![1, 2, 3].includes(draft.schemaVersion)) return defaults;
-    if ([2, 3].includes(draft.schemaVersion)) {
+    if (!draft || ![1, 2, 3, 4].includes(draft.schemaVersion)) return defaults;
+    if ([2, 3, 4].includes(draft.schemaVersion)) {
       return {
         ...defaults,
         ...draft,
-        schemaVersion: 3,
+        schemaVersion: 4,
         boundary: { ...defaults.boundary, ...draft.boundary },
         registration: { ...defaults.registration, ...draft.registration },
         domainNotes: { ...defaults.domainNotes, ...draft.domainNotes },
@@ -2473,7 +2747,7 @@
     return {
       ...defaults,
       ...draft,
-      schemaVersion: 3,
+      schemaVersion: 4,
       boundary: { ...defaults.boundary, ...draft.boundary },
       registration: { ...defaults.registration, ...draft.registration },
       rapid,
@@ -2503,8 +2777,11 @@
       if (betaConfig.config_version !== VERSIONS.beta || betaConfig.tool_version !== VERSIONS.tool) {
         throw new Error("The beta configuration and assessment tool versions do not match");
       }
-      if (betaConfig.transport.remote_collection_enabled || betaConfig.transport.mode !== "local-only") {
-        throw new Error("Remote beta collection cannot be enabled in this local prototype");
+      if (!betaConfig.transport || !["local-only", "local-with-optional-service"].includes(betaConfig.transport.mode)) {
+        throw new Error("The beta transport configuration is not recognised");
+      }
+      if (betaConfig.transport.remote_collection_enabled && !/^https:\/\//.test(betaConfig.transport.service_base_url || "")) {
+        throw new Error("The enabled beta service must use an HTTPS endpoint");
       }
       const defaults = defaultState();
       state = migrateDraft(draft, defaults);
@@ -2529,6 +2806,7 @@
         scheduleSave();
       });
       render();
+      if (remoteServiceEnabled()) void syncRemoteEvents();
     } catch (error) {
       root.setAttribute("aria-busy", "false");
       root.innerHTML = `

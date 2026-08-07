@@ -4,3 +4,6 @@ __pycache__/
 *.py[cod]
 .DS_Store
 .tmp/
+services/beta-service/.dev.vars
+services/beta-service/.wrangler/
+services/beta-service/node_modules/

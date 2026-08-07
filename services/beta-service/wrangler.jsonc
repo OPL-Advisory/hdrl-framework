@@ -1,0 +1,96 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hdrl-beta-service",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "minify": true,
+  "limits": { "cpu_ms": 50 },
+  "observability": { "enabled": false },
+  "secrets": {
+    "required": [
+      "DATA_ENCRYPTION_KEY_BASE64",
+      "HASH_SECRET",
+      "OTP_SECRET",
+      "RECEIPT_SECRET",
+      "ADMIN_TOKEN",
+      "RESEND_API_KEY"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "hdrl-beta-local",
+      "database_id": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "vars": {
+    "ENVIRONMENT": "local",
+    "ALLOWED_ORIGINS": "http://127.0.0.1:8123,http://localhost:8123,http://127.0.0.1:8124,http://test.hdrl.localhost:8124",
+    "EMAIL_PROVIDER": "development",
+    "EMAIL_FROM": "HDRL beta <report@beta.hdrlframework.org>",
+    "PRIVACY_CONTACT_EMAIL": "privacy@hdrlframework.org",
+    "ALLOW_DEVELOPMENT_OTP_RETURN": "true"
+  },
+  "triggers": { "crons": ["17 3 * * *"] },
+  "env": {
+    "staging": {
+      "name": "hdrl-beta-service-staging",
+      "secrets": {
+        "required": [
+          "DATA_ENCRYPTION_KEY_BASE64",
+          "HASH_SECRET",
+          "OTP_SECRET",
+          "RECEIPT_SECRET",
+          "ADMIN_TOKEN",
+          "RESEND_API_KEY"
+        ]
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "hdrl-beta-staging",
+          "database_id": "00000000-0000-0000-0000-000000000001"
+        }
+      ],
+      "vars": {
+        "ENVIRONMENT": "staging",
+        "ALLOWED_ORIGINS": "https://hdrlframework.org,http://127.0.0.1:8123,http://localhost:8123",
+        "EMAIL_PROVIDER": "resend",
+        "EMAIL_FROM": "HDRL beta <report@beta.hdrlframework.org>",
+        "PRIVACY_CONTACT_EMAIL": "privacy@hdrlframework.org",
+        "ALLOW_DEVELOPMENT_OTP_RETURN": "false"
+      }
+    },
+    "production": {
+      "name": "hdrl-beta-service",
+      "workers_dev": false,
+      "secrets": {
+        "required": [
+          "DATA_ENCRYPTION_KEY_BASE64",
+          "HASH_SECRET",
+          "OTP_SECRET",
+          "RECEIPT_SECRET",
+          "ADMIN_TOKEN",
+          "RESEND_API_KEY"
+        ]
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "hdrl-beta-production",
+          "database_id": "00000000-0000-0000-0000-000000000002"
+        }
+      ],
+      "vars": {
+        "ENVIRONMENT": "production",
+        "ALLOWED_ORIGINS": "https://hdrlframework.org",
+        "EMAIL_PROVIDER": "resend",
+        "EMAIL_FROM": "HDRL beta <report@beta.hdrlframework.org>",
+        "PRIVACY_CONTACT_EMAIL": "privacy@hdrlframework.org",
+        "ALLOW_DEVELOPMENT_OTP_RETURN": "false"
+      }
+    }
+  }
+}
