@@ -57,15 +57,15 @@ The following non-public staging configuration was activated and tested on 7 Aug
 - Supabase uses `smtp.ionos.co.uk`, port `587`, STARTTLS, username `report@hdrlframework.org` and sender name `HDRL Framework beta`;
 - Supabase's separate pre-sign-in email-confirmation step is disabled so new and returning users use the same passwordless OTP template;
 - both the confirm-sign-up and magic-link templates contain the six-digit token, a 10-minute expiry statement, the privacy contact and no link; and
-- a synthetic request was delivered through IONOS and the correct OTP returned HTTP 200 from Supabase verification.
+- after operator credential rotation, a synthetic request was delivered through IONOS, the correct OTP returned HTTP 200 from Supabase verification, reuse returned HTTP 403 and the synthetic Auth identity was deleted; and
+- delivery through the `privacy@hdrlframework.org` forwarding route was confirmed by the operator.
 
 Before public activation:
 
-1. confirm the privacy forwarding test arrived at the monitored destination;
-2. place the mailbox credential in the approved password manager and document the named operators without copying it into this repository;
-3. test a wrong code, code reuse, expiry, rate limiting and registered/unregistered timing with synthetic addresses;
-4. check that Auth, Function and IONOS logs contain no email body, OTP, assessment information or report content; and
-5. record privacy/processor, security and operational approval in the release evidence.
+1. retain the rotated mailbox credential in the approved password manager and document the named operators without copying it into this repository;
+2. test a wrong code, expiry, rate limiting and registered/unregistered timing with synthetic addresses;
+3. check that Auth, Function and IONOS logs contain no email body, OTP, assessment information or report content; and
+4. record privacy/processor, security and operational approval in the release evidence.
 
 ## Public activation
 

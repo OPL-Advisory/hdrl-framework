@@ -46,7 +46,7 @@ Send verification codes from `report@hdrlframework.org` using `smtp.ionos.co.uk`
 
 ## Release conditions
 
-The committed configuration stays off until the controller, privacy contact, lawful bases/LIA, processor DPAs and transfers, retention/recovery treatment, incident route, security tests and public privacy notice have named approval. IONOS SMTP and a token-only six-digit OTP journey were activated and tested with a synthetic identity on 7 August 2026; the remaining negative, expiry, abuse and log-content tests still require release evidence. Production requires a separate explicit change that publishes the browser-safe key and enables the Supabase and Plausible flags.
+The committed configuration stays off until the controller, privacy contact, lawful bases/LIA, processor DPAs and transfers, retention/recovery treatment, incident route, security tests and public privacy notice have named approval. IONOS SMTP and a token-only six-digit OTP journey were activated and tested with a synthetic identity on 7 August 2026; delivery and single use passed after operator credential rotation. The remaining wrong-code, expiry, abuse and log-content tests still require release evidence. Production requires a separate explicit change that publishes the browser-safe key and enables the Supabase and Plausible flags.
 
 ## Revisit triggers
 
