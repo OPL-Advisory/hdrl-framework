@@ -60,21 +60,22 @@ The research prototype does not transmit assessment information and must remain 
 
 ## Prototype verification record
 
-The following checks were completed against this branch on 30 July 2026 using synthetic content:
+The following checks were completed against this branch on 6 August 2026 using synthetic content. The second-iteration checks include migration of the earlier on-device draft schema:
 
 | Check | Result |
 |:--|:--|
-| JavaScript syntax and release invariant validator | Passed. Framework 1.0.1, catalogue 1.0.2, tool 0.1.0-prototype; eight rapid prompts; 64 reachable indicators; two same-origin data reads; no file input or external submission. |
+| JavaScript syntax and release invariant validator | Passed. Framework 1.0.1, catalogue 1.0.2, tool 0.2.0-prototype; eight rapid prompts; 64 reachable indicators; two same-origin data reads; no file input or external submission. |
 | Existing catalogue and Presentation Kit validators | Passed. 64 indicators, 92 slides and canonical wording/version checks remained intact. |
-| MkDocs strict build and site coherence | Passed. 32 pages, 2,797 internal links/anchors, unique descriptions and canonical framework download checksum. |
+| MkDocs strict build and site coherence | Passed. The strict build completed; coherence checked 32 indexed pages, 2,797 internal links/anchors, unique descriptions and the canonical framework download checksum. Prototype design documents are `noindex`. |
 | New-draft individual journey | Passed from boundary validation through eight rapid prompts, evidence-led review, report gate and full report. |
 | Framework fidelity | The workspace rendered 64 indicator tasks; A.1.1 rendered all five exact catalogue descriptors and its published minimum-evidence wording. |
-| Evidence and output safety | An HTML-like synthetic rationale rendered as inert text; no injected image appeared. Evidence entry preserved unsaved judgement fields. CSV formula-prefix protection is enforced by the release validator. |
-| Reporting | The report rendered all 64 indicator rows, version provenance, separate rapid/evidence-led sections, rule traces, limitations and no overall score. JSON and CSV generation paths are present; browser download-event capture was not reliable in the test harness and needs a normal-browser regression check. |
+| Evidence and output safety | Evidence entry now uses references only and omits “level supported” and review-period questions. Three-nation evidence examples are de-identified prompts, not proof. CSV formula-prefix protection is enforced by the release validator. |
+| Reporting | The report rendered the accessible impression-by-certainty matrix, domain Core median and observed range, all 64 indicator rows, domain constraints, version provenance, rule traces, limitations and no overall score. JSON and CSV generation paths are present; browser download-event capture still needs a normal-browser regression check. |
 | Save and return | Passed across browser reload using the same on-device IndexedDB draft. |
-| Responsive reflow | Passed at 390px and 320px browser viewports for the report, indicator workspace and long indicator entry. Measured document width equalled viewport width with no page-level horizontal overflow. |
+| Responsive reflow | Rechecked at a 320px embedded viewport: document width equalled viewport width with no page-level horizontal overflow. The 5-column profile matrix uses a labelled internal scroll region (240px viewport, 660px table) and the fallback domain list reflows to one column. |
 | Analytics and indexing | Built prototype contains `noindex, nofollow` and no Plausible script; other site pages retain aggregate analytics. |
-| Browser diagnostics | No application errors or warnings during the completed journey. |
+| Progressive interaction and focus | Passed. Deferred rapid choices hide certainty; unstarted indicators show only the binary decision; the three no-judgement reasons and short explanation reveal together; judgement, certainty and evidence reveal only when relevant. Next-domain and next-indicator actions put the new heading in focus and return the assessment root to the top of the viewport. |
+| Browser diagnostics | No application errors or warnings during the second-iteration interaction tests. |
 
 This is not a substitute for the still-required VoiceOver/NVDA test, independent WCAG audit, tagged-PDF test, usability research, penetration test or production authentication/workspace-isolation testing.
 
@@ -109,7 +110,7 @@ The application report is the executable sample for an individual journey. A tea
 - The canonical catalogue is the source for indicator names, descriptors and minimum evidence. Product guidance never silently edits it.
 - Rapid impressions teach the eight-domain shape and are not HDRL scores.
 - Evidence-led results describe the evidence available at a date within a stated boundary.
-- The report shows missing evidence, uncertainty and unassessed scope rather than imputing optimistic values.
+- The report shows missing evidence, low certainty and unassessed scope rather than imputing optimistic values.
 - Rules generate questions and carry forward user actions; they do not invent authoritative recommendations.
 - No overall score, rank, badge, pass/fail or participation decision is produced.
 - Team distributions remain visible after calibration.

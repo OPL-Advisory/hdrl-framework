@@ -17,13 +17,13 @@ description: A synthetic team report showing independent distributions, calibrat
 | Boundary | The service’s current operational capability; national policy is inherited context |
 | Independent round | Four contributors submitted before seeing one another’s answers |
 | Calibration | Facilitated meeting with the owner, three contributors and one read-only reviewer |
-| Versions | HDRL Framework 1.0.1 · catalogue 1.0.2 · tool/team-workflow design 0.1.0 · guidance 0.1.0 · rules 0.1.0 · report 0.1.0 |
+| Versions | HDRL Framework 1.0.1 · catalogue 1.0.2 · tool/team-workflow design 0.2.0 · guidance 0.2.0 · rules 0.2.0 · report 0.2.0 |
 
 The independent distributions are evidence about differing knowledge and interpretation. The consensus column is a facilitated working judgement, not an average or objective truth.
 
 ## Calibration overview
 
-| Indicator | Independent responses | Why selected | Facilitated result | Remaining uncertainty |
+| Indicator | Independent responses | Why selected | Facilitated result | Remaining uncertainty / low certainty |
 |:--|:--|:--|:--|:--|
 | A.1.1 · Core Dataset Availability | L2 × 1; L3 × 2; L4 × 1 | Three-level span and different coverage denominators | L3 · Defined | Primary-care coverage denominator needs confirmation |
 | A.1.2 · Data Currency & Timeliness | L3 × 3; Not known × 1 | One participant could not locate refresh evidence | L3 · Defined | Two datasets lack a current refresh log |

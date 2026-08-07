@@ -146,7 +146,7 @@ OPL Advisory Ltd is proposed to operate the HDRL self-assessment service and act
 
 ### What we collect and why
 
-We collect the account and service information needed to secure your workspace, save your assessment, generate your report and respond to your requests. Your assessment may contain maturity judgements, uncertainty, rationale, improvement notes and references to evidence. Do not enter patient-level data, personal confidential data, credentials or information that is more sensitive than needed.
+We collect the account and service information needed to secure your workspace, save your assessment, generate your report and respond to your requests. Your assessment may contain maturity judgements, certainty, rationale, domain-level capacity notes, improvement notes and references to evidence. Do not enter patient-level data, personal confidential data, credentials or information that is more sensitive than needed.
 
 We do not use assessment data to accredit you, decide funding or participation, advertise to you, profile individuals or sell data. We do not publish identifiable assessment information.
 

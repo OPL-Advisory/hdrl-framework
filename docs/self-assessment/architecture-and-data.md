@@ -70,9 +70,10 @@ Email OTP avoids putting invitation or authentication secrets in URLs. Supabase 
 | `memberships` | workspace, user or invited email digest, role, invitation state/expiry, joined date |
 | `assessment_releases` | framework, catalogue, tool, guidance, rules and report versions; hashes; immutable release timestamp |
 | `assessments` | workspace, release, stage, round, status, assessment date, local conventions |
-| `rapid_responses` | assessment, domain, impression band, uncertainty, note, author, timestamp |
-| `indicator_responses` | assessment, indicator ref, applicability status/reason, maturity judgement, uncertainty, rationale, capacity note, improvement note, author, timestamps |
-| `evidence_records` | workspace, title, type, URL/internal reference, owner/source, evidence date, review period, note, limitation, review status |
+| `rapid_responses` | assessment, domain, impression band or deferred status, certainty, note, author, timestamp |
+| `indicator_responses` | assessment, indicator ref, judgement decision, no-judgement status/reason, maturity judgement, certainty, rationale, improvement note, author, timestamps |
+| `domain_capacity_notes` | assessment, domain ref, operating-capacity or constraint note, author, timestamps |
+| `evidence_records` | workspace, title, type, URL/internal reference, owner/source, evidence date, short note, limitation, review status |
 | `evidence_links` | evidence record, indicator response, supported level or claim |
 | `round_submissions` | assessment, participant, submitted/withdrawn timestamps, hidden-until-close state |
 | `consensus_decisions` | indicator, independent distribution snapshot, agreed judgement/status, rationale, facilitator, participants, date |

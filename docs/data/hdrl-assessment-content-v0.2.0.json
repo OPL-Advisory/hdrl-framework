@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "content_id": "hdrl-self-assessment-content",
+  "content_version": "0.2.0",
+  "tool_version": "0.2.0-prototype",
+  "recommendation_rules_version": "0.2.0",
+  "report_generation_version": "0.2.0",
+  "framework_version": "1.0.1",
+  "catalogue_version": "1.0.2",
+  "status": "research-prototype",
+  "rapid_method": {
+    "name": "Rapid first pass",
+    "estimated_minutes": "5–10",
+    "question_count": 8,
+    "interpretation": "Domain-level initial impressions based on current knowledge. They are not indicator scores, an evidence-led HDRL assessment or a benchmark."
+  },
+  "rapid_questions": [
+    {
+      "domain": "A",
+      "question": "How consistently are the data needed for research available, linkable and kept up to date within this assessment boundary?",
+      "consider": "Consider coverage, refresh cycles, linkage, identifiers and whether data can move between the relevant services in routine practice—not only in a pilot.",
+      "why": "Research cannot be dependable when required data are incomplete, stale, hard to link or confined to disconnected services."
+    },
+    {
+      "domain": "B",
+      "question": "How consistently can data be understood, quality-assessed and combined for pooled or federated analysis?",
+      "consider": "Consider terminology, metadata, quality monitoring, common data models, interoperability, curated datasets and reproducible definitions—not simply whether data can be accessed.",
+      "why": "Available data still create delay and risk when meaning, provenance, quality or interoperability are unclear."
+    },
+    {
+      "domain": "C",
+      "question": "How clear, lawful, proportionate and predictable are the routes for approving and enabling research access?",
+      "consider": "Consider legal basis, access decisions, ethics, cross-border working, disclosure control, researcher accreditation and permissions as they operate in practice.",
+      "why": "Trusted research needs safeguards and decision routes that are understandable, proportionate and dependable—not governance documents alone."
+    },
+    {
+      "domain": "D",
+      "question": "How well does the service support external researchers, cross-organisation collaboration and reproducible delivery?",
+      "consider": "Consider active users, support, research outputs, multi-site delivery, training, trials and appropriate commercial access.",
+      "why": "Readiness should be visible in dependable research delivery and user support, not infrastructure claims alone."
+    },
+    {
+      "domain": "E",
+      "question": "How clearly does the service demonstrate transparency, public benefit and meaningful public involvement?",
+      "consider": "Consider public registers, accessible reporting, lay governance, opt-outs, engagement and independent learning or assurance.",
+      "why": "Trusted health-data research depends on legitimacy, useful transparency and evidence that public benefit shapes decisions."
+    },
+    {
+      "domain": "F",
+      "question": "How resilient are the funding, operating model and evidence of value needed to sustain the service?",
+      "consider": "Consider funding horizon, financial risk, pricing, cost recovery, partnerships and credible evidence of value.",
+      "why": "Capability that cannot be maintained, staffed or funded is not dependable operating capacity."
+    },
+    {
+      "domain": "G",
+      "question": "How well do workforce capacity, specialist skills, clear roles and service culture support dependable delivery?",
+      "consider": "Consider staffing headroom, defined responsibilities, specialist skills, retention, workforce planning and collaboration.",
+      "why": "A capable platform can still fail to deliver when specialist people, operating headroom or service behaviours are missing."
+    },
+    {
+      "domain": "H",
+      "question": "How secure, usable, resilient and scalable is the technical environment under realistic demand?",
+      "consider": "Consider secure environments, user experience, compute, storage, security operations, privacy-enhancing technology and responsible AI.",
+      "why": "Technical readiness requires secure and supportable operation under realistic demand—not a one-off deployment."
+    }
+  ],
+  "impression_bands": [
+    {"value": "starting", "label": "Starting", "description": "Capability appears limited, fragmented or mainly informal."},
+    {"value": "developing", "label": "Developing", "description": "Plans and early capability exist, but routine delivery appears uneven."},
+    {"value": "defined", "label": "Defined", "description": "Responsibilities and processes appear documented and in regular use."},
+    {"value": "managed", "label": "Managed", "description": "Performance appears measured, standardised and actively managed."},
+    {"value": "improving", "label": "Continuously improving", "description": "Learning, comparison and improvement appear systematic and sustained."}
+  ],
+  "domain_guidance": {
+    "A": {"common_mistake": "Counting data that exist somewhere as research-ready without checking coverage, refresh, linkage permissions and routine delivery.", "dependencies": ["B: meaning and quality", "C: lawful access and linkage governance", "H: secure infrastructure and data flows"]},
+    "B": {"common_mistake": "Treating a one-off mapping or data dictionary as evidence of consistently governed semantics, quality and interoperability.", "dependencies": ["A: representative and current source data", "D: researcher feedback and reproducibility", "H: metadata, model and pipeline tooling"]},
+    "C": {"common_mistake": "Equating a written policy with an operating pathway that is understood, measured and used consistently.", "dependencies": ["A: data-controller and linkage arrangements", "E: public benefit and transparency", "H: technical enforcement and audit"]},
+    "D": {"common_mistake": "Counting projects or publications without defining the denominator, period, service contribution or quality of support.", "dependencies": ["A–C: usable data and workable governance", "G: service and research support capacity", "H: usable analysis environments"]},
+    "E": {"common_mistake": "Treating one-way communications as meaningful involvement, or publication alone as evidence that transparency is useful.", "dependencies": ["C: governance and public-benefit decisions", "D: evidence of research use and benefit", "G: engagement capacity"]},
+    "F": {"common_mistake": "Treating current funding as sustainability without testing renewal risk, cost recovery, demand and operating liabilities.", "dependencies": ["D: demand and value evidence", "G: affordable workforce capacity", "H: lifecycle and infrastructure cost"]},
+    "G": {"common_mistake": "Counting posts rather than funded capacity, specialist competence, retention risk and headroom for real demand.", "dependencies": ["D: user support and service demand", "F: sustainable funding", "H: technical operating skills"]},
+    "H": {"common_mistake": "Treating certification, procurement or a successful pilot as evidence of secure, usable and scalable operation.", "dependencies": ["A–B: data-flow and quality requirements", "C: governance controls and assurance", "G: operational skills and capacity"]}
+  },
+  "domain_evidence_examples": {
+    "A": ["Dataset inventory with coverage, refresh and access information", "Linkage quality or turnaround metrics", "Data-sharing or federation operating procedures", "Records of routine pooled or federated data use"],
+    "B": ["Metadata catalogue or data dictionary with coverage information", "Terminology or common-data-model mapping and validation records", "Data-quality dashboard and improvement log", "Reusable dataset, phenotype or transformation documentation"],
+    "C": ["Published access route, decision criteria and applicant guidance", "Legal-basis, controller or data-sharing documentation", "Access, ethics or disclosure-control turnaround measures", "Redacted decision, audit or mutual-recognition records"],
+    "D": ["Service demand, project delivery and time-to-output measures", "Researcher support standards and satisfaction findings", "Publication, impact or reproducibility tracking", "Records of multi-site, training, trial or partnership delivery"],
+    "E": ["Public project register and accessible transparency reporting", "Public-benefit decision criteria and examples", "Public-involvement membership, decisions and feedback loops", "Complaints, opt-out, engagement or independent-learning records"],
+    "F": ["Approved budget, funding agreement and forward financial plan", "Risk, scenario-planning and cost-recovery records", "Pricing or partnership governance documentation", "Value, benefit or economic-impact reporting"],
+    "G": ["Workforce plan, funded establishment and vacancy measures", "Skills matrix, role framework and development records", "Turnover, retention, survey or succession evidence", "Service standards, collaboration and knowledge-sharing records"],
+    "H": ["Architecture, capacity and service-management documentation", "User onboarding, accessibility or satisfaction measures", "Certification, audit, penetration-test and remediation records", "Backup, incident, security-operations, PET or responsible-AI evidence"]
+  },
+  "evidence_guidance": {
+    "provenance": "Domain examples are de-identified patterns synthesised from the Scotland, Northern Ireland and Wales HDRL applications. Indicator-specific ideas are drawn at runtime from the canonical catalogue's minimum-evidence wording.",
+    "caution": "Examples are prompts, not a checklist, required evidence set or proof that a maturity level has been met. Evidence must match the stated assessment boundary and date."
+  },
+  "recommendation_rules": [
+    {"id": "R-EVIDENCE-GAP", "category": "provisional_interpretation", "when": "A maturity judgement has no linked evidence record.", "output": "Treat the judgement as provisional and ask what document, metric, audit record or other source could substantiate it."},
+    {"id": "R-LOW-CERTAINTY", "category": "question_to_investigate", "when": "A response has low certainty or is not known.", "output": "Identify the person closest to this capability and the evidence needed to resolve the uncertainty."},
+    {"id": "R-NOT-ASSESSED", "category": "question_to_investigate", "when": "An indicator has not been assessed.", "output": "Decide whether the indicator is relevant, who should review it and by when."},
+    {"id": "R-USER-ACTION", "category": "potential_improvement_action", "when": "The assessor records an improvement note.", "output": "Carry the assessor's own proposed action into the report with a link back to the indicator; do not invent an action."},
+    {"id": "R-TEAM-DISAGREEMENT", "category": "question_to_investigate", "when": "Independent team judgements span more than one adjacent maturity level or use different applicability statuses.", "output": "Review interpretation, scope and evidence before agreeing a consensus; do not average the responses."}
+  ]
+}

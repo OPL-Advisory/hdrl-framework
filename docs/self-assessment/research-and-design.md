@@ -40,12 +40,12 @@ These categories must remain distinct. The legal interpretation needs formal UK 
 ## What HDRL should learn
 
 1. **Two visibly different methods.** The rapid pass is eight domain-level impressions and takes about 5–10 minutes. It teaches the scope of HDRL but does not produce indicator scores or a single maturity number. The evidence-led pass uses all applicable canonical indicators.
-2. **A matrix, not a verdict.** Show patterns, gaps, uncertainty and dependencies. Never calculate an overall HDRL score in the product.
+2. **A matrix, not a verdict.** Show impression, certainty, evidence gaps and dependencies. Never calculate an overall HDRL score in the product.
 3. **Scope before score.** Record the service or ecosystem, unit of assessment, organisations/capabilities included, time boundary, intended use and local scoring conventions.
-4. **Evidence beside judgement.** A response has an applicability status, judgement, rationale, uncertainty and evidence records. Capability, evidence visibility and operating capacity are discussed separately.
+4. **Evidence beside judgement.** A response starts with a binary decision to make a judgement or explain why not. Judgements have a canonical level, rationale, certainty and lightweight evidence references. Operating capacity is recorded once at domain level rather than repeated for every indicator.
 5. **Progressive disclosure.** Keep canonical wording and the chosen maturity descriptors visible; place examples, evidence guidance, common mistakes and dependencies in expandable sections.
 6. **Independent team input before calibration.** Owners can see completion but not answers until the round closes. Calibration begins with the range, distribution, rationales and evidence—not an average.
-7. **Traceable recommendations.** Initial recommendations come only from explicit rules, recorded evidence gaps, uncertainty, dependencies and user-entered improvement notes.
+7. **Traceable recommendations.** Initial recommendations come only from explicit rules, recorded evidence gaps, low certainty, dependencies and user-entered improvement notes.
 8. **HTML first, structured exports alongside.** The web report is the accessible source; print-to-PDF is a convenience rendition. JSON preserves the full structure and CSV supports analysis.
 
 ## Users and jobs to be done

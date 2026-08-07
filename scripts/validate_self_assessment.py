@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CATALOGUE_PATH = ROOT / "docs" / "data" / "hdrl-indicators-v1.json"
 CONTENT_PATH = (
-    ROOT / "docs" / "data" / "hdrl-assessment-content-v0.1.0.json"
+    ROOT / "docs" / "data" / "hdrl-assessment-content-v0.2.0.json"
 )
 APP_PATH = ROOT / "docs" / "assets" / "js" / "self-assessment.js"
 PAGE_PATH = ROOT / "docs" / "self-assessment" / "index.md"
@@ -19,7 +19,7 @@ MKDOCS_PATH = ROOT / "mkdocs.yml"
 EXPECTED_DOMAINS = list("ABCDEFGH")
 EXPECTED_RULES = {
     "R-EVIDENCE-GAP",
-    "R-HIGH-UNCERTAINTY",
+    "R-LOW-CERTAINTY",
     "R-NOT-ASSESSED",
     "R-USER-ACTION",
     "R-TEAM-DISAGREEMENT",
@@ -59,10 +59,10 @@ def main() -> None:
         "Assessment content catalogue version does not match catalogue",
     )
     require(
-        content["tool_version"] == "0.1.0-prototype"
-        and content["content_version"] == "0.1.0"
-        and content["recommendation_rules_version"] == "0.1.0"
-        and content["report_generation_version"] == "0.1.0",
+        content["tool_version"] == "0.2.0-prototype"
+        and content["content_version"] == "0.2.0"
+        and content["recommendation_rules_version"] == "0.2.0"
+        and content["report_generation_version"] == "0.2.0",
         "Assessment content release versions are unexpected",
     )
 
@@ -80,6 +80,11 @@ def main() -> None:
     require(
         set(content["domain_guidance"]) == set(EXPECTED_DOMAINS),
         "Every domain needs versioned guidance",
+    )
+    require(
+        set(content["domain_evidence_examples"]) == set(EXPECTED_DOMAINS)
+        and all(len(items) >= 4 for items in content["domain_evidence_examples"].values()),
+        "Every domain needs at least four three-nation evidence prompts",
     )
     require(
         {rule["id"] for rule in content["recommendation_rules"]}
@@ -135,6 +140,25 @@ def main() -> None:
         and "indicator.minimum_evidence[level]" in app,
         "Evidence-led UI must render every canonical indicator and descriptor",
     )
+    require(
+        '"indicator-decision"' in app
+        and 'id="hdrl-nonjudgement-panel"' in app
+        and "How certain are you?" in app,
+        "Progressive indicator decision and certainty controls are missing",
+    )
+    require(
+        "domain_evidence_examples" in app
+        and "indicatorEvidenceIdeas" in app
+        and "evidence-review-period" not in app
+        and "evidence-supports" not in app,
+        "Simplified evidence guidance or fields are incorrect",
+    )
+    require(
+        "rapidProfileMatrix" in app
+        and "Observed range" in app
+        and "domain_capacity_notes" in app,
+        "Profile, report range or domain-capacity output is missing",
+    )
 
     require("robots: noindex, nofollow" in page, "Prototype page must remain noindex")
     require("analytics: false" in page, "Prototype page must disable public-site analytics")
@@ -153,6 +177,7 @@ def main() -> None:
 
     for filename in (
         "research-and-design.md",
+        "persona-review-v0.2.md",
         "product-requirements.md",
         "architecture-and-data.md",
         "privacy-and-data-flow.md",
@@ -169,7 +194,7 @@ def main() -> None:
     print(
         "Versions: "
         f"HDRL {js_versions['framework']}; catalogue {js_versions['catalogue']}; "
-        f"tool {js_versions['tool']}; guidance/rules/report 0.1.0"
+        f"tool {js_versions['tool']}; guidance/rules/report 0.2.0"
     )
     print("Rapid questions: 8; canonical indicators reachable: 64; external data submissions: 0")
 

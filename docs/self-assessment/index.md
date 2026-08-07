@@ -21,7 +21,7 @@ This prototype explores how people and teams could learn the **Health Data Readi
   id="hdrl-assessment-root"
   class="hdrl-assessment"
   data-catalogue-url="../../data/hdrl-indicators-v1.json"
-  data-content-url="../../data/hdrl-assessment-content-v0.1.0.json"
+  data-content-url="../../data/hdrl-assessment-content-v0.2.0.json"
   aria-busy="true"
 >
   <p>Loading the assessment prototype…</p>
@@ -48,6 +48,7 @@ Do not enter patient-level data, personal confidential data, passwords, API keys
 <div class="hdrl-button-grid hdrl-button-grid--two" markdown>
 
 [Read the design rationale](research-and-design.md){ .md-button }
+[Review the v0.2 persona pass](persona-review-v0.2.md){ .md-button }
 [Review privacy and data flow](privacy-and-data-flow.md){ .md-button }
 [Read the product requirements](product-requirements.md){ .md-button }
 [Review architecture and data](architecture-and-data.md){ .md-button }

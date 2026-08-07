@@ -7,10 +7,10 @@
   const VERSIONS = {
     framework: "1.0.1",
     catalogue: "1.0.2",
-    tool: "0.1.0-prototype",
-    guidance: "0.1.0",
-    rules: "0.1.0",
-    report: "0.1.0"
+    tool: "0.2.0-prototype",
+    guidance: "0.2.0",
+    rules: "0.2.0",
+    report: "0.2.0"
   };
 
   const DB_NAME = "hdrl-self-assessment-prototype";
@@ -66,7 +66,7 @@
 
   function defaultState() {
     return {
-      schemaVersion: 1,
+      schemaVersion: 2,
       id: makeId(),
       createdAt: nowIso(),
       updatedAt: nowIso(),
@@ -85,6 +85,7 @@
       },
       rapid: {},
       indicators: {},
+      domainNotes: {},
       registration: {
         unlocked: false,
         name: "",
@@ -105,13 +106,13 @@
   function indicatorResponse(ref) {
     if (!state.indicators[ref]) {
       state.indicators[ref] = {
+        decision: "",
         status: "unstarted",
         level: "",
-        uncertainty: "",
+        certainty: "",
         rationale: "",
-        capacityNote: "",
         improvementNote: "",
-        applicabilityReason: "",
+        statusReason: "",
         evidence: [],
         updatedAt: null
       };
@@ -216,11 +217,10 @@
     state.view = view;
     scheduleSave();
     render();
-    requestAnimationFrame(() => {
-      const focusTarget = document.getElementById(focusId);
-      focusTarget?.focus();
-      root.scrollIntoView({ block: "start", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-    });
+  }
+
+  function certaintyLabel(value) {
+    return value ? `${value[0].toUpperCase()}${value.slice(1)} certainty` : "Certainty not recorded";
   }
 
   function shell(body) {
@@ -260,7 +260,7 @@
           <p>Review every relevant canonical indicator and record what supports the judgement.</p>
           <dl>
             <div><dt>Time</dt><dd>Several sessions</dd></div>
-            <div><dt>Evidence</dt><dd>References, rationale and uncertainty</dd></div>
+            <div><dt>Evidence</dt><dd>References, rationale and certainty</dd></div>
             <div><dt>Output</dt><dd>Traceable assessment report</dd></div>
           </dl>
         </article>
@@ -274,11 +274,10 @@
         response.status !== "unstarted"
         || response.evidence.length
         || response.rationale
-        || response.capacityNote
         || response.improvementNote
     );
     const hasDraft = Boolean(
-      state.boundary.title || Object.keys(state.rapid).length || hasIndicatorWork
+      state.boundary.title || Object.keys(state.rapid).length || Object.keys(state.domainNotes).length || hasIndicatorWork
     );
     return shell(`
       <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
@@ -418,7 +417,8 @@
   function rapidView() {
     const q = content.rapid_questions[state.rapidIndex];
     const domain = catalogue.domains.find((item) => item.ref === q.domain);
-    const response = state.rapid[q.domain] || { impression: "", uncertainty: "", note: "" };
+    const response = state.rapid[q.domain] || { impression: "", certainty: "", note: "" };
+    const hasImpression = content.impression_bands.some((band) => band.value === response.impression);
     const completed = Object.values(state.rapid).filter((item) => item.impression).length;
     const percent = Math.round((completed / content.rapid_questions.length) * 100);
     return shell(`
@@ -438,15 +438,20 @@
           <fieldset class="hdrl-impression-options">
             <legend>Choose the closest initial impression</legend>
             <p class="hdrl-hint">These are impression bands, not HDRL indicator scores.</p>
-            ${content.impression_bands.map((band) => radio("rapid-impression", band.value, band.label, band.description, response.impression)).join("")}
-            ${radio("rapid-impression", "not_known", "Not known", "I do not know enough to form an impression.", response.impression)}
-            ${radio("rapid-impression", "not_assessed", "Not assessed", "I am intentionally leaving this domain for later.", response.impression)}
+            <div class="hdrl-impression-band-group">
+              ${content.impression_bands.map((band) => radio("rapid-impression", band.value, band.label, band.description, response.impression)).join("")}
+            </div>
+            <div class="hdrl-impression-deferred">
+              <p><strong>Cannot make an initial impression</strong></p>
+              ${radio("rapid-impression", "not_known", "Not known", "I do not know enough to form an impression.", response.impression)}
+              ${radio("rapid-impression", "not_assessed", "Not assessed", "I am intentionally leaving this domain for later.", response.impression)}
+            </div>
           </fieldset>
-          <fieldset class="hdrl-inline-radios">
+          <fieldset class="hdrl-inline-radios" id="hdrl-rapid-certainty-panel" ${hasImpression ? "" : "hidden"}>
             <legend>How certain are you?</legend>
-            ${radio("rapid-uncertainty", "low", "Low uncertainty", "I am fairly confident in this impression.", response.uncertainty)}
-            ${radio("rapid-uncertainty", "medium", "Some uncertainty", "Important details may change this impression.", response.uncertainty)}
-            ${radio("rapid-uncertainty", "high", "High uncertainty", "This is a tentative view.", response.uncertainty)}
+            ${radio("rapid-certainty", "high", "High", "I am fairly certain this impression reflects the current position.", response.certainty)}
+            ${radio("rapid-certainty", "medium", "Medium", "Some important details could change this impression.", response.certainty)}
+            ${radio("rapid-certainty", "low", "Low", "This is tentative and should be checked.", response.certainty)}
           </fieldset>
           ${textareaField("rapid-note", "Optional note", response.note, "What shaped this impression, or what should you check later?", false, "", 600)}
           <div class="hdrl-assessment-actions">
@@ -459,6 +464,58 @@
     `);
   }
 
+  function rapidProfileMatrix({ interactive = true, id = "rapid-profile" } = {}) {
+    const unknown = [];
+    const rows = ["high", "medium", "low"];
+    const matrix = rows.map((certainty) => `
+      <tr>
+        <th scope="row">${certainty[0].toUpperCase()}${certainty.slice(1)}</th>
+        ${content.impression_bands.map((band) => {
+          const domains = catalogue.domains.filter((domain) => {
+            const response = state.rapid[domain.ref] || {};
+            return response.impression === band.value && response.certainty === certainty;
+          });
+          return `<td data-band="${band.value}" data-certainty="${certainty}">
+            ${domains.map((domain) => interactive
+              ? `<button type="button" class="hdrl-domain-dot" style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}" data-action="rapid-edit" data-domain="${domain.ref}" aria-label="Domain ${domain.ref}, ${esc(domain.name)}: ${esc(band.label)}, ${certainty} certainty">${domain.ref}</button>`
+              : `<span class="hdrl-domain-dot" style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}" title="${esc(domain.name)}">${domain.ref}<span class="hdrl-assessment-sr"> · ${esc(domain.name)}</span></span>`
+            ).join("") || `<span class="hdrl-empty-cell" aria-hidden="true">—</span>`}
+          </td>`;
+        }).join("")}
+      </tr>
+    `).join("");
+    catalogue.domains.forEach((domain) => {
+      const response = state.rapid[domain.ref] || {};
+      if (!content.impression_bands.some((band) => band.value === response.impression) || !response.certainty) {
+        unknown.push({ domain, response });
+      }
+    });
+    return `
+      <div class="hdrl-profile-visual" aria-labelledby="${id}-title">
+        <div class="hdrl-profile-visual__heading">
+          <div>
+            <h3 id="${id}-title">Impression by certainty</h3>
+            <p>Position shows an impression band and certainty—not an evidence-led HDRL score.</p>
+          </div>
+          <span class="hdrl-profile-arrow" aria-hidden="true">Lower impression → Higher impression</span>
+        </div>
+        <div class="hdrl-profile-matrix-wrap" role="region" aria-label="Rapid profile matrix" tabindex="0">
+          <table class="hdrl-profile-matrix">
+            <caption class="hdrl-assessment-sr">Domains arranged by initial impression and certainty</caption>
+            <thead><tr><th scope="col">Certainty</th>${content.impression_bands.map((band) => `<th scope="col">${esc(band.label)}</th>`).join("")}</tr></thead>
+            <tbody>${matrix}</tbody>
+          </table>
+        </div>
+        ${unknown.length ? `<div class="hdrl-profile-unplaced"><strong>Not positioned on the matrix</strong><div>${unknown.map(({ domain, response }) => {
+          const label = IMPRESSION_LABELS[response.impression] || "Not answered";
+          return interactive
+            ? `<button type="button" data-action="rapid-edit" data-domain="${domain.ref}" style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><strong>${domain.ref}</strong><span>${esc(domain.name)}</span><small>${esc(label)}${response.impression && !["not_known", "not_assessed"].includes(response.impression) ? " · certainty not recorded" : ""}</small></button>`
+            : `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><strong>${domain.ref}</strong><span>${esc(domain.name)}</span><small>${esc(label)}</small></div>`;
+        }).join("")}</div></div>` : ""}
+      </div>
+    `;
+  }
+
   function rapidSummaryView() {
     const answered = Object.values(state.rapid).filter((item) => item.impression).length;
     return shell(`
@@ -466,7 +523,10 @@
         <div class="hdrl-progress-label">Stage 1 complete · ${answered} of 8 domains answered</div>
         <h2 id="hdrl-view-title" tabindex="-1">Your preliminary learning profile</h2>
         <p class="hdrl-assessment-lede">This is a snapshot of initial impressions. It is not a full HDRL assessment and has no overall score.</p>
-        <div class="hdrl-rapid-profile">
+        ${rapidProfileMatrix({ interactive: true, id: "rapid-summary-profile" })}
+        <details class="hdrl-guidance">
+          <summary>View the profile as a domain list</summary>
+          <div class="hdrl-rapid-profile">
           ${catalogue.domains.map((domain) => {
             const response = state.rapid[domain.ref] || {};
             return `
@@ -474,12 +534,13 @@
                 <span>Domain ${domain.ref}</span>
                 <h3>${esc(domain.name)}</h3>
                 <strong>${esc(IMPRESSION_LABELS[response.impression] || "No impression recorded")}</strong>
-                <p>${response.uncertainty ? `${esc(response.uncertainty[0].toUpperCase() + response.uncertainty.slice(1))} uncertainty` : "Uncertainty not recorded"}</p>
+                <p>${esc(certaintyLabel(response.certainty))}</p>
                 <button type="button" class="hdrl-link-button" data-action="rapid-edit" data-domain="${domain.ref}">Change</button>
               </article>
             `;
           }).join("")}
-        </div>
+          </div>
+        </details>
         <div class="hdrl-assessment-callout">
           <h3>Now test the impression</h3>
           <p>The evidence-led pass opens all applicable indicators, the exact maturity descriptors and minimum-evidence guidance. You may discover that capability is stronger than its evidence—or that operating capacity is the real constraint.</p>
@@ -537,6 +598,24 @@
           ${statCard(s.notAssessed, "Not assessed", "including not started")}
           ${statCard(s.notApplicable, "Not applicable", "with reason")}
         </div>
+        <details class="hdrl-domain-notes">
+          <summary>Record domain-level operating capacity and constraints</summary>
+          <p>Keep this separate from maturity and evidence. Note whether the domain can operate reliably under current demand—for example staffing headroom, throughput, funding or technical capacity.</p>
+          <form id="hdrl-domain-notes-form">
+            <div class="hdrl-domain-note-grid">
+              ${catalogue.domains.map((domain) => textareaField(
+                `domain-capacity-${domain.ref}`,
+                `${domain.ref} · ${domain.name}`,
+                state.domainNotes[domain.ref] || "",
+                "Optional domain-level capacity or constraint note.",
+                false,
+                "",
+                1200
+              )).join("")}
+            </div>
+            <button type="submit" class="md-button">Save domain notes</button>
+          </form>
+        </details>
         <div class="hdrl-assessment-workspace">
           <aside class="hdrl-assessment-filters" aria-label="Filter indicators">
             <form id="hdrl-filter-form">
@@ -594,6 +673,25 @@
     `;
   }
 
+  function indicatorEvidenceIdeas(indicator) {
+    const canonicalIdeas = [...new Set(
+      LEVELS.flatMap((level) => indicator.minimum_evidence[level] || [])
+    )].slice(0, 4);
+    const domainIdeas = content.domain_evidence_examples[indicator.domain] || [];
+    return `
+      <details class="hdrl-evidence-ideas">
+        <summary>Evidence ideas for this indicator</summary>
+        <div class="hdrl-assessment-notice">
+          <strong>Prompts, not an exam or checklist.</strong> Use only evidence that fits this assessment boundary and date. These examples do not prove a maturity level.
+        </div>
+        ${canonicalIdeas.length ? `<h4>Indicator-specific prompts from the canonical catalogue</h4><ul>${canonicalIdeas.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>` : ""}
+        <h4>Patterns seen across the three-nation application</h4>
+        <ul>${domainIdeas.map((item) => `<li>${esc(item)}</li>`).join("")}</ul>
+        <p class="hdrl-hint">${esc(content.evidence_guidance.caution)}</p>
+      </details>
+    `;
+  }
+
   function indicatorView(errors = {}) {
     const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
     if (!indicator) return evidenceDashboardView();
@@ -601,6 +699,11 @@
     const domain = catalogue.domains.find((item) => item.ref === indicator.domain);
     const guidance = content.domain_guidance[indicator.domain];
     const index = catalogue.indicators.findIndex((item) => item.ref === indicator.ref);
+    const decision = response.decision || (response.status === "rated"
+      ? "rated"
+      : ["not_known", "not_assessed", "not_applicable"].includes(response.status)
+        ? "not_judged"
+        : "");
     const errorSummary = Object.keys(errors).length
       ? `<div class="hdrl-error-summary" role="alert" tabindex="-1" id="hdrl-indicator-errors">
           <h3>Check this indicator response</h3>
@@ -627,12 +730,20 @@
         ${errorSummary}
         <form id="hdrl-indicator-form" novalidate>
           <fieldset class="hdrl-status-options">
-            <legend>Applicability and assessment status</legend>
-            ${radio("indicator-status", "rated", "Make a maturity judgement", "Compare the available evidence with all five descriptors.", response.status)}
-            ${radio("indicator-status", "not_known", "Not known", "The right person or information is not currently available.", response.status)}
-            ${radio("indicator-status", "not_assessed", "Not assessed", "Relevant, but intentionally left for a later review.", response.status)}
-            ${radio("indicator-status", "not_applicable", "Not applicable", "Outside this explicit boundary; give a reason.", response.status)}
+            <legend>Will you make a maturity judgement?</legend>
+            <p class="hdrl-hint">Start with this choice. The form will show only the fields relevant to it.</p>
+            ${radio("indicator-decision", "rated", "Make a maturity judgement", "Compare the available evidence with all five canonical descriptors.", decision)}
+            ${radio("indicator-decision", "not_judged", "Do not make a judgement", "Record why this indicator cannot or will not be judged now.", decision)}
           </fieldset>
+          <div id="hdrl-nonjudgement-panel" ${decision === "not_judged" ? "" : "hidden"}>
+            <fieldset class="hdrl-status-options" id="indicator-nonjudgement">
+              <legend>Why are you not making a judgement?</legend>
+              ${radio("indicator-status", "not_known", "Not known", "The right person or information is not currently available.", response.status)}
+              ${radio("indicator-status", "not_assessed", "Not assessed", "Relevant, but intentionally left for a later review.", response.status)}
+              ${radio("indicator-status", "not_applicable", "Not applicable", "Outside this explicit assessment boundary.", response.status)}
+            </fieldset>
+            ${textareaField("indicator-status-reason", "Short explanation", response.statusReason, "Record the knowledge gap, planned follow-up or boundary reason. Missing evidence alone does not make an indicator not applicable.", true, errors["indicator-status-reason"], 800)}
+          </div>
           <div id="hdrl-level-panel" ${response.status === "rated" ? "" : "hidden"}>
             <fieldset class="hdrl-level-options">
               <legend>Canonical maturity descriptors</legend>
@@ -653,26 +764,24 @@
               `).join("")}
             </fieldset>
           </div>
-          <div id="hdrl-applicability-panel" ${response.status === "not_applicable" ? "" : "hidden"}>
-            ${textareaField("indicator-applicability", "Why is this not applicable?", response.applicabilityReason, "Describe the boundary or service decision. Do not use N/A merely because evidence is missing.", true, errors["indicator-applicability"], 800)}
-          </div>
-          <div class="hdrl-form-grid">
+          <div class="hdrl-form-grid" id="hdrl-judgement-details" ${response.status === "rated" ? "" : "hidden"}>
             <div class="hdrl-field">
-              <label for="indicator-uncertainty">Uncertainty</label>
-              <p class="hdrl-hint" id="indicator-uncertainty-hint">Separate confidence in your interpretation from the maturity judgement.</p>
-              <select id="indicator-uncertainty" name="indicator-uncertainty" aria-describedby="indicator-uncertainty-hint">
-                <option value="">Choose uncertainty</option>
-                <option value="low" ${response.uncertainty === "low" ? "selected" : ""}>Low uncertainty</option>
-                <option value="medium" ${response.uncertainty === "medium" ? "selected" : ""}>Some uncertainty</option>
-                <option value="high" ${response.uncertainty === "high" ? "selected" : ""}>High uncertainty</option>
+              <label for="indicator-certainty">How certain are you?</label>
+              <p class="hdrl-hint" id="indicator-certainty-hint">Record confidence in this interpretation separately from the maturity judgement.</p>
+              <select id="indicator-certainty" name="indicator-certainty" aria-describedby="indicator-certainty-hint">
+                <option value="">Choose certainty</option>
+                <option value="high" ${response.certainty === "high" ? "selected" : ""}>High</option>
+                <option value="medium" ${response.certainty === "medium" ? "selected" : ""}>Medium</option>
+                <option value="low" ${response.certainty === "low" ? "selected" : ""}>Low</option>
               </select>
             </div>
-            ${textareaField("indicator-rationale", "Rationale", response.rationale, "Why does the selected status or level best fit the current evidence?", false, "", 1800)}
+            ${textareaField("indicator-rationale", "Rationale", response.rationale, "Why does the selected level best fit the current evidence?", false, "", 1800)}
           </div>
-          <div class="hdrl-form-grid">
-            ${textareaField("indicator-capacity", "Operating-capacity note", response.capacityNote, "Record delivery headroom, staffing or volume constraints separately from capability and evidence.", false, "", 1200)}
+          <div class="hdrl-form-grid" id="hdrl-judgement-notes" ${response.status === "rated" ? "" : "hidden"}>
             ${textareaField("indicator-improvement", "Potential improvement note", response.improvementNote, "Your own proposed next step. The rules engine will not invent an action.", false, "", 1200)}
           </div>
+          <div id="hdrl-evidence-panel" ${response.status === "rated" ? "" : "hidden"}>
+          ${indicatorEvidenceIdeas(indicator)}
           <section class="hdrl-evidence-register" aria-labelledby="hdrl-evidence-title">
             <div>
               <h3 id="hdrl-evidence-title">Evidence references</h3>
@@ -700,15 +809,6 @@
                 ${textField("evidence-reference", "URL or internal reference", "", "Do not paste access tokens or secret document links.", false, "", 500)}
                 ${textField("evidence-owner", "Owner or source", "", "The team, role or public source responsible for it.", false, "", 180)}
                 ${textField("evidence-date", "Evidence date", "", "Use the date on the evidence where possible.", false, "", 10, "date")}
-                ${textField("evidence-review-period", "Review period", "", "When should its currency be reviewed?", false, "", 120)}
-                <div class="hdrl-field">
-                  <label for="evidence-supports">Judgement supported</label>
-                  <select id="evidence-supports">
-                    <option value="">Choose</option>
-                    ${LEVELS.map((level) => `<option value="${level}">${level}</option>`).join("")}
-                    <option value="applicability">Applicability/status only</option>
-                  </select>
-                </div>
                 <div class="hdrl-field">
                   <label for="evidence-review-status">Review status</label>
                   <select id="evidence-review-status">
@@ -724,6 +824,7 @@
               <button type="button" class="md-button" data-action="add-evidence">Add reference</button>
             </details>
           </section>
+          </div>
           <div class="hdrl-assessment-actions">
             <button type="submit" class="md-button md-button--primary">Save and return to indicators</button>
             ${index < 63 ? `<button type="button" class="md-button" data-action="save-next">Save and open next indicator</button>` : ""}
@@ -740,7 +841,7 @@
           <span class="hdrl-assessment-chip">${esc(item.type || "Evidence")}</span>
           <h4>${esc(item.title)}</h4>
           <p>${esc(item.reference || "No external reference")} · ${esc(item.owner || "No owner recorded")}</p>
-          <p><strong>Supports:</strong> ${esc(item.supports || "Not specified")} · <strong>Status:</strong> ${esc(item.reviewStatus.replaceAll("_", " "))}</p>
+          <p><strong>Status:</strong> ${esc(item.reviewStatus.replaceAll("_", " "))}${item.date ? ` · <strong>Date:</strong> ${esc(item.date)}` : ""}</p>
           ${item.note ? `<p>${esc(item.note)}</p>` : ""}
           ${item.limitations ? `<p><strong>Limitations:</strong> ${esc(item.limitations)}</p>` : ""}
         </div>
@@ -756,7 +857,7 @@
       if (response.status === "rated" && !response.level) issues.push({ ref: indicator.ref, type: "Missing level", text: "Maturity judgement selected without a level." });
       if (response.status === "rated" && !response.rationale.trim()) issues.push({ ref: indicator.ref, type: "Missing rationale", text: "Judgement has no rationale." });
       if (response.status === "rated" && response.evidence.length === 0) issues.push({ ref: indicator.ref, type: "Evidence gap", text: "Judgement has no evidence reference and will be provisional." });
-      if (response.status === "not_applicable" && !response.applicabilityReason.trim()) issues.push({ ref: indicator.ref, type: "Missing N/A reason", text: "Not applicable has no boundary reason." });
+      if (["not_known", "not_assessed", "not_applicable"].includes(response.status) && !response.statusReason.trim()) issues.push({ ref: indicator.ref, type: "Missing explanation", text: "The decision not to make a judgement has no explanation." });
       if (response.status === "not_known") issues.push({ ref: indicator.ref, type: "Knowledge gap", text: "The response is not known." });
       if (["unstarted", "not_assessed"].includes(response.status)) issues.push({ ref: indicator.ref, type: "Not assessed", text: "The indicator is not assessed." });
     });
@@ -770,12 +871,16 @@
       .filter((response) => response.status === "rated" && LEVELS.includes(response.level))
       .map((response) => Number(response.level.slice(1)))
       .sort((a, b) => a - b);
-    if (!values.length) return { label: "Insufficient assessed indicators", count: 0 };
+    if (!values.length) return { label: "Insufficient assessed indicators", median: "—", range: "—", count: 0 };
     const middle = Math.floor(values.length / 2);
-    if (values.length % 2) return { label: `L${values[middle]} · ${catalogue.maturity_level_names[`L${values[middle]}`]}`, count: values.length };
-    const low = values[middle - 1];
-    const high = values[middle];
-    return { label: low === high ? `L${low} · ${catalogue.maturity_level_names[`L${low}`]}` : `L${low}–L${high} observed median range`, count: values.length };
+    const low = values.length % 2 ? values[middle] : values[middle - 1];
+    const high = values.length % 2 ? values[middle] : values[middle];
+    const median = low === high ? `L${low}` : `L${low}–L${high}`;
+    const range = `L${values[0]}–L${values[values.length - 1]}`;
+    const label = low === high
+      ? `${median} · ${catalogue.maturity_level_names[median]}`
+      : `${median} core median range`;
+    return { label, median, range, count: values.length };
   }
 
   function reviewView() {
@@ -917,11 +1022,11 @@
           });
         }
       }
-      if (response.status === "not_known" || response.uncertainty === "high") {
+      if (response.status === "not_known" || response.certainty === "low") {
         questions.push({
           ref: indicator.ref,
           text: `Who is closest to this capability, and what evidence would resolve the uncertainty?`,
-          rule: "R-HIGH-UNCERTAINTY"
+          rule: "R-LOW-CERTAINTY"
         });
       } else if (["unstarted", "not_assessed"].includes(response.status)) {
         questions.push({
@@ -977,25 +1082,23 @@
         <section>
           <h3>Rapid first pass</h3>
           <p>These are preliminary domain impressions based on current knowledge. They are not evidence-led HDRL scores.</p>
-          <div class="hdrl-report-domain-grid">
-            ${catalogue.domains.map((domain) => {
-              const response = state.rapid[domain.ref] || {};
-              return `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><strong>${domain.ref} · ${esc(domain.name)}</strong><span>${esc(IMPRESSION_LABELS[response.impression] || "Not answered")}</span><small>${response.uncertainty ? `${esc(response.uncertainty)} uncertainty` : "Uncertainty not recorded"}</small></div>`;
-            }).join("")}
-          </div>
+          ${rapidProfileMatrix({ interactive: false, id: "report-rapid-profile" })}
         </section>
         <section>
           <h3>Evidence-led domain profile</h3>
           <p>Summaries use applicable judged Core indicators and exclude Outcome/Context entries. Missing responses are not imputed. Even medians are ranges. No overall score is calculated.</p>
-          <div class="hdrl-report-domain-grid">
-            ${catalogue.domains.map((domain) => {
-              const summary = domainSummary(domain.ref);
-              return `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><strong>${domain.ref} · ${esc(domain.name)}</strong><span>${esc(summary.label)}</span><small>${summary.count} Core judgement${summary.count === 1 ? "" : "s"}</small></div>`;
-            }).join("")}
+          <div class="hdrl-report-table-wrap" role="region" aria-label="Evidence-led domain profile" tabindex="0">
+            <table class="hdrl-domain-summary-table">
+              <thead><tr><th scope="col">Domain</th><th scope="col">Core median</th><th scope="col">Observed range</th><th scope="col">Coverage</th></tr></thead>
+              <tbody>${catalogue.domains.map((domain) => {
+                const summary = domainSummary(domain.ref);
+                return `<tr><th scope="row"><span class="hdrl-domain-key" style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}">${domain.ref}</span> ${esc(domain.name)}</th><td><strong>${esc(summary.median)}</strong></td><td>${esc(summary.range)}</td><td>${summary.count} Core judgement${summary.count === 1 ? "" : "s"}</td></tr>`;
+              }).join("")}</tbody>
+            </table>
           </div>
         </section>
         <section>
-          <h3>Evidence, uncertainty and coverage</h3>
+          <h3>Evidence, certainty and coverage</h3>
           <ul>
             <li>${s.judged} of 64 indicators have a maturity judgement.</li>
             <li>${s.evidenceLinked} indicators have one or more evidence references.</li>
@@ -1005,18 +1108,18 @@
         </section>
         ${findingSection("Findings supported by referenced evidence status", findings.supported, "No maturity judgements have evidence marked reviewed or accepted.")}
         ${findingSection("Provisional interpretations", findings.provisional, "No provisional maturity judgements were generated by the current rule.")}
-        ${findingSection("Suggested questions to investigate", findings.questions, "No uncertainty or unassessed prompts were generated.")}
+        ${findingSection("Suggested questions to investigate", findings.questions, "No low-certainty or unassessed prompts were generated.")}
         ${findingSection("Potential improvement actions", findings.actions, "No user-entered improvement actions were recorded. The tool does not invent actions.")}
         <section>
           <h3>Indicator-level results and derivation</h3>
           <div class="hdrl-report-table-wrap" role="region" aria-label="All indicator results" tabindex="0">
             <table>
-              <thead><tr><th scope="col">Indicator</th><th scope="col">Status / judgement</th><th scope="col">Uncertainty</th><th scope="col">Evidence</th><th scope="col">Notes</th></tr></thead>
+              <thead><tr><th scope="col">Indicator</th><th scope="col">Status / judgement</th><th scope="col">Certainty</th><th scope="col">Evidence</th><th scope="col">Notes</th></tr></thead>
               <tbody>
                 ${catalogue.indicators.map((indicator) => {
                   const response = indicatorResponse(indicator.ref);
                   const result = response.status === "rated" && response.level ? `${response.level} · ${catalogue.maturity_level_names[response.level]}` : STATUS_LABELS[response.status];
-                  return `<tr><th scope="row">${indicator.ref} · ${esc(indicator.name)}</th><td>${esc(result)}</td><td>${esc(response.uncertainty || "Not recorded")}</td><td>${response.evidence.length}</td><td>${esc(response.rationale || response.applicabilityReason || "No rationale recorded")}</td></tr>`;
+                  return `<tr><th scope="row">${indicator.ref} · ${esc(indicator.name)}</th><td>${esc(result)}</td><td>${esc(certaintyLabel(response.certainty))}</td><td>${response.evidence.length}</td><td>${esc(response.rationale || response.statusReason || "No rationale recorded")}</td></tr>`;
                 }).join("")}
               </tbody>
             </table>
@@ -1025,8 +1128,7 @@
         <section>
           <h3>Dependencies and constraints</h3>
           <p>HDRL is sociotechnical: domain patterns should be interpreted together. Review these dependencies where a domain is uncertain, thinly evidenced or constrained:</p>
-          <ul>${catalogue.domains.map((domain) => `<li><strong>${domain.ref} · ${esc(domain.name)}:</strong> ${content.domain_guidance[domain.ref].dependencies.map(esc).join("; ")}.</li>`).join("")}</ul>
-          <p>Operating-capacity notes are recorded separately from capability and evidence in the structured export.</p>
+          <div class="hdrl-constraint-list">${catalogue.domains.map((domain) => `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><h4>${domain.ref} · ${esc(domain.name)}</h4><p><strong>Dependencies:</strong> ${content.domain_guidance[domain.ref].dependencies.map(esc).join("; ")}.</p><p><strong>Operating capacity or constraints:</strong> ${esc(state.domainNotes[domain.ref] || "No domain-level note recorded.")}</p></div>`).join("")}</div>
         </section>
         ${state.boundary.method === "team" ? `
           <section>
@@ -1040,7 +1142,7 @@
             <li>HDRL remains evidence-informed and formatively applied; reliability, validity and accreditation fitness are not established.</li>
             <li>A maturity judgement describes the available evidence at a date and does not guarantee delivery, legal compliance, funding or programme participation.</li>
             <li>Rapid impressions and evidence-led judgements use different methods and should not be combined.</li>
-            <li>Rules version ${VERSIONS.rules} identifies coverage, evidence and uncertainty patterns only; it does not provide professional, legal or investment advice.</li>
+            <li>Rules version ${VERSIONS.rules} identifies coverage, evidence and certainty patterns only; it does not provide professional, legal or investment advice.</li>
           </ul>
         </section>
         <footer class="hdrl-report-footer">
@@ -1076,19 +1178,22 @@
     content.rapid_questions.forEach((question, index) => {
       sample.rapid[question.domain] = {
         impression: ["developing", "defined", "defined", "developing", "managed", "developing", "defined", "managed"][index],
-        uncertainty: index % 3 === 0 ? "high" : "medium",
+        certainty: index % 3 === 0 ? "low" : "medium",
         note: "Synthetic example impression."
       };
     });
+    catalogue.domains.forEach((domain, index) => {
+      sample.domainNotes[domain.ref] = index % 3 === 0 ? "Synthetic example: operating headroom should be checked at domain level." : "";
+    });
     catalogue.indicators.slice(0, 12).forEach((indicator, index) => {
       sample.indicators[indicator.ref] = {
+        decision: "rated",
         status: "rated",
         level: `L${(index % 3) + 2}`,
-        uncertainty: index % 4 === 0 ? "high" : "medium",
+        certainty: index % 4 === 0 ? "low" : "medium",
         rationale: "Synthetic rationale used only to demonstrate the report.",
-        capacityNote: index % 3 === 0 ? "Synthetic example: operating headroom should be checked." : "",
         improvementNote: index % 4 === 0 ? "Confirm the responsible owner and review the current operating evidence." : "",
-        applicabilityReason: "",
+        statusReason: "",
         evidence: index % 2 === 0 ? [{
           id: makeId(),
           title: "Synthetic operating record",
@@ -1096,9 +1201,7 @@
           reference: "EXAMPLE-ONLY",
           owner: "Example team",
           date: today(),
-          reviewPeriod: "Annual",
           note: "Demonstration record; not real evidence.",
-          supports: `L${(index % 3) + 2}`,
           limitations: "Synthetic and not independently reviewed.",
           reviewStatus: index % 4 === 0 ? "reviewed" : "unreviewed"
         }] : [],
@@ -1123,7 +1226,7 @@
 
   function exportPayload() {
     return {
-      export_schema: "hdrl-self-assessment-export-v0.1.0",
+      export_schema: "hdrl-self-assessment-export-v0.2.0",
       exported_at: nowIso(),
       versions: { ...VERSIONS },
       assessment: {
@@ -1132,6 +1235,7 @@
         updated_at: state.updatedAt,
         boundary: state.boundary,
         rapid_first_pass: state.rapid,
+        domain_capacity_notes: state.domainNotes,
         evidence_led_responses: state.indicators,
         audit: state.audit
       },
@@ -1149,7 +1253,7 @@
   }
 
   function csvPayload() {
-    const columns = ["indicator_ref", "indicator_name", "domain", "status", "level", "uncertainty", "rationale", "capacity_note", "improvement_note", "applicability_reason", "evidence_count", "evidence_titles"];
+    const columns = ["indicator_ref", "indicator_name", "domain", "status", "level", "certainty", "rationale", "domain_capacity_note", "improvement_note", "status_reason", "evidence_count", "evidence_titles"];
     const cell = (value) => {
       let safe = String(value ?? "");
       if (/^[=+\-@\t\r]/.test(safe)) safe = `'${safe}`;
@@ -1163,11 +1267,11 @@
         indicator.domain,
         response.status,
         response.level,
-        response.uncertainty,
+        response.certainty,
         response.rationale,
-        response.capacityNote,
+        state.domainNotes[indicator.domain] || "",
         response.improvementNote,
-        response.applicabilityReason,
+        response.statusReason,
         response.evidence.length,
         response.evidence.map((item) => item.title).join("; ")
       ].map(cell).join(",");
@@ -1203,13 +1307,14 @@
     const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
     const response = indicatorResponse(indicator.ref);
     const previous = JSON.stringify(response);
-    response.status = form.elements["indicator-status"].value || "unstarted";
+    const decision = form.elements["indicator-decision"].value;
+    response.decision = decision;
+    response.status = decision === "rated" ? "rated" : (form.elements["indicator-status"].value || "unstarted");
     response.level = response.status === "rated" ? (form.elements["indicator-level"].value || "") : "";
-    response.uncertainty = form.elements["indicator-uncertainty"].value;
-    response.rationale = form.elements["indicator-rationale"].value.trim();
-    response.capacityNote = form.elements["indicator-capacity"].value.trim();
-    response.improvementNote = form.elements["indicator-improvement"].value.trim();
-    response.applicabilityReason = response.status === "not_applicable" ? form.elements["indicator-applicability"].value.trim() : "";
+    response.certainty = response.status === "rated" ? form.elements["indicator-certainty"].value : "";
+    response.rationale = response.status === "rated" ? form.elements["indicator-rationale"].value.trim() : "";
+    response.improvementNote = response.status === "rated" ? form.elements["indicator-improvement"].value.trim() : "";
+    response.statusReason = response.status === "rated" ? "" : form.elements["indicator-status-reason"].value.trim();
     response.updatedAt = nowIso();
     if (JSON.stringify(response) !== previous) audit("indicator_response_changed", indicator.ref, "Prototype user edit");
     scheduleSave();
@@ -1218,9 +1323,19 @@
 
   function validateIndicator(form) {
     const errors = {};
-    const status = form.elements["indicator-status"].value;
-    if (status === "not_applicable" && !form.elements["indicator-applicability"].value.trim()) {
-      errors["indicator-applicability"] = "Explain why this indicator is outside the assessment boundary.";
+    const decision = form.elements["indicator-decision"].value;
+    if (!decision) errors["indicator-decision-rated"] = "Choose whether to make a maturity judgement.";
+    if (decision === "rated" && !form.elements["indicator-level"].value) {
+      errors["hdrl-level-panel"] = "Choose the closest canonical maturity descriptor.";
+    }
+    if (decision === "rated" && !form.elements["indicator-certainty"].value) {
+      errors["indicator-certainty"] = "Choose high, medium or low certainty.";
+    }
+    if (decision === "not_judged" && !form.elements["indicator-status"].value) {
+      errors["indicator-nonjudgement"] = "Choose why you are not making a judgement.";
+    }
+    if (decision === "not_judged" && !form.elements["indicator-status-reason"].value.trim()) {
+      errors["indicator-status-reason"] = "Add a short explanation for this decision.";
     }
     return errors;
   }
@@ -1266,6 +1381,7 @@
           setView("rapid");
         } else if (action === "rapid-prev") {
           state.rapidIndex = Math.max(0, state.rapidIndex - 1);
+          lastFocusId = "hdrl-view-title";
           render();
         } else if (action === "rapid-summary") setView("rapid-summary");
         else if (action === "rapid-edit" || action === "rapid-edit-first") {
@@ -1316,6 +1432,7 @@
           const index = catalogue.indicators.findIndex((item) => item.ref === state.activeIndicator);
           state.activeIndicator = catalogue.indicators[Math.min(index + 1, 63)].ref;
           if (response.status === "rated" && !response.level) announce("Saved without a maturity level; the review will flag this.", true);
+          lastFocusId = "hdrl-view-title";
           render();
         }
       });
@@ -1336,9 +1453,7 @@
       reference: document.getElementById("evidence-reference").value.trim(),
       owner: document.getElementById("evidence-owner").value.trim(),
       date: document.getElementById("evidence-date").value,
-      reviewPeriod: document.getElementById("evidence-review-period").value.trim(),
       note: document.getElementById("evidence-note").value.trim(),
-      supports: document.getElementById("evidence-supports").value,
       limitations: document.getElementById("evidence-limitations").value.trim(),
       reviewStatus: document.getElementById("evidence-review-status").value
     };
@@ -1377,6 +1492,14 @@
     });
 
     const rapidForm = document.getElementById("hdrl-rapid-form");
+    rapidForm?.querySelectorAll('input[name="rapid-impression"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        const isBand = content.impression_bands.some((band) => band.value === input.value);
+        const panel = document.getElementById("hdrl-rapid-certainty-panel");
+        panel.hidden = !isBand;
+        if (!isBand) rapidForm.querySelectorAll('input[name="rapid-certainty"]').forEach((choice) => { choice.checked = false; });
+      });
+    });
     rapidForm?.addEventListener("submit", (event) => {
       event.preventDefault();
       const domain = content.rapid_questions[state.rapidIndex].domain;
@@ -1386,9 +1509,15 @@
         rapidForm.elements["rapid-impression"][0].focus();
         return;
       }
+      const isImpressionBand = content.impression_bands.some((band) => band.value === impression);
+      if (isImpressionBand && !rapidForm.elements["rapid-certainty"].value) {
+        announce("Choose high, medium or low certainty before continuing.", true);
+        rapidForm.elements["rapid-certainty"][0].focus();
+        return;
+      }
       state.rapid[domain] = {
         impression,
-        uncertainty: rapidForm.elements["rapid-uncertainty"].value,
+        certainty: isImpressionBand ? rapidForm.elements["rapid-certainty"].value : "",
         note: rapidForm.elements["rapid-note"].value.trim()
       };
       audit("rapid_response_saved", domain);
@@ -1396,6 +1525,7 @@
       else {
         state.rapidIndex += 1;
         scheduleSave();
+        lastFocusId = "hdrl-view-title";
         render();
       }
     });
@@ -1413,11 +1543,26 @@
       }
       setView("evidence");
     });
-    indicatorForm?.querySelectorAll('input[name="indicator-status"]').forEach((input) => {
+    indicatorForm?.querySelectorAll('input[name="indicator-decision"]').forEach((input) => {
       input.addEventListener("change", () => {
-        document.getElementById("hdrl-level-panel").hidden = input.value !== "rated";
-        document.getElementById("hdrl-applicability-panel").hidden = input.value !== "not_applicable";
+        const rated = input.value === "rated";
+        document.getElementById("hdrl-level-panel").hidden = !rated;
+        document.getElementById("hdrl-judgement-details").hidden = !rated;
+        document.getElementById("hdrl-judgement-notes").hidden = !rated;
+        document.getElementById("hdrl-evidence-panel").hidden = !rated;
+        document.getElementById("hdrl-nonjudgement-panel").hidden = rated;
       });
+    });
+
+    const domainNotesForm = document.getElementById("hdrl-domain-notes-form");
+    domainNotesForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      catalogue.domains.forEach((domain) => {
+        state.domainNotes[domain.ref] = domainNotesForm.elements[`domain-capacity-${domain.ref}`].value.trim();
+      });
+      audit("domain_capacity_notes_saved", "domains");
+      scheduleSave();
+      announce("Domain-level operating capacity and constraint notes saved.");
     });
 
     const filterForm = document.getElementById("hdrl-filter-form");
@@ -1476,9 +1621,63 @@
     root.setAttribute("aria-busy", "false");
     bind();
     if (lastFocusId) {
-      requestAnimationFrame(() => document.getElementById(lastFocusId)?.focus());
+      const focusId = lastFocusId;
+      requestAnimationFrame(() => {
+        root.scrollIntoView({ block: "start", behavior: "auto" });
+        document.getElementById(focusId)?.focus({ preventScroll: true });
+      });
       lastFocusId = "";
     }
+  }
+
+  function migrateDraft(draft, defaults) {
+    if (!draft || ![1, 2].includes(draft.schemaVersion)) return defaults;
+    if (draft.schemaVersion === 2) {
+      return {
+        ...defaults,
+        ...draft,
+        boundary: { ...defaults.boundary, ...draft.boundary },
+        registration: { ...defaults.registration, ...draft.registration },
+        domainNotes: { ...defaults.domainNotes, ...draft.domainNotes },
+        versions: { ...VERSIONS }
+      };
+    }
+    const certaintyFromUncertainty = { low: "high", medium: "medium", high: "low" };
+    const domainNotes = {};
+    const rapid = Object.fromEntries(Object.entries(draft.rapid || {}).map(([domain, response]) => [domain, {
+      impression: response.impression || "",
+      certainty: certaintyFromUncertainty[response.uncertainty] || "",
+      note: response.note || ""
+    }]));
+    const indicators = Object.fromEntries(Object.entries(draft.indicators || {}).map(([ref, response]) => {
+      const indicator = catalogue.indicators.find((item) => item.ref === ref);
+      if (indicator && response.capacityNote) {
+        const prefix = domainNotes[indicator.domain] ? `${domainNotes[indicator.domain]}\n` : "";
+        domainNotes[indicator.domain] = `${prefix}${ref}: ${response.capacityNote}`;
+      }
+      return [ref, {
+        decision: response.status === "rated" ? "rated" : ["not_known", "not_assessed", "not_applicable"].includes(response.status) ? "not_judged" : "",
+        status: response.status || "unstarted",
+        level: response.level || "",
+        certainty: certaintyFromUncertainty[response.uncertainty] || "",
+        rationale: response.rationale || "",
+        improvementNote: response.improvementNote || "",
+        statusReason: response.applicabilityReason || "",
+        evidence: (response.evidence || []).map(({ supports, reviewPeriod, ...item }) => item),
+        updatedAt: response.updatedAt || null
+      }];
+    }));
+    return {
+      ...defaults,
+      ...draft,
+      schemaVersion: 2,
+      boundary: { ...defaults.boundary, ...draft.boundary },
+      registration: { ...defaults.registration, ...draft.registration },
+      rapid,
+      indicators,
+      domainNotes,
+      versions: { ...VERSIONS }
+    };
   }
 
   async function init() {
@@ -1495,15 +1694,7 @@
         throw new Error("The prototype and canonical catalogue versions do not match");
       }
       const defaults = defaultState();
-      state = draft && draft.schemaVersion === 1
-        ? {
-            ...defaults,
-            ...draft,
-            boundary: { ...defaults.boundary, ...draft.boundary },
-            registration: { ...defaults.registration, ...draft.registration },
-            versions: { ...VERSIONS }
-          }
-        : defaults;
+      state = migrateDraft(draft, defaults);
       catalogue.indicators.forEach((indicator) => indicatorResponse(indicator.ref));
       render();
     } catch (error) {

@@ -91,6 +91,7 @@ nav:
   - Self-assessment:
     - Research prototype: self-assessment/index.md
     - Research & design: self-assessment/research-and-design.md
+    - Rapid-question persona review: self-assessment/persona-review-v0.2.md
     - Product requirements: self-assessment/product-requirements.md
     - Architecture & data model: self-assessment/architecture-and-data.md
     - Privacy & data flow: self-assessment/privacy-and-data-flow.md

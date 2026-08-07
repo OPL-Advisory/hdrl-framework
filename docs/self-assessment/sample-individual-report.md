@@ -1,6 +1,6 @@
 ---
 title: Sample individual self-assessment report
-description: A synthetic example showing how an individual HDRL self-assessment report distinguishes evidence, uncertainty and limitations.
+description: A synthetic example showing how an individual HDRL self-assessment report distinguishes evidence, certainty and limitations.
 ---
 
 # Sample individual self-assessment report
@@ -18,7 +18,7 @@ description: A synthetic example showing how an individual HDRL self-assessment 
 | Assessment date | 30 July 2026 |
 | Method | Individual self-assessment |
 | Intended use | Identify questions for a multidisciplinary evidence workshop |
-| Versions | HDRL Framework 1.0.1 · catalogue 1.0.2 · tool 0.1.0-prototype · guidance 0.1.0 · rules 0.1.0 · report 0.1.0 |
+| Versions | HDRL Framework 1.0.1 · catalogue 1.0.2 · tool 0.2.0-prototype · guidance 0.2.0 · rules 0.2.0 · report 0.2.0 |
 
 ## Rapid first pass
 
@@ -42,7 +42,7 @@ This sample reviewed 12 of 64 indicators. Unassessed entries remain visible and 
 | Domain | Observed summary | Coverage caveat |
 |:--|:--|:--|
 | A · Data Coverage & Federation | L2–L3 observed median range | 7 Core judgements; three references; currency evidence incomplete |
-| B · Data Semantics & Quality | L3 · Defined | 4 Core judgements; two references; one high-uncertainty judgement |
+| B · Data Semantics & Quality | L3 · Defined | 4 Core judgements; two references; one low-certainty judgement |
 | C–H | Insufficient assessed indicators | Not assessed in this short sample |
 
 ## Indicator findings and derivation
@@ -51,7 +51,7 @@ This sample reviewed 12 of 64 indicators. Unassessed entries remain visible and 
 |:--|:--|:--|:--|:--|
 | A.1.1 · Core Dataset Availability | L2 · Developing | One assessor-reviewed synthetic operating record | Supported only as an assessor-recorded judgement; the reference has not been independently verified | Direct evidence-status summary |
 | A.1.2 · Data Currency & Timeliness | L3 · Defined | No reviewed reference | Provisional until refresh logs or another dated source are linked | R-EVIDENCE-GAP |
-| A.1.3 · Data Equity & Representativeness | L2 · Developing, high uncertainty | One unreviewed reference | Ask who owns representativeness analysis and what denominator is credible | R-HIGH-UNCERTAINTY |
+| A.1.3 · Data Equity & Representativeness | L2 · Developing, low certainty | One unreviewed reference | Ask who owns representativeness analysis and what denominator is credible | R-LOW-CERTAINTY |
 | B.2.1 · Quality Framework & Monitoring | L3 · Defined | One assessor-reviewed synthetic record | Check whether monitoring covers routine operations, not a one-off exercise | Direct evidence-status summary |
 
 An evidence reference means that the assessor linked a source. It does not mean that HDRL, OPL Advisory, Research Data Scotland or an independent reviewer has verified the source or judgement.
@@ -62,13 +62,13 @@ An evidence reference means that the assessor linked a source. It does not mean 
 - 6 have at least one evidence reference.
 - 3 references are marked reviewed by the assessor.
 - 52 indicators are not assessed and remain outside this sample’s evidential coverage.
-- High uncertainty remains for A.1.3, A.2.2 and B.2.1.
+- Low certainty remains for A.1.3, A.2.2 and B.2.1.
 
 ## Suggested questions to investigate
 
 - **A.1.2 — R-EVIDENCE-GAP:** Which dated operating record shows actual refresh performance over a representative period?
-- **A.1.3 — R-HIGH-UNCERTAINTY:** Who can establish the relevant population denominator and explain known coverage bias?
-- **A.2.2 — R-HIGH-UNCERTAINTY:** Which team can distinguish technical linkage capability from routinely approved linkage delivery?
+- **A.1.3 — R-LOW-CERTAINTY:** Who can establish the relevant population denominator and explain known coverage bias?
+- **A.2.2 — R-LOW-CERTAINTY:** Which team can distinguish technical linkage capability from routinely approved linkage delivery?
 - **C–H — R-NOT-ASSESSED:** Which indicators are relevant to the boundary, who should review them and by when?
 
 ## Potential improvement actions

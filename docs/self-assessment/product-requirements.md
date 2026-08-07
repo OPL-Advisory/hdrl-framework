@@ -17,7 +17,8 @@ Help people learn HDRL by applying it and create a proportionate, traceable impr
 - an eight-question, 5–10 minute rapid first pass using non-scoring impression bands;
 - evidence-led access to all 64 canonical indicators;
 - not known, not assessed and not applicable statuses;
-- maturity judgement, uncertainty, rationale, improvement note and evidence references;
+- a binary judgement decision, reason when no judgement is made, maturity judgement, certainty, rationale, improvement note and evidence references;
+- one operating-capacity and constraint note per domain, separate from indicator capability judgements;
 - save and return;
 - task-list, search and domain/status filtering;
 - completeness review and a limited pre-gate summary;
@@ -61,7 +62,8 @@ Help people learn HDRL by applying it and create a proportionate, traceable impr
 
 ### Evidence
 
-- Evidence record fields include title, type, URL/internal reference, owner/source, date, review period, note, supported judgement, limitations and review status.
+- Evidence record fields include title, type, URL/internal reference, owner/source, date, short note, limitations and review status. The form does not ask which level the user is trying to prove.
+- Expandable evidence ideas combine indicator-specific canonical minimum-evidence wording with de-identified domain patterns synthesised from the three-nation application; they are labelled as prompts, not a checklist.
 - The interface has no evidence-file upload.
 - A persistent notice prohibits patient data, personal confidential data, credentials and unnecessarily sensitive operational information.
 - User-supplied text is rendered as text, never executable HTML.
@@ -69,7 +71,7 @@ Help people learn HDRL by applying it and create a proportionate, traceable impr
 ### Reporting
 
 - The limited pre-gate summary contains completion and coverage only, not the full domain/indicator profile.
-- The full report records boundary, method, versions, rapid impressions, evidence-led profile, evidence coverage, uncertainty, gaps, dependencies, findings, actions and limitations.
+- The full report records boundary, method, versions, the rapid impression-by-certainty matrix, evidence-led median and observed range, evidence coverage, low certainty, gaps, domain constraints, dependencies, findings, actions and limitations.
 - Every generated finding includes its source indicator and rule.
 - Findings are separated into supported judgements, provisional interpretations, questions and potential actions.
 - Potential actions are only the user's own notes in MVP.
