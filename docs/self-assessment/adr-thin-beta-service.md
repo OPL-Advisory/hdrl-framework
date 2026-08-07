@@ -29,7 +29,7 @@ Send verification codes from `report@hdrlframework.org` using `smtp.ionos.co.uk`
 
 - It adds the missing operational capability without turning the beta into a hosted assessment database.
 - One managed project provides email identity, Postgres, RLS, Edge Functions, retention scheduling and recovery controls, reducing the number of custom operational components.
-- The user approved the dedicated project and its additional US$10 monthly charge. IONOS and Plausible are already used for HDRL services, but the mailbox order and post-trial Plausible plan are separate cost decisions.
+- The user approved the dedicated project and its additional US$10 monthly charge. On 7 August 2026, IONOS Mail Basic was activated at £2.50/month excluding VAT and Plausible Business at £19/month excluding VAT; both remain subject to normal subscription review.
 - London is available as the database region. Browser calls explicitly request the London Edge region and deployment checks verify the returned region header.
 - The application contract and Postgres schema are deliberately small. A future authenticated workspace can extend the same platform or migrate to a sponsor platform without moving browser-local assessments.
 - Plausible can answer starts, progress, report unlock requests, download requests and feedback choice without linking that activity to the participant profile.
@@ -46,7 +46,7 @@ Send verification codes from `report@hdrlframework.org` using `smtp.ionos.co.uk`
 
 ## Release conditions
 
-The committed configuration stays off until the controller, privacy contact, lawful bases/LIA, processor DPAs and transfers, retention/recovery treatment, incident route, SMTP sender, security tests and public privacy notice have named approval. IONOS SMTP must be entered directly in Supabase and tested with synthetic addresses. Production requires a separate explicit change that publishes the browser-safe key and enables the Supabase and Plausible flags.
+The committed configuration stays off until the controller, privacy contact, lawful bases/LIA, processor DPAs and transfers, retention/recovery treatment, incident route, security tests and public privacy notice have named approval. IONOS SMTP and a token-only six-digit OTP journey were activated and tested with a synthetic identity on 7 August 2026; the remaining negative, expiry, abuse and log-content tests still require release evidence. Production requires a separate explicit change that publishes the browser-safe key and enables the Supabase and Plausible flags.
 
 ## Revisit triggers
 

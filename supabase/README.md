@@ -50,14 +50,22 @@ Never use a real assessment or business-sensitive text in these tests.
 
 ## IONOS SMTP activation
 
-After the mailbox order and privacy/processor approvals:
+The following non-public staging configuration was activated and tested on 7 August 2026:
 
-1. create `report@hdrlframework.org` as the authenticated sending mailbox and ensure `privacy@hdrlframework.org` reaches a monitored inbox;
-2. in Supabase Authentication email settings, configure `smtp.ionos.co.uk`, port `587`, STARTTLS, username `report@hdrlframework.org`, sender name `HDRL Framework beta`, and the mailbox password;
-3. enter the password directly in Supabase and retain it only in the approved password manager;
-4. keep the six-digit, 10-minute OTP template and ensure it contains no magic link;
-5. test request, delivery, correct code, wrong code, expiry and rate limiting with synthetic addresses; and
-6. check that IONOS delivery logs contain no assessment information.
+- `report@hdrlframework.org` is an IONOS Mail Basic mailbox and the authenticated sender;
+- `privacy@hdrlframework.org` forwards to a monitored OPL Advisory inbox;
+- Supabase uses `smtp.ionos.co.uk`, port `587`, STARTTLS, username `report@hdrlframework.org` and sender name `HDRL Framework beta`;
+- Supabase's separate pre-sign-in email-confirmation step is disabled so new and returning users use the same passwordless OTP template;
+- both the confirm-sign-up and magic-link templates contain the six-digit token, a 10-minute expiry statement, the privacy contact and no link; and
+- a synthetic request was delivered through IONOS and the correct OTP returned HTTP 200 from Supabase verification.
+
+Before public activation:
+
+1. confirm the privacy forwarding test arrived at the monitored destination;
+2. place the mailbox credential in the approved password manager and document the named operators without copying it into this repository;
+3. test a wrong code, code reuse, expiry, rate limiting and registered/unregistered timing with synthetic addresses;
+4. check that Auth, Function and IONOS logs contain no email body, OTP, assessment information or report content; and
+5. record privacy/processor, security and operational approval in the release evidence.
 
 ## Public activation
 
