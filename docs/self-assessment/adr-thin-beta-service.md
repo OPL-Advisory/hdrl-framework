@@ -19,7 +19,7 @@ The public beta needs to count starts, progress, report unlocks, download reques
 
 Keep the assessment and report local. Use a new dedicated Supabase Pro project in West Europe (London), IONOS authenticated SMTP and the existing Plausible account. Accept only three deliberately narrow streams:
 
-1. anonymous aggregate, allow-listed Plausible events with no application identifier;
+1. individual allow-listed Plausible event messages without a participant identifier, aggregated by Plausible after receipt;
 2. a minimum verified participant profile; and
 3. feedback submitted either without contact details or explicitly contactable.
 

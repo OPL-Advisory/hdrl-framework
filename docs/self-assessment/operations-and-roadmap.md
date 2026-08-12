@@ -43,6 +43,8 @@ Supabase custom SMTP is active through `smtp.ionos.co.uk` on port 587 with sende
 
 Plausible Business is active from 7 August 2026 at £19/month excluding VAT (£22.80 including VAT), renewing monthly, with an allowance of up to 10,000 monthly pageviews. Seven core event goals are configured: beta started, snapshot domain completed, snapshot completed, report unlocked, report download requested, feedback submitted and feedback skipped. The Business plan permits the coarse custom properties proposed for active-time bands and section context, but the HDRL beta loader remains disabled and no identifier or assessment property is configured.
 
+An independent UK data-protection and digital-service review was received on 12 August 2026. The original outputs and a reconciled action record are retained under `governance/privacy-review-2026-08-12/`. The review supports the browser-local assessment boundary and identifies publication blockers covering controller particulars, the report-gate LIA, PECR analytics exception/objection, complaints handling, GitHub request logs, supplier terms/transfers, fixed retention periods, governance artefacts and named operational cover. Its statement that part of the DUAA remained uncommenced was not adopted: current ICO guidance says all stages were in force from 19 June 2026. The public flags remain off while the accepted findings are implemented and the remaining controller/adviser decisions are resolved.
+
 ## Security test set
 
 | Test | Expected result |

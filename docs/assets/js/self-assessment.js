@@ -561,13 +561,13 @@
           <p>A self-assessment cannot validate, accredit or endorse a service. It reflects a stated boundary, the people involved and the evidence available on the assessment date.</p>
         </div>
         <div class="hdrl-assessment-notice">
-          <strong>${remoteServiceEnabled() ? "Anonymous beta activity is on." : "Anonymous beta activity is off."}</strong>
+          <strong>${remoteServiceEnabled() ? "Beta analytics is on." : "Beta analytics is off."}</strong>
           ${remoteServiceEnabled()
             ? " Plausible receives allow-listed event names and coarse progress or time bands. It does not receive a session ID, email, organisation, levels, certainty, scope, notes, evidence or report contents."
             : " Assessment entries and the local diagnostic record stay in this browser."}
           ${state.beta.telemetryEnabled
-            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Use without anonymous beta activity</button>`
-            : `<span>Anonymous beta activity remains off for this draft.</span>`}
+            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Turn beta analytics off</button>`
+            : `<span>Beta analytics remains off for this draft.</span>`}
         </div>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="${hasDraft ? "resume" : "start"}">${hasDraft ? "Resume draft" : "Set the assessment boundary"}</button>
@@ -1754,7 +1754,7 @@
     const counts = Object.fromEntries(betaConfig.event_allowlist && Object.keys(betaConfig.event_allowlist).map((name) => [name, state.beta.events.filter((event) => event.name === name).length]));
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Beta diagnostics · ${remoteServiceEnabled() ? "anonymous aggregate activity on" : "anonymous aggregate activity off"}</div>
+        <div class="hdrl-progress-label">Beta diagnostics · ${remoteServiceEnabled() ? "beta analytics on" : "beta analytics off"}</div>
         <h2 id="hdrl-view-title" tabindex="-1">What the beta activity record contains</h2>
         <p class="hdrl-assessment-lede">The allow-listed event record is kept locally for inspection. When approved analytics is active, selected events are sent to Plausible without an email, organisation, assessment identifier or assessment content.</p>
         <div class="hdrl-data-boundary-grid">
@@ -1771,15 +1771,15 @@
           ${statCard(counts.feedback_submitted || 0, "Feedback submitted", `${counts.feedback_skipped || 0} skipped`)}
         </div>
         <div class="hdrl-assessment-notice">
-          <strong>${remoteServiceEnabled() ? "Anonymous aggregate activity is on." : "Anonymous aggregate activity is off."}</strong>
+          <strong>${remoteServiceEnabled() ? "Beta analytics is on." : "Beta analytics is off."}</strong>
           ${remoteServiceEnabled()
             ? ` ${state.beta.remoteLastSyncAt ? `Last event sent ${esc(new Date(state.beta.remoteLastSyncAt).toLocaleString())}.` : "No event has been sent yet."}`
             : betaServiceAvailable()
               ? " Future allow-listed activity events will not be sent. Email verification and feedback you deliberately submit can still use the separate beta service."
               : " Beta activity, identity and feedback remain on this device."}
           ${state.beta.telemetryEnabled
-            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Stop anonymous beta activity</button>`
-            : `<span>Anonymous beta activity remains off for this draft.</span>`}
+            ? `<button type="button" class="hdrl-link-button" data-action="telemetry-off">Turn beta analytics off</button>`
+            : `<span>Beta analytics remains off for this draft.</span>`}
         </div>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button" data-action="export-beta-activity">Download local beta activity record</button>
@@ -2223,7 +2223,7 @@
         else if (action === "telemetry-off") {
           await turnOffRemoteTelemetry();
           render();
-          announce("Anonymous beta activity has been turned off for this draft.");
+          announce("Beta analytics has been turned off for this draft.");
         }
         else if (action === "verification-restart") {
           authAccessToken = "";

@@ -5,31 +5,31 @@ description: Draft privacy model, data-flow assessment, notices, retention and r
 
 # Self-assessment privacy and data-flow assessment
 
-**Status:** draft for product design. It requires formal legal and data-protection review before production.
+**Status:** draft for product and controller review. An independent review was received on 12 August 2026 and reconciled against current ICO guidance; qualified legal/data-protection approval is still required before production.
 
 ## Proposed roles
 
-The proposed initial controller is **OPL Advisory Ltd**, because it currently administers the framework website and would determine the operational purposes and means of the assessment service. Research Data Scotland would receive no identifiable assessment data by default. If Research Data Scotland or another sponsor jointly determines purposes or access, the parties must document whether the arrangement is joint controllership or controller/processor before launch.
+The working controller determination is **OPL Advisory Ltd** (company number `16704749`; registered office 71–75 Shelton Street, Covent Garden, London WC2H 9JQ), because it administers the framework website and determines the operational purposes and means of the beta service. The ICO registration reference, privacy postal address, accountable owner and deputy remain publication blockers. Research Data Scotland receives no participant or assessment data by default. A written boundary arrangement must record that position and require a new role assessment before Research Data Scotland or another sponsor determines processing purposes, specifies participant measures, receives identifiable records or gains supplier-dashboard access.
 
-The selected design uses **Supabase, Inc.** for email authentication, London-region Postgres, Edge Functions and recovery; **IONOS** for authenticated email delivery; **Plausible Insights OÜ** for aggregate product events; and GitHub Pages for the static application. Each supplier requires due diligence, an Article 28 arrangement where applicable, sub-processor review, data-location/transfer assessment, deletion commitments, security-log review and incident terms. The database region is West Europe (London), but that does not by itself establish that every support, authentication, log, backup or sub-processor activity stays in the UK.
+The selected design uses **Supabase, Inc.** for email authentication, London-region Postgres, Edge Functions and recovery; **IONOS** for authenticated email delivery; **Plausible Insights OÜ** for product-event aggregation; and **GitHub, Inc.** for the static application and content delivery. GitHub Pages/CDN receives normal request metadata such as visitor IP address and browser details even though it receives no assessment content. Each supplier requires role determination and due diligence, an Article 28 arrangement where applicable, sub-processor review, data-location/transfer assessment, deletion commitments, security-log review and incident terms. The database region is West Europe (London), but that does not by itself establish that every support, authentication, log, backup or sub-processor activity stays in the UK.
 
-Operational assessment records remain separate from Plausible. GitHub Pages serves the application but receives no participant record or assessment content from the application API. Supabase and Plausible will inevitably operate proportionate platform/security logs under their terms; content, access and retention must be confirmed before activation.
+Operational participant records remain separate from Plausible. GitHub Pages serves the application and receives request metadata, but no participant record or assessment content from the application API. Supabase, Plausible, IONOS and GitHub operate platform/security logs under their terms; roles, content, access and retention must be confirmed before activation.
 
 ## Recommended public-beta boundary
 
 The first public beta should **not** operate a server-side assessment workspace. Levels, certainty, applicability, boundary text, comments, evidence and report contents remain in the user's browser. OPL Advisory receives only the information needed to understand beta adoption, verify report access and receive optional feedback. Server-side assessment storage, team workspaces and benchmarking are later, separately approved features.
 
-This reduces confidentiality and contractual friction but does not remove data-protection obligations: verified participant details, security logs and feedback can still be personal data. Plausible's aggregate events must be assessed in context rather than described as legally anonymous without review.
+This reduces confidentiality and contractual friction but does not remove data-protection obligations: verified participant details, security logs and feedback can still be personal data. Plausible event messages are sent without a participant identifier and aggregated after receipt; they must not be described as legally anonymous.
 
 ## Data flow
 
 ```text
-Public site ──normal link──> browser assessment (IndexedDB)
+GitHub Pages/CDN ──page request metadata──> browser assessment (IndexedDB)
                                   │
                                   ├── local levels, certainty, notes, evidence
                                   ├── local HTML report / JSON / CSV / print
                                   │
-                                  ├── allow-listed funnel events ──> Plausible aggregate events
+                                  ├── allow-listed event messages ──> Plausible aggregation
                                   │                                  (no app/user ID or results/text)
                                   │
                                   ├── report-gate details ──> email OTP + participant store
@@ -42,7 +42,7 @@ Automatic public-site page views are disabled on the assessment route. Explicit
 beta events receive no email, app/user identifier, response, evidence or report.
 ```
 
-The browser calls Supabase Auth and the Edge Function directly over TLS. Supabase Auth receives the email and OTP state; London Postgres receives the minimum participant profile, preferences, feedback and rights/audit records. Plausible receives only allow-listed event names and coarse properties with no Supabase identity. IONOS receives the destination email, sender, one-time-code message and normal delivery metadata; it receives no participant profile, assessment response, report or feedback. Supabase administrator access is not a routine application flow and is protected by account MFA and least privilege.
+The browser first requests the static application from GitHub Pages/CDN, which receives normal request metadata but no assessment content. It calls Supabase Auth and the Edge Function directly over TLS. Supabase Auth receives the email and OTP state; London Postgres receives the minimum participant profile, preferences, feedback and rights/audit records. Plausible receives individual allow-listed event messages without a participant identifier and aggregates them after receipt. IONOS receives the destination email, sender, one-time-code message and normal delivery metadata; it receives no participant profile, assessment response, report or feedback. Supabase administrator access is not a routine application flow and is protected by account MFA and least privilege.
 
 No patient-level data, personal confidential data, credentials or unnecessarily sensitive operational information is required or permitted.
 
@@ -50,19 +50,19 @@ No patient-level data, personal confidential data, credentials or unnecessarily 
 
 | Purpose | Data | Proposed basis | Review point |
 |:--|:--|:--|:--|
-| Measure beta starts, progress and requested exports | allow-listed Plausible event name, tool version, coarse duration and completion counts; no application identifier | Legitimate interests | Complete an LIA; confirm any PECR/storage-access implications and provide a simple objection where required. No assessment values or text. |
-| Verify report access and know who completed the beta | email, role, organisation, optional profile bands, verification/security events | Contract where necessary to deliver the requested report; legitimate interests for proportionate security and beta administration | Confirm that the free-service terms form a suitable contract and test whether role/organisation are genuinely necessary. |
-| Generate and save the assessment/report | browser-only boundary, responses, rationale, evidence references | Processing occurs locally at the user's direction; OPL Advisory does not receive these data in the public-beta model | Confirm that no request, log, analytics event or crash report can capture the content. |
+| Measure beta starts, progress and requested exports | allow-listed Plausible event name, tool version, coarse duration and completion counts; no participant identifier | Legitimate interests | Complete an LIA. Use the PECR statistical-purposes exception only with clear information, purpose limitation and a simple, free objection that actually stops the storage/access. No assessment values or text. |
+| Verify report access and know who completed the beta | email, role, organisation, optional profile bands, verification/security events | Legitimate interests for running and learning from a controlled beta | Complete the gate LIA and decide whether organisation is necessary. Report generation itself is local, so contract is not relied on. |
+| Generate and save the assessment/report | browser-only boundary, responses, rationale, evidence references | Outside the OPL-held beta record by design: OPL Advisory does not receive these data by default | Confirm that no request, log, analytics event or crash report captures the content; separately govern any deliberate share or support copy. |
 | Receive feedback without contact details | rating/category/comment and allow-listed coarse tool context | Legitimate interests | Do not promise legal anonymity; exclude participant and analytics identifiers, separate storage and minimise network logs. |
 | Receive contactable feedback | feedback plus explicit participant/contact reference | Legitimate interests for responding to the requested contact; consent if later contact goes beyond that request | Make the choice explicit and separate from report delivery and marketing. |
-| Support access, correction, export and deletion | account and request records | Legal obligation and/or basis used for the service | Define identity-verification and response procedures. |
+| Support access, correction, export, deletion and complaints | account, request and complaint records | Legal obligation | Define identity verification, response procedures, complaint acknowledgement within 30 days and outcomes without undue delay. |
 | Improve the tool and framework | aggregate funnel measures and feedback deliberately submitted by users | Legitimate interests; separate consent/permission for identifiable quotations or case studies | The public beta has no central result dataset. Future result research requires explicit sharing and new governance. |
 | Invite optional research contact | email and preference record | Consent; PECR consent where the message is electronic direct marketing | Separate, specific, unbundled, recorded and withdrawable. |
 | Newsletter or promotional updates | email and preference record | Consent unless a reviewed PECR exception genuinely applies | Do not infer from report delivery or research participation. |
 
 ICO guidance distinguishes a requested service message from marketing: an emailed report requested by the user does not grant permission for promotional email. See [planning direct marketing](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/direct-marketing-guidance/plan-direct-marketing/) and [electronic mail marketing](https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-direct-marketing-using-electronic-mail/).
 
-The Data (Use and Access) Act 2025 is fully in force. ICO guidance continues to require purpose clarity, necessity, transparency and accountability; several detailed UK GDPR pages remain under review and should be rechecked before launch. See the [ICO DUAA summary](https://ico.org.uk/about-the-ico/what-we-do/legislation-we-cover/data-use-and-access-act-2025/the-data-use-and-access-act-2025-duaa-summary-of-the-changes/).
+As checked on 12 August 2026, the ICO states that all stages of the Data (Use and Access) Act 2025 are in force, with the complaints requirements applying from 19 June 2026. ICO guidance continues to require purpose clarity, necessity, transparency and accountability; current guidance must be rechecked at launch. See the ICO's [current DUAA status](https://ico.org.uk/about-the-ico/what-we-do/legislation-we-cover/data-use-and-access-act-2025/the-data-use-and-access-act-2025-how-does-this-affect-me/) and [complaints guidance](https://ico.org.uk/for-organisations/how-to-deal-with-data-protection-complaints/).
 
 ## Data minimisation
 
@@ -132,7 +132,7 @@ The public beta has no central result dataset, so it cannot generate a maturity 
 9. perform motivated-intruder and linkability review before release; and
 10. keep a release ledger recording purpose, fields, thresholds, reviewer and residual risk.
 
-Small-cell rules are contextual rather than magic numbers. ONS advises considering sparsity, zeros, differencing, dimensionality and sensitivity, and using aggregation, rounding or suppression as appropriate: [ONS disclosure-control policy](https://www.ons.gov.uk/methodology/methodologytopicsandstatisticalconcepts/disclosurecontrol/policyonprotectingconfidentialityintablesofbirthanddeathstatistics). ICO guidance requires a comprehensive governance approach and a DPIA for anonymisation: [anonymisation governance](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-sharing/anonymisation/what-accountability-and-governance-measures-do-we-need/).
+Small-cell rules are contextual rather than magic numbers. ONS advises considering sparsity, zeros, differencing, dimensionality and sensitivity, and using aggregation, rounding or suppression as appropriate: [ONS disclosure-control policy](https://www.ons.gov.uk/methodology/methodologytopicsandstatisticalconcepts/disclosurecontrol/policyonprotectingconfidentialityintablesofbirthanddeathstatistics). ICO guidance recommends comprehensive anonymisation governance and considering a DPIA; it does not impose a freestanding DPIA requirement for every anonymisation exercise: [anonymisation governance](https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-sharing/anonymisation/what-accountability-and-governance-measures-do-we-need/).
 
 ## Analytics separation
 
@@ -169,19 +169,19 @@ Small-cell rules are contextual rather than magic numbers. ONS advises consideri
 
 ### Who we are
 
-OPL Advisory Ltd is proposed to operate the HDRL self-assessment service and act as controller. This must be confirmed before launch. The HDRL Framework was commissioned by and is owned by Research Data Scotland, but Research Data Scotland will not receive identifiable assessment records unless a separate arrangement and notice say otherwise.
+OPL Advisory Ltd (company number `16704749`) is the working controller for the HDRL self-assessment beta records described here. Its registered office is 71–75 Shelton Street, Covent Garden, London WC2H 9JQ. The ICO registration reference, approved privacy postal address and accountable contact must be confirmed before publication. The HDRL Framework was commissioned by and is owned by Research Data Scotland, but Research Data Scotland does not operate the beta or receive participant or assessment records under the planned arrangement. Any change requires a new role assessment and updated notice before it takes effect.
 
 ### What we collect and why
 
-Your assessment—including levels, certainty, scope, comments, evidence references and report—stays in your browser unless you deliberately download or share it. OPL Advisory cannot see or recover it.
+Your assessment—including levels, certainty, scope, comments, evidence references and report—stays in your browser unless you deliberately export or share it. It is not sent to OPL Advisory through the assessment service, and OPL Advisory cannot retrieve the on-device draft. If you deliberately send assessment content in a share bundle, support message or another route, that copy is outside this default boundary.
 
-We use a limited set of aggregate Plausible events to understand how many people start, make progress, reach the report and request downloads. We do not send an application user/session identifier, email or organisation with those events. Events contain tool versions, coarse time bands and completion counts, but no assessment values or text. At report access we collect a verified email address, role and organisation, plus any optional broad profile information you provide, so we can administer the beta and know who reached the report. We collect feedback only when you submit it.
+We send a limited set of individual event messages to Plausible so it can aggregate how many people start, make progress, reach the report and request downloads. We do not send a participant/session identifier, email or organisation with those events. Events contain tool versions, coarse time bands and completion counts, but no assessment values or text. At report access we collect a verified email address, role and organisation, plus any optional broad profile information you provide, so we can administer the beta and know who reached the report. We collect feedback only when you submit it.
 
-We do not use assessment data to accredit you, decide funding or participation, advertise to you, profile individuals or sell data. We do not publish identifiable assessment information.
+OPL Advisory does not use participant records or assessment content deliberately shared with it to accredit you or make funding or participation decisions. It does not use beta records for advertising or individual profiling, sell them or publish identifiable assessment information. A participant who shares a report with another organisation controls that disclosure; this notice cannot govern the recipient's later use.
 
 ### Sharing
 
-Participant and feedback records are available only to authorised OPL Advisory personnel and suppliers that process them under contract. Plausible events are held separately. Feedback submitted without contact details is stored without your email, organisation or participant identifier; however, free text or unusual context can still identify you. We do not share individual scores, evidence or reports with another organisation because we do not receive them unless you explicitly create and send a results bundle. Identifiable quotations, case studies and examples require separate permission.
+Participant and feedback records are available only to authorised OPL Advisory personnel and suppliers that process them under the applicable contractual terms. GitHub receives normal website request metadata but no assessment content. Plausible events are held separately. Feedback submitted without contact details is stored without your email, organisation or participant identifier; however, free text or unusual context can still identify you. We do not share individual scores, evidence or reports with another organisation because we do not receive them unless you explicitly create and send a results bundle. Identifiable quotations, case studies and examples require separate permission.
 
 ### Framework improvement
 
@@ -217,7 +217,7 @@ The Supabase database is configured in West Europe (London), and browser request
 
 ### Beta activity
 
-> If you allow beta analytics, Plausible records that this beta was started, coarse time and completion bands, and whether report, download and feedback actions were reached. We do not send an application identifier, your email or organisation, levels, certainty, assessment boundary, comments, evidence or report contents. Automatic page views are disabled on this route. You can stop future beta events for this draft; requested email verification and feedback you deliberately submit will still use the service.
+> We count how this beta is used: that it was started, coarse time and completion bands, and whether report, download and feedback actions were reached. We do not send a participant identifier, your email or organisation, levels, certainty, assessment boundary, comments, evidence or report contents. Automatic page views are disabled on this route. You can turn beta analytics off in one action; it takes effect immediately for future events and does not stop requested email verification or feedback you deliberately submit.
 
 ### Feedback
 
@@ -250,6 +250,7 @@ The Supabase database is configured in West Europe (London), and browser request
 ## Required formal review before production
 
 - confirm controller, joint-controller and processor roles;
+- approve and test the data-protection complaints procedure, accountable owner and deputy cover;
 - approve lawful bases and legitimate-interest assessments;
 - complete the DPIA and records of processing;
 - approve controller contact, rights and complaint wording;
@@ -257,8 +258,8 @@ The Supabase database is configured in West Europe (London), and browser request
 - approve processor contracts, sub-processors, locations and transfer safeguards;
 - record approval of the dedicated Supabase London project and its US$10 monthly increment;
 - approve the current Supabase, Plausible and IONOS terms, subprocessors, locations, transfers and recovery/log-retention settings;
-- create and test `report@hdrlframework.org` through IONOS custom SMTP without sharing its password in project records;
-- confirm that `privacy@hdrlframework.org` is monitored, or replace it with the approved rights-contact mailbox;
+- retain the tested `report@hdrlframework.org` IONOS custom SMTP credential through the approved secret/password process;
+- retain monitoring and deputy cover for the tested `privacy@hdrlframework.org` rights-contact route;
 - validate retention, backup expiry and deletion evidence;
 - approve statistical disclosure-control protocol;
 - review optional-contact wording and preference records under PECR;
