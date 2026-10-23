@@ -9,6 +9,8 @@ description: Scope, functional requirements, acceptance criteria and roadmap for
 
 Help people learn HDRL by applying it and create a proportionate, traceable improvement record. The service is not accreditation, certification, an official standard, a validated benchmark or an endorsement.
 
+**Current implementation plan — 23 October 2026:** use the [current build brief](current-build-brief.md) and [comparator refresh](comparator-refresh-2026-10.md). The v0.5 prototype already implements the individual orientation/snapshot/evidence flows. The next candidate adds a clearer snapshot report, separately versioned next-step guidance, safe local restore and the remaining service/privacy hardening. Multi-rater teams and agent evidence work remain planned increments; the requirements below must not be read as a claim that those features already exist.
+
 ## MVP scope
 
 ### Included
@@ -95,7 +97,7 @@ Help people learn HDRL by applying it and create a proportionate, traceable impr
 - The service records that feedback was submitted or skipped in the funnel, but never copies feedback text into event analytics or logs.
 - Assessment results are local by default. Optional result sharing requires a separate, explicit action and a preview of the included categories.
 
-### Team workflow (production)
+### Team workflow (future hosted service)
 
 - Roles are owner, contributor and reviewer; a facilitator permission may be assigned to an owner or contributor.
 - Invitees authenticate using an emailed one-time code; membership is bound to the invited email and workspace.
@@ -133,19 +135,33 @@ Operational measures may include starts, domain and stage completion, report unl
 
 ## Prioritised roadmap
 
-### Prototype v0.3 — this branch
+The October refresh establishes the following order; the [current build brief](current-build-brief.md#ordered-backlog-and-acceptance-checks) contains concrete acceptance checks. Each increment can be reviewed independently.
+
+### Prototype v0.5 — implemented on this branch
 
 On-device orientation, 64-indicator snapshot, evidence register, local beta-event inspection, optional feedback checkpoint, explicit results share bundle, report gate simulation, rules-based report and exports. No transmission or real account system.
 
-### Public beta — thin operational service
+### Next candidate — useful report and operational readiness
 
-Keep assessment and report generation in the browser. Add privacy-reviewed email verification, beta participant records, allow-listed operational events and a separate feedback endpoint. Do not add a server-side assessment store. This is the preferred next release because it provides adoption and usability learning without asking organisations to disclose business-sensitive results.
+Make the full canonical snapshot the primary route, retain optional orientation and later evidence deepening, and show a fictional report example. A snapshot-only report must concentrate on current understanding, certainty, coverage and useful next questions rather than interpreting untouched evidence fields. Add original next-step guidance with versioned triggers/indicator references and user-selected priorities; any suggested action must show its derivation and limits. Add safe JSON restore and provenance before promising reassessment or team import. Complete the current brief's analytics-objection, authentication, retention, contract and accessibility work while keeping collection off.
+
+### Public beta — activate the existing thin operational service after approval
+
+Keep assessment and report generation in the browser. The dedicated London Supabase service is already deployed; its browser client remains disabled. Activate privacy-reviewed email verification, minimum participant records, allow-listed operational events and separate feedback only after the release candidate and governance arrangements receive explicit approval. Do not add a server-side assessment store.
+
+### Local team comparison
+
+Support deliberate local import of independently completed compatible exports, distribution/uncertainty/applicability views and a separate consensus/action record. No central result store is required. Explain that local exchange cannot authenticate contributors, enforce blind rounds, revoke files or provide tamper-resistant audit. This is a smaller step than hosted teams and should test demand for calibration.
+
+### Evidence-assistant research experiment
+
+Evaluate citation-linked evidence mapping and follow-up questions on a fixed permitted public/synthetic corpus. Preserve sources, catalogue/model/prompt/run versions and human review decisions. Missing public evidence must not become L1 or absent capability. Measure net reviewer time saved after correction. Do not integrate a live AI provider or confidential uploads into the beta as part of this research plan.
 
 ### Evidence workspace pilot (optional later)
 
 Only if user research demonstrates need: UK-hosted authenticated workspaces, emailed OTP, autosave, export/delete, application audit trail, operational admin, DPIA/security review and invited pilot cohort. Server-side assessment storage is a separate product and privacy decision, not an automatic beta upgrade.
 
-### Team beta
+### Hosted team beta (only if justified)
 
 Independent rounds, invitations and roles, disagreement views, action assignment, consensus audit and reviewer sign-off.
 
@@ -155,4 +171,4 @@ Content review, public contributor review, user research, inter-rater reliabilit
 
 ### Later, only if justified
 
-Accessible server-generated PDF, approved external sharing, version-to-version comparison and carefully governed cross-assessment learning. AI assistance remains off by default and requires a separate DPIA, explainability design and processor review.
+Accessible server-generated PDF, approved external sharing, compatible-version reassessment and carefully governed cross-assessment learning. A live evidence assistant remains off by default and requires a separate data-flow, explainability, supplier, cost and evaluation decision.

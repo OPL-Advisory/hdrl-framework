@@ -7,6 +7,8 @@ description: Comparator research, user needs, design principles and risks behind
 
 **Research snapshot:** 30 July 2026. This is product and design research, not legal advice.
 
+**Restart update — 23 October 2026:** the [current build brief](current-build-brief.md) is the implementation restart point. The [SmarterX comparison and synthesis](comparator-refresh-2026-10.md) updates the product recommendations using current primary sources, the supplied Grok/Gemini analyses and a separate agent review. The original landscape below remains historical research. Proposed hosted-team controls are not implemented by the current single-working-set prototype.
+
 ## Verified HDRL baseline
 
 The design is tied to **HDRL Framework v1.0.1**, indicator catalogue and Schema **v1.0.2**, and Presentation Kit **v1.1.0**. The live and repository catalogues both contain 64 indicators in eight domains. The framework remains evidence-informed and formatively applied; content validity, inter-rater reliability, responsiveness and predictive validity require further work. It must not be represented as accreditation, an official standard, a programme participation decision or a validated benchmarking service.

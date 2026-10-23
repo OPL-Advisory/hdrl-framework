@@ -37,12 +37,16 @@ The machine-readable catalogue deliberately excludes the project-specific HDRS c
 
 ## Local development
 
+The self-assessment development branch is `codex/self-assessment`. For its current state, next build and a copyable fresh-session prompt, start with the [current build brief](docs/self-assessment/current-build-brief.md). The [October 2026 product refresh](docs/self-assessment/comparator-refresh-2026-10.md) reconciles SmarterX research, the two supplied model analyses and a separate agent review. The assessment is a local/staging prototype; public collection remains disabled.
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 mkdocs serve
 ```
+
+For the self-assessment preview, use `mkdocs serve --dev-addr 127.0.0.1:8123` and open `http://127.0.0.1:8123/self-assessment/`. Opening a template under `overrides/` directly will not render the site.
 
 Run a production-equivalent build before opening a pull request:
 

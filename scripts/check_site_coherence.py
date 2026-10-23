@@ -28,6 +28,11 @@ PRESENTATION_KIT = (
     SITE / "downloads" / "HDRL-Presentation-Kit-v1.1.0.pptx"
 )
 CANONICAL_ORIGIN = "https://hdrlframework.org"
+ASSESSMENT_NOINDEX_ROUTES = {
+    "/self-assessment/",
+    "/self-assessment/current-build-brief/",
+    "/self-assessment/comparator-refresh-2026-10/",
+}
 INTERNAL_HOSTS = {
     "hdrlframework.org",
     "launch-review--hdrl-framework-pr10-review.netlify.app",
@@ -184,7 +189,7 @@ def main() -> None:
             f"{route} canonical URL is {parser.canonical!r}, "
             f"expected {expected_canonical!r}",
         )
-        if route == "/self-assessment/":
+        if route in ASSESSMENT_NOINDEX_ROUTES:
             require(
                 parser.robots and "noindex" in parser.robots.lower(),
                 "Research prototype must remain excluded from indexing",

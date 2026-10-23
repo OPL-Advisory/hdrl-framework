@@ -5,6 +5,8 @@ description: Deployment controls, quality plan, operational runbook and handover
 
 # Self-assessment operations, testing and handover
 
+**Current restart point:** [current build brief — 23 October 2026](current-build-brief.md). It distinguishes implemented features, historical tests, live service checks and the next bounded increment. The [October comparator refresh](comparator-refresh-2026-10.md) explains the product direction.
+
 ## Release gate
 
 The research prototype does not transmit assessment information and must remain visibly labelled as non-production. Do not enable production collection until all of the following have named approvers and evidence:
@@ -32,6 +34,8 @@ The research prototype does not transmit assessment information and must remain 
 9. Review incidents, support demand, funnel loss and user research before any wider launch or server-side assessment feature.
 
 ### Current activation state
+
+**Rechecked 23 October 2026:** the Supabase London project reports `ACTIVE_HEALTHY`, its `beta-service` function is active and the public health route reports service `0.3.0` with `result_storage:false`. Table metadata reports zero rows in all six operational tables, with RLS enabled. Security Advisor returns only the expected six informational no-policy findings, with no errors/warnings. The committed browser configuration still disables Supabase collection and Plausible and omits the publishable key. The public self-assessment URL returns HTTP 404; this remains a branch/local-preview capability. Email delivery, current supplier billing/terms and the August browser/accessibility checks were not re-tested in this restart.
 
 The dedicated Supabase project **HDRL Framework Beta** is deployed in West Europe (London). Its versioned Postgres migrations, RLS, least-privilege grants, scheduled retention and `beta-service` Edge Function are live. The project database contains no assessment or report tables and synthetic feedback used for verification has been removed.
 
@@ -80,7 +84,7 @@ Workspace, invitation and role-manipulation tests apply only if the later server
 
 ## Prototype verification record
 
-The following checks were completed against this branch on 7 August 2026 using synthetic content. Tool v0.5 includes migration of earlier on-device draft schemas and the Supabase/Plausible public-beta data boundary:
+The following historical checks were completed against this branch on 7 August 2026 using synthetic content. Tool v0.5 includes migration of earlier on-device draft schemas and the Supabase/Plausible public-beta data boundary. The October restart does not turn these browser, email or accessibility observations into current release approval:
 
 | Check | Result |
 |:--|:--|
