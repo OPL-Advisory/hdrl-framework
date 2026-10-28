@@ -18,7 +18,7 @@
   const CATALOGUE_SHA256 = "442a10be23a0ddec889785577fb8853db2296cc5b3a50929849025e27077cd47";
   const GUIDANCE_SHA256 = "1118cb773ca4ecc2bff06d2612d14b756134bda04603c43dd18604f4df36f92f";
   // Engineering candidate identity; baseline release labels above are not advanced by this work.
-  const COMPATIBILITY_CANDIDATE = "2026-10-28.2";
+  const COMPATIBILITY_CANDIDATE = "2026-10-28.3";
   const DRAFT_SCHEMA_VERSION = 5;
   const PROVENANCE_VERSION_KEYS = ["framework", "catalogue", "tool", "guidance", "rules", "report"];
 
@@ -1079,10 +1079,10 @@
     `);
   }
 
-  function snapshotIndicatorView(errors = {}) {
+  function snapshotIndicatorView(errors = {}, pendingResponse = null) {
     const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
     if (!indicator) return snapshotDashboardView();
-    const response = snapshotResponse(indicator.ref);
+    const response = pendingResponse || snapshotResponse(indicator.ref);
     const domain = catalogue.domains.find((item) => item.ref === indicator.domain);
     const index = catalogue.indicators.findIndex((item) => item.ref === indicator.ref);
     const errorSummary = Object.keys(errors).length
@@ -1162,12 +1162,19 @@
     return summariseLevelValues(values);
   }
 
+  function snapshotRevisitReasons(response) {
+    const reasons = [];
+    if (response.status === "unstarted") reasons.push("Not completed");
+    if (response.status === "not_known") reasons.push("Not known");
+    if (response.status === "not_assessed") reasons.push("Not assessed — left for later");
+    if (response.certainty === "low") reasons.push("Low certainty");
+    if (["some_overlap", "unclear"].includes(response.clarity)) reasons.push("Level wording flagged");
+    return reasons;
+  }
+
   function snapshotReviewView() {
     const s = snapshotStats();
-    const revisit = catalogue.indicators.filter((indicator) => {
-      const response = snapshotResponse(indicator.ref);
-      return response.status === "unstarted" || response.certainty === "low" || ["some_overlap", "unclear"].includes(response.clarity);
-    });
+    const revisit = catalogue.indicators.filter((indicator) => snapshotRevisitReasons(snapshotResponse(indicator.ref)).length);
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
         <div class="hdrl-progress-label">Stage 1 review · ${s.completed} of 64 indicators completed</div>
@@ -1190,15 +1197,14 @@
             }).join("")}</tbody>
           </table>
         </div>
-        <h3>Indicators to revisit</h3>
+        <h3>Indicators to revisit (${revisit.length})</h3>
         <div class="hdrl-review-issues">
-          ${revisit.slice(0, 40).map((indicator) => {
+          ${revisit.map((indicator) => {
             const response = snapshotResponse(indicator.ref);
-            const reason = response.status === "unstarted" ? "Not completed" : response.certainty === "low" ? "Low certainty" : "Level wording flagged";
-            return `<button type="button" data-action="open-snapshot" data-ref="${indicator.ref}"><span>${esc(reason)}</span><strong>${indicator.ref}</strong><small>${esc(indicator.name)}</small></button>`;
-          }).join("") || `<p class="hdrl-success-panel">No snapshot completeness, low-certainty or wording flags remain.</p>`}
+            const reason = snapshotRevisitReasons(response).join(" · ");
+            return `<button type="button" data-action="open-snapshot" data-ref="${indicator.ref}"><span>${esc(reason)}</span><strong>${indicator.ref}</strong><small>${esc(indicator.name)}${response.note ? ` · ${esc(response.note)}` : ""}</small></button>`;
+          }).join("") || `<p class="hdrl-success-panel">No incomplete, unknown, deferred, low-certainty or wording flags remain.</p>`}
         </div>
-        ${revisit.length > 40 ? `<p>${revisit.length - 40} additional indicators to revisit remain visible in the snapshot overview and exports.</p>` : ""}
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="gate">${publicTestMode() ? "Open report" : "Prepare report and exports"}</button>
           <button type="button" class="md-button" data-action="evidence">Start evidence gathering</button>
@@ -1434,8 +1440,8 @@
             </div>
             ${textareaField("indicator-rationale", "Rationale", response.rationale, "Why does the selected level best fit the current evidence?", false, "", 1800)}
           </div>
-          <div class="hdrl-form-grid" id="hdrl-judgement-notes" ${response.status === "rated" ? "" : "hidden"}>
-            ${textareaField("indicator-improvement", "Potential improvement note", response.improvementNote, "Your own proposed next step. The rules engine will not invent an action.", false, "", 1200)}
+          <div class="hdrl-form-grid" id="hdrl-judgement-notes">
+            ${textareaField("indicator-improvement", "Potential improvement note", response.improvementNote, "Your own proposed next step, if useful — including when no level is selected. The tool does not invent an action.", false, "", 1200)}
           </div>
           <div id="hdrl-evidence-panel" ${response.status === "rated" ? "" : "hidden"}>
           ${indicatorEvidenceIdeas(indicator)}
@@ -1544,6 +1550,11 @@
   function reviewView() {
     const s = stats();
     const issues = reviewIssues();
+    const byIndicator = new Map();
+    issues.forEach((issue) => {
+      if (!byIndicator.has(issue.ref)) byIndicator.set(issue.ref, []);
+      byIndicator.get(issue.ref).push(issue);
+    });
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
         <div class="hdrl-progress-label">Review before report · nothing will be submitted</div>
@@ -1563,15 +1574,15 @@
             return `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><span>${domain.ref}</span><strong>${esc(domain.name)}</strong><p>${esc(summary.label)}</p><small>${summary.count} Core judgement${summary.count === 1 ? "" : "s"} included</small></div>`;
           }).join("")}
         </div>
-        <h3>Items to understand before reporting</h3>
+        <h3>Items to understand before reporting (${byIndicator.size})</h3>
         ${issues.length ? `
           <div class="hdrl-review-issues">
-            ${issues.slice(0, 30).map((issue) => `
-              <button type="button" data-action="open-indicator" data-ref="${issue.ref}">
-                <span>${esc(issue.type)}</span><strong>${esc(issue.ref)}</strong><small>${esc(issue.text)}</small>
+            ${[...byIndicator].map(([ref, reasons]) => `
+              <button type="button" data-action="open-indicator" data-ref="${ref}">
+                <span>${reasons.map((issue) => esc(issue.type)).join(" · ")}</span><strong>${esc(ref)}</strong><small>${reasons.map((issue) => esc(issue.text)).join(" ")}${indicatorResponse(ref).statusReason ? ` ${esc(indicatorResponse(ref).statusReason)}` : ""}</small>
               </button>`).join("")}
           </div>
-          ${issues.length > 30 ? `<p>${issues.length - 30} additional items will be listed in the report.</p>` : ""}` : `<p class="hdrl-success-panel">No obvious completeness issues were found. This does not validate the judgements or evidence.</p>`}
+          ` : `<p class="hdrl-success-panel">No obvious completeness issues were found. This does not validate the judgements or evidence.</p>`}
         ${state.boundary.method === "team" ? teamReviewPanel() : ""}
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="gate">${publicTestMode() ? "Open report" : "Continue to report information"}</button>
@@ -1925,11 +1936,34 @@
     `);
   }
 
+  function findingExplanation(item) {
+    const response = indicatorResponse(item.ref);
+    if (item.rule === "R-USER-ACTION") return "You entered this action.";
+    if (item.rule === "R-EVIDENCE-GAP") return "No reference for this judgement is marked reviewed or accepted. This does not establish that the capability is absent.";
+    if (item.rule === "Direct evidence-status summary") return "You marked a reference reviewed or accepted. The tool has not independently checked it.";
+    if (item.rule === "R-LOW-CERTAINTY") return `Suggested because ${[response.status === "not_known" ? "you selected Not known" : "", response.certainty === "low" ? "you recorded low certainty" : ""].filter(Boolean).join(" and ")}.`;
+    if (item.rule === "R-NOT-ASSESSED") return response.status === "not_assessed"
+      ? "Suggested because you left this indicator for a later assessment."
+      : "Suggested because this indicator has not been started.";
+    return "Based on the response you recorded.";
+  }
+
   function findingSection(title, items, empty) {
+    // All items stay in ordinary HTML, including print. Group long lists by
+    // domain rather than hiding later items or inventing a priority ranking.
+    const provisional = items.length && items.every((item) => item.rule === "R-EVIDENCE-GAP");
+    const list = (entries) => `<ul class="hdrl-finding-list">${entries.map((item) => `<li><button type="button" class="hdrl-link-button" data-action="open-indicator" data-ref="${esc(item.ref)}">${esc(item.ref)}<span class="hdrl-assessment-sr"> · Review response</span></button> ${esc(provisional ? `${indicatorResponse(item.ref).level} judgement — evidence review pending.` : item.text)}${provisional ? "" : `<p>${esc(findingExplanation(item))}</p>`}</li>`).join("")}</ul>`;
+    const body = items.length > 25
+      ? catalogue.domains.map((domain) => {
+        const entries = items.filter((item) => item.ref.startsWith(`${domain.ref}.`));
+        return entries.length ? `<div class="hdrl-finding-domain"><h4>${esc(domain.ref)} · ${esc(domain.name)} (${entries.length})</h4>${list(entries)}</div>` : "";
+      }).join("")
+      : list(items);
     return `
-      <section>
-        <h3>${esc(title)}</h3>
-        ${items.length ? `<ul class="hdrl-finding-list">${items.slice(0, 25).map((item) => `<li><strong>${esc(item.ref)}</strong> ${esc(item.text)} <details><summary>How this was identified</summary><p>Guidance reference: ${esc(item.rule)}</p></details></li>`).join("")}</ul>${items.length > 25 ? `<p>${items.length - 25} additional items are included in the JSON export.</p>` : ""}` : `<p>${esc(empty)}</p>`}
+      <section class="hdrl-findings-section">
+        <h3>${esc(title)} (${items.length})</h3>
+        ${provisional ? `<p>These judgements have no reference marked reviewed or accepted. This does not establish that the capability is absent.</p>` : ""}
+        ${items.length ? body : `<p>${esc(empty)}</p>`}
       </section>
     `;
   }
@@ -2340,18 +2374,30 @@
     return errors;
   }
 
+  function snapshotFormValues(form) {
+    const level = form.elements["snapshot-level"].value;
+    return {
+      status: level ? "rated" : (form.elements["snapshot-status"].value || "unstarted"),
+      level,
+      certainty: form.elements["snapshot-certainty"].value,
+      certaintyReasons: [...form.querySelectorAll('input[name="snapshot-reason"]:checked')].map((input) => input.value),
+      clarity: form.elements["snapshot-clarity"].value,
+      note: form.elements["snapshot-note"].value
+    };
+  }
+
   function saveSnapshotForm(form) {
     requireCompatibleDraft();
     const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
     const response = snapshotResponse(indicator.ref);
     const previous = JSON.stringify(response);
-    const level = form.elements["snapshot-level"].value;
-    response.status = level ? "rated" : (form.elements["snapshot-status"].value || "unstarted");
-    response.level = level;
-    response.certainty = level ? form.elements["snapshot-certainty"].value : "";
-    response.certaintyReasons = response.certainty === "low" ? [...form.querySelectorAll('input[name="snapshot-reason"]:checked')].map((input) => input.value) : [];
-    response.clarity = level ? form.elements["snapshot-clarity"].value : "";
-    response.note = form.elements["snapshot-note"].value.trim();
+    const values = snapshotFormValues(form);
+    response.status = values.status;
+    response.level = values.level;
+    response.certainty = values.level ? values.certainty : "";
+    response.certaintyReasons = response.certainty === "low" ? values.certaintyReasons : [];
+    response.clarity = values.level ? values.clarity : "";
+    response.note = values.note.trim();
     response.updatedAt = nowIso();
     if (JSON.stringify(response) !== previous) audit("snapshot_response_changed", indicator.ref, "Prototype user edit");
     scheduleSave();
@@ -2378,7 +2424,7 @@
     response.level = response.status === "rated" ? (form.elements["indicator-level"].value || "") : "";
     response.certainty = response.status === "rated" ? form.elements["indicator-certainty"].value : "";
     response.rationale = response.status === "rated" ? form.elements["indicator-rationale"].value.trim() : "";
-    response.improvementNote = response.status === "rated" ? form.elements["indicator-improvement"].value.trim() : "";
+    response.improvementNote = form.elements["indicator-improvement"].value.trim();
     response.statusReason = response.status === "rated" ? "" : form.elements["indicator-status-reason"].value.trim();
     response.updatedAt = nowIso();
     if (JSON.stringify(response) !== previous) audit("indicator_response_changed", indicator.ref, "Prototype user edit");
@@ -2673,7 +2719,7 @@
       event.preventDefault();
       const errors = validateSnapshot(snapshotForm);
       if (Object.keys(errors).length) {
-        root.innerHTML = snapshotIndicatorView(errors);
+        root.innerHTML = snapshotIndicatorView(errors, snapshotFormValues(snapshotForm));
         bind();
         document.getElementById("hdrl-snapshot-errors")?.focus();
         return;
@@ -2718,7 +2764,6 @@
         const rated = input.value === "rated";
         document.getElementById("hdrl-level-panel").hidden = !rated;
         document.getElementById("hdrl-judgement-details").hidden = !rated;
-        document.getElementById("hdrl-judgement-notes").hidden = !rated;
         document.getElementById("hdrl-evidence-panel").hidden = !rated;
         document.getElementById("hdrl-nonjudgement-panel").hidden = rated;
       });

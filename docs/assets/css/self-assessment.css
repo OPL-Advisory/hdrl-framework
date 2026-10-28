@@ -597,6 +597,8 @@
 }
 
 .hdrl-domain-dot {
+  /* Keep its screen-reader label inside the horizontally scrolling matrix. */
+  position: relative;
   display: inline-grid;
   width: 2.25rem;
   min-height: 2.25rem;
@@ -1572,6 +1574,14 @@ button.hdrl-domain-dot:focus-visible {
     color: #111 !important;
     background: #fff !important;
     border-color: #777 !important;
+  }
+
+  .hdrl-generated-report > .hdrl-findings-section {
+    break-inside: auto;
+  }
+
+  .hdrl-finding-list > li {
+    break-inside: avoid;
   }
 
   .hdrl-report-domain-grid {
