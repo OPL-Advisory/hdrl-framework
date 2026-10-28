@@ -125,7 +125,8 @@ function harness(options = {}) {
     exportPayload, recoveryPayload, downloadRecovery, csvPayload, snapshotCsvPayload, shareBundlePayload,
     reportView, gateView, welcomeView, feedbackView, betaActivityView, derivedFindings, snapshotDomainSummary, domainSummary, summariseLevelValues,
     publicTestMode, betaServiceAvailable, remoteServiceEnabled, recordBetaEvent, updateActiveTime, clearDraft, sampleState,
-    saveSnapshotForm, saveIndicatorForm, persist, scheduleSave, setView, render, init,
+    saveSnapshotForm, snapshotFormValues, validateSnapshot, snapshotIndicatorView, snapshotReviewView, snapshotStats,
+    saveIndicatorForm, indicatorView, reviewView, findingSection, persist, scheduleSave, setView, render, init,
     setInputs(c, g, b) { catalogue = c; content = g; betaConfig = b; },
     setState(value, original) { state = value; originalLoadedDraft = original; hasOriginalLoadedDraft = arguments.length > 1; },
     getState() { return state; }
@@ -228,7 +229,7 @@ test("current synthetic exports retain separate method and generator provenance"
 });
 
 test("a compatible earlier implementation retains its original provenance", () => {
-  for (const candidate of ["2026-10-26.1", "2026-10-26.2", "2026-10-28.1"]) {
+  for (const candidate of ["2026-10-26.1", "2026-10-26.2", "2026-10-28.1", "2026-10-28.2"]) {
     const { api } = harness();
     const draft = plain(api.defaultState());
     draft.provenance.implementation_candidate = candidate;
@@ -238,7 +239,7 @@ test("a compatible earlier implementation retains its original provenance", () =
     assert.equal(api.draftCompatibility().compatible, true);
     const exported = plain(api.exportPayload());
     assert.equal(exported.provenance.implementation_candidate, candidate);
-    assert.equal(exported.generated_by.implementation_candidate, "2026-10-28.2");
+    assert.equal(exported.generated_by.implementation_candidate, "2026-10-28.3");
     assert.equal(exported.assessment.boundary.assessmentDate, "2024-02-01");
     assert.deepEqual(exported.versions, draft.versions);
   }
@@ -323,7 +324,7 @@ test("chosen evidence unknowns and partial work remain visible with traceable gu
     assert.match(report, /Evidence-led indicator results/);
     assert.match(report, /Synthetic evidence-stage rationale/);
     assert.doesNotMatch(report, /The evidence-led pass was not undertaken/);
-    assert.match(report, /<details><summary>How this was identified<\/summary><p>Guidance reference: R-/);
+    assert.match(report, /Suggested because .*you recorded low certainty/);
     assert.doesNotMatch(report.replace(/<details>[\s\S]*?<\/details>/g, ""), /R-LOW-CERTAINTY|R-NOT-ASSESSED|R-EVIDENCE-GAP/);
     const exported = plain(api.exportPayload());
     assert.equal(exported.derived.evidence_stage_status, "started");
@@ -661,4 +662,129 @@ test("failed draft deletion preserves the draft and reports failure; successful 
       assert.match(metrics.announcements.at(-1), /has been deleted/);
     }
   }
+});
+
+// Feedback batch 1: behaviour complements the isolated real-browser regressions.
+const formWith = (values, checked = []) => ({
+  elements: Object.fromEntries(Object.entries(values).map(([key, value]) => [key, { value }])),
+  querySelectorAll() { return checked.map((value) => ({ value })); }
+});
+
+test("FB-01 actions survive all non-rated saves without changing level or evidence semantics", async () => {
+  for (const status of ["not_known", "not_assessed", "not_applicable"]) {
+    const { api, getStored } = harness();
+    const draft = api.defaultState();
+    draft.activeIndicator = "E.3.1";
+    api.setState(draft);
+    const originalMedian = plain(api.domainSummary("E"));
+    const action = "Ask the owner <without claiming an evidence gap> & review scope.";
+    api.saveIndicatorForm(formWith({
+      "indicator-decision": "not_judged", "indicator-status": status,
+      "indicator-level": "L5", "indicator-certainty": "high", "indicator-rationale": "Unused",
+      "indicator-improvement": action, "indicator-status-reason": "Synthetic deliberate non-rating"
+    }));
+    await api.persist();
+    const saved = getStored().indicators["E.3.1"];
+    assert.equal(saved.improvementNote, action);
+    assert.equal(saved.status, status);
+    assert.equal(saved.level, "");
+    assert.equal(saved.certainty, "");
+    assert.deepEqual(saved.evidence, []);
+    assert.deepEqual(plain(api.domainSummary("E")), originalMedian);
+    const exported = plain(api.exportPayload());
+    assert.equal(exported.assessment.evidence_led_responses["E.3.1"].improvementNote, action);
+    assert.deepEqual(exported.derived.findings.actions, [{ ref: "E.3.1", text: action, rule: "R-USER-ACTION" }]);
+    if (status === "not_applicable") assert.equal(exported.derived.findings.questions.some((x) => x.ref === "E.3.1"), false);
+    assert.match(api.reportView(), /Ask the owner &lt;without claiming an evidence gap&gt; &amp; review scope/);
+    assert.match(api.reportView(), /You entered this action/);
+    const reload = harness({ stored: getStored() });
+    await reload.api.init();
+    assert.equal(reload.api.getState().indicators["E.3.1"].improvementNote, action);
+  }
+});
+
+test("FB-02 failed certainty validation renders temporary input without completing or replacing a response", () => {
+  for (const existing of [false, true]) {
+    const { api, metrics } = harness();
+    const draft = api.defaultState();
+    draft.activeIndicator = "A.1.2";
+    if (existing) draft.snapshot["A.1.2"] = { status: "rated", level: "L2", certainty: "high", note: "Previously saved", clarity: "clear", certaintyReasons: [] };
+    api.setState(draft);
+    api.snapshotIndicatorView(); // Normal rendering initialises an empty, unstarted row.
+    const completed = api.snapshotStats().completed;
+    const before = plain(draft.snapshot);
+    const form = formWith({ "snapshot-level": "L3", "snapshot-status": "", "snapshot-certainty": "", "snapshot-clarity": "unclear", "snapshot-note": "Keep <my note> & choice" });
+    const errors = api.validateSnapshot(form);
+    assert.deepEqual(plain(errors), { "hdrl-snapshot-certainty-panel": "Choose high, medium or low certainty." });
+    const html = api.snapshotIndicatorView(errors, api.snapshotFormValues(form));
+    assert.match(html, /id="snapshot-level-L3"[^>]*checked/);
+    assert.match(html, /Keep &lt;my note&gt; &amp; choice/);
+    assert.match(html, /name="snapshot-clarity"[^>]*value="unclear"[^>]*checked/);
+    assert.match(html, /role="alert"/);
+    assert.deepEqual(plain(draft.snapshot), before);
+    assert.equal(api.snapshotStats().completed, completed);
+    assert.equal(metrics.writes, 0);
+    form.elements["snapshot-certainty"].value = "medium";
+    assert.deepEqual(plain(api.validateSnapshot(form)), {});
+    api.saveSnapshotForm(form);
+    assert.equal(draft.snapshot["A.1.2"].level, "L3");
+    assert.equal(draft.snapshot["A.1.2"].note, "Keep <my note> & choice");
+    assert.equal(draft.snapshot["A.1.2"].certainty, "medium");
+  }
+});
+
+test("FB-03 review queues expose all unresolved items once with every reason, excluding explained N/A", () => {
+  const { api } = harness();
+  const draft = api.defaultState();
+  api.setState(draft);
+  const initial = api.snapshotReviewView();
+  assert.equal((initial.match(/data-action="open-snapshot" data-ref=/g) || []).length, 64);
+  draft.snapshot["E.3.1"] = { ...draft.snapshot["E.3.1"], status: "not_known", certainty: "low", clarity: "unclear", note: "Ask the representative" };
+  draft.snapshot["H.3.1"] = { ...draft.snapshot["H.3.1"], status: "not_assessed" };
+  draft.snapshot["A.4.1"] = { ...draft.snapshot["A.4.1"], status: "not_applicable", note: "Outside the synthetic scope" };
+  let html = api.snapshotReviewView();
+  assert.equal((html.match(/data-action="open-snapshot" data-ref=/g) || []).length, 63);
+  assert.equal((html.match(/data-action="open-snapshot" data-ref="E\.3\.1"/g) || []).length, 1);
+  assert.match(html, /Not known · Low certainty · Level wording flagged/);
+  assert.match(html, /Not assessed — left for later/);
+  assert.doesNotMatch(html, /data-action="open-snapshot" data-ref="A\.4\.1"/);
+  api.reviewView();
+  draft.indicators["E.3.1"].status = "not_known"; // Also missing explanation: both reasons in one row.
+  draft.indicators["A.4.1"].status = "not_applicable";
+  draft.indicators["A.4.1"].statusReason = "Explicitly outside boundary";
+  html = api.reviewView();
+  assert.equal((html.match(/data-action="open-indicator" data-ref=/g) || []).length, 63);
+  assert.equal((html.match(/data-action="open-indicator" data-ref="E\.3\.1"/g) || []).length, 1);
+  assert.match(html, /Missing explanation · Knowledge gap/);
+  assert.doesNotMatch(html, /data-action="open-indicator" data-ref="A\.4\.1"/);
+});
+
+test("FB-04/05 complete HTML lists link every finding to its input with plain provenance; JSON retains rule IDs", () => {
+  const { api } = harness();
+  const draft = api.defaultState();
+  api.setState(draft);
+  api.reviewView();
+  for (const indicator of catalogue.indicators) {
+    Object.assign(draft.indicators[indicator.ref], { status: "rated", level: "L3", certainty: "high", rationale: "Synthetic", improvementNote: `Action for ${indicator.ref}` });
+  }
+  const findings = plain(api.derivedFindings());
+  for (const [name, items] of Object.entries(findings)) {
+    const html = api.findingSection(name, items, "None");
+    assert.equal((html.match(/<li>/g) || []).length, items.length);
+    for (const item of items) assert.ok(html.includes(`data-action="open-indicator" data-ref="${item.ref}"`));
+    assert.doesNotMatch(html, /R-USER-ACTION|R-EVIDENCE-GAP|additional items.*JSON/);
+  }
+  assert.match(api.reportView(), /You entered this action/);
+  assert.deepEqual(plain(api.exportPayload().derived.findings), findings);
+  draft.indicators["E.3.1"].status = "not_known";
+  draft.indicators["E.3.1"].level = "";
+  draft.indicators["H.3.1"].status = "not_assessed";
+  draft.indicators["H.3.1"].level = "";
+  draft.indicators["F.1.1"].certainty = "low";
+  draft.indicators["A.1.1"].evidence = [{ title: "Synthetic only", reviewStatus: "reviewed" }];
+  const report = api.reportView();
+  assert.match(report, /Suggested because you selected Not known/);
+  assert.match(report, /Suggested because you recorded low certainty/);
+  assert.match(report, /Suggested because you left this indicator for a later assessment/);
+  assert.match(report, /You marked a reference reviewed or accepted. The tool has not independently checked it/);
 });
