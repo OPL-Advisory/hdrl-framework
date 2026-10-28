@@ -28,6 +28,7 @@ PRESENTATION_KIT = (
     SITE / "downloads" / "HDRL-Presentation-Kit-v1.1.0.pptx"
 )
 CANONICAL_ORIGIN = "https://hdrlframework.org"
+ASSESSMENT_NOINDEX_ROUTES = {"/self-assessment/", "/self-assessment/test-privacy/"}
 INTERNAL_HOSTS = {
     "hdrlframework.org",
     "launch-review--hdrl-framework-pr10-review.netlify.app",
@@ -148,7 +149,7 @@ def target_for(current_route: str, href: str) -> tuple[Path, str] | None:
         path = "/" + path
 
     suffix = Path(path).suffix
-    if path.endswith("/") or not suffix:
+    if not raw_path or raw_path.endswith("/") or not suffix:
         target = SITE / path.lstrip("/") / "index.html"
     else:
         target = SITE / path.lstrip("/")
@@ -184,10 +185,14 @@ def main() -> None:
             f"{route} canonical URL is {parser.canonical!r}, "
             f"expected {expected_canonical!r}",
         )
-        require(
-            not parser.robots or "noindex" not in parser.robots.lower(),
-            f"{route} contains an unintended noindex directive",
-        )
+        if route in ASSESSMENT_NOINDEX_ROUTES:
+            require(parser.robots and "noindex" in parser.robots.lower(),
+                    f"{route} public test must stay excluded from indexing")
+            require("plausible.io" not in document and "fonts.googleapis.com" not in document,
+                    f"{route} public test must not load analytics or external fonts")
+        else:
+            require(not parser.robots or "noindex" not in parser.robots.lower(),
+                    f"{route} contains an unintended noindex directive")
         require(
             "Framework methodology and public framework materials:" in document,
             f"{route} does not scope the global CC BY statement",
