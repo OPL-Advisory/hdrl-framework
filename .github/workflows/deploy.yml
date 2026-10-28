@@ -22,6 +22,10 @@ jobs:
         with:
           python-version: "3.12"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -33,6 +37,12 @@ jobs:
 
       - name: Validate versioned Presentation Kit
         run: python scripts/validate_presentation_kit.py
+
+      - name: Validate public self-assessment test
+        run: python scripts/validate_public_self_assessment.py
+
+      - name: Check assessment provenance and test mode
+        run: node --test tests/self-assessment-provenance.test.mjs
 
       - name: Check built-site coherence
         run: python scripts/check_site_coherence.py
