@@ -13,7 +13,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash, webcrypto } from "node:crypto";
 import vm from "node:vm";
+import { CASE_NAMES, selectFeedbackRun, feedbackCoverageFailures } from "./self_assessment_feedback_inventory.mjs";
 
+// Fail configuration errors before loading Playwright, opening a browser or reading a fixture.
+const selection = selectFeedbackRun(process.env);
 const require = createRequire(import.meta.url);
 const playwright = require(process.env.HDRL_PLAYWRIGHT || "playwright");
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -52,6 +55,7 @@ const scoreShape = (responses) => Object.fromEntries(Object.entries(responses).m
 const actionEntries = (draft) => Object.entries(draft.indicators).filter(([, r]) => r.improvementNote.trim());
 const statusCounts = (responses) => Object.values(responses).reduce((acc, r) => ({ ...acc, [r.status]: (acc[r.status] || 0) + 1 }), {});
 const report = { observed_at: new Date().toISOString(), fixture_sha256: hash(fixtureBytes), source_sha256: sourceHash,
+  requested_engines: selection.engines, expected_case_names: selection.caseNames, case_filter: selection.filter || null,
   source_path: sourcePath, artifact_directory: artifacts, fixture_name: path.basename(fixturePath), synthetic_only: true, live_services: false,
   fixture_counts: { snapshot: statusCounts(fixture.assessment.whole_framework_snapshot), evidence: statusCounts(fixture.assessment.evidence_led_responses), actions: actionEntries(makeDraft()).length },
   browsers: [], failures: [] };
@@ -100,7 +104,8 @@ async function plainText(locator) {
 }
 
 async function runCase(browser, engine, name, draft, body) {
-  if (process.env.HDRL_BROWSER_CASE && name !== process.env.HDRL_BROWSER_CASE) return;
+  assert.ok(CASE_NAMES.includes(name), `Undeclared browser case: ${name}`);
+  if (!selection.caseNames.includes(name)) return;
   const record = { name, checks: [], observations: {} };
   const browserRecord = report.browsers.find((b) => b.engine === engine);
   browserRecord.cases.push(record);
@@ -129,6 +134,8 @@ async function runCase(browser, engine, name, draft, body) {
     await body({ page, record, check, engine });
   } catch (error) { record.fatal = error.message; }
   finally {
+    record.behaviour_assertions = record.checks.length;
+    if (!record.behaviour_assertions) record.fatal ||= "Case executed without behavioural assertions.";
     check("no external request", external, []); check("no uncaught page error", errors, []);
     check("all served JS copies match selected source", [...new Set(await Promise.all(scriptHashes))], [sourceHash]);
     record.assertions = { total: record.checks.length, passed: record.checks.filter((c) => c.passed).length, failed: record.checks.filter((c) => !c.passed).length };
@@ -141,7 +148,7 @@ async function runCase(browser, engine, name, draft, body) {
 }
 
 try {
-  for (const engine of (process.env.HDRL_BROWSERS || "chromium,firefox,webkit").split(",")) {
+  for (const engine of selection.engines) {
     assert.ok(playwright[engine], "Unknown browser engine");
     const browser = await playwright[engine].launch({ headless: true });
     report.browsers.push({ engine, version: browser.version(), cases: [] });
@@ -317,8 +324,9 @@ try {
     } finally { await browser.close(); }
   }
 } finally {
+  report.failures.push(...feedbackCoverageFailures(selection, report.browsers));
   const allCases = report.browsers.flatMap((b) => b.cases);
-  report.assertions = { total: allCases.reduce((n, c) => n + c.assertions.total, 0), passed: allCases.reduce((n, c) => n + c.assertions.passed, 0), failed: allCases.reduce((n, c) => n + c.assertions.failed, 0), fatal_cases: allCases.filter((c) => c.fatal).length };
+  report.assertions = { total: allCases.reduce((n, c) => n + (c.assertions?.total || 0), 0), passed: allCases.reduce((n, c) => n + (c.assertions?.passed || 0), 0), failed: allCases.reduce((n, c) => n + (c.assertions?.failed || 0), 0), fatal_cases: allCases.filter((c) => c.fatal).length };
   report.finished_at = new Date().toISOString();
   await mkdir(path.dirname(output), { recursive: true });
   await writeFile(output, JSON.stringify(report, null, 2) + "\n");
