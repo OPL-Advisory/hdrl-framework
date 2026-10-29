@@ -80,6 +80,7 @@ async function storage(page, operation, value) {
   }), { operation, value });
 }
 async function ready(page) { await page.locator('#hdrl-assessment-root[aria-busy="false"]').waitFor(); }
+async function settledView(page) { await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))); }
 async function reload(page) { await page.reload(); await ready(page); }
 async function settle(page) { await page.waitForTimeout(500); }
 async function replaceFixture(page, draft) {
@@ -116,7 +117,7 @@ async function snapshotNoteForm(page, note) {
   if ((await details.getAttribute("open")) === null) await details.locator("summary").click();
   // render() schedules heading focus in requestAnimationFrame. Let that native
   // focus work complete before typing, especially in Firefox; never retry fill.
-  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await settledView(page);
   await page.locator("#snapshot-note").fill(note);
   assert.equal(await page.locator("#snapshot-note").inputValue(), note, "The intended note reached the actual input");
 }
@@ -211,6 +212,7 @@ const MINIMAL_SCOPE = "INVENTED TEST ONLY: bounded research service and current 
 const NA_SCOPE = "INVENTED TEST ONLY: A.4.1 consented cohorts and recall services are outside this selected scope.";
 async function openShare(page, { context = "synthetic", snapshot = true, evidence = false, comments = false, records = false, na = NA_SCOPE } = {}) {
   await toReport(page); await page.locator('[data-action="share-results"]').click();
+  await settledView(page);
   await page.locator("#share-context").selectOption(context);
   await page.locator("#share-scope").fill(MINIMAL_SCOPE);
   await page.locator("#share-snapshot").setChecked(snapshot);
@@ -218,6 +220,11 @@ async function openShare(page, { context = "synthetic", snapshot = true, evidenc
   await page.locator("#share-comments").setChecked(comments);
   await page.locator("#share-evidence-records").setChecked(records);
   await page.locator("#share-na-context").fill(na);
+  assert.deepEqual({ context: await page.locator("#share-context").inputValue(),
+    scope: await page.locator("#share-scope").inputValue(), na: await page.locator("#share-na-context").inputValue(),
+    snapshot: await page.locator("#share-snapshot").isChecked(), evidence: await page.locator("#share-evidence-results").isChecked(),
+    comments: await page.locator("#share-comments").isChecked(), records: await page.locator("#share-evidence-records").isChecked()
+  }, { context, scope: MINIMAL_SCOPE, na, snapshot, evidence, comments, records }, "Share inputs exactly match the deliberate test choices before submission");
 }
 async function previewShare(page) {
   await page.locator('#hdrl-share-form button[type="submit"]').click();
@@ -599,7 +606,27 @@ try {
           const received = await Promise.all(assetResponses);
           for (const [url, pin] of Object.entries(assetPins)) assert.deepEqual([...new Set(received.filter((r) => r.path === url).map((r) => r.sha256))], [pin], `Unmodified served asset: ${url}`);
           await tests[name]({ page, check, dir, observations: record.observations, engine });
-        } catch (e) { record.fatal = e.message; }
+        } catch (e) {
+          record.fatal = e.message; record.failure_artifacts = [];
+          for (const [index, failedPage] of ctx.pages().entries()) {
+            const prefix = path.join(dir, `failure-page-${index + 1}`);
+            try {
+              await writeFile(`${prefix}.html`, await failedPage.content());
+              await failedPage.screenshot({ path: `${prefix}.png`, fullPage: true });
+              const visibleState = await failedPage.evaluate(() => ({
+                heading: document.getElementById("hdrl-view-title")?.textContent,
+                restoreError: document.getElementById("restore-error")?.textContent,
+                shareError: document.getElementById("share-error")?.textContent,
+                snapshotError: document.getElementById("hdrl-snapshot-errors")?.textContent,
+                snapshotNote: document.getElementById("snapshot-note")?.value,
+                shareContext: document.getElementById("share-context")?.value,
+                shareScope: document.getElementById("share-scope")?.value,
+                shareNaContext: document.getElementById("share-na-context")?.value
+              }));
+              record.failure_artifacts.push({ html: `${prefix}.html`, screenshot: `${prefix}.png`, visible_state: visibleState });
+            } catch (captureError) { record.failure_artifacts.push({ page: index + 1, capture_error: captureError.message }); }
+          }
+        }
         finally {
           finalizing = true; record.behaviour_assertions = record.checks.length;
           if (!record.behaviour_assertions) record.fatal ||= "No behavioural assertions executed";
