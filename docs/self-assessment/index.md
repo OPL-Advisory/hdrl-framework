@@ -11,7 +11,7 @@ hide:
 # Try HDRL self-assessment
 
 <div class="hdrl-prototype-banner" role="note">
-  <strong>Public test — no registration, uploads or analytics.</strong>
+  <strong>Public test — no registration, remote uploads or analytics.</strong>
   Your answers and report stay in this browser. Use invented or non-sensitive information. Nothing is sent to the owner automatically.
 </div>
 
@@ -40,10 +40,10 @@ Set a boundary, select a description and certainty for each indicator, then open
 ## Saving and sharing
 
 - One draft is saved in this browser on this device. Return using the same browser and address to continue.
-- Download JSON or CSV, or print your report. Clearing browser data removes the saved draft; downloaded files cannot yet be restored into this tool.
-- There is no file upload. Evidence entries contain references and notes only.
+- Download a **full backup JSON** to keep your work, or use CSV and print for summaries. **Restore assessment** reads a supported full JSON backup on this device, previews it and asks before replacing the current draft. Download your current backup first if you want to keep both.
+- Restore files stay in this browser; they are not uploaded. Evidence entries contain references and notes only.
 - No email, registration or feedback form is required. The test does not send feedback or reports to the owner.
-- An optional share bundle is a file you choose to download. Only send it to someone after checking its contents.
+- A **minimised share** contains selected results, your declared synthetic/real/unspecified context and a scope summary you review. Preview the complete file before downloading. A share or CSV is not a restorable backup; nothing is sent automatically.
 
 Do not enter patient-level data, personal confidential data, passwords, API keys, access tokens or sensitive operational details. This public test does not include an AI reviewer.
 

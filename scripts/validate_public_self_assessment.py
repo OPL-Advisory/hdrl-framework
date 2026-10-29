@@ -107,6 +107,7 @@ def validate(root):
 
     app_path = "assets/js/self-assessment.js"
     css_path = "assets/css/self-assessment.css"
+    portability_path = "assets/js/self-assessment-portability.js"
     app = (docs / app_path).read_text(encoding="utf-8")
     require((docs / css_path).is_file() and (docs / css_path).stat().st_size > 0,
             "Self-assessment stylesheet is missing or empty")
@@ -120,8 +121,14 @@ def validate(root):
                 f"Application {constant} does not match the pinned method")
     require("public_test_mode" in app, "Application does not recognise the public test mode")
     mkdocs = (root / "mkdocs.yml").read_text(encoding="utf-8")
-    for entry in (app_path, css_path, "self-assessment/index.md"):
+    for entry in (app_path, css_path, portability_path, "self-assessment/index.md"):
         require(entry in mkdocs, f"MkDocs is missing {entry}")
+    require((docs / portability_path).is_file()
+            and mkdocs.index(portability_path) < mkdocs.index(app_path),
+            "Local restore validator must load before the application")
+    portability = (docs / portability_path).read_text(encoding="utf-8")
+    require("fetch(" not in portability and "XMLHttpRequest" not in portability,
+            "Restore validation must not fetch imported references")
     template = (root / "overrides/main.html").read_text(encoding="utf-8")
     require("page.meta.analytics == false" in template and "page.meta.robots" in template,
             "Page template must honour analytics and robots metadata")
