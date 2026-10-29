@@ -111,12 +111,18 @@ async function snapshotNoteForm(page, note) {
   const indicatorDetails = page.locator("details").filter({ has: page.locator('[data-action="open-snapshot"][data-ref="A.1.1"]') }).first();
   if ((await indicatorDetails.getAttribute("open")) === null) await indicatorDetails.locator("summary").click();
   await page.locator('[data-action="open-snapshot"][data-ref="A.1.1"]').last().click();
+  assert.match(await page.locator("#hdrl-view-title").innerText(), /^A\.1\.1 ·/, "Edit the intended indicator");
   const details = page.locator(".hdrl-snapshot-note");
   if ((await details.getAttribute("open")) === null) await details.locator("summary").click();
+  // render() schedules heading focus in requestAnimationFrame. Let that native
+  // focus work complete before typing, especially in Firefox; never retry fill.
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   await page.locator("#snapshot-note").fill(note);
+  assert.equal(await page.locator("#snapshot-note").inputValue(), note, "The intended note reached the actual input");
 }
 async function saveSnapshotNote(page, note) {
   await snapshotNoteForm(page, note);
+  assert.equal(await page.locator("#snapshot-note").inputValue(), note, "Other-tab form still contains the note immediately before submit");
   await page.locator('#hdrl-snapshot-form button[type="submit"]').click();
   await page.waitForTimeout(800);
   const saved = await storage(page, "get");
@@ -127,6 +133,7 @@ async function pendingSnapshotThenRestore(page, note, prepared = false) {
   if (!prepared) { await snapshotNoteForm(page, note); await page.waitForTimeout(800); }
   const before = await storage(page, "get");
   assert.notEqual(before.snapshot["A.1.1"].note, note, "Form text is not saved before submitting it");
+  assert.equal(await page.locator("#snapshot-note").inputValue(), note, "Pending form still contains the note immediately before submit");
   // One browser task ensures Restore suspends the real 350ms autosave created
   // by the real form submission. No timer or storage API is mocked here.
   await page.evaluate(() => {
