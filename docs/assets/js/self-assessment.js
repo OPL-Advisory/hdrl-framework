@@ -18,8 +18,8 @@
   const CATALOGUE_SHA256 = "442a10be23a0ddec889785577fb8853db2296cc5b3a50929849025e27077cd47";
   const GUIDANCE_SHA256 = "1118cb773ca4ecc2bff06d2612d14b756134bda04603c43dd18604f4df36f92f";
   // Engineering candidate identity; baseline release labels above are not advanced by this work.
-  const COMPATIBILITY_CANDIDATE = "2026-10-28.3";
-  const DRAFT_SCHEMA_VERSION = 5;
+  const COMPATIBILITY_CANDIDATE = "2026-10-29.2";
+  const DRAFT_SCHEMA_VERSION = 6;
   const PROVENANCE_VERSION_KEYS = ["framework", "catalogue", "tool", "guidance", "rules", "report"];
 
   const DB_NAME = "hdrl-self-assessment-prototype";
@@ -61,6 +61,13 @@
   let hasOriginalLoadedDraft = false;
   let packageLoadError = "";
   let saveTimer;
+  let storageQueue = Promise.resolve();
+  let deletingDraft = false;
+  let storageBaseline = { found: false, value: undefined };
+  let storagePause = "";
+  let restoreSession = null;
+  let sharePreview = null;
+  let shareOptions = {};
   let lastFocusId = "";
   let lastActivityTick = Date.now();
   let authAccessToken = "";
@@ -84,6 +91,7 @@
   function defaultState() {
     return {
       schemaVersion: DRAFT_SCHEMA_VERSION,
+      declaredContext: "unspecified",
       id: makeId(),
       createdAt: nowIso(),
       updatedAt: nowIso(),
@@ -148,7 +156,7 @@
     const reasons = [];
     if (packageLoadError) reasons.push("The current method package could not be verified");
     if (hasOriginalLoadedDraft && !canRecoverOriginalAsJson()) reasons.push("The original record cannot be preserved by JSON recovery");
-    if (![1, 2, 3, 4, DRAFT_SCHEMA_VERSION].includes(draft?.schemaVersion)) reasons.push("Unsupported draft format");
+    if (![1, 2, 3, 4, 5, DRAFT_SCHEMA_VERSION].includes(draft?.schemaVersion)) reasons.push("Unsupported draft format");
     PROVENANCE_VERSION_KEYS.forEach((key) => {
       const version = draft?.versions?.[key];
       if (typeof version !== "string" || !version) reasons.push(`Unknown original ${key} version`);
@@ -168,7 +176,10 @@
   }
 
   function canRecoverOriginalAsJson() {
-    const original = hasOriginalLoadedDraft ? originalLoadedDraft : state;
+    return isRecoverableJson(hasOriginalLoadedDraft ? originalLoadedDraft : state);
+  }
+
+  function isRecoverableJson(original) {
     // A top-level undefined has an explicit marker in the recovery envelope.
     if (original === undefined) return true;
     const ancestors = new WeakSet();
@@ -212,14 +223,14 @@
       limitations: [
         "Original local record; no reassessment, derived report or version relabelling has been performed.",
         "May contain contact details and private assessment text. Keep this recovery file private.",
-        "Local recovery backup only; this prototype has no restore/import workflow."
+        "Original-record recovery file; Restore assessment accepts full assessment backups, not this recovery format."
       ]
     };
   }
 
   function recoveryOptionsView() {
     if (!canRecoverOriginalAsJson()) return "<p>Your original draft remains on this device. JSON recovery is unavailable because the saved record contains values this format cannot preserve. Editing and saving are paused. Do not clear this browser's site data.</p>";
-    return `<p>Download the original local record for recovery. It may contain contact details and private assessment text. A restore/import workflow is not yet available.</p>
+    return `<p>Download the original local record for recovery. It may contain contact details and private assessment text. This original-record recovery format cannot be restored here; Restore assessment accepts full assessment backups only.</p>
       <button type="button" class="md-button md-button--primary" data-action="export-recovery">Download original draft JSON</button>`;
   }
 
@@ -320,54 +331,103 @@
     }
   }
 
-  async function persist() {
-    if (!draftCompatibility().compatible) return;
-    state.updatedAt = nowIso();
-    try {
-      const db = await openDb();
-      await new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, "readwrite");
-        tx.objectStore(STORE_NAME).put(state, ACTIVE_KEY);
-        tx.oncomplete = resolve;
-        tx.onerror = () => reject(tx.error);
-      });
-      db.close();
-      announce(`Saved on this device at ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`);
-    } catch {
-      announce("This browser could not save the draft. Keep this page open to continue.", true);
-    }
+  function sameStoredDraft(a, b) {
+    if (!a || !b || a.found !== b.found) return false;
+    if (!a.found) return true;
+    return isRecoverableJson(a.value) && isRecoverableJson(b.value)
+      && JSON.stringify(a.value) === JSON.stringify(b.value);
   }
 
-  function scheduleSave() {
-    if (!draftCompatibility().compatible) return;
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(persist, 350);
+  function pauseStorage(message) {
+    storagePause = message;
+    clearTimeout(saveTimer); saveTimer = null;
+    render();
+    document.getElementById("restore-error")?.focus();
   }
 
-  async function clearDraft() {
-    clearTimeout(saveTimer);
+  async function writeIfUnchanged(value, expected, remove = false) {
     let db;
     try {
       db = await openDb();
       await new Promise((resolve, reject) => {
         const tx = db.transaction(STORE_NAME, "readwrite");
-        tx.objectStore(STORE_NAME).delete(ACTIVE_KEY);
+        const store = tx.objectStore(STORE_NAME);
+        let failure;
+        const compare = (found, current) => {
+          if (!sameStoredDraft({ found, value: current }, expected)) {
+            failure = new Error("The saved draft changed in another tab. Saving is paused so that work is kept.");
+            failure.code = "DRAFT_CHANGED";
+            tx.abort(); return;
+          }
+          if (remove) store.delete(ACTIVE_KEY);
+          else store.put(value, ACTIVE_KEY);
+        };
+        const request = store.get(ACTIVE_KEY);
+        request.onsuccess = () => {
+          if (request.result !== undefined) compare(true, request.result);
+          else {
+            const count = store.count(ACTIVE_KEY);
+            count.onsuccess = () => compare(count.result > 0, undefined);
+          }
+        };
         tx.oncomplete = resolve;
-        tx.onerror = () => reject(tx.error);
-        tx.onabort = () => reject(tx.error || new Error("Draft deletion was interrupted"));
+        tx.onerror = () => reject(failure || tx.error || new Error("Storage failed"));
+        tx.onabort = () => reject(failure || tx.error || new Error("Storage was interrupted"));
       });
-    } catch {
-      announce("Deletion could not be confirmed. Your draft remains open. Try again or clear this site's data in your browser settings.", true);
-      return;
-    } finally {
-      db?.close();
-    }
-    authAccessToken = "";
-    originalLoadedDraft = null;
-    hasOriginalLoadedDraft = false;
-    state = defaultState();
-    render();
-    announce("The on-device draft has been deleted.");
+      storageBaseline = { found: !remove, value: remove ? undefined : structuredClone(value) };
+    } finally { db?.close(); }
+  }
+
+  function persist() {
+    if (storagePause || deletingDraft || restoreSession || !draftCompatibility().compatible) return Promise.resolve(false);
+    state.updatedAt = nowIso();
+    const value = structuredClone(state);
+    const write = async () => {
+      if (storagePause) return false;
+      try {
+        await writeIfUnchanged(value, storageBaseline);
+        announce(`Saved on this device at ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`);
+        return true;
+      } catch (error) {
+        if (error.code === "DRAFT_CHANGED") pauseStorage(error.message);
+        else announce("This browser could not save the draft. Keep this page open to continue.", true);
+        return false;
+      }
+    };
+    storageQueue = storageQueue.then(write, write);
+    return storageQueue;
+  }
+
+  function scheduleSave() {
+    if (storagePause || deletingDraft || restoreSession || !draftCompatibility().compatible) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => { saveTimer = null; void persist(); }, 350);
+  }
+
+  async function clearDraft() {
+    if (deletingDraft || storagePause) return;
+    deletingDraft = true;
+    clearTimeout(saveTimer); saveTimer = null;
+    root.inert = true;
+    const remove = async () => {
+      if (storagePause) return;
+      try { await writeIfUnchanged(undefined, storageBaseline, true); }
+      catch (error) {
+        if (error.code === "DRAFT_CHANGED") pauseStorage(error.message);
+        else announce("Deletion could not be confirmed. Your draft remains open. Try again or clear this site's data in your browser settings.", true);
+        return;
+      }
+      authAccessToken = "";
+      originalLoadedDraft = null;
+      hasOriginalLoadedDraft = false;
+      state = defaultState();
+      render();
+      announce("The on-device draft has been deleted.");
+    };
+    // Delete after every earlier save, while preventing later writes from reviving it.
+    storageQueue = storageQueue.then(remove, remove);
+    try { await storageQueue; }
+    finally { deletingDraft = false; root.inert = false; }
   }
 
   function announce(message, assertive = false) {
@@ -629,6 +689,7 @@
         </div>
         <div class="hdrl-assessment-toolbar__actions">
           ${boundaryReady ? `<button type="button" class="hdrl-link-button" data-action="dashboard">Assessment overview</button>` : ""}
+          <button type="button" class="hdrl-link-button" data-action="restore">Restore assessment</button>
           <button type="button" class="hdrl-link-button hdrl-link-button--danger" data-action="clear">Delete on-device draft</button>
         </div>
       </div>
@@ -802,6 +863,10 @@
                 ${radio("boundary-method", "team", "Team", "Independent views followed by calibration.", b.method)}
               </fieldset>
             </div>
+          </div>
+          <div class="hdrl-field"><label for="boundary-context">Assessment context</label>
+            <p class="hdrl-hint">Your declaration, not something inferred from names or notes.</p>
+            <select id="boundary-context" name="boundary-context">${contextOptions(state.declaredContext)}</select>
           </div>
           ${textareaField("boundary-use", "Intended use", b.intendedUse, "What decision, conversation or improvement planning should this assessment inform?", true, errors["boundary-use"], 600)}
           <div class="hdrl-assessment-actions">
@@ -1816,7 +1881,7 @@
         </header>
         <div class="hdrl-report-actions">
           <button type="button" class="md-button md-button--primary" data-action="print">Print or save PDF</button>
-          <button type="button" class="md-button" data-action="export-json">Download JSON</button>
+          <button type="button" class="md-button" data-action="export-json">Download full backup JSON</button>
           <button type="button" class="md-button" data-action="export-snapshot-csv">Download snapshot CSV</button>
           <button type="button" class="md-button" data-action="export-csv">Download evidence CSV</button>
           ${publicTestMode() ? "" : `<button type="button" class="md-button" data-action="feedback">Share feedback</button>`}
@@ -1829,6 +1894,7 @@
             <div><dt>Service or ecosystem</dt><dd>${esc(state.boundary.serviceName)}</dd></div>
             <div><dt>Scope</dt><dd>${esc(state.boundary.scope)}</dd></div>
             <div><dt>Time period</dt><dd>${esc(state.boundary.timePeriod)}</dd></div>
+            <div><dt>Assessor-declared context</dt><dd>${esc(state.declaredContext || "unspecified")}</dd></div>
             <div><dt>Assessment date</dt><dd>${esc(assessedDate)}</dd></div>
             <div><dt>Unit</dt><dd>${esc(state.boundary.unit)}</dd></div>
             <div><dt>Method</dt><dd>${state.boundary.method === "team" ? "Team workflow represented by one prototype working set; production requires independent blind submissions and calibration." : "Individual self-assessment."}</dd></div>
@@ -2050,29 +2116,213 @@
     `);
   }
 
-  function shareResultsView() {
-    return shell(`
+  function contextOptions(selected = "unspecified") {
+    return [["unspecified", "Unspecified"], ["synthetic", "Synthetic / invented"], ["real", "Real assessment"]]
+      .map(([value, label]) => `<option value="${value}" ${selected === value ? "selected" : ""}>${label}</option>`).join("");
+  }
+
+  async function beginRestore() {
+    if (storagePause || deletingDraft || restoreSession) return;
+    const hadPendingSave = Boolean(saveTimer);
+    clearTimeout(saveTimer); saveTimer = null;
+    const session = { reading: true, pending: null, error: "", hadPendingSave };
+    restoreSession = session;
+    render();
+    await storageQueue; // Earlier saves compare against their own last observed record.
+    if (restoreSession !== session) return;
+    try {
+      const saved = await loadDraft();
+      if (restoreSession !== session) return;
+      if (storagePause || !sameStoredDraft(saved, storageBaseline)) {
+        pauseStorage("The saved draft changed in another tab. Restore is paused; the newer saved work has not been replaced.");
+        return;
+      }
+      session.baseline = saved;
+      session.savedBackup = saved.found ? fullBackupPayload(migrateDraft(saved.value, defaultState())) : null;
+      session.tabBackup = fullBackupPayload(state);
+      session.hasUnsavedCopy = JSON.stringify(session.savedBackup?.assessment) !== JSON.stringify(session.tabBackup.assessment);
+    } catch (error) { session.error = error.message; session.blocked = true; }
+    session.reading = false;
+    if (restoreSession === session) { render(); document.getElementById("hdrl-view-title")?.focus(); }
+  }
+
+  function restoreView() {
+    const r = restoreSession;
+    const a = r.pending?.assessment;
+    return `<div id="hdrl-assessment-status" role="status" aria-live="polite"></div>
       <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Explicit sharing · local file only</div>
-        <h2 id="hdrl-view-title" tabindex="-1">Create a results share bundle</h2>
-        <p class="hdrl-assessment-lede">Nothing is selected by default. Review each category and include only what the intended recipient needs.</p>
-        <div class="hdrl-assessment-callout"><h3>Business-sensitive information</h3><p>A share bundle may reveal perceived strengths, gaps and uncertainty. It is downloaded to this device and is never sent automatically. Use an organisation-approved transfer route.</p></div>
-        <form id="hdrl-share-form">
-          <fieldset class="hdrl-share-options">
-            <legend>Choose information to include</legend>
-            <div class="hdrl-checkbox"><input id="share-snapshot" name="share-snapshot" type="checkbox"><label for="share-snapshot"><strong>Whole-framework snapshot</strong><span>Indicator status, level, certainty and clarity flag.</span></label></div>
-            <div class="hdrl-checkbox"><input id="share-evidence-results" name="share-evidence-results" type="checkbox"><label for="share-evidence-results"><strong>Evidence-led results</strong><span>Status, level, certainty and evidence counts.</span></label></div>
-            <div class="hdrl-checkbox"><input id="share-comments" name="share-comments" type="checkbox"><label for="share-comments"><strong>Comments and rationale</strong><span>Snapshot notes, evidence-led rationale and improvement notes.</span></label></div>
-            <div class="hdrl-checkbox"><input id="share-evidence-records" name="share-evidence-records" type="checkbox"><label for="share-evidence-records"><strong>Evidence reference details</strong><span>Titles, references, owners, notes and limitations.</span></label></div>
-          </fieldset>
-          <div class="hdrl-assessment-actions"><button type="submit" class="md-button md-button--primary">Review and download bundle</button><button type="button" class="md-button" data-action="report">Return to report</button></div>
-        </form>
-      </section>
-    `);
+        <h2 id="hdrl-view-title" tabindex="-1">Restore assessment</h2>
+        <p>A full assessment JSON backup can replace the one draft saved in this browser. The file is read here, never uploaded.</p>
+        ${r.error ? `<div id="restore-error" class="hdrl-error-summary" role="alert" tabindex="-1">${esc(r.error)}</div>` : ""}
+        ${r.reading ? "<p>Checking the current saved draft…</p>" : ""}
+        ${!r.reading && !r.blocked && !a ? `<label for="restore-file">Choose a full JSON backup (up to 2 MiB)</label>
+          <input id="restore-file" type="file" accept=".json,application/json">
+          <p>CSV summaries, original-record recovery files and minimised shares cannot restore a full assessment.</p>` : ""}
+        ${a ? `<div id="restore-preview">
+          <h3>Check the backup before replacing anything</h3>
+          <dl class="hdrl-report-definition">
+            <div><dt>Title</dt><dd>${esc(a.boundary.title || "Untitled assessment")}</dd></div>
+            <div><dt>Assessment identifier</dt><dd>${esc(a.id)}</dd></div>
+            <div><dt>Date</dt><dd>${esc(a.boundary.assessmentDate || "Not recorded")}</dd></div>
+            <div><dt>Scope</dt><dd>${esc(a.boundary.scope || "Not recorded")}</dd></div>
+            <div><dt>Context</dt><dd>${esc(a.declared_context)}</dd></div>
+            <div><dt>Original versions</dt><dd>${Object.entries(r.pending.versions).map(([k, v]) => `${esc(k)}: ${esc(v)}`).join(" · ")}</dd></div>
+          </dl>
+          <p>${esc(r.pending.compatibilityNote)}</p>
+          <p>Summaries will be recalculated from the restored responses.</p>
+          <p><strong>${r.savedBackup ? `This replaces the saved draft “${esc(r.savedBackup.assessment.boundary.title || "Untitled assessment")}” (${esc(r.savedBackup.assessment.id)}) on this device.` : "There is no saved draft; this will become the active draft on this device."} It does not merge assessments.</strong></p>
+          ${r.savedBackup ? `<button type="button" class="md-button" data-action="restore-backup" ${r.committing ? "disabled" : ""}>Download saved draft backup</button>` : ""}
+          ${r.hasUnsavedCopy ? `<p>This tab also has work that differs from the saved draft. Keep that copy too before replacing anything.</p><button type="button" class="md-button" data-action="restore-tab-backup" ${r.committing ? "disabled" : ""}>Download this tab's copy</button>` : ""}
+          <form id="hdrl-restore-confirm-form">
+            <div class="hdrl-checkbox"><input id="restore-confirm" type="checkbox" required ${r.committing ? "disabled" : ""}><label for="restore-confirm">I have checked this backup and want to replace the current draft.</label></div>
+            <button type="submit" class="md-button md-button--primary" ${r.committing ? "disabled" : ""}>${r.committing ? "Restoring…" : "Replace current draft"}</button>
+          </form>
+        </div>` : ""}
+        <button type="button" class="md-button" data-action="restore-cancel" ${r.committing ? "disabled" : ""}>Cancel — keep current draft</button>
+      </section>`;
+  }
+
+  function restoredState(parsed) {
+    const a = parsed.assessment;
+    return { ...defaultState(), id: a.id, createdAt: a.created_at, updatedAt: a.updated_at,
+      declaredContext: a.declared_context, boundary: a.boundary, rapid: a.rapid_first_pass,
+      snapshot: a.whole_framework_snapshot, indicators: a.evidence_led_responses,
+      domainNotes: a.domain_capacity_notes, audit: [], versions: parsed.versions, provenance: parsed.provenance,
+      view: "overview" };
+  }
+
+  async function commitRestore(session) {
+    if (storagePause || restoreSession !== session || session.committing || session.cancelling || !session.pending || session.blocked) return false;
+    session.committing = true; session.error = ""; render();
+    const replacement = restoredState(session.pending);
+    try { await writeIfUnchanged(replacement, session.baseline); }
+    catch (error) {
+      session.committing = false;
+      if (error.code === "DRAFT_CHANGED") pauseStorage(error.message);
+      else {
+        session.error = `Restore did not complete. Your current draft has not been replaced. ${error.message}`;
+        render(); document.getElementById("restore-error")?.focus();
+      }
+      return false;
+    }
+    state = replacement;
+    originalLoadedDraft = structuredClone(replacement); hasOriginalLoadedDraft = true;
+    authAccessToken = ""; sharePreview = null; shareOptions = {};
+    restoreSession = null;
+    lastFocusId = "hdrl-view-title"; render();
+    announce("Assessment restored and saved on this device. Continue your snapshot or evidence work below.");
+    return true;
+  }
+
+  async function cancelRestore(session) {
+    if (session.committing || session.cancelling || restoreSession !== session) return;
+    session.cancelling = true;
+    if (!storagePause) {
+      try {
+        const saved = await loadDraft();
+        if (restoreSession !== session) return;
+        if (!sameStoredDraft(saved, storageBaseline)) {
+          storagePause = "The saved draft changed in another tab. Saving remains paused; the newer work is kept.";
+        }
+      } catch {
+        if (restoreSession !== session) return;
+        storagePause = "The saved draft could not be checked. Saving remains paused to protect it.";
+      }
+    }
+    if (restoreSession !== session) return;
+    restoreSession = null; lastFocusId = "hdrl-view-title"; render();
+    if (!storagePause && session.hadPendingSave) scheduleSave();
+  }
+
+  function storagePausedView() {
+    return `<section id="hdrl-storage-conflict" class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
+      <h2 id="hdrl-view-title" tabindex="-1">Saving paused — keep both copies safe</h2>
+      <div id="restore-error" class="hdrl-error-summary" role="alert" tabindex="-1">${esc(storagePause)}</div>
+      <p>You can download this tab's assessment copy before reloading the saved draft. Nothing will be merged or sent. Cancelling restore does not resume saving from this tab.</p>
+      <button type="button" class="md-button" data-action="download-tab-backup">Download this tab's copy</button>
+      <button type="button" class="md-button md-button--primary" data-action="reload-saved-draft">Reload saved draft</button>
+      ${restoreSession ? `<button type="button" class="md-button" data-action="restore-cancel">Cancel restore — keep saved draft</button>` : ""}
+    </section>`;
+  }
+
+  function bindStoragePause() {
+    root.querySelector('[data-action="download-tab-backup"]')?.addEventListener("click", () => {
+      download(`hdrl-this-tab-backup-${today()}.json`, "application/json", JSON.stringify(fullBackupPayload(state), null, 2));
+    });
+    root.querySelector('[data-action="reload-saved-draft"]')?.addEventListener("click", () => location.reload());
+    root.querySelector('[data-action="restore-cancel"]')?.addEventListener("click", () => cancelRestore(restoreSession));
+  }
+
+  function bindRestore() {
+    const session = restoreSession;
+    root.querySelector('[data-action="restore-cancel"]')?.addEventListener("click", () => cancelRestore(session));
+    root.querySelector('[data-action="restore-backup"]')?.addEventListener("click", () => {
+      download(`hdrl-saved-backup-${today()}.json`, "application/json", JSON.stringify(session.savedBackup, null, 2));
+    });
+    root.querySelector('[data-action="restore-tab-backup"]')?.addEventListener("click", () => {
+      download(`hdrl-this-tab-backup-${today()}.json`, "application/json", JSON.stringify(session.tabBackup, null, 2));
+    });
+    document.getElementById("restore-file")?.addEventListener("change", async (event) => {
+      const file = event.target.files[0]; if (!file) return;
+      try {
+        if (file.size > 2 * 1024 * 1024) throw new Error("Choose a JSON backup smaller than 2 MiB.");
+        if (/\.csv$/i.test(file.name)) throw new Error("CSV is a summary, not a restorable backup. Choose the full assessment JSON.");
+        let text;
+        try { text = new TextDecoder("utf-8", { fatal: true }).decode(await file.arrayBuffer()); }
+        catch { throw new Error("This file is not readable UTF-8 JSON. Choose an unchanged full assessment backup."); }
+        const parsed = globalThis.HDRLPortability.parseBackup(text, catalogue);
+        if (restoreSession !== session) return;
+        session.pending = parsed; session.error = "";
+      } catch (error) {
+        if (restoreSession !== session) return;
+        session.pending = null; session.error = error.message;
+      }
+      render(); document.getElementById(session.error ? "restore-error" : "hdrl-view-title")?.focus();
+    });
+    document.getElementById("hdrl-restore-confirm-form")?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!document.getElementById("restore-confirm").checked) return;
+      await commitRestore(session);
+    });
+  }
+
+  function shareResultsView() {
+    const o = shareOptions;
+    const chosen = (name) => o[name] ? "checked" : "";
+    if (sharePreview) return shell(`<section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
+      <h2 id="hdrl-view-title" tabindex="-1">Check your local share</h2>
+      <p>This is a minimised share, not a full backup. It cannot be restored as an assessment. Nothing will be sent automatically.</p>
+      <p><strong>Included:</strong> assessment identifier, date, declared context, method identity, your scope summary${sharePreview.boundary_summary.not_applicable ? " and your N/A explanation" : ""}; ${Object.entries(sharePreview.included).filter(([, v]) => v).map(([k]) => ({ snapshot: "snapshot results", evidenceResults: "evidence-led results", comments: "comments and rationale", evidenceRecords: "evidence reference details" }[k])).join(", ")}.</p>
+      <p><strong>Excluded:</strong> assessment title, service name, original full scope and intended use, domain notes, orientation notes, contacts, consent, sessions and event history${!o.comments ? ", comments and rationale" : ""}${!o.evidenceRecords ? ", evidence reference details" : ""}. Text you deliberately typed or selected above may still identify a service; check the complete file below.</p>
+      <details open><summary>Complete file preview</summary><pre id="share-preview-json" class="hdrl-file-preview">${esc(JSON.stringify(sharePreview, null, 2))}</pre></details>
+      <form id="hdrl-share-download-form">
+        <div class="hdrl-checkbox"><input id="share-confirm" type="checkbox" required><label for="share-confirm">I have checked the included text and want to download this share.</label></div>
+        <button type="submit" class="md-button md-button--primary">Download minimised share</button>
+        <button type="button" class="md-button" data-action="share-edit">Change selection</button>
+        <button type="button" class="md-button" data-action="report">Cancel</button>
+      </form></section>`);
+    return shell(`<section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
+      <h2 id="hdrl-view-title" tabindex="-1">Prepare a local share</h2>
+      <p>A minimised share includes only the results and context you choose. It is not a restorable backup. For a complete private copy, use Download full backup JSON.</p>
+      <form id="hdrl-share-form" novalidate>
+        <div class="hdrl-field"><label for="share-context">Assessor-declared context</label><select id="share-context" name="share-context">${contextOptions(o.declaredContext || state.declaredContext || "unspecified")}</select><p class="hdrl-hint">No context is inferred from names or notes. This declaration is saved with your draft when you download.</p></div>
+        ${textareaField("share-scope", "Minimal scope summary for this share", o.scopeSummary || "", "Write only what the recipient needs to interpret the results: what is included or excluded and the relevant period. Your full private scope is not copied.", true, "", 1200)}
+        <fieldset class="hdrl-share-options"><legend>Choose results to include</legend>
+          <div class="hdrl-checkbox"><input id="share-snapshot" type="checkbox" ${chosen("snapshot")}><label for="share-snapshot">Snapshot results: indicator status, level, certainty and clarity.</label></div>
+          <div class="hdrl-checkbox"><input id="share-evidence-results" type="checkbox" ${chosen("evidenceResults")}><label for="share-evidence-results">Evidence-led results: status, level, certainty and reference counts.</label></div>
+          <div class="hdrl-checkbox"><input id="share-comments" type="checkbox" ${chosen("comments")}><label for="share-comments">Comments and rationale for selected stages, including actions and explanations.</label></div>
+          <div class="hdrl-checkbox"><input id="share-evidence-records" type="checkbox" ${chosen("evidenceRecords")}><label for="share-evidence-records">Evidence reference details for evidence-led results, including owners, notes and limitations.</label></div>
+        </fieldset>
+        ${textareaField("share-na-context", "Explanation of N/A results, if included", o.naContext || "", "If a selected stage includes Not applicable, explain why those results are outside scope. Nothing is copied from private notes.", false, "", 1200)}
+        <p id="share-error" role="alert" class="hdrl-field-error"></p>
+        <button type="submit" class="md-button md-button--primary">Preview share</button>
+        <button type="button" class="md-button" data-action="report">Cancel</button>
+      </form></section>`);
   }
 
   function sampleState() {
     const sample = defaultState();
+    sample.declaredContext = "synthetic";
     sample.boundary = {
       title: "Example regional research data service",
       serviceName: "Example service (synthetic)",
@@ -2148,25 +2398,32 @@
     return sample;
   }
 
+  function fullBackupPayload(draft) {
+    return {
+      export_schema: "hdrl-self-assessment-export-v0.5.0",
+      exported_at: nowIso(),
+      versions: { ...draft.versions },
+      provenance: { ...draft.provenance },
+      generated_by: { tool_version: VERSIONS.tool, report_version: VERSIONS.report, implementation_candidate: COMPATIBILITY_CANDIDATE },
+      assessment: {
+        id: draft.id,
+        declared_context: draft.declaredContext || "unspecified",
+        created_at: draft.createdAt,
+        updated_at: draft.updatedAt,
+        boundary: draft.boundary,
+        rapid_first_pass: draft.rapid,
+        whole_framework_snapshot: draft.snapshot,
+        domain_capacity_notes: draft.domainNotes,
+        evidence_led_responses: draft.indicators,
+        audit: draft.audit
+      },
+    };
+  }
+
   function exportPayload() {
     if (!draftCompatibility().compatible) return recoveryPayload();
     return {
-      export_schema: "hdrl-self-assessment-export-v0.4.0",
-      exported_at: nowIso(),
-      versions: { ...state.versions },
-      provenance: { ...state.provenance },
-      generated_by: { tool_version: VERSIONS.tool, report_version: VERSIONS.report, implementation_candidate: COMPATIBILITY_CANDIDATE },
-      assessment: {
-        id: state.id,
-        created_at: state.createdAt,
-        updated_at: state.updatedAt,
-        boundary: state.boundary,
-        rapid_first_pass: state.rapid,
-        whole_framework_snapshot: state.snapshot,
-        domain_capacity_notes: state.domainNotes,
-        evidence_led_responses: state.indicators,
-        audit: state.audit
-      },
+      ...fullBackupPayload(state),
       derived: {
         evidence_stage_status: evidenceStageStarted() ? "started" : "not_started",
         snapshot_domain_summaries: Object.fromEntries(catalogue.domains.map((domain) => [domain.ref, snapshotDomainSummary(domain.ref)])),
@@ -2290,26 +2547,37 @@
 
   function shareBundlePayload(options) {
     requireCompatibleDraft();
+    const allowed = ["synthetic", "real", "unspecified"];
+    const declared = options.declaredContext || state.declaredContext || "unspecified";
+    if (!allowed.includes(declared)) throw new Error("Choose synthetic, real or unspecified context.");
+    if (!options.snapshot && !options.evidenceResults) throw new Error("Choose snapshot results, evidence-led results or both.");
+    if (options.evidenceRecords && !options.evidenceResults) throw new Error("Choose evidence-led results to include evidence details.");
+    if (typeof options.scopeSummary !== "string" || !options.scopeSummary.trim() || options.scopeSummary.length > 1200) throw new Error("Write a minimal scope summary of up to 1,200 characters.");
+    const selectedMaps = [options.snapshot ? state.snapshot : {}, options.evidenceResults ? state.indicators : {}];
+    const naRefs = [...new Set(selectedMaps.flatMap((map) => Object.entries(map).filter(([, r]) => r.status === "not_applicable").map(([ref]) => ref)))].sort();
+    if (naRefs.length && (typeof options.naContext !== "string" || !options.naContext.trim() || options.naContext.length > 1200)) throw new Error(`Explain the N/A results in this share (${naRefs.join(", ")}) in up to 1,200 characters.`);
+    const included = Object.fromEntries(["snapshot", "evidenceResults", "comments", "evidenceRecords"].map((key) => [key, Boolean(options[key])]));
     const payload = {
-      schema: "hdrl-explicit-results-share-v0.1.0",
-      created_at: nowIso(),
-      versions: { ...state.versions },
-      provenance: { ...state.provenance },
-      boundary_summary: { assessment_date: state.boundary.assessmentDate, unit: state.boundary.unit },
-      included: options,
-      limitations: ["Explicitly created by the assessor", "Self-assessment; not validation, accreditation or endorsement", "May contain business-sensitive information"]
+      schema: "hdrl-explicit-results-share-v0.2.0", restorable: false,
+      created_at: nowIso(), assessment_id: state.id, declared_context: declared,
+      versions: Object.fromEntries([...PROVENANCE_VERSION_KEYS, "beta"].map((key) => [key, state.versions[key]])),
+      provenance: Object.fromEntries(["status", "catalogue_sha256", "guidance_sha256", "implementation_candidate"].filter((key) => Object.hasOwn(state.provenance, key)).map((key) => [key, state.provenance[key]])),
+      boundary_summary: { assessment_date: state.boundary.assessmentDate, unit: state.boundary.unit,
+        scope_summary: options.scopeSummary.trim(), ...(naRefs.length ? { not_applicable: { indicator_refs: naRefs, explanation: options.naContext.trim() } } : {}) },
+      included,
+      limitations: ["Assessor-declared context; not independently checked", "Self-assessment; not validation, accreditation or endorsement", "Local minimised share, not a restorable backup", "May contain business-sensitive information"]
     };
-    if (options.snapshot) payload.snapshot = Object.fromEntries(catalogue.indicators.map((indicator) => {
+    if (included.snapshot) payload.snapshot = Object.fromEntries(catalogue.indicators.map((indicator) => {
       const response = snapshotResponse(indicator.ref);
       const result = { status: response.status, level: response.level, certainty: response.certainty, clarity: response.clarity };
-      if (options.comments) result.note = response.note;
+      if (included.comments) result.note = response.note;
       return [indicator.ref, result];
     }));
-    if (options.evidenceResults) payload.evidence_led = Object.fromEntries(catalogue.indicators.map((indicator) => {
+    if (included.evidenceResults) payload.evidence_led = Object.fromEntries(catalogue.indicators.map((indicator) => {
       const response = indicatorResponse(indicator.ref);
       const result = { status: response.status, level: response.level, certainty: response.certainty, evidence_count: response.evidence.length };
-      if (options.comments) Object.assign(result, { rationale: response.rationale, improvement_note: response.improvementNote, status_reason: response.statusReason });
-      if (options.evidenceRecords) result.evidence = response.evidence;
+      if (included.comments) Object.assign(result, { rationale: response.rationale, improvement_note: response.improvementNote, status_reason: response.statusReason });
+      if (included.evidenceRecords) result.evidence = response.evidence.map((item) => Object.fromEntries(["id", "title", "type", "reference", "owner", "date", "note", "limitations", "reviewStatus"].map((key) => [key, item[key] || ""])));
       return [indicator.ref, result];
     }));
     return payload;
@@ -2473,7 +2741,8 @@
       button.addEventListener("click", async (event) => {
         const target = event.currentTarget;
         const action = target.dataset.action;
-        if (action === "clear") {
+        if (action === "restore") { await beginRestore(); }
+        else if (action === "clear") {
           if (confirm("Delete the entire on-device assessment draft? This cannot be undone.")) await clearDraft();
         } else if (action === "welcome") setView("welcome");
         else if (action === "telemetry-off") {
@@ -2535,7 +2804,8 @@
           }
         } else if (action === "review") setView("review");
         else if (action === "gate") setView(publicTestMode() ? "report" : "gate");
-        else if (action === "report") setView("report");
+        else if (action === "report") { sharePreview = null; shareOptions = {}; setView("report"); }
+        else if (action === "share-edit") { sharePreview = null; render(); }
         else if (["print", "export-json", "export-snapshot-csv", "export-csv"].includes(action)) requestExport(action);
         else if (action === "feedback") {
           state.beta.pendingExport = "none";
@@ -2546,6 +2816,7 @@
           recordBetaEvent("feedback_skipped", { context: state.beta.feedbackContext?.view || state.view });
           continueAfterFeedback();
         } else if (action === "share-results") {
+          sharePreview = null; shareOptions = {};
           if (!publicTestMode() && betaConfig.feature_flags.feedback_checkpoint && !state.beta.feedbackCheckpointAnswered) {
             state.beta.pendingExport = "share-results";
             state.beta.feedbackContext = feedbackContext();
@@ -2636,6 +2907,7 @@
         method: boundaryForm.elements["boundary-method"].value,
         intendedUse: boundaryForm.elements["boundary-use"].value.trim()
       };
+      state.declaredContext = boundaryForm.elements["boundary-context"].value;
       audit("assessment_boundary_saved", "boundary");
       if (!hasBetaEvent("assessment_started")) recordBetaEvent("assessment_started", { entry_point: "boundary_completed" });
       setView("overview");
@@ -2826,22 +3098,27 @@
         snapshot: shareForm.elements["share-snapshot"].checked,
         evidenceResults: shareForm.elements["share-evidence-results"].checked,
         comments: shareForm.elements["share-comments"].checked,
-        evidenceRecords: shareForm.elements["share-evidence-records"].checked
+        evidenceRecords: shareForm.elements["share-evidence-records"].checked,
+        declaredContext: shareForm.elements["share-context"].value,
+        scopeSummary: shareForm.elements["share-scope"].value,
+        naContext: shareForm.elements["share-na-context"].value
       };
-      if (!options.snapshot && !options.evidenceResults) {
-        announce("Choose the snapshot, evidence-led results or both before creating a share bundle.", true);
-        shareForm.elements["share-snapshot"].focus();
-        return;
+      try {
+        sharePreview = shareBundlePayload(options); shareOptions = options;
+        lastFocusId = "hdrl-view-title"; render();
+      } catch (error) {
+        document.getElementById("share-error").textContent = error.message;
+        announce(error.message, true);
       }
-      if (options.evidenceRecords && !options.evidenceResults) {
-        announce("Select evidence-led results before including evidence reference details.", true);
-        shareForm.elements["share-evidence-results"].focus();
-        return;
-      }
-      download(`hdrl-explicit-share-${today()}.json`, "application/json", JSON.stringify(shareBundlePayload(options), null, 2));
-      recordBetaEvent("share_bundle_created", { bundle_scope: Object.entries(options).filter(([, included]) => included).map(([name]) => name).join(",") });
-      audit("explicit_share_bundle_created", "local_download");
+    });
+    document.getElementById("hdrl-share-download-form")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!sharePreview || !document.getElementById("share-confirm").checked) return;
+      download(`hdrl-minimised-share-${today()}.json`, "application/json", JSON.stringify(sharePreview, null, 2));
+      state.declaredContext = sharePreview.declared_context;
+      sharePreview = null; shareOptions = {};
       setView("report");
+      announce("Share downloaded locally. Nothing was sent automatically.");
     });
 
     const gateForm = document.getElementById("hdrl-gate-form");
@@ -2931,6 +3208,8 @@
   }
 
   function render() {
+    if (storagePause) { root.innerHTML = storagePausedView(); root.setAttribute("aria-busy", "false"); bindStoragePause(); return; }
+    if (restoreSession) { root.innerHTML = restoreView(); root.setAttribute("aria-busy", "false"); bindRestore(); return; }
     if (!draftCompatibility().compatible) {
       root.innerHTML = compatibilityView();
       root.setAttribute("aria-busy", "false");
@@ -2991,13 +3270,14 @@
       guidance_sha256: draft.provenance?.guidance_sha256 || null
     };
     const preserved = {
+      declaredContext: ["synthetic", "real", "unspecified"].includes(draft.declaredContext) ? draft.declaredContext : "unspecified",
       versions,
       provenance,
       createdAt: draft.createdAt ?? null,
       updatedAt: draft.updatedAt ?? null,
       boundary: { ...defaults.boundary, ...draft.boundary, assessmentDate: draft.boundary?.assessmentDate ?? "" }
     };
-    if (![1, 2, 3, 4, DRAFT_SCHEMA_VERSION].includes(draft.schemaVersion)) {
+    if (![1, 2, 3, 4, 5, DRAFT_SCHEMA_VERSION].includes(draft.schemaVersion)) {
       return { ...defaults, ...draft, ...preserved, schemaVersion: draft.schemaVersion ?? null };
     }
     const formatMigration = draft.schemaVersion === DRAFT_SCHEMA_VERSION ? draft.formatMigration : {
@@ -3006,7 +3286,7 @@
       migrated_by_tool: VERSIONS.tool,
       reassessed: false
     };
-    if ([2, 3, 4, DRAFT_SCHEMA_VERSION].includes(draft.schemaVersion)) {
+    if ([2, 3, 4, 5, DRAFT_SCHEMA_VERSION].includes(draft.schemaVersion)) {
       const {
         sessionId: discardedLegacySessionId,
         remoteSessionId: discardedLegacyRemoteSessionId,
@@ -3077,6 +3357,7 @@
   async function init() {
     try {
       const loaded = await loadDraft();
+      storageBaseline = structuredClone(loaded);
       hasOriginalLoadedDraft = loaded.found;
       originalLoadedDraft = loaded.found ? structuredClone(loaded.value) : null;
       const [catalogueResponse, contentResponse, betaResponse] = await Promise.all([

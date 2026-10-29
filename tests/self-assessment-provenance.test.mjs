@@ -48,12 +48,12 @@ function harness(options = {}) {
         }
         request.result = {
           close() { metrics.closes += 1; },
-          transaction() {
+          transaction(_store, mode) {
             const finishRead = () => queueMicrotask(() => {
               if (readFailure === "abort") tx.onabort();
               else tx.oncomplete();
             });
-            const tx = { objectStore() { return {
+            const tx = { abort() { queueMicrotask(() => tx.onabort()); }, objectStore() { return {
               get() {
                 const result = { result: structuredClone(storedPresent ? storedValue : undefined) };
                 queueMicrotask(() => {
@@ -63,7 +63,7 @@ function harness(options = {}) {
                     return;
                   }
                   result.onsuccess();
-                  if (result.result !== undefined) finishRead();
+                  if (mode === "readonly" && result.result !== undefined) finishRead();
                 });
                 return result;
               },
@@ -76,7 +76,7 @@ function harness(options = {}) {
                     return;
                   }
                   result.onsuccess();
-                  finishRead();
+                  if (mode === "readonly") finishRead();
                 });
                 return result;
               },
@@ -128,7 +128,7 @@ function harness(options = {}) {
     saveSnapshotForm, snapshotFormValues, validateSnapshot, snapshotIndicatorView, snapshotReviewView, snapshotStats,
     saveIndicatorForm, indicatorView, reviewView, findingSection, persist, scheduleSave, setView, render, init,
     setInputs(c, g, b) { catalogue = c; content = g; betaConfig = b; },
-    setState(value, original) { state = value; originalLoadedDraft = original; hasOriginalLoadedDraft = arguments.length > 1; },
+    setState(value, original) { state = value; originalLoadedDraft = original; hasOriginalLoadedDraft = arguments.length > 1; if (hasOriginalLoadedDraft) storageBaseline = { found: true, value: structuredClone(original) }; },
     getState() { return state; }
   };`;
   assert.match(source, /  init\(\);\n\}\)\(\);\s*$/);
@@ -216,7 +216,7 @@ test("current synthetic exports retain separate method and generator provenance"
     assert.ok(csv.includes(api.CATALOGUE_SHA256));
     assert.ok(csv.includes("2026-01-15"));
   }
-  const share = api.shareBundlePayload({ snapshot: true });
+  const share = api.shareBundlePayload({ snapshot: true, scopeSummary: "Synthetic service boundary, current period." });
   assert.deepEqual(plain(share.versions), plain(draft.versions));
   assert.equal(share.provenance.catalogue_sha256, api.CATALOGUE_SHA256);
   draft.registration.unlocked = true;
@@ -229,7 +229,7 @@ test("current synthetic exports retain separate method and generator provenance"
 });
 
 test("a compatible earlier implementation retains its original provenance", () => {
-  for (const candidate of ["2026-10-26.1", "2026-10-26.2", "2026-10-28.1", "2026-10-28.2"]) {
+  for (const candidate of ["2026-10-26.1", "2026-10-26.2", "2026-10-28.1", "2026-10-28.2", "2026-10-28.3", "2026-10-29.1"]) {
     const { api } = harness();
     const draft = plain(api.defaultState());
     draft.provenance.implementation_candidate = candidate;
@@ -239,7 +239,7 @@ test("a compatible earlier implementation retains its original provenance", () =
     assert.equal(api.draftCompatibility().compatible, true);
     const exported = plain(api.exportPayload());
     assert.equal(exported.provenance.implementation_candidate, candidate);
-    assert.equal(exported.generated_by.implementation_candidate, "2026-10-28.3");
+    assert.equal(exported.generated_by.implementation_candidate, "2026-10-29.2");
     assert.equal(exported.assessment.boundary.assessmentDate, "2024-02-01");
     assert.deepEqual(exported.versions, draft.versions);
   }
@@ -787,4 +787,55 @@ test("FB-04/05 complete HTML lists link every finding to its input with plain pr
   assert.match(report, /Suggested because you recorded low certainty/);
   assert.match(report, /Suggested because you left this indicator for a later assessment/);
   assert.match(report, /You marked a reference reviewed or accepted. The tool has not independently checked it/);
+});
+
+
+test("FB-07 context is declared, never inferred; format migration preserves provenance", () => {
+  const { api } = harness();
+  const original = plain(api.defaultState());
+  original.schemaVersion = 5;
+  delete original.declaredContext;
+  original.boundary.title = "Synthetic name alone is not a declaration";
+  original.provenance.implementation_candidate = "2026-10-28.3";
+  const migrated = api.migrateDraft(original, api.defaultState());
+  assert.equal(migrated.declaredContext, "unspecified");
+  assert.equal(migrated.schemaVersion, 6);
+  assert.deepEqual(plain(migrated.provenance), original.provenance);
+  assert.equal(migrated.formatMigration.reassessed, false);
+  api.setState(migrated);
+  const exported = plain(api.exportPayload());
+  assert.equal(exported.export_schema, "hdrl-self-assessment-export-v0.5.0");
+  assert.equal(exported.assessment.declared_context, "unspecified");
+  assert.equal(api.sampleState().declaredContext, "synthetic");
+});
+
+test("FB-07 minimised shares include reviewed context and exclude private unselected text", () => {
+  const { api } = harness();
+  const draft = api.sampleState();
+  Object.assign(draft.boundary, { title: "SECRET_TITLE", serviceName: "SECRET_SERVICE", scope: "SECRET_SCOPE", intendedUse: "SECRET_INTENT" });
+  draft.domainNotes.A = "SECRET_DOMAIN";
+  draft.rapid.A.note = "SECRET_ORIENTATION";
+  draft.snapshot["A.1.1"].note = "SECRET_COMMENT";
+  draft.snapshot["A.1.2"] = { status: "not_applicable", level: "", certainty: "", clarity: "", note: "SECRET_NA" };
+  draft.provenance.extra = "SECRET_PROVENANCE_EXTRA";
+  draft.versions.extra = "SECRET_VERSION_EXTRA";
+  draft.registration.name = "SECRET_CONTACT";
+  draft.audit = [{ reason: "SECRET_HISTORY" }];
+  api.setState(draft);
+  const options = { snapshot: true, scopeSummary: "Selected service function this year", declaredContext: "synthetic", naContext: "A.1.2 is outside this selected boundary." };
+  const shared = plain(api.shareBundlePayload(options));
+  assert.doesNotMatch(JSON.stringify(shared), /SECRET_/);
+  assert.equal(shared.schema, "hdrl-explicit-results-share-v0.2.0");
+  assert.equal(shared.restorable, false);
+  assert.equal(shared.assessment_id, draft.id);
+  assert.equal(shared.declared_context, "synthetic");
+  assert.equal(shared.boundary_summary.assessment_date, draft.boundary.assessmentDate);
+  assert.deepEqual(shared.boundary_summary.not_applicable.indicator_refs, ["A.1.2"]);
+  assert.equal(shared.boundary_summary.not_applicable.explanation, options.naContext);
+  assert.equal(shared.provenance.implementation_candidate, draft.provenance.implementation_candidate);
+  assert.equal(shared.evidence_led, undefined);
+  assert.match(JSON.stringify(api.shareBundlePayload({ ...options, comments: true })), /SECRET_COMMENT/);
+  assert.throws(() => api.shareBundlePayload({ ...options, naContext: "" }), /Explain the N\/A/);
+  assert.throws(() => api.shareBundlePayload({ ...options, scopeSummary: "" }), /scope summary/);
+  assert.throws(() => api.shareBundlePayload({ ...options, evidenceRecords: true }), /Choose evidence-led/);
 });

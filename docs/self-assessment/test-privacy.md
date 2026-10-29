@@ -22,9 +22,9 @@ The test does not create beta activity events or collect time spent using it. If
 
 ## Downloads and deletion
 
-You can download JSON or CSV, print a report, or deliberately create a share bundle. These files may include your assessment text and evidence references. Check their contents before sharing them. A download does not send anything to OPL Advisory or another person.
+You can download a full backup JSON or summary CSV, print a report, or deliberately prepare a minimised share. A minimised share includes your selected results, declared context and reviewed scope/N/A explanation; it is not a restorable backup. These files may include your assessment text and evidence references. Check their contents before sharing them. A download does not send anything to OPL Advisory or another person.
 
-Use **Delete on-device draft** to remove the saved draft, or clear this site's browser data. Clearing browser data or using another device can make your draft unavailable. Download a copy you can read before clearing it: this test has no restore/import feature. Downloaded files remain wherever you saved them until you delete them separately.
+Use **Delete on-device draft** to remove the saved draft, or clear this site's browser data. Clearing browser data or using another device can make your draft unavailable. Download a full backup JSON before clearing it. Restore reads that file locally and asks before replacing the one saved draft. Cancellation or a failed validation/storage transaction leaves the current draft intact. Restore retains original assessment provenance but excludes contacts, consent, sessions, service settings and prior event history. Downloaded files remain wherever you saved them until you delete them separately.
 
 ## Website requests
 

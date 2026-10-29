@@ -1602,3 +1602,8 @@ button.hdrl-domain-dot:focus-visible {
     font-size: 7pt;
   }
 }
+
+/* Local restore/share previews must reflow without widening a narrow screen. */
+.hdrl-file-preview { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow: auto; }
+#restore-preview dd { overflow-wrap: anywhere; }
+#restore-file { max-width: 100%; }
