@@ -18,7 +18,7 @@
   const CATALOGUE_SHA256 = "442a10be23a0ddec889785577fb8853db2296cc5b3a50929849025e27077cd47";
   const GUIDANCE_SHA256 = "1118cb773ca4ecc2bff06d2612d14b756134bda04603c43dd18604f4df36f92f";
   // Engineering candidate identity; baseline release labels above are not advanced by this work.
-  const COMPATIBILITY_CANDIDATE = "2026-10-29.1";
+  const COMPATIBILITY_CANDIDATE = "2026-10-29.2";
   const DRAFT_SCHEMA_VERSION = 6;
   const PROVENANCE_VERSION_KEYS = ["framework", "catalogue", "tool", "guidance", "rules", "report"];
 
@@ -63,6 +63,8 @@
   let saveTimer;
   let storageQueue = Promise.resolve();
   let deletingDraft = false;
+  let storageBaseline = { found: false, value: undefined };
+  let storagePause = "";
   let restoreSession = null;
   let sharePreview = null;
   let shareOptions = {};
@@ -174,7 +176,10 @@
   }
 
   function canRecoverOriginalAsJson() {
-    const original = hasOriginalLoadedDraft ? originalLoadedDraft : state;
+    return isRecoverableJson(hasOriginalLoadedDraft ? originalLoadedDraft : state);
+  }
+
+  function isRecoverableJson(original) {
     // A top-level undefined has an explicit marker in the recovery envelope.
     if (original === undefined) return true;
     const ancestors = new WeakSet();
@@ -326,58 +331,92 @@
     }
   }
 
+  function sameStoredDraft(a, b) {
+    if (!a || !b || a.found !== b.found) return false;
+    if (!a.found) return true;
+    return isRecoverableJson(a.value) && isRecoverableJson(b.value)
+      && JSON.stringify(a.value) === JSON.stringify(b.value);
+  }
+
+  function pauseStorage(message) {
+    storagePause = message;
+    clearTimeout(saveTimer); saveTimer = null;
+    render();
+    document.getElementById("restore-error")?.focus();
+  }
+
+  async function writeIfUnchanged(value, expected, remove = false) {
+    let db;
+    try {
+      db = await openDb();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, "readwrite");
+        const store = tx.objectStore(STORE_NAME);
+        let failure;
+        const compare = (found, current) => {
+          if (!sameStoredDraft({ found, value: current }, expected)) {
+            failure = new Error("The saved draft changed in another tab. Saving is paused so that work is kept.");
+            failure.code = "DRAFT_CHANGED";
+            tx.abort(); return;
+          }
+          if (remove) store.delete(ACTIVE_KEY);
+          else store.put(value, ACTIVE_KEY);
+        };
+        const request = store.get(ACTIVE_KEY);
+        request.onsuccess = () => {
+          if (request.result !== undefined) compare(true, request.result);
+          else {
+            const count = store.count(ACTIVE_KEY);
+            count.onsuccess = () => compare(count.result > 0, undefined);
+          }
+        };
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(failure || tx.error || new Error("Storage failed"));
+        tx.onabort = () => reject(failure || tx.error || new Error("Storage was interrupted"));
+      });
+      storageBaseline = { found: !remove, value: remove ? undefined : structuredClone(value) };
+    } finally { db?.close(); }
+  }
+
   function persist() {
-    if (deletingDraft || restoreSession || !draftCompatibility().compatible) return Promise.resolve(false);
+    if (storagePause || deletingDraft || restoreSession || !draftCompatibility().compatible) return Promise.resolve(false);
     state.updatedAt = nowIso();
     const value = structuredClone(state);
     const write = async () => {
-      let db;
+      if (storagePause) return false;
       try {
-        db = await openDb();
-        await new Promise((resolve, reject) => {
-          const tx = db.transaction(STORE_NAME, "readwrite");
-          tx.objectStore(STORE_NAME).put(value, ACTIVE_KEY);
-          tx.oncomplete = resolve;
-          tx.onerror = () => reject(tx.error);
-          tx.onabort = () => reject(tx.error || new Error("Draft save interrupted"));
-        });
+        await writeIfUnchanged(value, storageBaseline);
         announce(`Saved on this device at ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.`);
         return true;
-      } catch {
-        announce("This browser could not save the draft. Keep this page open to continue.", true);
+      } catch (error) {
+        if (error.code === "DRAFT_CHANGED") pauseStorage(error.message);
+        else announce("This browser could not save the draft. Keep this page open to continue.", true);
         return false;
-      } finally { db?.close(); }
+      }
     };
     storageQueue = storageQueue.then(write, write);
     return storageQueue;
   }
 
   function scheduleSave() {
-    if (deletingDraft || restoreSession || !draftCompatibility().compatible) return;
+    if (storagePause || deletingDraft || restoreSession || !draftCompatibility().compatible) return;
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => { saveTimer = null; void persist(); }, 350);
   }
 
   async function clearDraft() {
-    if (deletingDraft) return;
+    if (deletingDraft || storagePause) return;
     deletingDraft = true;
     clearTimeout(saveTimer); saveTimer = null;
     root.inert = true;
     const remove = async () => {
-      let db;
-      try {
-        db = await openDb();
-        await new Promise((resolve, reject) => {
-          const tx = db.transaction(STORE_NAME, "readwrite");
-          tx.objectStore(STORE_NAME).delete(ACTIVE_KEY);
-          tx.oncomplete = resolve;
-          tx.onerror = () => reject(tx.error);
-          tx.onabort = () => reject(tx.error || new Error("Draft deletion was interrupted"));
-        });
-      } catch {
-        announce("Deletion could not be confirmed. Your draft remains open. Try again or clear this site's data in your browser settings.", true);
+      if (storagePause) return;
+      try { await writeIfUnchanged(undefined, storageBaseline, true); }
+      catch (error) {
+        if (error.code === "DRAFT_CHANGED") pauseStorage(error.message);
+        else announce("Deletion could not be confirmed. Your draft remains open. Try again or clear this site's data in your browser settings.", true);
         return;
-      } finally { db?.close(); }
+      }
       authAccessToken = "";
       originalLoadedDraft = null;
       hasOriginalLoadedDraft = false;
@@ -2083,14 +2122,25 @@
   }
 
   async function beginRestore() {
+    if (storagePause || deletingDraft || restoreSession) return;
     const hadPendingSave = Boolean(saveTimer);
     clearTimeout(saveTimer); saveTimer = null;
     const session = { reading: true, pending: null, error: "", hadPendingSave };
     restoreSession = session;
     render();
-    await storageQueue; // Drain earlier saves before capturing the replacement baseline.
+    await storageQueue; // Earlier saves compare against their own last observed record.
+    if (restoreSession !== session) return;
     try {
-      session.baseline = await loadDraft();
+      const saved = await loadDraft();
+      if (restoreSession !== session) return;
+      if (storagePause || !sameStoredDraft(saved, storageBaseline)) {
+        pauseStorage("The saved draft changed in another tab. Restore is paused; the newer saved work has not been replaced.");
+        return;
+      }
+      session.baseline = saved;
+      session.savedBackup = saved.found ? fullBackupPayload(migrateDraft(saved.value, defaultState())) : null;
+      session.tabBackup = fullBackupPayload(state);
+      session.hasUnsavedCopy = JSON.stringify(session.savedBackup?.assessment) !== JSON.stringify(session.tabBackup.assessment);
     } catch (error) { session.error = error.message; session.blocked = true; }
     session.reading = false;
     if (restoreSession === session) { render(); document.getElementById("hdrl-view-title")?.focus(); }
@@ -2120,8 +2170,9 @@
           </dl>
           <p>${esc(r.pending.compatibilityNote)}</p>
           <p>Summaries will be recalculated from the restored responses.</p>
-          <p><strong>This replaces “${esc(state.boundary.title || "Untitled assessment") }” on this device. It does not merge assessments.</strong> Download your current backup first if you want to keep it.</p>
-          <button type="button" class="md-button" data-action="restore-backup" ${r.committing ? "disabled" : ""}>Download current backup</button>
+          <p><strong>${r.savedBackup ? `This replaces the saved draft “${esc(r.savedBackup.assessment.boundary.title || "Untitled assessment")}” (${esc(r.savedBackup.assessment.id)}) on this device.` : "There is no saved draft; this will become the active draft on this device."} It does not merge assessments.</strong></p>
+          ${r.savedBackup ? `<button type="button" class="md-button" data-action="restore-backup" ${r.committing ? "disabled" : ""}>Download saved draft backup</button>` : ""}
+          ${r.hasUnsavedCopy ? `<p>This tab also has work that differs from the saved draft. Keep that copy too before replacing anything.</p><button type="button" class="md-button" data-action="restore-tab-backup" ${r.committing ? "disabled" : ""}>Download this tab's copy</button>` : ""}
           <form id="hdrl-restore-confirm-form">
             <div class="hdrl-checkbox"><input id="restore-confirm" type="checkbox" required ${r.committing ? "disabled" : ""}><label for="restore-confirm">I have checked this backup and want to replace the current draft.</label></div>
             <button type="submit" class="md-button md-button--primary" ${r.committing ? "disabled" : ""}>${r.committing ? "Restoring…" : "Replace current draft"}</button>
@@ -2141,42 +2192,19 @@
   }
 
   async function commitRestore(session) {
-    if (restoreSession !== session || session.committing || !session.pending || session.blocked) return false;
+    if (storagePause || restoreSession !== session || session.committing || session.cancelling || !session.pending || session.blocked) return false;
     session.committing = true; session.error = ""; render();
     const replacement = restoredState(session.pending);
-    let db;
-    try {
-      db = await openDb();
-      await new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, "readwrite");
-        const store = tx.objectStore(STORE_NAME);
-        let failure;
-        const compareAndReplace = (found, value) => {
-          const expected = session.baseline;
-          if (found !== Boolean(expected?.found) || (found && JSON.stringify(value) !== JSON.stringify(expected.value))) {
-            failure = new Error("The saved draft changed in another tab. Cancel and refresh before trying again.");
-            tx.abort(); return;
-          }
-          store.put(replacement, ACTIVE_KEY);
-        };
-        const request = store.get(ACTIVE_KEY);
-        request.onsuccess = () => {
-          if (request.result !== undefined) compareAndReplace(true, request.result);
-          else {
-            const count = store.count(ACTIVE_KEY);
-            count.onsuccess = () => compareAndReplace(count.result > 0, undefined);
-          }
-        };
-        tx.oncomplete = resolve;
-        tx.onerror = () => reject(failure || tx.error || new Error("Storage failed"));
-        tx.onabort = () => reject(failure || tx.error || new Error("Storage was interrupted"));
-      });
-    } catch (error) {
+    try { await writeIfUnchanged(replacement, session.baseline); }
+    catch (error) {
       session.committing = false;
-      session.error = `Restore did not complete. Your current draft has not been replaced. ${error.message}`;
-      render(); document.getElementById("restore-error")?.focus();
+      if (error.code === "DRAFT_CHANGED") pauseStorage(error.message);
+      else {
+        session.error = `Restore did not complete. Your current draft has not been replaced. ${error.message}`;
+        render(); document.getElementById("restore-error")?.focus();
+      }
       return false;
-    } finally { db?.close(); }
+    }
     state = replacement;
     originalLoadedDraft = structuredClone(replacement); hasOriginalLoadedDraft = true;
     authAccessToken = ""; sharePreview = null; shareOptions = {};
@@ -2186,15 +2214,53 @@
     return true;
   }
 
+  async function cancelRestore(session) {
+    if (session.committing || session.cancelling || restoreSession !== session) return;
+    session.cancelling = true;
+    if (!storagePause) {
+      try {
+        const saved = await loadDraft();
+        if (restoreSession !== session) return;
+        if (!sameStoredDraft(saved, storageBaseline)) {
+          storagePause = "The saved draft changed in another tab. Saving remains paused; the newer work is kept.";
+        }
+      } catch {
+        if (restoreSession !== session) return;
+        storagePause = "The saved draft could not be checked. Saving remains paused to protect it.";
+      }
+    }
+    if (restoreSession !== session) return;
+    restoreSession = null; lastFocusId = "hdrl-view-title"; render();
+    if (!storagePause && session.hadPendingSave) scheduleSave();
+  }
+
+  function storagePausedView() {
+    return `<section id="hdrl-storage-conflict" class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
+      <h2 id="hdrl-view-title" tabindex="-1">Saving paused — keep both copies safe</h2>
+      <div id="restore-error" class="hdrl-error-summary" role="alert" tabindex="-1">${esc(storagePause)}</div>
+      <p>You can download this tab's assessment copy before reloading the saved draft. Nothing will be merged or sent. Cancelling restore does not resume saving from this tab.</p>
+      <button type="button" class="md-button" data-action="download-tab-backup">Download this tab's copy</button>
+      <button type="button" class="md-button md-button--primary" data-action="reload-saved-draft">Reload saved draft</button>
+      ${restoreSession ? `<button type="button" class="md-button" data-action="restore-cancel">Cancel restore — keep saved draft</button>` : ""}
+    </section>`;
+  }
+
+  function bindStoragePause() {
+    root.querySelector('[data-action="download-tab-backup"]')?.addEventListener("click", () => {
+      download(`hdrl-this-tab-backup-${today()}.json`, "application/json", JSON.stringify(fullBackupPayload(state), null, 2));
+    });
+    root.querySelector('[data-action="reload-saved-draft"]')?.addEventListener("click", () => location.reload());
+    root.querySelector('[data-action="restore-cancel"]')?.addEventListener("click", () => cancelRestore(restoreSession));
+  }
+
   function bindRestore() {
     const session = restoreSession;
-    root.querySelector('[data-action="restore-cancel"]')?.addEventListener("click", () => {
-      if (session.committing) return;
-      restoreSession = null; lastFocusId = "hdrl-view-title"; render();
-      if (session.hadPendingSave) scheduleSave();
-    });
+    root.querySelector('[data-action="restore-cancel"]')?.addEventListener("click", () => cancelRestore(session));
     root.querySelector('[data-action="restore-backup"]')?.addEventListener("click", () => {
-      download(`hdrl-current-backup-${today()}.json`, "application/json", JSON.stringify(exportPayload(), null, 2));
+      download(`hdrl-saved-backup-${today()}.json`, "application/json", JSON.stringify(session.savedBackup, null, 2));
+    });
+    root.querySelector('[data-action="restore-tab-backup"]')?.addEventListener("click", () => {
+      download(`hdrl-this-tab-backup-${today()}.json`, "application/json", JSON.stringify(session.tabBackup, null, 2));
     });
     document.getElementById("restore-file")?.addEventListener("change", async (event) => {
       const file = event.target.files[0]; if (!file) return;
@@ -2332,26 +2398,32 @@
     return sample;
   }
 
-  function exportPayload() {
-    if (!draftCompatibility().compatible) return recoveryPayload();
+  function fullBackupPayload(draft) {
     return {
       export_schema: "hdrl-self-assessment-export-v0.5.0",
       exported_at: nowIso(),
-      versions: { ...state.versions },
-      provenance: { ...state.provenance },
+      versions: { ...draft.versions },
+      provenance: { ...draft.provenance },
       generated_by: { tool_version: VERSIONS.tool, report_version: VERSIONS.report, implementation_candidate: COMPATIBILITY_CANDIDATE },
       assessment: {
-        id: state.id,
-        declared_context: state.declaredContext || "unspecified",
-        created_at: state.createdAt,
-        updated_at: state.updatedAt,
-        boundary: state.boundary,
-        rapid_first_pass: state.rapid,
-        whole_framework_snapshot: state.snapshot,
-        domain_capacity_notes: state.domainNotes,
-        evidence_led_responses: state.indicators,
-        audit: state.audit
+        id: draft.id,
+        declared_context: draft.declaredContext || "unspecified",
+        created_at: draft.createdAt,
+        updated_at: draft.updatedAt,
+        boundary: draft.boundary,
+        rapid_first_pass: draft.rapid,
+        whole_framework_snapshot: draft.snapshot,
+        domain_capacity_notes: draft.domainNotes,
+        evidence_led_responses: draft.indicators,
+        audit: draft.audit
       },
+    };
+  }
+
+  function exportPayload() {
+    if (!draftCompatibility().compatible) return recoveryPayload();
+    return {
+      ...fullBackupPayload(state),
       derived: {
         evidence_stage_status: evidenceStageStarted() ? "started" : "not_started",
         snapshot_domain_summaries: Object.fromEntries(catalogue.domains.map((domain) => [domain.ref, snapshotDomainSummary(domain.ref)])),
@@ -3136,6 +3208,7 @@
   }
 
   function render() {
+    if (storagePause) { root.innerHTML = storagePausedView(); root.setAttribute("aria-busy", "false"); bindStoragePause(); return; }
     if (restoreSession) { root.innerHTML = restoreView(); root.setAttribute("aria-busy", "false"); bindRestore(); return; }
     if (!draftCompatibility().compatible) {
       root.innerHTML = compatibilityView();
@@ -3284,6 +3357,7 @@
   async function init() {
     try {
       const loaded = await loadDraft();
+      storageBaseline = structuredClone(loaded);
       hasOriginalLoadedDraft = loaded.found;
       originalLoadedDraft = loaded.found ? structuredClone(loaded.value) : null;
       const [catalogueResponse, contentResponse, betaResponse] = await Promise.all([

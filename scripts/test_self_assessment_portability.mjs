@@ -13,6 +13,8 @@ import vm from "node:vm";
 const CASE_NAMES = Object.freeze([
   "restore-current-backup-confirm", "restore-legacy-v04", "restore-cancel-preserves-current",
   "restore-invalid-inputs-atomic", "restore-transaction-abort", "restore-concurrent-change-refused", "delete-drains-queued-saves", "restore-inert-text",
+  "restore-two-tab-stale-same-id", "restore-two-tab-stale-replaced-id",
+  "restore-two-tab-conflict-cancel", "restore-pending-cancel-without-conflict",
   "share-synthetic-snapshot", "share-real-context", "share-legacy-unspecified",
   "share-selection-exclusions", "share-na-context", "keyboard-mobile"
 ]);
@@ -94,6 +96,77 @@ async function restoreFile(page, content, filename = "synthetic-backup.json") {
 async function confirmRestore(page) {
   await page.locator("#restore-confirm").check();
   await page.locator('#hdrl-restore-confirm-form button[type="submit"]').click();
+}
+async function secondAssessmentTab(page) {
+  const second = await page.context().newPage();
+  await second.goto(`${origin.origin}/self-assessment/`); await ready(second);
+  // Allow any visibility-triggered save from opening the other actual tab to
+  // finish before deliberately creating the concurrency sequence under test.
+  await second.waitForTimeout(800);
+  return second;
+}
+async function snapshotNoteForm(page, note) {
+  await page.locator('[data-action="dashboard"]').first().click();
+  await page.locator('[data-action="snapshot-dashboard"]').first().click();
+  const indicatorDetails = page.locator("details").filter({ has: page.locator('[data-action="open-snapshot"][data-ref="A.1.1"]') }).first();
+  if ((await indicatorDetails.getAttribute("open")) === null) await indicatorDetails.locator("summary").click();
+  await page.locator('[data-action="open-snapshot"][data-ref="A.1.1"]').last().click();
+  const details = page.locator(".hdrl-snapshot-note");
+  if ((await details.getAttribute("open")) === null) await details.locator("summary").click();
+  await page.locator("#snapshot-note").fill(note);
+}
+async function saveSnapshotNote(page, note) {
+  await snapshotNoteForm(page, note);
+  await page.locator('#hdrl-snapshot-form button[type="submit"]').click();
+  await page.waitForTimeout(800);
+  const saved = await storage(page, "get");
+  assert.equal(saved.snapshot["A.1.1"].note, note, "Other tab genuinely saved the new note through the UI");
+  return saved;
+}
+async function pendingSnapshotThenRestore(page, note, prepared = false) {
+  if (!prepared) { await snapshotNoteForm(page, note); await page.waitForTimeout(800); }
+  const before = await storage(page, "get");
+  assert.notEqual(before.snapshot["A.1.1"].note, note, "Form text is not saved before submitting it");
+  // One browser task ensures Restore suspends the real 350ms autosave created
+  // by the real form submission. No timer or storage API is mocked here.
+  await page.evaluate(() => {
+    document.getElementById("hdrl-snapshot-form").requestSubmit();
+    document.querySelector('[data-action="restore"]').click();
+  });
+  await page.locator("#restore-file").waitFor();
+  assert.deepEqual(await storage(page, "get"), before, "Pending submitted note remains unsaved while Restore is open");
+  return before;
+}
+async function verifyStaleEntry({ page, second, check, dir, observations, beforeA, savedB }) {
+  await page.locator('[data-action="restore"]').first().click();
+  await page.locator("#hdrl-storage-conflict").waitFor();
+  check("stale tab is stopped before incoming file or replacement confirmation", {
+    file: await page.locator("#restore-file").count(),
+    confirmation: await page.locator("#hdrl-restore-confirm-form").count(),
+    preview: await page.locator("#restore-preview").count()
+  }, { file: 0, confirmation: 0, preview: 0 });
+  check("conflict explains the saved draft changed", /changed|another tab|newer/i.test(await page.locator("#restore-error").innerText()));
+  check("opening stale Restore preserves exact saved B", await storage(second, "get"), savedB);
+  const tabBackup = await download(page, '[data-action="download-tab-backup"]', path.join(dir, "stale-tab-A-backup.json"));
+  check("stale-tab recovery download preserves A identity", tabBackup.value.assessment.id, beforeA.id);
+  check("stale-tab recovery download preserves A responses", tabBackup.value.assessment.whole_framework_snapshot, beforeA.snapshot);
+  check("stale-tab recovery download retains original provenance", tabBackup.value.provenance, beforeA.provenance);
+  await page.screenshot({ path: path.join(dir, "stale-tab-paused.png"), fullPage: true });
+  await page.locator('[data-action="restore-cancel"]').click(); await page.waitForTimeout(1200);
+  check("cancelling a stale-entry restore keeps B exact", await storage(second, "get"), savedB);
+  check("cancelling does not clear the storage pause", await page.locator("#hdrl-storage-conflict").count(), 1);
+  await page.locator('[data-action="reload-saved-draft"]').click();
+  await page.locator("#hdrl-storage-conflict").waitFor({ state: "detached" }); await ready(page);
+  check("explicit reload preserves B", await storage(second, "get"), savedB);
+  await restoreFile(page, fixtureBytes); await page.locator("#restore-preview").waitFor();
+  check("replacement warning now names actual saved B", (await page.locator("#restore-preview p strong").innerText()).includes(savedB.boundary.title));
+  const savedBackup = await download(page, '[data-action="restore-backup"]', path.join(dir, "actual-saved-B-backup.json"));
+  check("actual current backup matches the entire saved assessment B", expectedRestored(savedBackup.value), assessmentShape(savedB));
+  check("actual current backup preserves B provenance", savedBackup.value.provenance, savedB.provenance);
+  await page.locator('[data-action="restore-cancel"]').click(); await page.waitForTimeout(800);
+  check("second cancellation keeps B after recovery", await storage(second, "get"), savedB);
+  observations.downloads = [{ path: tabBackup.path, sha256: tabBackup.sha256 }, { path: savedBackup.path, sha256: savedBackup.sha256 }];
+  observations.identities = { A: beforeA.id, B: savedB.id };
 }
 async function download(page, selector, destination) {
   const [file] = await Promise.all([page.waitForEvent("download"), typeof selector === "function" ? selector() : page.locator(selector).click()]);
@@ -297,6 +370,77 @@ const tests = {
     check("supplied script did not execute", await page.evaluate(() => Boolean(window.__importExecuted)), false);
     verifyRestored(check, await storage(page, "get"), incoming);
   },
+  async "restore-two-tab-stale-same-id"({ page, check, dir, observations }) {
+    const second = await secondAssessmentTab(page); const beforeA = await storage(page, "get");
+    check("two actual assessment tabs share the isolated context", page.context().pages().length, 2);
+    const savedB = await saveSnapshotNote(second, "SYNTHETIC newer B note saved before A opens Restore");
+    check("pre-entry divergence uses identical IDs", savedB.id, beforeA.id);
+    check("B actually differs in its saved response", savedB.snapshot["A.1.1"].note !== beforeA.snapshot["A.1.1"].note);
+    await verifyStaleEntry({ page, second, check, dir, observations, beforeA, savedB });
+  },
+  async "restore-two-tab-stale-replaced-id"({ page, check, dir, observations }) {
+    const second = await secondAssessmentTab(page); const beforeA = await storage(page, "get");
+    check("two actual assessment tabs share the isolated context", page.context().pages().length, 2);
+    const replacementB = clone(fixture);
+    replacementB.assessment.id = "SYNTHETIC-OTHER-TAB-REPLACED-ID-B";
+    replacementB.assessment.boundary.title = "SYNTHETIC saved replacement B from other tab";
+    replacementB.assessment.whole_framework_snapshot["A.1.1"].note = "SYNTHETIC B-only note before A opens Restore";
+    await restoreFile(second, JSON.stringify(replacementB)); await second.locator("#restore-preview").waitFor();
+    await confirmRestore(second); await second.locator("#restore-preview").waitFor({ state: "detached" }); await second.waitForTimeout(800);
+    const savedB = await storage(second, "get");
+    check("B actually replaces the saved ID through Restore UI", savedB.id, replacementB.assessment.id);
+    check("pre-entry divergence uses a different ID", savedB.id !== beforeA.id);
+    await verifyStaleEntry({ page, second, check, dir, observations, beforeA, savedB });
+  },
+  async "restore-two-tab-conflict-cancel"({ page, check, dir, observations }) {
+    const pendingNote = "SYNTHETIC pending tab A note — preserve locally without overwriting B";
+    await snapshotNoteForm(page, pendingNote); await page.waitForTimeout(800);
+    const second = await secondAssessmentTab(page);
+    check("two actual assessment tabs share the isolated context", page.context().pages().length, 2);
+    const before = await pendingSnapshotThenRestore(page, pendingNote, true);
+    await page.locator("#restore-file").setInputFiles({ name: "synthetic-C.json", mimeType: "application/json", buffer: fixtureBytes });
+    await page.locator("#restore-preview").waitFor();
+    const pendingBackup = await download(page, '[data-action="restore-tab-backup"]', path.join(dir, "pending-tab-A-backup.json"));
+    check("actual preconflict backup identifies A", pendingBackup.value.assessment.id, before.id);
+    check("actual preconflict backup preserves pending A note", pendingBackup.value.assessment.whole_framework_snapshot["A.1.1"].note, pendingNote);
+    check("preview and download have not saved pending A over disk", await storage(second, "get"), before);
+    const savedB = await saveSnapshotNote(second, "SYNTHETIC newer tab B note after A preview");
+    check("B saves same assessment identity with different content", savedB.id, before.id);
+    await confirmRestore(page); await page.locator("#restore-error").waitFor();
+    check("replacement is refused after other-tab change", /another tab|changed|newer|refresh/i.test(await page.locator("#restore-error").innerText()));
+    check("refusal preserves exact B immediately", await storage(second, "get"), savedB);
+    await page.locator('[data-action="restore-cancel"]').click();
+    await page.waitForTimeout(1200);
+    check("Cancel cannot resume stale A autosave over B", await storage(second, "get"), savedB);
+    await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+    await page.waitForTimeout(800);
+    check("visibility save remains suppressed until saved draft is reloaded", await storage(second, "get"), savedB);
+    await reload(page);
+    check("reload retains exact newer B", await storage(second, "get"), savedB);
+    observations.pending_backup = { path: pendingBackup.path, sha256: pendingBackup.sha256 };
+    observations.saved_B = { id: savedB.id, note: savedB.snapshot["A.1.1"].note };
+  },
+  async "restore-pending-cancel-without-conflict"({ page, check, dir, observations }) {
+    const pendingNote = "SYNTHETIC pending A note — no conflict, ordinary cancellation resumes save";
+    await snapshotNoteForm(page, pendingNote); await page.waitForTimeout(800);
+    const second = await secondAssessmentTab(page);
+    check("control also uses two actual assessment tabs", page.context().pages().length, 2);
+    const before = await pendingSnapshotThenRestore(page, pendingNote, true);
+    await page.locator("#restore-file").setInputFiles({ name: "synthetic-C.json", mimeType: "application/json", buffer: fixtureBytes });
+    await page.locator("#restore-preview").waitFor();
+    const backup = await download(page, '[data-action="restore-tab-backup"]', path.join(dir, "pending-no-conflict-tab-backup.json"));
+    check("this-tab backup preserves submitted pending note", backup.value.assessment.whole_framework_snapshot["A.1.1"].note, pendingNote);
+    const savedBackup = await download(page, '[data-action="restore-backup"]', path.join(dir, "pending-no-conflict-saved-backup.json"));
+    check("current saved backup contains the exact saved original", expectedRestored(savedBackup.value), assessmentShape(before));
+    check("no-conflict preview keeps old saved bytes until cancellation", await storage(second, "get"), before);
+    await page.locator('[data-action="restore-cancel"]').click(); await page.waitForTimeout(1200);
+    const saved = await storage(second, "get");
+    check("no-conflict Cancel resumes the legitimate pending save", saved.snapshot["A.1.1"].note, pendingNote);
+    check("no-conflict Cancel retains assessment identity", saved.id, before.id);
+    check("no-conflict Cancel retains original provenance", saved.provenance, before.provenance);
+    await reload(page); check("resumed note survives reload", (await storage(second, "get")).snapshot["A.1.1"].note, pendingNote);
+    observations.downloads = [{ path: backup.path, sha256: backup.sha256 }, { path: savedBackup.path, sha256: savedBackup.sha256 }];
+  },
   async "share-synthetic-snapshot"({ page, check, dir, observations }) {
     await openShare(page); const text = await previewShare(page); const preview = JSON.parse(text);
     check("snapshot-only preview excludes evidence-led results", Object.hasOwn(preview, "evidence_led"), false);
@@ -434,9 +578,12 @@ try {
           if (url.pathname === "/__hdrl_portability_fixture__") return route.fulfill({ contentType: "text/html", body: "<!doctype html><title>Synthetic fixture</title>" });
           return route.continue();
         });
-        const page = await ctx.newPage(); page.setDefaultTimeout(10000);
-        page.on("pageerror", (e) => pageErrors.push(e.message));
-        page.on("response", (r) => { const url = new URL(r.url()).pathname; if (assetPins[url]) assetResponses.push(r.body().then((bytes) => ({ path: url, sha256: sha(bytes) }))); });
+        ctx.on("page", (opened) => {
+          opened.setDefaultTimeout(10000);
+          opened.on("pageerror", (e) => pageErrors.push(e.message));
+          opened.on("response", (r) => { const url = new URL(r.url()).pathname; if (assetPins[url]) assetResponses.push(r.body().then((bytes) => ({ path: url, sha256: sha(bytes) }))); });
+        });
+        const page = await ctx.newPage();
         const dir = path.join(artifacts, `${engine}-${name}`); await mkdir(dir, { recursive: true });
         try {
           await page.goto(`${origin.origin}/__hdrl_portability_fixture__`);

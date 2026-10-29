@@ -48,12 +48,12 @@ function harness(options = {}) {
         }
         request.result = {
           close() { metrics.closes += 1; },
-          transaction() {
+          transaction(_store, mode) {
             const finishRead = () => queueMicrotask(() => {
               if (readFailure === "abort") tx.onabort();
               else tx.oncomplete();
             });
-            const tx = { objectStore() { return {
+            const tx = { abort() { queueMicrotask(() => tx.onabort()); }, objectStore() { return {
               get() {
                 const result = { result: structuredClone(storedPresent ? storedValue : undefined) };
                 queueMicrotask(() => {
@@ -63,7 +63,7 @@ function harness(options = {}) {
                     return;
                   }
                   result.onsuccess();
-                  if (result.result !== undefined) finishRead();
+                  if (mode === "readonly" && result.result !== undefined) finishRead();
                 });
                 return result;
               },
@@ -76,7 +76,7 @@ function harness(options = {}) {
                     return;
                   }
                   result.onsuccess();
-                  finishRead();
+                  if (mode === "readonly") finishRead();
                 });
                 return result;
               },
@@ -128,7 +128,7 @@ function harness(options = {}) {
     saveSnapshotForm, snapshotFormValues, validateSnapshot, snapshotIndicatorView, snapshotReviewView, snapshotStats,
     saveIndicatorForm, indicatorView, reviewView, findingSection, persist, scheduleSave, setView, render, init,
     setInputs(c, g, b) { catalogue = c; content = g; betaConfig = b; },
-    setState(value, original) { state = value; originalLoadedDraft = original; hasOriginalLoadedDraft = arguments.length > 1; },
+    setState(value, original) { state = value; originalLoadedDraft = original; hasOriginalLoadedDraft = arguments.length > 1; if (hasOriginalLoadedDraft) storageBaseline = { found: true, value: structuredClone(original) }; },
     getState() { return state; }
   };`;
   assert.match(source, /  init\(\);\n\}\)\(\);\s*$/);
@@ -229,7 +229,7 @@ test("current synthetic exports retain separate method and generator provenance"
 });
 
 test("a compatible earlier implementation retains its original provenance", () => {
-  for (const candidate of ["2026-10-26.1", "2026-10-26.2", "2026-10-28.1", "2026-10-28.2", "2026-10-28.3"]) {
+  for (const candidate of ["2026-10-26.1", "2026-10-26.2", "2026-10-28.1", "2026-10-28.2", "2026-10-28.3", "2026-10-29.1"]) {
     const { api } = harness();
     const draft = plain(api.defaultState());
     draft.provenance.implementation_candidate = candidate;
@@ -239,7 +239,7 @@ test("a compatible earlier implementation retains its original provenance", () =
     assert.equal(api.draftCompatibility().compatible, true);
     const exported = plain(api.exportPayload());
     assert.equal(exported.provenance.implementation_candidate, candidate);
-    assert.equal(exported.generated_by.implementation_candidate, "2026-10-29.1");
+    assert.equal(exported.generated_by.implementation_candidate, "2026-10-29.2");
     assert.equal(exported.assessment.boundary.assessmentDate, "2024-02-01");
     assert.deepEqual(exported.versions, draft.versions);
   }
