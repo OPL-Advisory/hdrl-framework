@@ -229,7 +229,7 @@ test("current synthetic exports retain separate method and generator provenance"
 });
 
 test("a compatible earlier implementation retains its original provenance", () => {
-  for (const candidate of ["2026-10-26.1", "2026-10-26.2", "2026-10-28.1", "2026-10-28.2", "2026-10-28.3", "2026-10-29.1"]) {
+  for (const candidate of ["2026-10-26.1", "2026-10-26.2", "2026-10-28.1", "2026-10-28.2", "2026-10-28.3", "2026-10-29.1", "2026-10-29.2"]) {
     const { api } = harness();
     const draft = plain(api.defaultState());
     draft.provenance.implementation_candidate = candidate;
@@ -239,7 +239,7 @@ test("a compatible earlier implementation retains its original provenance", () =
     assert.equal(api.draftCompatibility().compatible, true);
     const exported = plain(api.exportPayload());
     assert.equal(exported.provenance.implementation_candidate, candidate);
-    assert.equal(exported.generated_by.implementation_candidate, "2026-10-29.2");
+    assert.equal(exported.generated_by.implementation_candidate, "2026-10-29.3");
     assert.equal(exported.assessment.boundary.assessmentDate, "2024-02-01");
     assert.deepEqual(exported.versions, draft.versions);
   }

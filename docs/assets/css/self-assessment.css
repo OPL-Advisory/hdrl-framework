@@ -1542,62 +1542,62 @@ button.hdrl-domain-dot:focus-visible {
 }
 
 @media print {
-  .md-header,
-  .md-tabs,
-  .md-sidebar,
-  .md-footer,
-  .md-content > .md-content__inner > h1,
-  .md-content > .md-content__inner > h1 ~ p,
-  .md-content > .md-content__inner > .hdrl-prototype-banner,
-  .md-content > .md-content__inner > noscript,
-  .md-content > .md-content__inner > h2,
-  .md-content > .md-content__inner > h2 ~ *,
-  .hdrl-assessment-toolbar,
-  .hdrl-report-actions {
+  body:has(#hdrl-assessment-root) .md-header,
+  body:has(#hdrl-assessment-root) .md-tabs,
+  body:has(#hdrl-assessment-root) .md-sidebar,
+  body:has(#hdrl-assessment-root) .md-footer,
+  body:has(#hdrl-assessment-root) .md-content > .md-content__inner > h1,
+  body:has(#hdrl-assessment-root) .md-content > .md-content__inner > h1 ~ p,
+  body:has(#hdrl-assessment-root) .md-content > .md-content__inner > .hdrl-prototype-banner,
+  body:has(#hdrl-assessment-root) .md-content > .md-content__inner > noscript,
+  body:has(#hdrl-assessment-root) .md-content > .md-content__inner > h2,
+  body:has(#hdrl-assessment-root) .md-content > .md-content__inner > h2 ~ *,
+  body:has(#hdrl-assessment-root) .hdrl-assessment-toolbar,
+  body:has(#hdrl-assessment-root) .hdrl-report-actions {
     display: none !important;
   }
 
-  .md-main__inner,
-  .md-content,
-  .md-content__inner,
-  .hdrl-assessment,
-  .hdrl-generated-report {
+  body:has(#hdrl-assessment-root) .md-main__inner,
+  body:has(#hdrl-assessment-root) .md-content,
+  body:has(#hdrl-assessment-root) .md-content__inner,
+  body:has(#hdrl-assessment-root) .hdrl-assessment,
+  body:has(#hdrl-assessment-root) .hdrl-generated-report {
     width: 100% !important;
     max-width: none !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  .hdrl-generated-report > section,
-  .hdrl-report-header {
+  body:has(#hdrl-assessment-root) .hdrl-generated-report > section,
+  body:has(#hdrl-assessment-root) .hdrl-report-header {
     break-inside: avoid;
     color: #111 !important;
     background: #fff !important;
     border-color: #777 !important;
   }
 
-  .hdrl-generated-report > .hdrl-findings-section {
+  body:has(#hdrl-assessment-root) .hdrl-generated-report > .hdrl-findings-section {
     break-inside: auto;
   }
 
-  .hdrl-finding-list > li {
+  body:has(#hdrl-assessment-root) .hdrl-finding-list > li {
     break-inside: avoid;
   }
 
-  .hdrl-report-domain-grid {
+  body:has(#hdrl-assessment-root) .hdrl-report-domain-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .hdrl-report-table-wrap {
+  body:has(#hdrl-assessment-root) .hdrl-report-table-wrap {
     overflow: visible;
   }
 
-  .hdrl-generated-report table {
+  body:has(#hdrl-assessment-root) .hdrl-generated-report table {
     min-width: 0;
     font-size: 8pt;
   }
 
-  .hdrl-profile-matrix {
+  body:has(#hdrl-assessment-root) .hdrl-profile-matrix {
     min-width: 0;
     font-size: 7pt;
   }
