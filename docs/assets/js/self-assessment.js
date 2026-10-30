@@ -18,7 +18,7 @@
   const CATALOGUE_SHA256 = "442a10be23a0ddec889785577fb8853db2296cc5b3a50929849025e27077cd47";
   const GUIDANCE_SHA256 = "1118cb773ca4ecc2bff06d2612d14b756134bda04603c43dd18604f4df36f92f";
   // Engineering candidate identity; baseline release labels above are not advanced by this work.
-  const COMPATIBILITY_CANDIDATE = "2026-10-29.3";
+  const COMPATIBILITY_CANDIDATE = "2026-10-30.1";
   const DRAFT_SCHEMA_VERSION = 6;
   const PROVENANCE_VERSION_KEYS = ["framework", "catalogue", "tool", "guidance", "rules", "report"];
 
@@ -1327,14 +1327,14 @@
         </div>
         <details class="hdrl-domain-notes">
           <summary>Record domain-level operating capacity and constraints</summary>
-          <p>Keep this separate from maturity and evidence. Note whether the domain can operate reliably under current demand—for example staffing headroom, throughput, funding or technical capacity.</p>
+          <p>Describe whether delivery is local, shared or inherited, who provides it, which source supports that account and any local limits. You can also record staffing headroom, throughput, funding or technical capacity. These notes do not change scores or applicability.</p>
           <form id="hdrl-domain-notes-form">
             <div class="hdrl-domain-note-grid">
               ${catalogue.domains.map((domain) => textareaField(
                 `domain-capacity-${domain.ref}`,
                 `${domain.ref} · ${domain.name}`,
                 state.domainNotes[domain.ref] || "",
-                "Optional domain-level capacity or constraint note.",
+                "Optional operating context, provider/source and local limitations. Do not include private or sensitive details.",
                 false,
                 "",
                 1200
@@ -1362,7 +1362,7 @@
             </form>
             <div class="hdrl-assessment-actions hdrl-assessment-actions--stack">
               <button type="button" class="md-button md-button--primary" data-action="review">Review and prepare report</button>
-              <button type="button" class="hdrl-link-button" data-action="rapid-summary">Compare rapid impressions</button>
+              <button type="button" class="hdrl-link-button" data-action="comparison">Compare your responses</button>
             </div>
           </aside>
           <div class="hdrl-indicator-list" aria-live="polite">
@@ -1471,7 +1471,7 @@
               ${radio("indicator-status", "not_assessed", "Not assessed", "Relevant, but intentionally left for a later review.", response.status)}
               ${radio("indicator-status", "not_applicable", "Not applicable", "Outside this explicit assessment boundary.", response.status)}
             </fieldset>
-            ${textareaField("indicator-status-reason", "Short explanation", response.statusReason, "Record the knowledge gap, planned follow-up or boundary reason. Missing evidence alone does not make an indicator not applicable.", true, errors["indicator-status-reason"], 800)}
+            ${textareaField("indicator-status-reason", "Short explanation", response.statusReason, "Record the knowledge gap, planned follow-up or boundary reason. If delivery is shared or inherited, explain the provider/source and local limits. Missing evidence alone does not make an indicator not applicable.", true, errors["indicator-status-reason"], 800)}
           </div>
           <div id="hdrl-level-panel" ${response.status === "rated" ? "" : "hidden"}>
             <fieldset class="hdrl-level-options">
@@ -1504,7 +1504,7 @@
                 <option value="low" ${response.certainty === "low" ? "selected" : ""}>Low</option>
               </select>
             </div>
-            ${textareaField("indicator-rationale", "Rationale", response.rationale, "Why does the selected level best fit the current evidence?", false, "", 1800)}
+            ${textareaField("indicator-rationale", "Rationale", response.rationale, "Why does the selected level best fit the current evidence? If delivery is local, shared or inherited, name the provider/source and explain any local limitations. This does not automatically establish equivalence or evidence review.", false, "", 1800)}
           </div>
           <div class="hdrl-form-grid" id="hdrl-judgement-notes">
             ${textareaField("indicator-improvement", "Potential improvement note", response.improvementNote, "Your own proposed next step, if useful — including when no level is selected. The tool does not invent an action.", false, "", 1200)}
@@ -1637,7 +1637,7 @@
         <div class="hdrl-review-domains">
           ${catalogue.domains.map((domain) => {
             const summary = domainSummary(domain.ref);
-            return `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><span>${domain.ref}</span><strong>${esc(domain.name)}</strong><p>${esc(summary.label)}</p><small>${summary.count} Core judgement${summary.count === 1 ? "" : "s"} included</small></div>`;
+            return `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><span>${domain.ref}</span><strong>${esc(domain.name)}</strong><p>${esc(summary.label)}</p><small>${summary.count}/${coreCoverage("evidence", domain.ref).total} Core levels selected</small></div>`;
           }).join("")}
         </div>
         <h3>Items to understand before reporting (${byIndicator.size})</h3>
@@ -1862,6 +1862,111 @@
     </section>`;
   }
 
+  // Presentation-only summaries use the existing median membership and source
+  // responses. They do not change ratings, applicability or reference status.
+  function recordedResponse(stage, ref) {
+    return (stage === "snapshot" ? state.snapshot : state.indicators)[ref] || {};
+  }
+
+  function responseSelection(response) {
+    return response.status === "rated"
+      ? (LEVELS.includes(response.level) ? response.level : "Level not recorded")
+      : STATUS_LABELS[response.status || "unstarted"] || "Status not recorded";
+  }
+
+  function coreCoverage(stage, domain) {
+    const members = catalogue.indicators.filter((item) => item.domain === domain && item.type === "Core" && item.applicability_class !== "Y");
+    const result = { total: members.length, rated: 0, not_known: 0, not_assessed: 0, unstarted: 0, not_applicable: 0, incomplete: 0 };
+    members.forEach((item) => {
+      const response = recordedResponse(stage, item.ref);
+      const status = response.status || "unstarted";
+      if (status === "rated" && LEVELS.includes(response.level)) result.rated += 1;
+      else if (["not_known", "not_assessed", "unstarted", "not_applicable"].includes(status)) result[status] += 1;
+      else result.incomplete += 1;
+    });
+    return result;
+  }
+
+  function referenceCounts(indicators) {
+    const result = { total: 0, reviewed: 0, accepted: 0, unreviewed: 0, needs_update: 0, other: 0 };
+    indicators.forEach((item) => (recordedResponse("evidence", item.ref).evidence || []).forEach((reference) => {
+      result.total += 1;
+      const status = reference.reviewStatus;
+      result[["reviewed", "accepted", "unreviewed", "needs_update"].includes(status) ? status : "other"] += 1;
+    }));
+    return result;
+  }
+
+  function referenceCountText(counts) {
+    return `${counts.total} references: ${counts.reviewed} reviewed by assessor; ${counts.accepted} accepted in calibration; ${counts.unreviewed} unreviewed; ${counts.needs_update} need update${counts.other ? `; ${counts.other} review status not recorded` : ""}.`;
+  }
+
+  function coverageCell(stage, domain) {
+    const c = coreCoverage(stage, domain);
+    return `<strong>${c.rated}/${c.total} Core levels selected</strong><p>${c.not_known} not known; ${c.not_assessed} not assessed; ${c.unstarted} not started; ${c.not_applicable} N/A${c.incomplete ? `; ${c.incomplete} incomplete` : ""}.</p>`;
+  }
+
+  function coverageTable() {
+    return `<p>Each denominator is the full set of Core indicators used by that domain's median, excluding Outcome/Context entries. Unknown, unstarted, deferred and N/A entries remain in the denominator and are not scores. N/A is the assessor's declaration. A selected level does not mean its evidence has been reviewed.</p>
+      <div class="hdrl-report-table-wrap" role="region" aria-label="Assessment coverage by domain" tabindex="0">
+        <table class="hdrl-report-detail-table"><thead><tr><th scope="col">Domain</th><th scope="col">Snapshot</th><th scope="col">Evidence-led</th><th scope="col">References (all indicators)</th></tr></thead>
+        <tbody>${catalogue.domains.map((domain) => `<tr><th scope="row">${domain.ref} · ${esc(domain.name)}</th><td>${coverageCell("snapshot", domain.ref)}</td><td>${coverageCell("evidence", domain.ref)}</td><td>${referenceCountText(referenceCounts(catalogue.indicators.filter((item) => item.domain === domain.ref)))}</td></tr>`).join("")}</tbody></table>
+      </div><p>Review status is recorded by the assessor or calibration group. The tool has not checked the sources independently. Reference counts do not measure the strength or completeness of evidence.</p>`;
+  }
+
+  function foundationalTable() {
+    return `<h3>Foundational indicators</h3>
+      <p>These five indicators have a proposed L3 reference in the <a href="/framework/foundational-requirements/">current published framework</a>. Read each result separately from domain medians. This comparison is not a pass/fail decision or an assessment of legal compliance.</p>
+      <div class="hdrl-report-table-wrap" role="region" aria-label="Foundational indicators" tabindex="0">
+        <table class="hdrl-report-detail-table"><thead><tr><th scope="col">Indicator</th><th scope="col">Proposed reference</th><th scope="col">Snapshot</th><th scope="col">Evidence-led</th><th scope="col">Reference review</th></tr></thead>
+          <tbody>${catalogue.indicators.filter((item) => item.foundational).map((item) => `<tr><th scope="row">${item.ref} · ${esc(item.name)}</th><td>L3</td><td>${esc(responseSelection(recordedResponse("snapshot", item.ref)))}</td><td><strong>${esc(responseSelection(recordedResponse("evidence", item.ref)))}</strong><p>${esc(certaintyLabel(recordedResponse("evidence", item.ref).certainty))}</p></td><td>${referenceCountText(referenceCounts([item]))}</td></tr>`).join("")}</tbody>
+        </table>
+      </div>`;
+  }
+
+  function comparisonDomainTable() {
+    return `<p>Orientation records a domain impression. The snapshot selects descriptions without an evidence requirement. The evidence-led pass adds rationale and references. These are different views of the same assessment, not a time series or evidence of improvement. A changed level or certainty does not by itself show an evidence gap.</p>
+      <div class="hdrl-report-table-wrap" role="region" aria-label="Comparison by domain" tabindex="0">
+        <table class="hdrl-report-detail-table"><thead><tr><th scope="col">Domain</th><th scope="col">Orientation impression</th><th scope="col">Snapshot Core median</th><th scope="col">Evidence-led Core median</th></tr></thead>
+          <tbody>${catalogue.domains.map((domain) => {
+            const rapid = state.rapid[domain.ref] || {};
+            const snapshot = snapshotDomainSummary(domain.ref), evidence = domainSummary(domain.ref);
+            return `<tr><th scope="row">${domain.ref} · ${esc(domain.name)}</th><td>${esc(IMPRESSION_LABELS[rapid.impression] || "Not recorded")}<p>${esc(certaintyLabel(rapid.certainty))}</p></td><td><strong>${esc(snapshot.median)}</strong> · ${snapshot.count}/${coreCoverage("snapshot", domain.ref).total} Core levels</td><td><strong>${esc(evidence.median)}</strong> · ${evidence.count}/${coreCoverage("evidence", domain.ref).total} Core levels</td></tr>`;
+          }).join("")}</tbody>
+        </table>
+      </div>`;
+  }
+
+  function comparisonView() {
+    const cell = (stage, item) => {
+      const response = recordedResponse(stage, item.ref);
+      const note = stage === "snapshot" ? response.note : response.rationale || response.statusReason;
+      return `<strong>${esc(responseSelection(response))}</strong><p>${esc(certaintyLabel(response.certainty))}</p><p>${esc(note || "No explanation recorded.")}</p><button type="button" class="hdrl-link-button" data-action="${stage === "snapshot" ? "open-snapshot" : "open-indicator"}" data-ref="${item.ref}">Review ${stage === "snapshot" ? "snapshot" : "evidence-led response"} · ${item.ref}</button>`;
+    };
+    return shell(`<section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
+      <h2 id="hdrl-view-title" tabindex="-1">Compare your responses</h2>
+      ${comparisonDomainTable()}
+      <h3>Indicator selections and explanations</h3><p>Read both selections and their certainty together. Use the response notes to explain a difference, including a different scope, source or way of working. No difference is automatically classified as an error or a shortfall.</p>
+      <div class="hdrl-report-table-wrap" role="region" aria-label="Comparison by indicator" tabindex="0">
+        <table class="hdrl-report-detail-table"><thead><tr><th scope="col">Indicator</th><th scope="col">Snapshot</th><th scope="col">Evidence-led</th></tr></thead>
+          <tbody>${catalogue.indicators.map((item) => `<tr><th scope="row">${item.ref} · ${esc(item.name)}</th><td>${cell("snapshot", item)}</td><td>${cell("evidence", item)}</td></tr>`).join("")}</tbody>
+        </table>
+      </div><div class="hdrl-assessment-actions"><button type="button" class="md-button" data-action="report">Return to report</button><button type="button" class="md-button" data-action="evidence">Return to indicators</button></div>
+    </section>`);
+  }
+
+  function reportOverview(findings) {
+    return `<section id="hdrl-report-overview" class="hdrl-report-overview">
+      <h3>Read this report first</h3>
+      <p>Use the scope above to interpret the results. A domain median can conceal a different individual result or a small number of selections. ${evidenceStageStarted() ? "Evidence-led responses are recorded below; the tool has not verified them." : "The evidence-led pass was not undertaken. The empty evidence-led columns below do not indicate absent capability."}</p>
+      <p>${evidenceStageStarted() ? `<a href="#hdrl-report-questions">${findings.questions.length} suggested questions</a> · <a href="#hdrl-report-actions">${findings.actions.length} actions you entered</a> · ` : ""} <a href="#hdrl-report-context">Your operating context and constraints</a>. These are not ranked priorities.</p>
+      ${foundationalTable()}
+      <h3>Coverage and reference review</h3>${coverageTable()}
+      <h3>Compare the three views</h3>${comparisonDomainTable()}
+      <div class="hdrl-report-actions"><button type="button" class="md-button" data-action="comparison">Compare all indicator responses</button></div>
+    </section>`;
+  }
+
   function reportView() {
     if (!draftCompatibility().compatible) return compatibilityView();
     if (!publicTestMode() && !state.registration.unlocked) return gateView();
@@ -1884,11 +1989,12 @@
           <button type="button" class="md-button md-button--primary" data-action="print">Print or save PDF</button>
           <button type="button" class="md-button" data-action="export-json">Download full backup JSON</button>
           <button type="button" class="md-button" data-action="export-snapshot-csv">Download snapshot CSV</button>
-          <button type="button" class="md-button" data-action="export-csv">Download evidence CSV</button>
+          <button type="button" class="md-button" data-action="export-csv">Download evidence summary CSV</button>
           ${publicTestMode() ? "" : `<button type="button" class="md-button" data-action="feedback">Share feedback</button>`}
           <button type="button" class="md-button" data-action="share-results">Create optional share bundle</button>
           <button type="button" class="md-button" data-action="${evidenceStarted ? "review" : "snapshot-review"}">Revise assessment</button>
         </div>
+        <p class="hdrl-export-help">CSV files are summaries. The evidence summary CSV includes titles and counts, but not each reference's review status, locator, explanatory note or limitations. Use the full backup JSON for those details and to restore your work. Its recent event list keeps at most 250 events; it is not a complete change history and cannot reconstruct earlier decisions or identify their authors. Restore starts a new event list.</p>
         <section>
           <h3>Assessment identity and method</h3>
           <dl class="hdrl-report-definition">
@@ -1905,6 +2011,7 @@
             <div><dt>Guidance and rules content SHA-256</dt><dd><code>${hashMarkup(state.provenance.guidance_sha256)}</code></dd></div>
           </dl>
         </section>
+        ${reportOverview(findings)}
         <section>
           <h3>Rapid first pass</h3>
           ${Object.values(state.rapid).some((response) => response.impression)
@@ -1941,7 +2048,7 @@
               <thead><tr><th scope="col">Domain</th><th scope="col">Core median</th><th scope="col">Observed range</th><th scope="col">Coverage</th></tr></thead>
               <tbody>${catalogue.domains.map((domain) => {
                 const summary = domainSummary(domain.ref);
-                return `<tr><th scope="row"><span class="hdrl-domain-key" style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}">${domain.ref}</span> ${esc(domain.name)}</th><td><strong>${esc(summary.median)}</strong></td><td>${esc(summary.range)}</td><td>${summary.count} Core judgement${summary.count === 1 ? "" : "s"}</td></tr>`;
+                return `<tr><th scope="row"><span class="hdrl-domain-key" style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}">${domain.ref}</span> ${esc(domain.name)}</th><td><strong>${esc(summary.median)}</strong></td><td>${esc(summary.range)}</td><td>${summary.count}/${coreCoverage("evidence", domain.ref).total} Core levels selected</td></tr>`;
               }).join("")}</tbody>
             </table>
           </div>
@@ -1957,8 +2064,8 @@
         </section>
         ${findingSection("Findings supported by referenced evidence status", findings.supported, "No maturity judgements have evidence marked reviewed or accepted.")}
         ${findingSection("Provisional interpretations", findings.provisional, "No provisional maturity judgements were generated by the current rule.")}
-        ${findingSection("Suggested questions to investigate", findings.questions, "No low-certainty or unassessed prompts were generated.")}
-        ${findingSection("Potential improvement actions", findings.actions, "No user-entered improvement actions were recorded. The tool does not invent actions.")}
+        ${findingSection("Suggested questions to investigate", findings.questions, "No low-certainty or unassessed prompts were generated.", "hdrl-report-questions")}
+        ${findingSection("Potential improvement actions", findings.actions, "No user-entered improvement actions were recorded. The tool does not invent actions.", "hdrl-report-actions")}
         <section>
           <h3>Evidence-led indicator results</h3>
           <div class="hdrl-report-table-wrap" role="region" aria-label="All indicator results" tabindex="0">
@@ -1974,10 +2081,10 @@
             </table>
           </div>
         </section>` : `<section><h3>Evidence-led pass</h3><p>The evidence-led pass was not undertaken. No evidence-led findings are inferred from the snapshot; this does not indicate missing capability.</p></section>`}
-        <section>
+        <section id="hdrl-report-context">
           <h3>Dependencies and constraints</h3>
-          <p>HDRL is sociotechnical: domain patterns should be interpreted together. Review these dependencies where a domain is uncertain, thinly evidenced or constrained:</p>
-          <div class="hdrl-constraint-list">${catalogue.domains.map((domain) => `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><h4>${domain.ref} · ${esc(domain.name)}</h4><p><strong>Dependencies:</strong> ${content.domain_guidance[domain.ref].dependencies.map(esc).join("; ")}.</p><p><strong>Operating capacity or constraints:</strong> ${esc(state.domainNotes[domain.ref] || "No domain-level note recorded.")}</p></div>`).join("")}</div>
+          <p>Read the domains together. The dependencies below come from framework guidance; the context and constraints are your own notes. The tool does not infer a constraint or change a score from those notes.</p><div class="hdrl-report-actions"><button type="button" class="md-button" data-action="domain-notes">Edit your operating context and constraints</button></div>
+          <div class="hdrl-constraint-list">${catalogue.domains.map((domain) => `<div style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}"><h4>${domain.ref} · ${esc(domain.name)}</h4><p><strong>Dependencies:</strong> ${content.domain_guidance[domain.ref].dependencies.map(esc).join("; ")}.</p><p><strong>Your operating context and constraints:</strong> ${esc(state.domainNotes[domain.ref] || "No domain-level note recorded.")}</p></div>`).join("")}</div>
         </section>
         ${state.boundary.method === "team" ? `
           <section>
@@ -2015,7 +2122,7 @@
     return "Based on the response you recorded.";
   }
 
-  function findingSection(title, items, empty) {
+  function findingSection(title, items, empty, id = "") {
     // All items stay in ordinary HTML, including print. Group long lists by
     // domain rather than hiding later items or inventing a priority ranking.
     const provisional = items.length && items.every((item) => item.rule === "R-EVIDENCE-GAP");
@@ -2027,7 +2134,7 @@
       }).join("")
       : list(items);
     return `
-      <section class="hdrl-findings-section">
+      <section class="hdrl-findings-section"${id ? ` id="${esc(id)}"` : ""}>
         <h3>${esc(title)} (${items.length})</h3>
         ${provisional ? `<p>These judgements have no reference marked reviewed or accepted. This does not establish that the capability is absent.</p>` : ""}
         ${items.length ? body : `<p>${esc(empty)}</p>`}
@@ -2794,6 +2901,11 @@
           lastFocusId = "hdrl-view-title";
           render();
         } else if (action === "rapid-summary") setView("rapid-summary");
+        else if (action === "comparison") setView("comparison");
+        else if (action === "domain-notes") {
+          setView("evidence", "domain-capacity-A");
+          root.querySelector(".hdrl-domain-notes").open = true;
+        }
         else if (action === "rapid-edit" || action === "rapid-edit-first") {
           state.rapidIndex = action === "rapid-edit-first"
             ? 0
@@ -3250,6 +3362,7 @@
       "rapid-intro": rapidIntroView,
       rapid: rapidView,
       "rapid-summary": rapidSummaryView,
+      comparison: comparisonView,
       "snapshot-dashboard": snapshotDashboardView,
       snapshot: snapshotIndicatorView,
       "snapshot-review": snapshotReviewView,

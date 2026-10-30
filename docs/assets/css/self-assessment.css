@@ -1607,3 +1607,32 @@ button.hdrl-domain-dot:focus-visible {
 .hdrl-file-preview { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 24rem; overflow: auto; }
 #restore-preview dd { overflow-wrap: anywhere; }
 #restore-file { max-width: 100%; }
+
+/* Reporting comparisons scroll inside their labelled region on narrow screens. */
+.hdrl-assessment .hdrl-report-detail-table {
+  width: 100%; min-width: 680px; border-collapse: collapse; font-size: .75rem;
+}
+.hdrl-report-detail-table th, .hdrl-report-detail-table td {
+  padding: .6rem; border: 1px solid var(--assessment-border); text-align: left;
+  vertical-align: top; overflow-wrap: anywhere;
+}
+/* Fixed foundational columns keep short result headings readable in print. */
+[aria-label="Foundational indicators"] table { table-layout: fixed; }
+[aria-label="Foundational indicators"] th:nth-child(1) { width: 25%; }
+[aria-label="Foundational indicators"] th:nth-child(2) { width: 13%; }
+[aria-label="Foundational indicators"] th:nth-child(3) { width: 14%; }
+[aria-label="Foundational indicators"] th:nth-child(4) { width: 18%; }
+[aria-label="Foundational indicators"] th:nth-child(5) { width: 30%; }
+.hdrl-report-detail-table th { overflow-wrap: normal; }
+.hdrl-report-detail-table p { margin: .35rem 0; }
+.hdrl-export-help { font-size: .75rem; overflow-wrap: anywhere; }
+.hdrl-report-overview a { text-underline-offset: .2em; }
+@media print {
+  body:has(#hdrl-assessment-root) .hdrl-generated-report > .hdrl-report-overview {
+    break-inside: auto;
+  }
+  body:has(#hdrl-assessment-root) .hdrl-report-detail-table {
+    min-width: 0; font-size: 8pt;
+  }
+  body:has(#hdrl-assessment-root) .hdrl-report-detail-table tr { break-inside: avoid; }
+}
