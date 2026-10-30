@@ -150,3 +150,24 @@ test("reporting browser harness rejects unknown filters and engines before loadi
     assert.doesNotMatch(child.stderr, /HDRL_FEEDBACK_FIXTURE is required|Cannot find module/);
   }
 });
+
+test("browser receipt rejects started, empty or incomplete cases even if their names match", () => {
+  const harnessSource = read("scripts/test_self_assessment_reporting.mjs");
+  const predicate = harnessSource.match(/function completedCase\(record\) \{[\s\S]*?\n\}/)?.[0];
+  assert.ok(predicate, "Use the actual finalizer predicate");
+  const complete = vm.runInNewContext(`${predicate}; completedCase`);
+  const good = { passed: true, behaviour_assertions: 1, assertions: { total: 3, failed: 0 }, checks: [{passed:true},{passed:true},{passed:true}] };
+  assert.equal(complete(good), true);
+  for (const record of [
+    { name: "fenland-report-comparison", checks: [] },
+    { ...good, passed: undefined },
+    { ...good, passed: false },
+    { ...good, behaviour_assertions: 0 },
+    { ...good, behaviour_assertions: undefined },
+    { ...good, assertions: undefined },
+    { ...good, assertions: { total: 3, failed: 1 } },
+    { ...good, assertions: { total: 1, failed: 0 } },
+    { ...good, checks: [{passed:true}] },
+    { ...good, checks: [{passed:true},{passed:false},{passed:true}] }
+  ]) assert.equal(Boolean(complete(record)), false);
+});

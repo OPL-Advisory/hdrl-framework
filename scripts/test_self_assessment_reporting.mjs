@@ -275,6 +275,13 @@ await mkdir(artifacts, { recursive: true }); await mkdir(path.dirname(output), {
 const harnessPin = sha(await readFile(fileURLToPath(import.meta.url)));
 const report = { started_at: new Date().toISOString(), origin: origin.origin, source_root: sourceRoot, harness_sha256: harnessPin, source_pins: pins, fixture_sha256: sha(fixtureBytes),
   selected_cases: selected, selected_engines: engines, synthetic_only: true, live_services: false, browsers: [], failures: [] };
+// A named/started case is not evidence of a completed behavioural run.
+function completedCase(record) {
+  return record.passed === true && Number.isInteger(record.behaviour_assertions)
+    && record.behaviour_assertions > 0 && record.assertions?.total > record.behaviour_assertions
+    && record.assertions.failed === 0 && record.checks.length === record.assertions.total
+    && record.checks.every((check) => check.passed === true);
+}
 try {
   for (const engine of engines) {
     const browser = await playwright[engine].launch({ headless: true }), group = { engine, version: browser.version(), cases: [] }; report.browsers.push(group);
@@ -313,9 +320,14 @@ try {
       }
     } } finally { await browser.close(); }
   }
+} catch (error) {
+  report.failures.push({ name: "runner-error", fatal: error.stack || String(error) });
 } finally {
   for (const engine of engines) { const groups = report.browsers.filter((g) => g.engine === engine); if (groups.length !== 1 || JSON.stringify(groups[0].cases.map((c) => c.name)) !== JSON.stringify(selected)) report.failures.push({ engine, name: "inventory", fatal: "Exact requested cases did not execute" }); }
   const all = report.browsers.flatMap((b) => b.cases);
+  for (const group of report.browsers) for (const record of group.cases) {
+    if (!completedCase(record)) report.failures.push({ engine: group.engine, name: record.name, fatal: "Case did not complete with passing behavioural assertions" });
+  }
   if (sha(await readFile(fileURLToPath(import.meta.url))) !== harnessPin) report.failures.push({ name: "harness-mutated" });
   for (const [url, pin] of Object.entries(pins)) if (sha(await readFile(path.join(sourceRoot, "docs", url))) !== pin) report.failures.push({ name: "source-mutated", path: url });
   if (sha(await readFile(fixturePath)) !== report.fixture_sha256) report.failures.push({ name: "fixture-mutated" });
