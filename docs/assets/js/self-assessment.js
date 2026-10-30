@@ -18,7 +18,7 @@
   const CATALOGUE_SHA256 = "442a10be23a0ddec889785577fb8853db2296cc5b3a50929849025e27077cd47";
   const GUIDANCE_SHA256 = "1118cb773ca4ecc2bff06d2612d14b756134bda04603c43dd18604f4df36f92f";
   // Engineering candidate identity; baseline release labels above are not advanced by this work.
-  const COMPATIBILITY_CANDIDATE = "2026-10-29.2";
+  const COMPATIBILITY_CANDIDATE = "2026-10-29.3";
   const DRAFT_SCHEMA_VERSION = 6;
   const PROVENANCE_VERSION_KEYS = ["framework", "catalogue", "tool", "guidance", "rules", "report"];
 
@@ -817,8 +817,9 @@
     `);
   }
 
-  function boundaryView(errors = {}) {
-    const b = state.boundary;
+  function boundaryView(errors = {}, pending = null) {
+    const b = pending?.boundary || state.boundary;
+    const declaredContext = pending?.declaredContext ?? state.declaredContext;
     const errorSummary = Object.keys(errors).length
       ? `<div class="hdrl-error-summary" role="alert" tabindex="-1" id="hdrl-boundary-errors">
           <h3>Check the assessment boundary</h3>
@@ -846,7 +847,7 @@
           </div>
           <div class="hdrl-form-grid">
             <div class="hdrl-field ${errors["boundary-unit"] ? "hdrl-field--error" : ""}">
-              <fieldset>
+              <fieldset id="boundary-unit" tabindex="-1">
                 <legend>Unit of assessment <span aria-hidden="true">*</span></legend>
                 <p class="hdrl-hint">This suggests relevance but never silently hides an indicator.</p>
                 ${radio("boundary-unit", "system", "System", "Policy, legal framework or population infrastructure.", b.unit)}
@@ -866,7 +867,7 @@
           </div>
           <div class="hdrl-field"><label for="boundary-context">Assessment context</label>
             <p class="hdrl-hint">Your declaration, not something inferred from names or notes.</p>
-            <select id="boundary-context" name="boundary-context">${contextOptions(state.declaredContext)}</select>
+            <select id="boundary-context" name="boundary-context">${contextOptions(declaredContext)}</select>
           </div>
           ${textareaField("boundary-use", "Intended use", b.intendedUse, "What decision, conversation or improvement planning should this assessment inform?", true, errors["boundary-use"], 600)}
           <div class="hdrl-assessment-actions">
@@ -2630,6 +2631,23 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  function boundaryFormValues(form) {
+    // Pending values stay separate from the saved assessment until validation succeeds.
+    return {
+      boundary: {
+        title: form.elements["boundary-title"].value,
+        serviceName: form.elements["boundary-service"].value,
+        scope: form.elements["boundary-scope"].value,
+        timePeriod: form.elements["boundary-period"].value,
+        assessmentDate: form.elements["boundary-date"].value,
+        unit: form.elements["boundary-unit"].value,
+        method: form.elements["boundary-method"].value,
+        intendedUse: form.elements["boundary-use"].value
+      },
+      declaredContext: form.elements["boundary-context"].value
+    };
+  }
+
   function validateBoundary(form) {
     const errors = {};
     if (!form.elements["boundary-title"].value.trim()) errors["boundary-title"] = "Enter an assessment title.";
@@ -2887,27 +2905,36 @@
   function bind() {
     bindCommonActions();
 
+    root.querySelectorAll('#hdrl-boundary-errors a[href^="#"]').forEach((link) => {
+      link.addEventListener("click", (event) => {
+        const target = document.getElementById(link.getAttribute("href").slice(1));
+        if (!target) return;
+        // Explicit focus lets keyboard users type immediately in WebKit too.
+        event.preventDefault();
+        target.focus();
+      });
+    });
+
     const boundaryForm = document.getElementById("hdrl-boundary-form");
     boundaryForm?.addEventListener("submit", (event) => {
       event.preventDefault();
+      const pending = boundaryFormValues(boundaryForm);
       const errors = validateBoundary(boundaryForm);
       if (Object.keys(errors).length) {
-        root.innerHTML = boundaryView(errors);
+        root.innerHTML = boundaryView(errors, pending);
         bind();
         document.getElementById("hdrl-boundary-errors")?.focus();
         return;
       }
       state.boundary = {
-        title: boundaryForm.elements["boundary-title"].value.trim(),
-        serviceName: boundaryForm.elements["boundary-service"].value.trim(),
-        scope: boundaryForm.elements["boundary-scope"].value.trim(),
-        timePeriod: boundaryForm.elements["boundary-period"].value.trim(),
-        assessmentDate: boundaryForm.elements["boundary-date"].value,
-        unit: boundaryForm.elements["boundary-unit"].value,
-        method: boundaryForm.elements["boundary-method"].value,
-        intendedUse: boundaryForm.elements["boundary-use"].value.trim()
+        ...pending.boundary,
+        title: pending.boundary.title.trim(),
+        serviceName: pending.boundary.serviceName.trim(),
+        scope: pending.boundary.scope.trim(),
+        timePeriod: pending.boundary.timePeriod.trim(),
+        intendedUse: pending.boundary.intendedUse.trim()
       };
-      state.declaredContext = boundaryForm.elements["boundary-context"].value;
+      state.declaredContext = pending.declaredContext;
       audit("assessment_boundary_saved", "boundary");
       if (!hasBetaEvent("assessment_started")) recordBetaEvent("assessment_started", { entry_point: "boundary_completed" });
       setView("overview");
