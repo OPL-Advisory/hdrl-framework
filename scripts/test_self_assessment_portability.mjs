@@ -124,7 +124,7 @@ async function snapshotNoteForm(page, note) {
 async function saveSnapshotNote(page, note) {
   await snapshotNoteForm(page, note);
   assert.equal(await page.locator("#snapshot-note").inputValue(), note, "Other-tab form still contains the note immediately before submit");
-  await page.locator('#hdrl-snapshot-form button[type="submit"]').click();
+  await page.locator('#hdrl-snapshot-form [name="journey-action"][value="next"]').click();
   await page.waitForTimeout(800);
   const saved = await storage(page, "get");
   assert.equal(saved.snapshot["A.1.1"].note, note, "Other tab genuinely saved the new note through the UI");

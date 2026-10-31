@@ -18,7 +18,8 @@ function setup() {
   assert.match(source, /  init\(\);\n\}\)\(\);\s*$/);
   vm.runInContext(source.replace(/  init\(\);\n\}\)\(\);\s*$/, `globalThis.api = {
     coreCoverage, referenceCounts, foundationalTable, comparisonView, reportView, reportOverview, evidenceExplanation,
-    snapshotContext, snapshotEvidenceGuidance, snapshotIndicatorView,
+    snapshotContext, snapshotEvidenceGuidance, snapshotIndicatorView, nextSnapshotIndicator,
+    snapshotDashboardView, rapidSummaryView, rapidIntroView, overviewView, indicatorView,
     domainSummary, snapshotDomainSummary, reportFindings, fullBackupPayload, csvPayload, audit,
     restore(backup) { state=restoredState(HDRLPortability.parseBackup(JSON.stringify(backup), catalogue)); return state; },
     setup(c,g,b) { catalogue=c; content=g; betaConfig=b; state=defaultState();
@@ -320,4 +321,58 @@ test("selected-level guidance comes directly from the catalogue and does not mut
   assert.match(html, /<details class="hdrl-guidance" id="hdrl-snapshot-evidence-guidance">/);
   assert.match(html, /provisional snapshot, not an evidence-backed judgement/);
   for (const text of Object.values(catalogue.indicators.find(i => i.ref === "C.1.1").maturity_levels)) assert.ok(html.includes(escape(text)));
+});
+
+
+test("orientation summaries distinguish empty, partial and addressed domains without a false completion claim", () => {
+  const { api, state } = setup();
+  assert.match(api.rapidIntroView(), /Skip orientation and start Snapshot/);
+  assert.match(api.rapidSummaryView(), /0 of 8 domains answered · not started/);
+  state.rapid.A = { impression:"not_known", certainty:"", note:"Synthetic" };
+  assert.match(api.rapidSummaryView(), /1 of 8 domains answered · partial/);
+  for (const domain of catalogue.domains) state.rapid[domain.ref] = { impression:"not_assessed", certainty:"", note:"Synthetic" };
+  assert.match(api.rapidSummaryView(), /8 of 8 domains answered · all domains addressed/);
+  assert.doesNotMatch(api.rapidSummaryView() + api.rapidIntroView(), /Stage 1|Stage 2|Stage 1 complete/);
+});
+
+test("64 mixed addressed responses offer review and report without an unfinished-item fallback", () => {
+  const { api, state } = setup();
+  for (const item of catalogue.indicators) rate(state.snapshot[item.ref]);
+  for (const [index, status] of ["not_known", "not_assessed", "not_applicable"].entries()) {
+    Object.assign(state.snapshot[catalogue.indicators[index].ref], {status, level:"", certainty:""});
+  }
+  const html = api.snapshotDashboardView();
+  assert.match(html, /64 of 64 snapshot indicators addressed/);
+  assert.match(html, /data-action="snapshot-review">Review snapshot/);
+  assert.match(html, /data-action="gate">View report/);
+  assert.doesNotMatch(html, /Resume snapshot|unfinished indicator|Start indicator 1 of 64/);
+  assert.match(html, /They are not all ratings and do not establish readiness/);
+  assert.equal((html.match(/<li><button[^>]+data-action="open-snapshot"/g)||[]).length,64);
+  assert.match(api.overviewView(), /64\/64 indicators addressed · 61 rated/);
+  assert.match(api.overviewView(), /Evidence review not started/);
+  assert.equal(api.nextSnapshotIndicator("A.1.1"),undefined);
+});
+
+test("next-domain destination excludes the current pending response and remains correct when reviewing a completed snapshot", () => {
+  const { api, state } = setup(); const a = catalogue.indicators.filter(i => i.domain === "A");
+  for (const item of a.slice(0,-1)) state.snapshot[item.ref].status="not_known";
+  state.activeIndicator=a.at(-1).ref;
+  assert.equal(api.nextSnapshotIndicator(state.activeIndicator).domain,"B");
+  assert.match(api.snapshotIndicatorView(), /Save and continue in domain B/);
+  assert.match(api.snapshotIndicatorView(), /name="journey-action" value="pause">Save and pause/);
+  for (const item of catalogue.indicators) state.snapshot[item.ref].status="not_assessed";
+  assert.equal(api.nextSnapshotIndicator(state.activeIndicator),undefined);
+  assert.match(api.snapshotIndicatorView(), /Save and review snapshot/);
+});
+
+test("snapshot-only work stays visible beside an explicitly untouched evidence review without copying a judgement", () => {
+  const { api, state } = setup(); state.activeIndicator="H.3.1";
+  rate(state.snapshot["H.3.1"],"L4"); state.snapshot["H.3.1"].note="Synthetic inherited context";
+  const before=plain(state);
+  const html=api.indicatorView();
+  assert.match(html, /Evidence review not started for this indicator/);
+  assert.match(html, /Provisional snapshot:<\/strong> L4/);
+  assert.match(html, /data-action="open-snapshot" data-ref="H.3.1">Review this snapshot response/);
+  assert.deepEqual(plain(state),before);
+  assert.equal(state.indicators["H.3.1"].status,"unstarted");
 });

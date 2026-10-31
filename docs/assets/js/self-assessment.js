@@ -69,6 +69,8 @@
   let sharePreview = null;
   let shareOptions = {};
   let lastFocusId = "";
+  let journeyNotice = "";
+  let committingSnapshot = false;
   let lastActivityTick = Date.now();
   let authAccessToken = "";
   let plausibleReady = false;
@@ -399,7 +401,7 @@
   }
 
   function scheduleSave() {
-    if (storagePause || deletingDraft || restoreSession || !draftCompatibility().compatible) return;
+    if (committingSnapshot || storagePause || deletingDraft || restoreSession || !draftCompatibility().compatible) return;
     clearTimeout(saveTimer);
     saveTimer = setTimeout(() => { saveTimer = null; void persist(); }, 350);
   }
@@ -668,6 +670,7 @@
   function setView(view, focusId = "hdrl-view-title") {
     requireCompatibleDraft();
     lastFocusId = focusId;
+    journeyNotice = "";
     state.view = view;
     scheduleSave();
     render();
@@ -686,6 +689,7 @@
         <div>
           <span class="hdrl-assessment-chip">${publicTestMode() ? "Public test · saved in this browser" : serviceActive ? "Staging beta · results on device" : "Prototype · remote service off"}</span>
           <span class="hdrl-assessment-version">Framework ${VERSIONS.framework} · catalogue ${VERSIONS.catalogue} · tool ${VERSIONS.tool}</span>
+          ${boundaryReady ? `<p><strong>${esc(state.boundary.title)}</strong> · ${esc(state.boundary.assessmentDate)}</p>` : ""}
         </div>
         <div class="hdrl-assessment-toolbar__actions">
           ${boundaryReady ? `<button type="button" class="hdrl-link-button" data-action="dashboard">Assessment overview</button>` : ""}
@@ -693,6 +697,7 @@
           <button type="button" class="hdrl-link-button hdrl-link-button--danger" data-action="clear">Delete on-device draft</button>
         </div>
       </div>
+      ${journeyNotice ? `<p class="hdrl-success-panel" role="status">${esc(journeyNotice)}</p>` : ""}
       ${body}
     `;
   }
@@ -711,19 +716,19 @@
           </dl>
         </article>
         <article class="hdrl-stage-card hdrl-stage-card--snapshot">
-          <span class="hdrl-stage-number">Stage 1</span>
+          <span class="hdrl-stage-number">Snapshot</span>
           <h3>Whole-framework snapshot</h3>
           <p>Select a canonical level and certainty for every indicator. Comments and wording feedback are optional.</p>
           <dl>
             <div><dt>Time</dt><dd>About 30–60 minutes; pause by domain</dd></div>
             <div><dt>Coverage</dt><dd>All 64 indicators</dd></div>
-            <div><dt>Minimum</dt><dd>Two selections each</dd></div>
+            <div><dt>Response</dt><dd>Level and certainty, or a non-rated response</dd></div>
             <div><dt>Output</dt><dd>Provisional readiness profile</dd></div>
           </dl>
         </article>
         <article class="hdrl-stage-card hdrl-stage-card--evidence">
-          <span class="hdrl-stage-number">Stage 2</span>
-          <h3>Evidence-led second pass</h3>
+          <span class="hdrl-stage-number">Evidence review</span>
+          <h3>Review against evidence</h3>
           <p>Review every relevant canonical indicator and record what supports the judgement.</p>
           <dl>
             <div><dt>Time</dt><dd>Several sessions</dd></div>
@@ -755,6 +760,10 @@
         <span class="hdrl-assessment-kicker">Learn by applying HDRL</span>
         <h2 id="hdrl-view-title" tabindex="-1">Start lightly, deepen when useful</h2>
         <p class="hdrl-assessment-lede">Get oriented, take a provisional snapshot across all 64 indicators, then gather evidence where deeper assurance or planning would add value.</p>
+        ${hasDraft ? `<div class="hdrl-assessment-callout"><h3>Your saved assessment</h3>
+          <p>${esc(state.boundary.title || "Untitled assessment")} · ${esc(state.boundary.assessmentDate || "Date not recorded")}</p>
+          <p>Snapshot: ${snapshotStats().completed}/64 addressed; ${snapshotStats().judged} rated. Orientation: ${Object.values(state.rapid).filter(item => item.impression).length}/8 domains answered.</p>
+          <button type="button" class="md-button" data-action="gate">View report</button></div>` : ""}
         ${stageCards()}
         <div class="hdrl-assessment-callout">
           <h3>What this cannot establish</h3>
@@ -770,7 +779,7 @@
             : `<span>Beta analytics remains off for this draft.</span>`}`}
         </div>
         <div class="hdrl-assessment-actions">
-          <button type="button" class="md-button md-button--primary" data-action="${hasDraft ? "resume" : "start"}">${hasDraft ? "Resume draft" : "Set the assessment boundary"}</button>
+          <button type="button" class="md-button md-button--primary" data-action="${hasDraft ? "resume" : "start"}">${hasDraft ? "Resume / review saved assessment" : "Set the assessment boundary"}</button>
           <button type="button" class="md-button" data-action="sample">Open a sample assessment</button>
         </div>
       </section>
@@ -781,6 +790,7 @@
     const rapidCompleted = Object.values(state.rapid).filter((item) => item.impression).length;
     const snapshot = snapshotStats();
     const evidence = stats();
+    const evidenceStarted = catalogue.indicators.filter(item => indicatorResponse(item.ref).status !== "unstarted").length;
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
         <span class="hdrl-assessment-kicker">${esc(state.boundary.title)}</span>
@@ -795,21 +805,22 @@
             <button type="button" class="md-button" data-action="${rapidCompleted ? "rapid-summary" : "rapid-intro"}">${rapidCompleted ? "Review orientation" : "Start orientation"}</button>
           </article>
           <article class="hdrl-overview-card--primary">
-            <span>Stage 1</span>
+            <span>Snapshot</span>
             <h3>Whole-framework snapshot</h3>
-            <strong>${snapshot.completed}/64 indicators</strong>
+            <strong>${snapshot.completed}/64 indicators addressed · ${snapshot.judged} rated</strong>
             <p>Provisional level and certainty across the complete framework.</p>
-            <button type="button" class="md-button md-button--primary" data-action="snapshot-dashboard">${snapshot.completed ? "Continue snapshot" : "Start snapshot"}</button>
+            <button type="button" class="md-button md-button--primary" data-action="snapshot-dashboard">${snapshot.completed === catalogue.indicators.length ? "Review snapshot" : snapshot.completed ? "Resume snapshot" : "Start snapshot"}</button>
           </article>
           <article>
-            <span>Stage 2</span>
-            <h3>Evidence workspace</h3>
+            <span>Evidence review</span>
+            <h3>Evidence review</h3>
             <strong>${evidence.judged}/64 judgements</strong>
-            <p>Rationale, evidence references, gaps and domain constraints.</p>
-            <button type="button" class="md-button" data-action="evidence">Open evidence workspace</button>
+            <p>${evidenceStarted ? `${evidenceStarted} indicators addressed in Evidence review.` : "Evidence review not started."} Snapshot responses stay separate.</p>
+            <button type="button" class="md-button" data-action="evidence">Open evidence review</button>
           </article>
         </div>
         <div class="hdrl-assessment-actions">
+          <button type="button" class="md-button" data-action="gate">View report</button>
           <button type="button" class="md-button" data-action="boundary">Edit assessment boundary</button>
           ${publicTestMode() ? "" : `<button type="button" class="hdrl-link-button" data-action="beta-activity">Review local beta activity</button>`}
         </div>
@@ -918,7 +929,7 @@
   function rapidIntroView() {
     return shell(`
       <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Stage 1 of 2 · about 5–10 minutes</div>
+        <div class="hdrl-progress-label">Orientation · optional</div>
         <h2 id="hdrl-view-title" tabindex="-1">Give your first impression</h2>
         <p class="hdrl-assessment-lede">There is one prompt for each HDRL domain. Answer from current knowledge without gathering evidence. “Not known” is useful—it points to a knowledge gap.</p>
         <div class="hdrl-assessment-callout">
@@ -928,11 +939,12 @@
         <ul class="hdrl-check-list">
           <li>Use your gut reaction.</li>
           <li>Record how certain you are.</li>
-          <li>Add a short note only if it will help the second pass.</li>
+          <li>Add a short note if it will help your later review.</li>
           <li>Expect to revise your view when you inspect evidence.</li>
         </ul>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="rapid-start">Start question 1 of 8</button>
+          <button type="button" class="md-button" data-action="snapshot-dashboard">Skip orientation and start Snapshot</button>
           <button type="button" class="md-button" data-action="boundary">Change boundary</button>
         </div>
       </section>
@@ -948,8 +960,8 @@
     const percent = Math.round((completed / content.rapid_questions.length) * 100);
     return shell(`
       <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress" aria-label="${completed} of 8 rapid questions answered">
-          <div class="hdrl-progress__meta"><span>Rapid first pass</span><span>Question ${state.rapidIndex + 1} of 8</span></div>
+        <div class="hdrl-progress" aria-label="${completed} of 8 orientation questions answered">
+          <div class="hdrl-progress__meta"><span>Orientation</span><span>Question ${state.rapidIndex + 1} of 8</span></div>
           <div class="hdrl-progress__track"><span style="width:${percent}%"></span></div>
         </div>
         <span class="hdrl-domain-label" style="--domain-colour:${DOMAIN_COLOURS[q.domain]}">Domain ${q.domain} · ${esc(domain.name)}</span>
@@ -980,7 +992,7 @@
           </fieldset>
           ${textareaField("rapid-note", "Optional note", response.note, "What shaped this impression, or what should you check later?", false, "", 600)}
           <div class="hdrl-assessment-actions">
-            <button type="submit" class="md-button md-button--primary">${state.rapidIndex === 7 ? "Review rapid summary" : "Save and continue"}</button>
+            <button type="submit" class="md-button md-button--primary">${state.rapidIndex === 7 ? "Review orientation summary" : "Save and continue"}</button>
             ${state.rapidIndex > 0 ? `<button type="button" class="md-button" data-action="rapid-prev">Previous domain</button>` : ""}
             <button type="button" class="hdrl-link-button" data-action="rapid-summary">Skip to summary</button>
           </div>
@@ -1024,7 +1036,7 @@
           </div>
           <span class="hdrl-profile-arrow" aria-hidden="true">Lower impression → Higher impression</span>
         </div>
-        <div class="hdrl-profile-matrix-wrap" role="region" aria-label="Rapid profile matrix" tabindex="0">
+        <div class="hdrl-profile-matrix-wrap" role="region" aria-label="Orientation profile matrix" tabindex="0">
           <table class="hdrl-profile-matrix">
             <caption class="hdrl-assessment-sr">Domains arranged by initial impression and certainty</caption>
             <thead><tr><th scope="col">Certainty</th>${content.impression_bands.map((band) => `<th scope="col">${esc(band.label)}</th>`).join("")}</tr></thead>
@@ -1045,9 +1057,9 @@
     const answered = Object.values(state.rapid).filter((item) => item.impression).length;
     return shell(`
       <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Stage 1 complete · ${answered} of 8 domains answered</div>
+        <div class="hdrl-progress-label">Orientation · ${answered} of 8 domains answered${answered === 8 ? " · all domains addressed" : answered ? " · partial" : " · not started"}</div>
         <h2 id="hdrl-view-title" tabindex="-1">Your preliminary learning profile</h2>
-        <p class="hdrl-assessment-lede">This is a snapshot of initial impressions. It is not a full HDRL assessment and has no overall score.</p>
+        <p class="hdrl-assessment-lede">This is a record of initial impressions. It is not a full HDRL assessment and has no overall score.</p>
         ${rapidProfileMatrix({ interactive: true, id: "rapid-summary-profile" })}
         <details class="hdrl-guidance">
           <summary>View the profile as a domain list</summary>
@@ -1072,7 +1084,7 @@
         </div>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="snapshot-dashboard">Start the 64-indicator snapshot</button>
-          <button type="button" class="md-button" data-action="rapid-edit-first">Review rapid answers</button>
+          <button type="button" class="md-button" data-action="rapid-edit-first">Review orientation answers</button>
         </div>
       </section>
     `);
@@ -1098,28 +1110,30 @@
     const percent = Math.round((s.completed / catalogue.indicators.length) * 100);
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Stage 1 · about 30–60 minutes · save and return</div>
+        <div class="hdrl-progress-label">Snapshot · save and return</div>
         <h2 id="hdrl-view-title" tabindex="-1">Whole-framework snapshot</h2>
         <p class="hdrl-assessment-lede">For each indicator, choose the canonical description that best fits your current understanding and record certainty. No evidence is required and every answer remains provisional.</p>
         <div class="hdrl-assessment-notice">
           <strong>Assessment results stay on this device.</strong> ${publicTestMode() ? "No registration, analytics or timing collection is enabled for this test." : "Local beta activity records completion counts and timing bands, never the levels, certainty, notes or report contents."}
         </div>
-        <div class="hdrl-progress" aria-label="${s.completed} of 64 snapshot indicators completed">
+        <div class="hdrl-progress" aria-label="${s.completed} of 64 snapshot indicators addressed">
           <div class="hdrl-progress__meta"><span>Snapshot progress</span><span>${s.completed} of 64</span></div>
           <div class="hdrl-progress__track"><span style="width:${percent}%"></span></div>
         </div>
         <div class="hdrl-stat-row" aria-label="Snapshot summary">
-          ${statCard(s.completed, "Completed", "of 64")}
+          ${statCard(s.completed, "Addressed", "of 64")}
           ${statCard(s.judged, "Level selected", "provisional")}
           ${statCard(s.lowCertainty, "Low certainty", "review prompts")}
           ${statCard(s.clarityFlags, "Wording flags", "optional feedback")}
-          ${statCard(s.completedDomains, "Domains complete", "of 8")}
+          ${statCard(s.completedDomains, "Domains addressed", "of 8")}
         </div>
         <div class="hdrl-assessment-actions">
-          <button type="button" class="md-button md-button--primary" data-action="open-snapshot" data-ref="${nextSnapshotRef()}">${s.completed ? "Continue with next unfinished indicator" : "Start indicator 1 of 64"}</button>
-          ${s.completed ? `<button type="button" class="md-button" data-action="snapshot-review">Review snapshot results</button>` : ""}
+          ${s.completed < catalogue.indicators.length ? `<button type="button" class="md-button md-button--primary" data-action="open-snapshot" data-ref="${nextSnapshotRef()}">${s.completed ? "Resume snapshot" : "Start indicator 1 of 64"}</button>` : ""}
+          ${s.completed ? `<button type="button" class="md-button ${s.completed === catalogue.indicators.length ? "md-button--primary" : ""}" data-action="snapshot-review">Review snapshot</button>` : ""}
+          <button type="button" class="md-button" data-action="gate">View report</button>
           <button type="button" class="hdrl-link-button" data-action="overview">Assessment overview</button>
         </div>
+        <p>Addressed responses can include not known, not assessed and not applicable. They are not all ratings and do not establish readiness.</p>
         <div class="hdrl-snapshot-domains">
           ${catalogue.domains.map((domain) => {
             const progress = snapshotDomainProgress(domain.ref);
@@ -1127,7 +1141,7 @@
             return `<article style="--domain-colour:${DOMAIN_COLOURS[domain.ref]}">
               <span>Domain ${domain.ref}</span>
               <h3>${esc(domain.name)}</h3>
-              <strong>${progress.completed}/${progress.total} indicators</strong>
+              <strong>${progress.completed}/${progress.total} indicators addressed</strong>
               <div class="hdrl-mini-progress" aria-hidden="true"><span style="width:${Math.round((progress.completed / progress.total) * 100)}%"></span></div>
               <button type="button" class="md-button" data-action="open-snapshot" data-ref="${nextSnapshotRef(domain.ref)}">${complete ? "Review domain" : progress.completed ? "Continue domain" : "Start domain"}</button>
               <details>
@@ -1167,10 +1181,18 @@
       <p>This is guidance for later evidence review. Selecting a level or reading this list does not establish that evidence has been checked.</p>`;
   }
 
+  function nextSnapshotIndicator(ref) {
+    const currentIndex = catalogue.indicators.findIndex(item => item.ref === ref);
+    return catalogue.indicators.slice(currentIndex + 1).find(item => snapshotResponse(item.ref).status === "unstarted")
+      || catalogue.indicators.find(item => item.ref !== ref && snapshotResponse(item.ref).status === "unstarted");
+  }
+
   function snapshotIndicatorView(errors = {}, pendingResponse = null) {
     const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
     if (!indicator) return snapshotDashboardView();
     const response = pendingResponse || snapshotResponse(indicator.ref);
+    const next = nextSnapshotIndicator(indicator.ref);
+    const nextLabel = !next ? "Save and review snapshot" : next.domain !== indicator.domain ? `Save and continue in domain ${next.domain}` : "Save and open next indicator";
     const domain = catalogue.domains.find((item) => item.ref === indicator.domain);
     const index = catalogue.indicators.findIndex((item) => item.ref === indicator.ref);
     const errorSummary = Object.keys(errors).length
@@ -1178,7 +1200,7 @@
       : "";
     return shell(`
       <section class="hdrl-assessment-view" aria-labelledby="hdrl-view-title">
-        <button type="button" class="hdrl-back-link" data-action="snapshot-dashboard">← Back to snapshot overview</button>
+        <button type="button" class="hdrl-back-link" data-action="snapshot-dashboard">← Return to snapshot overview without saving</button>
         <div class="hdrl-progress-label">Indicator ${index + 1} of 64 · Domain ${indicator.domain}</div>
         <span class="hdrl-domain-label" style="--domain-colour:${DOMAIN_COLOURS[indicator.domain]}">${indicator.domain} · ${esc(domain.name)}</span>
         <h2 id="hdrl-view-title" tabindex="-1">${indicator.ref} · ${esc(indicator.name)}</h2>
@@ -1188,7 +1210,7 @@
         <form id="hdrl-snapshot-form" novalidate>
           <fieldset class="hdrl-level-options hdrl-snapshot-levels" id="snapshot-levels">
             <legend>Select the closest canonical description</legend>
-            <p class="hdrl-hint">Use keys 1–5 to select a level. Exact catalogue wording is reproduced below.</p>
+            <p class="hdrl-hint">Use Tab to reach a group, arrow keys to move between radio choices and Space to select. Exact catalogue wording is reproduced below.</p>
             ${LEVELS.map((level) => `<div class="hdrl-level-option">
               <input id="snapshot-level-${level}" name="snapshot-level" type="radio" value="${level}" ${response.level === level ? "checked" : ""}>
               <label for="snapshot-level-${level}"><span><strong>${level} · ${esc(catalogue.maturity_level_names[level])}</strong></span><span>${esc(indicator.maturity_levels[level])}</span></label>
@@ -1207,7 +1229,7 @@
           <div id="hdrl-snapshot-certainty-panel" ${response.status === "rated" ? "" : "hidden"}>
             <fieldset class="hdrl-inline-radios">
               <legend>How certain are you?</legend>
-              <p class="hdrl-hint">Use H, M or L. This describes confidence in your selection—not the maturity level.</p>
+              <p class="hdrl-hint">This describes confidence in your selection, not the maturity level. Use the same standard radio controls.</p>
               ${radio("snapshot-certainty", "high", "High", "I know this area and the description fits clearly.", response.certainty)}
               ${radio("snapshot-certainty", "medium", "Medium", "Some details could change the selection.", response.certainty)}
               ${radio("snapshot-certainty", "low", "Low", "This should be checked with another person or evidence.", response.certainty)}
@@ -1226,9 +1248,11 @@
             ${textareaField("snapshot-note", "Your note", response.note, "Keep this concise and non-sensitive. It stays on this device unless you explicitly include it in a share bundle.", false, "", 1200)}
           </details>
           <div class="hdrl-assessment-actions">
-            <button type="submit" class="md-button md-button--primary">Save and open next indicator</button>
+            <button type="submit" class="md-button md-button--primary" name="journey-action" value="next">${nextLabel}</button>
+            <button type="submit" class="md-button" name="journey-action" value="pause">Save and pause</button>
             <button type="button" class="md-button" data-action="snapshot-dashboard">Return without saving</button>
           </div>
+          <p class="hdrl-hint">Pause at any point to return to the domain overview. Use “Return without saving” to discard the changes on this form.</p>
         </form>
       </section>
     `);
@@ -1270,15 +1294,15 @@
     const revisit = catalogue.indicators.filter((indicator) => snapshotRevisitReasons(snapshotResponse(indicator.ref)).length);
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Stage 1 review · ${s.completed} of 64 indicators completed</div>
+        <div class="hdrl-progress-label">Snapshot review · ${s.completed} of 64 indicators addressed</div>
         <h2 id="hdrl-view-title" tabindex="-1">Review the provisional snapshot</h2>
         <p class="hdrl-assessment-lede">This profile reflects current understanding and certainty. It is not evidence-backed, validated or suitable for benchmarking.</p>
         <div class="hdrl-stat-row">
           ${statCard(s.judged, "Level selected", "provisional")}
           ${statCard(s.lowCertainty, "Low certainty", "investigate")}
           ${statCard(s.clarityFlags, "Wording flags", "framework feedback")}
-          ${statCard(64 - s.completed, "Not completed", "visible gaps")}
-          ${statCard(s.completedDomains, "Domains complete", "of 8")}
+          ${statCard(64 - s.completed, "Not addressed", "no snapshot response")}
+          ${statCard(s.completedDomains, "Domains addressed", "of 8")}
         </div>
         <div class="hdrl-report-table-wrap" role="region" aria-label="Provisional snapshot domain profile" tabindex="0">
           <table class="hdrl-domain-summary-table">
@@ -1300,7 +1324,7 @@
         </div>
         <div class="hdrl-assessment-actions">
           <button type="button" class="md-button md-button--primary" data-action="gate">${publicTestMode() ? "Open report" : "Prepare report and exports"}</button>
-          <button type="button" class="md-button" data-action="evidence">Start evidence gathering</button>
+          <button type="button" class="md-button" data-action="evidence">Open evidence review</button>
           <button type="button" class="hdrl-link-button" data-action="snapshot-dashboard">Return to snapshot overview</button>
         </div>
       </section>
@@ -1339,13 +1363,13 @@
     });
     return shell(`
       <section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
-        <div class="hdrl-progress-label">Stage 2 · evidence gathering · save and return</div>
-        <h2 id="hdrl-view-title" tabindex="-1">Evidence-led indicator review</h2>
+        <div class="hdrl-progress-label">Evidence review · save and return</div>
+        <h2 id="hdrl-view-title" tabindex="-1">Evidence review</h2>
         <p class="hdrl-assessment-lede">All 64 indicators remain available. Scope tags are prompts, not automatic exclusions.</p>
         <div class="hdrl-assessment-notice">
           <strong>References and notes only—no files.</strong> Do not enter patient-level data, personal confidential data, credentials or unnecessarily sensitive operational information.
         </div>
-        <div class="hdrl-stat-row" aria-label="Evidence-led progress">
+        <div class="hdrl-stat-row" aria-label="Evidence review progress">
           ${statCard(s.judged, "Judged", "of 64")}
           ${statCard(s.evidenceLinked, "With evidence", "references")}
           ${statCard(s.unknown, "Not known", "knowledge gaps")}
@@ -1475,7 +1499,8 @@
         </div>
         <h2 id="hdrl-view-title" tabindex="-1">${esc(indicator.name)}</h2>
         <p class="hdrl-assessment-lede"><strong>What this establishes:</strong> the maturity and evidence for ${esc(indicator.name.toLowerCase())} within ${esc(domain.name.toLowerCase())}.</p>
-        ${snapshot.status !== "unstarted" ? `<div class="hdrl-snapshot-reference"><strong>Provisional snapshot:</strong> ${esc(snapshot.status === "rated" ? `${snapshot.level} · ${certaintyLabel(snapshot.certainty)}` : STATUS_LABELS[snapshot.status])}. Review it against evidence rather than silently carrying it forward.</div>` : ""}
+        ${response.status === "unstarted" ? '<p><strong>Evidence review not started for this indicator.</strong></p>' : ""}
+        ${snapshot.status !== "unstarted" ? `<div class="hdrl-snapshot-reference"><strong>Provisional snapshot:</strong> ${esc(snapshot.status === "rated" ? `${snapshot.level} · ${certaintyLabel(snapshot.certainty)}` : STATUS_LABELS[snapshot.status])}. Review it against evidence rather than silently carrying it forward. <button type="button" class="hdrl-link-button" data-action="open-snapshot" data-ref="${indicator.ref}">Review this snapshot response</button></div>` : "<p>No snapshot response recorded for this indicator.</p>"}
         <p><span class="hdrl-assessment-chip">${esc(relevance(indicator))}</span> This is a scope suggestion only. Record your applicability decision below.</p>
         <details class="hdrl-guidance">
           <summary>Why it matters, common mistakes and dependencies</summary>
@@ -1731,7 +1756,7 @@
         <div class="hdrl-progress-label">Limited completion summary</div>
         <h2 id="hdrl-view-title" tabindex="-1">Your assessment is ready to report</h2>
         <div class="hdrl-limited-summary">
-          <div><strong>${Object.values(state.rapid).filter((item) => item.impression).length}/8</strong><span>rapid impressions</span></div>
+          <div><strong>${Object.values(state.rapid).filter((item) => item.impression).length}/8</strong><span>orientation impressions</span></div>
           <div><strong>${snapshot.completed}/64</strong><span>snapshot indicators</span></div>
           <div><strong>${s.judged}/64</strong><span>indicator judgements</span></div>
           <div><strong>${s.evidenceLinked}/64</strong><span>with evidence references</span></div>
@@ -2046,7 +2071,7 @@
         </section>
         ${reportOverview(findings)}
         <section>
-          <h3>Rapid first pass</h3>
+          <h3>Orientation</h3>
           ${Object.values(state.rapid).some((response) => response.impression)
             ? `<p>These are preliminary domain impressions based on current knowledge. They are not evidence-led HDRL scores.</p>${rapidProfileMatrix({ interactive: false, id: "report-rapid-profile" })}`
             : "<p>The optional orientation was not undertaken.</p>"}
@@ -3050,13 +3075,14 @@
   function bind() {
     bindCommonActions();
 
-    root.querySelectorAll('#hdrl-boundary-errors a[href^="#"]').forEach((link) => {
+    root.querySelectorAll('#hdrl-boundary-errors a[href^="#"], #hdrl-snapshot-errors a[href^="#"], #hdrl-indicator-errors a[href^="#"]').forEach((link) => {
       link.addEventListener("click", (event) => {
         const target = document.getElementById(link.getAttribute("href").slice(1));
         if (!target) return;
         // Explicit focus lets keyboard users type immediately in WebKit too.
         event.preventDefault();
-        target.focus();
+        const control = target.matches("input, select, textarea, button") ? target : target.querySelector("input, select, textarea, button");
+        (control || target).focus();
       });
     });
 
@@ -3151,22 +3177,9 @@
         document.getElementById("hdrl-certainty-reasons").hidden = input.value !== "low";
       });
     });
-    snapshotForm?.addEventListener("keydown", (event) => {
-      if (event.target.matches("textarea, select, input:not([type=radio])")) return;
-      const level = /^[1-5]$/.test(event.key) ? `L${event.key}` : "";
-      const certainty = { h: "high", m: "medium", l: "low" }[event.key.toLowerCase()];
-      const choice = level
-        ? snapshotForm.querySelector(`input[name="snapshot-level"][value="${level}"]`)
-        : certainty && !document.getElementById("hdrl-snapshot-certainty-panel").hidden
-          ? snapshotForm.querySelector(`input[name="snapshot-certainty"][value="${certainty}"]`)
-          : null;
-      if (choice) {
-        event.preventDefault();
-        choice.click();
-      }
-    });
-    snapshotForm?.addEventListener("submit", (event) => {
+    snapshotForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
+      if (committingSnapshot) return;
       const errors = validateSnapshot(snapshotForm);
       if (Object.keys(errors).length) {
         root.innerHTML = snapshotIndicatorView(errors, snapshotFormValues(snapshotForm));
@@ -3174,6 +3187,9 @@
         document.getElementById("hdrl-snapshot-errors")?.focus();
         return;
       }
+      const pause = event.submitter?.value === "pause";
+      const beforeSave = pause ? structuredClone(state) : null;
+      committingSnapshot = pause;
       const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
       const domainProgressBefore = snapshotDomainProgress(indicator.domain);
       saveSnapshotForm(snapshotForm);
@@ -3186,14 +3202,42 @@
       if (snapshotProgress.completed === catalogue.indicators.length && !hasBetaEvent("snapshot_completed")) {
         recordBetaEvent("snapshot_completed", { completed_indicator_count: snapshotProgress.completed, completed_domain_count: snapshotProgress.completedDomains });
       }
-      const currentIndex = catalogue.indicators.findIndex((item) => item.ref === indicator.ref);
-      const next = catalogue.indicators.slice(currentIndex + 1).find((item) => snapshotResponse(item.ref).status === "unstarted")
-        || catalogue.indicators.find((item) => snapshotResponse(item.ref).status === "unstarted");
-      if (next) {
-        state.activeIndicator = next.ref;
-        lastFocusId = "hdrl-view-title";
-        render();
-      } else setView("snapshot-review");
+      const next = nextSnapshotIndicator(indicator.ref);
+      if (!pause) {
+        // Retain the existing next-indicator autosave and pending-restore behavior.
+        if (next) {
+          state.activeIndicator = next.ref;
+          lastFocusId = "hdrl-view-title";
+          render();
+        } else setView("snapshot-review");
+        return;
+      }
+      const previousView = state.view;
+      state.view = "snapshot-dashboard";
+      clearTimeout(saveTimer); saveTimer = null;
+      root.inert = true;
+      let saved;
+      try { saved = await persist(); }
+      finally { committingSnapshot = false; root.inert = false; }
+      if (!saved) {
+        // Keep this form and its entered values available; a newer-tab conflict has its own recovery screen.
+        state.view = previousView;
+        state.activeIndicator = indicator.ref;
+        if (!storagePause) {
+          // The form keeps the attempted values; discard must still return to the previous response.
+          state = beforeSave;
+          document.getElementById("hdrl-snapshot-save-error")?.remove();
+          const error = document.createElement("p");
+          error.id = "hdrl-snapshot-save-error"; error.className = "hdrl-error-summary";
+          error.setAttribute("role", "alert"); error.tabIndex = -1;
+          error.textContent = "This response could not be saved. Keep this page open and try again. Your entered values are still here.";
+          snapshotForm.prepend(error); error.focus();
+        }
+        return;
+      }
+      journeyNotice = "Saved on this device. You can close this tab and resume from the snapshot overview.";
+      lastFocusId = "hdrl-view-title";
+      render();
     });
 
     const indicatorForm = document.getElementById("hdrl-indicator-form");

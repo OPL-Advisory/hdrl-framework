@@ -13,7 +13,7 @@ import { promisify } from "node:util";
 import path from "node:path";
 import vm from "node:vm";
 
-const CASES = Object.freeze(["fenland-report-comparison", "foundational-low-h", "snapshot-only", "sparse-missingness", "reference-status-and-ordinal-comparison", "exports-history-and-safe-text", "narrative-correction-keyboard-mobile", "print-all-63-actions", "restored-active-explanation"]);
+const CASES = Object.freeze(["fenland-report-comparison", "foundational-low-h", "snapshot-only", "sparse-missingness", "reference-status-and-ordinal-comparison", "exports-history-and-safe-text", "narrative-correction-keyboard-mobile", "print-all-63-actions", "snapshot-context-and-guidance", "snapshot-keyboard-pause-and-domain-navigation", "snapshot-pause-failed-save-no-autosave", "orientation-and-completed-snapshot-resume", "restored-active-explanation"]);
 const ENGINES = Object.freeze(["chromium", "firefox", "webkit"]);
 const filter = process.env.HDRL_BROWSER_CASE || "";
 assert.ok(!filter || CASES.includes(filter), `Unknown HDRL_BROWSER_CASE; supported: ${CASES.join(", ")}`);
@@ -252,7 +252,7 @@ const tests = {
     await page.screenshot({ path: path.join(dir, "report-mobile.png") }); await compare(page);
     const comparisonWidth = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth })); check("comparison fits320px", comparisonWidth.scroll <= comparisonWidth.width + 1);
     await table(page, "Comparison by indicator").focus(); check("wide comparison is keyboard-focusable", await table(page, "Comparison by indicator").evaluate((node) => node === document.activeElement));
-    await page.screenshot({ path: path.join(dir, "comparison-mobile.png") }); observations.viewports = { reportWidth, comparisonWidth };
+    await page.screenshot({ path: path.join(dir, "comparison-mobile.png") }); observations.viewports = { reportWidth, comparisonWidth }; observations.long_note_characters = note.length;
   },
   async "print-all-63-actions"({ page, engine, check, dir, observations }) {
     const d = draft(); d.indicators["E.3.1"].improvementNote = "SYNTHETIC extra unknown-status action retained for reporting print.";
@@ -279,6 +279,226 @@ const tests = {
       observations.pdf = { path: pdf, sha256: sha(await readFile(pdf)), text_path: textFile, pages: pages.length, rendered_pages: rendered, scope: "Actual Chromium PDF/text checks; rendered PNGs retained for separate visual inspection." };
     } else observations.pdf = { produced: false, reason: "Chromium-only PDF API; this engine has print-media DOM and screenshots." };
     await page.waitForTimeout(700); check("printing preserves all source answers/provenance", verdictShape(await storage(page, "get")), verdictShape(d));
+  },
+  async "snapshot-context-and-guidance"({ page, check, dir, observations }) {
+    const d = draft();
+    const refs = ["C.1.1", "A.3.1", "H.4.2", "D.1.1"];
+    observations.indicators = []; observations.reflow = [];
+    for (const ref of refs) {
+      const indicator = catalogue.indicators.find((item) => item.ref === ref);
+      d.view = "snapshot"; d.activeIndicator = ref; await load(page, d);
+      const context = normal(await page.locator("#hdrl-snapshot-context").innerText());
+      check(`${ref} canonical type visible`, context.includes(indicator.type));
+      check(`${ref} canonical unit visible`, context.includes(`Unit: ${catalogue.vocabularies.units[indicator.unit]}`));
+      if (indicator.unit === "B") check(`${ref} Both unit explained`, context.includes("System / Service"));
+      check(`${ref} context explains local shared inherited scope`, /Local, shared or inherited/.test(context) && /no response is inherited automatically/.test(context));
+      if (indicator.foundational) check(`${ref} proposed foundational reference bounded`, /Proposed foundational indicator · L3 reference/.test(context) && /not a pass\/fail, legal-compliance or participation decision/.test(context));
+      else check(`${ref} no invented foundational marker`, !context.includes("Proposed foundational indicator"));
+      const expectedClass = indicator.applicability_class === "B0" ? /general baseline/ : indicator.applicability_class === "O" ? /Optional or Enhancement/ : indicator.applicability_class === "Y" ? /Outcome or Context.*excluded from domain medians/ : /does not decide applicability/;
+      check(`${ref} classification is a bounded context prompt`, expectedClass.test(context));
+      for (const level of ["L1", "L2", "L3", "L4", "L5"])
+        check(`${ref}/${level} canonical description unchanged`, await page.locator(`label[for="snapshot-level-${level}"] > span`).nth(1).innerText(), indicator.maturity_levels[level]);
+      const guidance = page.locator("#hdrl-snapshot-evidence-guidance");
+      check(`${ref} evidence guidance initially collapsed`, await guidance.evaluate((el) => el.open), false);
+      await guidance.locator("summary").click();
+      check(`${ref} opening guidance keeps selected level`, await page.locator('input[name="snapshot-level"]:checked').inputValue(), d.snapshot[ref].level);
+      for (const level of ["L1", "L2", "L3", "L4", "L5"]) {
+        await page.locator(`#snapshot-level-${level}`).check();
+        check(`${ref}/${level} guidance heading follows selection`, (await page.locator("#hdrl-snapshot-evidence-text strong").innerText()).startsWith(level + " · "));
+        check(`${ref}/${level} exact minimum evidence list`, await page.locator("#hdrl-snapshot-evidence-text li").allTextContents(), indicator.minimum_evidence[level] || []);
+        if (!indicator.minimum_evidence[level]) check(`${ref}/${level} missing list is explicit`, (await page.locator("#hdrl-snapshot-evidence-text").innerText()).includes(`does not publish a separate minimum-evidence list for ${level}`));
+        check(`${ref}/${level} reading guidance is not review`, /does not establish that evidence has been checked/.test(await page.locator("#hdrl-snapshot-evidence-text").innerText()));
+      }
+      await page.locator('input[name="snapshot-status"][value="not_applicable"]').check();
+      check(`${ref} N/A clears selected level without inventing guidance`, await page.locator('input[name="snapshot-level"]:checked').count(), 0);
+      check(`${ref} no-level guidance asks for selection`, /Select a level/.test(await page.locator("#hdrl-snapshot-evidence-text").innerText()));
+      await page.waitForTimeout(700);
+      check(`${ref} reading/changing pending guidance does not save answers or evidence`, verdictShape(await storage(page, "get")), verdictShape(d));
+      await page.setViewportSize({ width: 320, height: 900 }); await settled(page);
+      const width = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+      check(`${ref} context and expanded guidance fit320px`, width.scroll <= width.width + 1);
+      await page.locator("#hdrl-snapshot-context").scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(dir, `${ref}-context-mobile.png`) });
+      await guidance.scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(dir, `${ref}-guidance-mobile.png`) });
+      observations.indicators.push({ ref, context, width });
+      if (ref === "H.4.2") {
+        // CSS viewport equivalents exercise reflow, not native browser zoom.
+        // A 1280×900 reference viewport divided by2/4 represents200%/400% space.
+        for (const size of [{ name: "short-desktop", width: 1280, height: 600, equivalent_zoom: null }, { name: "reflow-200", width: 640, height: 450, equivalent_zoom: "200%" }, { name: "reflow-400", width: 320, height: 225, equivalent_zoom: "400%" }]) {
+          await page.setViewportSize({ width: size.width, height: size.height });
+          await page.locator("#snapshot-level-L5").focus(); await page.keyboard.press("Space"); await settled(page);
+          const dimensions = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth, focused: document.activeElement.id }));
+          check(`${size.name} long canonical form has no horizontal page overflow`, dimensions.scroll <= dimensions.width + 1);
+          check(`${size.name} native focus remains on selected radio`, dimensions.focused, "snapshot-level-L5");
+          const screenshot = path.join(dir, `${size.name}-long-canonical-native-focus.png`);
+          await page.screenshot({ path: screenshot });
+          observations.reflow.push({ ...size, ...dimensions, screenshot, technique: size.equivalent_zoom ? "Viewport equivalent only: reference1280x900 divided by scale; no native browser zoom performed" : "Actual short desktop viewport" });
+        }
+      }
+      await page.locator('button[data-action="snapshot-dashboard"]').last().click(); await settled(page); await page.waitForTimeout(700);
+      check(`${ref} return without saving discards provisional changes`, verdictShape(await storage(page, "get")), verdictShape(d));
+      await page.setViewportSize({ width: 1280, height: 900 });
+    }
+  },
+  async "snapshot-keyboard-pause-and-domain-navigation"({ page, check, dir, observations }) {
+    await page.setViewportSize({ width: 320, height: 900 });
+    const d = draft(); d.snapshot = {}; d.view = "snapshot-dashboard"; d.activeIndicator = "A.1.1";
+    await load(page, d);
+    await page.locator('.md-button--primary[data-action="open-snapshot"]').focus(); await page.keyboard.press("Enter"); await settled(page);
+    check("snapshot entry focuses heading", await page.evaluate(() => document.activeElement.id), "hdrl-view-title");
+    await page.waitForTimeout(700); const beforeEdit = await storage(page, "get");
+    check("hints describe native controls and no numeric shortcuts", /Tab.*arrow|arrow.*Tab/i.test(await page.locator("#hdrl-snapshot-form").innerText()) && !/Use keys 1|Use H, M or L/.test(await page.locator("#hdrl-snapshot-form").innerText()));
+    await page.keyboard.press("1"); await page.keyboard.press("h");
+    check("heading number/letter key does not silently change answer", await page.locator('input[name="snapshot-level"]:checked').count(), 0);
+    await page.keyboard.press("Tab"); check("Tab from heading reaches first native level radio", await page.evaluate(() => document.activeElement.id), "snapshot-level-L1");
+    await page.keyboard.press("Space"); await page.keyboard.press("ArrowRight");
+    check("native Space and arrow select L2", await page.locator('input[name="snapshot-level"]:checked').inputValue(), "L2");
+    await page.keyboard.press("5"); await page.keyboard.press("h");
+    check("radio numeric key does not trigger old custom shortcut", await page.locator('input[name="snapshot-level"]:checked').inputValue(), "L2");
+    check("radio letter key does not trigger certainty shortcut", await page.locator('input[name="snapshot-certainty"]:checked').count(), 0);
+    await page.locator(".hdrl-snapshot-note summary").click();
+    const rawNote = "  SYNTHETIC keyboard text 12345 H M L: local and inherited scope.  ";
+    await page.locator("#snapshot-note").fill(""); await page.locator("#snapshot-note").pressSequentially(rawNote);
+    check("editable note receives all letters and numbers", await page.locator("#snapshot-note").inputValue(), rawNote);
+    check("typing note leaves selected level unchanged", await page.locator('input[name="snapshot-level"]:checked').inputValue(), "L2");
+    await page.locator('[name="journey-action"][value="pause"]').click();
+    await page.locator("#hdrl-snapshot-errors").waitFor();
+    check("invalid pause focuses error summary", await page.evaluate(() => document.activeElement.id), "hdrl-snapshot-errors");
+    check("invalid pause preserves pending level", await page.locator('input[name="snapshot-level"]:checked').inputValue(), "L2");
+    check("invalid pause preserves raw pending note", await page.locator("#snapshot-note").inputValue(), rawNote);
+    const invalid = await storage(page, "get");
+    check("invalid pause does not commit any snapshot answer or note", invalid.snapshot, beforeEdit.snapshot);
+    await page.locator('#hdrl-snapshot-errors a[href="#hdrl-snapshot-certainty-panel"]').click();
+    check("error link focuses first certainty radio", await page.evaluate(() => document.activeElement.id), "snapshot-certainty-high");
+    await page.keyboard.press("Space"); await page.keyboard.press("ArrowRight");
+    check("native certainty arrow selects medium", await page.locator('input[name="snapshot-certainty"]:checked').inputValue(), "medium");
+    await page.screenshot({ path: path.join(dir, "keyboard-recovered-mobile.png") });
+    await page.locator('[name="journey-action"][value="pause"]').focus(); await page.keyboard.press("Enter");
+    await page.getByRole("heading", { name: "Whole-framework snapshot", exact: true }).waitFor(); await settled(page);
+    check("pause announces successful local save", /Saved on this device/.test(await page.locator("#hdrl-assessment-root").innerText()));
+    const paused = await storage(page, "get");
+    check("pause saves trimmed note and native selections", { level: paused.snapshot["A.1.1"].level, certainty: paused.snapshot["A.1.1"].certainty, note: paused.snapshot["A.1.1"].note }, { level: "L2", certainty: "medium", note: rawNote.trim() });
+    check("pause preserves evidence and original identity", { indicators: paused.indicators, versions: paused.versions, provenance: paused.provenance }, { indicators: d.indicators, versions: d.versions, provenance: d.provenance });
+    await page.reload(); await ready(page); await settled(page);
+    check("reload resumes snapshot overview", await page.locator("#hdrl-view-title").innerText(), "Whole-framework snapshot");
+    check("reload retains paused answer", (await storage(page, "get")).snapshot["A.1.1"], paused.snapshot["A.1.1"]);
+    check("partial dashboard offers next unfinished indicator", await page.locator('.md-button--primary[data-action="open-snapshot"]').getAttribute("data-ref"), "A.1.2");
+    await page.screenshot({ path: path.join(dir, "paused-overview-mobile.png") });
+    // A second invented state reaches the domain boundary without 64 repetitive saves.
+    const edge = draft(); edge.snapshot = {}; edge.view = "snapshot"; edge.activeIndicator = "A.4.2";
+    for (const i of catalogue.indicators.filter((item) => item.domain === "A" && item.ref !== edge.activeIndicator)) edge.snapshot[i.ref] = response("snapshot", "rated", "L3");
+    await load(page, edge); await page.locator('input[name="snapshot-status"][value="not_known"]').check();
+    check("domain boundary next action is explicit", await page.locator('[name="journey-action"][value="next"]').innerText(), "Save and continue in domain B");
+    await page.locator('[name="journey-action"][value="pause"]').click();
+    await page.getByRole("heading", { name: "Whole-framework snapshot", exact: true }).waitFor();
+    check("domain-end pause returns overview without compulsory checkpoint", await page.locator("#hdrl-view-title").innerText(), "Whole-framework snapshot");
+    const firstDomain = page.locator(".hdrl-snapshot-domains article").first();
+    check("domain-end pause marks actual A progress", (await firstDomain.innerText()).includes(`${catalogue.indicators.filter((i) => i.domain === "A").length}/${catalogue.indicators.filter((i) => i.domain === "A").length} indicators`));
+    await firstDomain.locator("details summary").click(); await firstDomain.locator('[data-action="open-snapshot"][data-ref="A.4.2"]').click(); await settled(page);
+    await page.locator('[name="journey-action"][value="next"]').click(); await page.getByRole("heading", { name: /^B\.1\.1 ·/ }).waitFor(); await settled(page);
+    check("domain continuation opens B1.1 directly", /^B\.1\.1 ·/.test(await page.locator("#hdrl-view-title").innerText()));
+    check("domain continuation focuses next heading", await page.evaluate(() => document.activeElement.id), "hdrl-view-title");
+    check("unknown status remains unscored after navigation", { status: (await storage(page, "get")).snapshot["A.4.2"].status, level: (await storage(page, "get")).snapshot["A.4.2"].level }, { status: "not_known", level: "" });
+    const width = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
+    check("snapshot keyboard journey fits320px", width.scroll <= width.width + 1); observations.width = width;
+    await page.screenshot({ path: path.join(dir, "next-domain-mobile.png") });
+  },
+  async "snapshot-pause-failed-save-no-autosave"({ page, check, dir, observations }) {
+    const d = draft(); d.view = "snapshot"; d.activeIndicator = "A.1.1";
+    d.snapshot["A.1.1"] = { ...response("snapshot", "rated", "L1"), certainty: "high", note: "SYNTHETIC previously saved note." };
+    await load(page, d); const before = await storage(page, "get");
+    await page.locator("#snapshot-level-L2").check(); await page.locator('input[name="snapshot-certainty"][value="medium"]').check();
+    await page.locator("#snapshot-note").fill("SYNTHETIC attempted note must remain unsaved.");
+    // Independently retained JRN-S1 probe established the failure sequence. Keep
+    // real IndexedDB transactions: delay first open delivery, then abort its put.
+    await page.evaluate(() => {
+      const originalOpen = indexedDB.open.bind(indexedDB), originalPut = IDBObjectStore.prototype.put;
+      globalThis.syntheticPauseFault = { opens: 0, puts: 0, aborts: 0, delay_ms: 850 };
+      globalThis.restorePauseFault = () => { indexedDB.open = originalOpen; IDBObjectStore.prototype.put = originalPut; };
+      indexedDB.open = function (...args) {
+        const request = originalOpen(...args);
+        if (!globalThis.syntheticPauseFault.opens++) {
+          let assigned;
+          Object.defineProperty(request, "onsuccess", { configurable: true, get: () => assigned, set(fn) {
+            assigned = fn; request.addEventListener("success", (event) => setTimeout(() => fn.call(request, event), 850), { once: true });
+          } });
+        }
+        return request;
+      };
+      IDBObjectStore.prototype.put = function (...args) {
+        const request = originalPut.apply(this, args);
+        if (this.name === "drafts") {
+          globalThis.syntheticPauseFault.puts++;
+          if (!globalThis.syntheticPauseFault.aborts) { globalThis.syntheticPauseFault.aborts++; this.transaction.abort(); }
+        }
+        return request;
+      };
+    });
+    await page.locator('[name="journey-action"][value="pause"]').click(); await page.waitForTimeout(75);
+    check("pause waits with form inert while IDB open delayed", await page.locator("#hdrl-assessment-root").evaluate((el) => el.inert));
+    await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+    await page.locator("#hdrl-snapshot-save-error").waitFor(); await page.waitForTimeout(650);
+    const fault = await page.evaluate(() => ({ ...globalThis.syntheticPauseFault })), after = await storage(page, "get");
+    check("real transaction abort was exercised", fault.aborts, 1);
+    check("visibility event did not enqueue second put after failed pause", fault.puts, 1);
+    check("failed pause leaves complete saved record unchanged", after, before);
+    check("failed pause keeps attempted note in visible form", await page.locator("#snapshot-note").inputValue(), "SYNTHETIC attempted note must remain unsaved.");
+    check("failed pause keeps attempted level", await page.locator('input[name="snapshot-level"]:checked').inputValue(), "L2");
+    check("failed pause keeps attempted certainty", await page.locator('input[name="snapshot-certainty"]:checked').inputValue(), "medium");
+    check("failed pause focuses error", await page.evaluate(() => document.activeElement.id), "hdrl-snapshot-save-error");
+    check("failed pause never claims success", await page.locator('[role="status"].hdrl-success-panel').count(), 0);
+    await writeFile(path.join(dir, "failed-pause.html"), await page.content()); await page.screenshot({ path: path.join(dir, "failed-pause-retains-form.png") });
+    await page.evaluate(() => globalThis.restorePauseFault());
+    await page.locator('button[data-action="snapshot-dashboard"]').last().click();
+    await page.getByRole("heading", { name: "Whole-framework snapshot", exact: true }).waitFor(); await page.waitForTimeout(700);
+    const discarded = await storage(page, "get");
+    check("explicit return discards attempted snapshot values", discarded.snapshot, before.snapshot);
+    check("discard preserves evidence and source provenance", { indicators: discarded.indicators, provenance: discarded.provenance, versions: discarded.versions }, { indicators: before.indicators, provenance: before.provenance, versions: before.versions });
+    await page.reload(); await ready(page);
+    check("reload after discard still has old note", (await storage(page, "get")).snapshot["A.1.1"].note, before.snapshot["A.1.1"].note);
+    observations.fault = { ...fault, visibility_event_during_commit: true, saved_record_unchanged_after_failure: JSON.stringify(after) === JSON.stringify(before), source: "Retained independent JRN-S1 fault sequence, using real disposable IndexedDB" };
+  },
+  async "orientation-and-completed-snapshot-resume"({ page, check, dir, observations }) {
+    const orientation = draft(); orientation.snapshot = {}; orientation.indicators = {}; orientation.view = "rapid-summary";
+    for (const domain of catalogue.domains) orientation.rapid[domain.ref] = { impression: "defined", certainty: "medium", note: "SYNTHETIC orientation only." };
+    await load(page, orientation);
+    const intro = await page.locator("#hdrl-assessment-root").innerText();
+    check("eight orientations do not claim Stage1 complete", !/Stage 1 complete/.test(intro));
+    check("summary identifies orientation distinctly", /Orientation/i.test(intro));
+    await page.locator('[data-action="snapshot-dashboard"]').first().click(); await settled(page);
+    check("orientation-only snapshot has zero addressed", (await page.locator(".hdrl-progress__meta").innerText()).includes("0 of 64"));
+    check("orientation-only primary starts first indicator", await page.locator('.md-button--primary[data-action="open-snapshot"]').getAttribute("data-ref"), "A.1.1");
+    await page.locator('[data-action="overview"]').first().click(); await settled(page);
+    const overview = await page.locator("#hdrl-assessment-root").innerText();
+    check("overview names assessment and date", overview.includes(orientation.boundary.title) && overview.includes(orientation.boundary.assessmentDate));
+    check("overview distinguishes zero snapshot from completed orientation", overview.includes("8/8") && overview.includes("0/64"));
+    check("overview has explicit report action", await page.locator('[data-action="gate"]').count(), 1);
+    await page.screenshot({ path: path.join(dir, "orientation-only-overview.png") });
+    const last = draft(); last.indicators = {}; last.view = "snapshot"; last.activeIndicator = "H.4.2"; last.snapshot["H.4.2"] = response("snapshot");
+    await load(page, last); await page.locator('input[name="snapshot-status"][value="not_assessed"]').check();
+    check("last response promises review not another question", await page.locator('[name="journey-action"][value="next"]').innerText(), "Save and review snapshot");
+    await page.locator('[name="journey-action"][value="next"]').click();
+    await page.getByRole("heading", { name: "Review the provisional snapshot", exact: true }).waitFor(); await settled(page);
+    observations.completed_review_label = normal(await page.locator(".hdrl-progress-label").innerText());
+    check("final response opens review showing64addressed", /64 of 64 indicators addressed/i.test(observations.completed_review_label));
+    await page.waitForTimeout(700);
+    const saved = await storage(page, "get"); check("last deferred answer remains unscored", { status: saved.snapshot["H.4.2"].status, level: saved.snapshot["H.4.2"].level }, { status: "not_assessed", level: "" });
+    await page.locator('[data-action="snapshot-dashboard"]').last().click(); await settled(page);
+    check("completed dashboard primary is review", await page.locator('.md-button--primary[data-action="snapshot-review"]').count(), 1);
+    check("completed dashboard no primary unfinished action", await page.locator('.md-button--primary[data-action="open-snapshot"]').count(), 0);
+    check("completed dashboard report available", await page.locator('[data-action="gate"]').count(), 1);
+    await page.waitForTimeout(700); await page.reload(); await ready(page); await settled(page);
+    check("reload retains completed review primary", await page.locator('.md-button--primary[data-action="snapshot-review"]').count(), 1);
+    check("reload retains64addressed without restarting A1.1", /64 of 64/.test(await page.locator(".hdrl-progress__meta").innerText()));
+    await page.screenshot({ path: path.join(dir, "completed-dashboard.png") });
+    await page.locator('[data-action="gate"]').first().click(); await page.locator("#hdrl-generated-report").waitFor();
+    check("completed snapshot opens honest snapshot-only report", /evidence-led pass was not undertaken/i.test(await page.locator("#hdrl-report-overview").innerText()));
+    const backup = await download(page, "export-json", path.join(dir, "completed-snapshot-backup.json"));
+    check("completion download retains all64snapshotresponses", Object.keys(backup.value.assessment.whole_framework_snapshot).length, 64);
+    check("completion download retains nonrated final answer", backup.value.assessment.whole_framework_snapshot["H.4.2"].status, "not_assessed");
+    check("completion never manufactures rated evidence", Object.values(backup.value.assessment.evidence_led_responses).filter((r) => r.status === "rated").length, 0);
+    check("completion preserves original provenance", backup.value.provenance, last.provenance);
+    check("completion preserves original method versions", backup.value.versions, last.versions);
+    observations.download = { path: backup.path, sha256: backup.sha256, bytes: backup.bytes.length };
   },
   async "restored-active-explanation"({ page, engine, check, dir, observations }) {
     // All variants are invented in memory from the separate supplied test input.
