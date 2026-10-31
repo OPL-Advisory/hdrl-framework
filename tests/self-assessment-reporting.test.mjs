@@ -13,11 +13,13 @@ const content = JSON.parse(read("docs/data/hdrl-assessment-content-v0.2.0.json")
 const config = JSON.parse(read("docs/data/hdrl-assessment-beta-config-v0.3.0.json"));
 const plain = (v) => JSON.parse(JSON.stringify(v));
 function setup() {
-  const context = vm.createContext({ document: { getElementById: () => ({}) }, crypto: webcrypto });
+  const context = vm.createContext({ TextEncoder, document: { getElementById: () => ({}) }, crypto: webcrypto });
+  vm.runInContext(read("docs/assets/js/self-assessment-portability.js"), context);
   assert.match(source, /  init\(\);\n\}\)\(\);\s*$/);
   vm.runInContext(source.replace(/  init\(\);\n\}\)\(\);\s*$/, `globalThis.api = {
     coreCoverage, referenceCounts, foundationalTable, comparisonView, reportView, reportOverview,
     domainSummary, snapshotDomainSummary, reportFindings, fullBackupPayload, csvPayload, audit,
+    restore(backup) { state=restoredState(HDRLPortability.parseBackup(JSON.stringify(backup), catalogue)); return state; },
     setup(c,g,b) { catalogue=c; content=g; betaConfig=b; state=defaultState();
       catalogue.indicators.forEach(i => { indicatorResponse(i.ref); snapshotResponse(i.ref); });
       return state; }
@@ -96,7 +98,7 @@ test("rendering overview/comparison preserves responses, original provenance and
   assert.deepEqual(plain(api.reportFindings()), findings);
   const backup = plain(api.fullBackupPayload(state));
   assert.equal(backup.provenance.implementation_candidate, "2026-10-28.2");
-  assert.equal(backup.generated_by.implementation_candidate, "2026-10-30.1");
+  assert.equal(backup.generated_by.implementation_candidate, "2026-10-31.1");
   assert.equal(backup.export_schema, "hdrl-self-assessment-export-v0.5.0");
   assert.equal(state.schemaVersion, 6);
 });
@@ -171,3 +173,66 @@ test("browser receipt rejects started, empty or incomplete cases even if their n
     { ...good, checks: [{passed:true},{passed:false},{passed:true}] }
   ]) assert.equal(Boolean(complete(record)), false);
 });
+
+// Exercise both supported validated-backup paths, not a hand-built renderer-only state.
+for (const schema of ["0.4.0", "0.5.0"]) {
+  test(`restored v${schema} comparison uses the current status without rewriting either narrative`, () => {
+    const { api, state } = setup();
+    state.provenance.implementation_candidate = "2026-10-28.2";
+    const input = plain(api.fullBackupPayload(state));
+    input.export_schema = `hdrl-self-assessment-export-v${schema}`;
+    if (schema === "0.4.0") delete input.assessment.declared_context;
+    const refs = ["A.1.1", "E.3.1", "C.1.1", "A.4.1"];
+    const statuses = ["rated", "not_known", "not_assessed", "not_applicable"];
+    refs.forEach((ref, index) => {
+      const status = statuses[index];
+      Object.assign(input.assessment.evidence_led_responses[ref], {
+        decision: status === "rated" ? "rated" : "not_judged", status,
+        level: status === "rated" ? "L3" : "", certainty: status === "rated" ? "medium" : "",
+        rationale: `SYNTHETIC rationale ${ref}`, statusReason: `SYNTHETIC current status ${ref}`
+      });
+      input.assessment.whole_framework_snapshot[ref].note = `SYNTHETIC snapshot ${ref}`;
+    });
+    const restored = api.restore(input), before = plain(restored), html = api.comparisonView();
+    refs.forEach((ref, index) => {
+      assert.ok(html.includes(`SYNTHETIC snapshot ${ref}`));
+      const current = index === 0 ? `SYNTHETIC rationale ${ref}` : `SYNTHETIC current status ${ref}`;
+      const inactive = index === 0 ? `SYNTHETIC current status ${ref}` : `SYNTHETIC rationale ${ref}`;
+      assert.ok(html.includes(current), `${ref} current explanation visible`);
+      assert.ok(!html.includes(inactive), `${ref} inactive explanation not substituted`);
+    });
+    assert.deepEqual(plain(restored), before);
+    const exported = plain(api.fullBackupPayload(restored));
+    assert.deepEqual(exported.assessment.evidence_led_responses, input.assessment.evidence_led_responses);
+    assert.deepEqual(exported.assessment.whole_framework_snapshot, input.assessment.whole_framework_snapshot);
+    assert.deepEqual(exported.provenance, input.provenance);
+    assert.deepEqual(exported.versions, input.versions);
+    assert.equal(exported.assessment.id, input.assessment.id);
+  });
+
+  test(`restored v${schema} empty active explanations never fall back to inactive text`, () => {
+    const { api, state } = setup();
+    const input = plain(api.fullBackupPayload(state));
+    input.export_schema = `hdrl-self-assessment-export-v${schema}`;
+    if (schema === "0.4.0") delete input.assessment.declared_context;
+    for (const [index, status] of ["rated", "not_known", "not_assessed", "not_applicable"].entries()) {
+      const ref = catalogue.indicators[index].ref;
+      Object.assign(input.assessment.evidence_led_responses[ref], {
+        decision: status === "rated" ? "rated" : "not_judged", status,
+        level: status === "rated" ? "L3" : "", certainty: status === "rated" ? "medium" : "",
+        rationale: status === "rated" ? "" : `INACTIVE rationale ${ref}`,
+        statusReason: status === "rated" ? `INACTIVE status ${ref}` : ""
+      });
+      input.assessment.whole_framework_snapshot[ref].note = "<script>SYNTHETIC unsafe note</script>";
+    }
+    const restored = api.restore(input), before = plain(restored), html = api.comparisonView();
+    assert.doesNotMatch(html, /INACTIVE/);
+    assert.doesNotMatch(html, /<script>/);
+    assert.match(html, /&lt;script&gt;SYNTHETIC unsafe note/);
+    // All64 evidence cells and60 empty snapshot cells have their own empty explanation.
+    assert.equal((html.match(/No explanation recorded\./g) || []).length, 124);
+    assert.deepEqual(plain(restored), before);
+    assert.deepEqual(plain(api.fullBackupPayload(restored)).assessment.evidence_led_responses,
+      input.assessment.evidence_led_responses);
+  });
+}

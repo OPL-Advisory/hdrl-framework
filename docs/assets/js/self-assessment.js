@@ -18,7 +18,7 @@
   const CATALOGUE_SHA256 = "442a10be23a0ddec889785577fb8853db2296cc5b3a50929849025e27077cd47";
   const GUIDANCE_SHA256 = "1118cb773ca4ecc2bff06d2612d14b756134bda04603c43dd18604f4df36f92f";
   // Engineering candidate identity; baseline release labels above are not advanced by this work.
-  const COMPATIBILITY_CANDIDATE = "2026-10-30.1";
+  const COMPATIBILITY_CANDIDATE = "2026-10-31.1";
   const DRAFT_SCHEMA_VERSION = 6;
   const PROVENANCE_VERSION_KEYS = ["framework", "catalogue", "tool", "guidance", "rules", "report"];
 
@@ -1940,7 +1940,9 @@
   function comparisonView() {
     const cell = (stage, item) => {
       const response = recordedResponse(stage, item.ref);
-      const note = stage === "snapshot" ? response.note : response.rationale || response.statusReason;
+      // Restored records may retain both fields; only the current status explains this response.
+      const note = stage === "snapshot" ? response.note
+        : response.status === "rated" ? response.rationale : response.statusReason;
       return `<strong>${esc(responseSelection(response))}</strong><p>${esc(certaintyLabel(response.certainty))}</p><p>${esc(note || "No explanation recorded.")}</p><button type="button" class="hdrl-link-button" data-action="${stage === "snapshot" ? "open-snapshot" : "open-indicator"}" data-ref="${item.ref}">Review ${stage === "snapshot" ? "snapshot" : "evidence-led response"} · ${item.ref}</button>`;
     };
     return shell(`<section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">

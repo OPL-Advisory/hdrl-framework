@@ -1,6 +1,8 @@
 // Reporting browser regressions: synthetic local fixtures, unmodified MkDocs assets.
 // No live services or existing browser profile. HDRL_FEEDBACK_FIXTURE is required.
 // HDRL_PREVIEW_ORIGIN defaults to http://127.0.0.1:8152. Results/artifacts must be private.
+// Full suite also requires HDRL_RESTORE_EXPLANATION_FIXTURE: the separate pinned
+// synthetic review fixture. It is not copied into this repository or published.
 import assert from "node:assert/strict";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -11,7 +13,7 @@ import { promisify } from "node:util";
 import path from "node:path";
 import vm from "node:vm";
 
-const CASES = Object.freeze(["fenland-report-comparison", "foundational-low-h", "snapshot-only", "sparse-missingness", "reference-status-and-ordinal-comparison", "exports-history-and-safe-text", "narrative-correction-keyboard-mobile", "print-all-63-actions"]);
+const CASES = Object.freeze(["fenland-report-comparison", "foundational-low-h", "snapshot-only", "sparse-missingness", "reference-status-and-ordinal-comparison", "exports-history-and-safe-text", "narrative-correction-keyboard-mobile", "print-all-63-actions", "restored-active-explanation"]);
 const ENGINES = Object.freeze(["chromium", "firefox", "webkit"]);
 const filter = process.env.HDRL_BROWSER_CASE || "";
 assert.ok(!filter || CASES.includes(filter), `Unknown HDRL_BROWSER_CASE; supported: ${CASES.join(", ")}`);
@@ -31,6 +33,15 @@ const normal = (s) => s.normalize("NFKC").replace(/\u00ad/g, "").replace(/([-\u2
 const fixtureBytes = await readFile(fixturePath);
 assert.equal(sha(fixtureBytes), "8e0c36eb2f24895d38198431ebc179e57517cbba0abc5b6a20e8e13c2db61422", "Retained synthetic Fenland fixture changed");
 const fixture = JSON.parse(fixtureBytes);
+const explanationFixturePath = process.env.HDRL_RESTORE_EXPLANATION_FIXTURE;
+let explanationFixtureBytes = null, explanationFixture = null;
+if (selected.includes("restored-active-explanation")) {
+  assert.ok(explanationFixturePath, "HDRL_RESTORE_EXPLANATION_FIXTURE is required for restored-active-explanation");
+  explanationFixtureBytes = await readFile(explanationFixturePath);
+  assert.equal(sha(explanationFixtureBytes), "f6567646391879cee274789ba75a59d81652a4d3aa13a7e9c5bdc3a882cccd85", "Separate synthetic restore fixture changed");
+  explanationFixture = JSON.parse(explanationFixtureBytes);
+  assert.equal(explanationFixture.export_schema, "hdrl-self-assessment-export-v0.4.0");
+}
 const assetPaths = ["/assets/js/self-assessment.js", "/assets/js/self-assessment-portability.js", "/assets/css/self-assessment.css", "/data/hdrl-indicators-v1.json", "/data/hdrl-assessment-content-v0.2.0.json", "/data/hdrl-assessment-beta-config-v0.3.0.json"];
 const assets = Object.fromEntries(await Promise.all(assetPaths.map(async (url) => [url, await readFile(path.join(sourceRoot, "docs", url))])));
 const pins = Object.fromEntries(Object.entries(assets).map(([url, bytes]) => [url, sha(bytes)]));
@@ -219,7 +230,7 @@ const tests = {
     check("CSV omits complete reference records", !Object.keys(rows[0]).some((key) => /review_status|reference_locator|evidence_owner|evidence_note|evidence_limitations/.test(key)));
     check("full JSON retains complete references", json.value.assessment.evidence_led_responses, d.indicators); check("full JSON retains narrative exactly", json.value.assessment.domain_capacity_notes, d.domainNotes);
     check("full JSON preserves original versions", json.value.versions, d.versions); check("full JSON preserves original provenance", json.value.provenance, d.provenance);
-    check("current generator stays distinct", json.value.generated_by.implementation_candidate, "2026-10-30.1"); check("source implementation retains2026-10-28.2", json.value.provenance.implementation_candidate, "2026-10-28.2");
+    check("current generator stays distinct", json.value.generated_by.implementation_candidate, "2026-10-31.1"); check("source implementation retains2026-10-28.2", json.value.provenance.implementation_candidate, "2026-10-28.2");
     check("recent event list bounded after real save", json.value.assessment.audit.length, 250); check("oldest invented events dropped", !json.value.assessment.audit.some((a) => a.id === "SYNTHETIC-event-0"));
     check("CSV retains source provenance", rows[0].implementation_candidate, "2026-10-28.2"); observations.downloads = [json, csv].map(({ path, sha256, bytes }) => ({ path, sha256, bytes: bytes.length }));
   },
@@ -268,12 +279,94 @@ const tests = {
       observations.pdf = { path: pdf, sha256: sha(await readFile(pdf)), text_path: textFile, pages: pages.length, rendered_pages: rendered, scope: "Actual Chromium PDF/text checks; rendered PNGs retained for separate visual inspection." };
     } else observations.pdf = { produced: false, reason: "Chromium-only PDF API; this engine has print-media DOM and screenshots." };
     await page.waitForTimeout(700); check("printing preserves all source answers/provenance", verdictShape(await storage(page, "get")), verdictShape(d));
+  },
+  async "restored-active-explanation"({ page, check, dir, observations }) {
+    // All variants are invented in memory from the separate supplied test input.
+    // Restore performs the actual parser/preview/confirmation/IndexedDB path.
+    // No evidence form is submitted: saves would clear the inactive narrative.
+    const scenarios = [
+      { ref: "A.1.1", status: "rated", empty: false },
+      { ref: "E.3.1", status: "not_known", empty: false },
+      { ref: "B.1.1", status: "not_assessed", empty: false },
+      { ref: "A.4.1", status: "not_applicable", empty: false },
+      { ref: "A.1.2", status: "rated", empty: true },
+      { ref: "E.1.1", status: "not_known", empty: true },
+      { ref: "B.1.2", status: "not_assessed", empty: true },
+      { ref: "C.1.1", status: "not_applicable", empty: true }
+    ];
+    const literal = '<img src="r25-inert-image" onerror="globalThis.r25Injected=true">';
+    async function reportFromWorkspace() {
+      await page.locator('[data-action="dashboard"]').first().click(); await page.locator('[data-action="evidence"]').first().click();
+      await page.locator('[data-action="review"]').first().click(); await page.locator('[data-action="gate"]').first().click();
+      await page.locator("#hdrl-generated-report").waitFor(); await settled(page);
+    }
+    observations.source_fixture_sha256 = sha(explanationFixtureBytes);
+    observations.variants = [];
+    await page.goto(`${origin.origin}/self-assessment/`); await ready(page);
+    for (const format of ["v0.4.0", "v0.5.0"]) {
+      const incoming = clone(explanationFixture);
+      incoming.export_schema = `hdrl-self-assessment-export-${format}`;
+      if (format === "v0.5.0") incoming.assessment.declared_context = "synthetic";
+      else delete incoming.assessment.declared_context;
+      incoming.assessment.boundary.title = `SYNTHETIC R25 active explanation — ${format}`;
+      for (const s of scenarios) {
+        const r = incoming.assessment.evidence_led_responses[s.ref], active = s.status === "rated" ? "rationale" : "statusReason", inactive = active === "rationale" ? "statusReason" : "rationale";
+        Object.assign(r, { status: s.status, decision: s.status === "rated" ? "rated" : "not_judged", level: s.status === "rated" ? "L3" : "", certainty: s.status === "rated" ? "medium" : "" });
+        r[active] = s.empty ? "" : `SYNTHETIC ACTIVE ${s.ref} ${active} — source/date/scope explanation ${literal}`;
+        r[inactive] = `SYNTHETIC INACTIVE ${s.ref} ${inactive} — retained historical text, never a fallback.`;
+      }
+      const serialized = Buffer.from(JSON.stringify(incoming, null, 2) + "\n"), variant = { source_schema: incoming.export_schema, incoming_sha256: sha(serialized), observations: [], downloads: [] };
+      observations.variants.push(variant);
+      await page.locator('[data-action="restore"]').first().click();
+      await page.locator("#restore-file").setInputFiles({ name: `synthetic-active-explanation-${format}.json`, mimeType: "application/json", buffer: serialized });
+      await page.locator("#restore-preview").waitFor(); const preview = await page.locator("#restore-preview").innerText();
+      check(`${format} validated preview names incoming record`, preview.includes(incoming.assessment.boundary.title));
+      check(`${format} preview preserves original method identity`, preview.includes("framework: 1.0.1") && preview.includes("catalogue: 1.0.2"));
+      await page.screenshot({ path: path.join(dir, `${format}-validated-preview.png`) });
+      await page.locator("#restore-confirm").check(); await page.locator('#hdrl-restore-confirm-form button[type="submit"]').click();
+      await page.locator("#restore-preview").waitFor({ state: "detached" }); await ready(page); await page.waitForTimeout(700);
+      const restored = await storage(page, "get");
+      check(`${format} actual restore preserves both narratives`, restored.indicators, incoming.assessment.evidence_led_responses);
+      check(`${format} source provenance survives restore`, restored.provenance, incoming.provenance);
+      check(`${format} original snapshot unchanged by restore`, restored.snapshot, incoming.assessment.whole_framework_snapshot);
+      check(`${format} context follows explicit schema`, restored.declaredContext, format === "v0.4.0" ? "unspecified" : "synthetic");
+      for (const phase of ["before-reload", "after-reload"]) {
+        if (phase === "after-reload") { await page.reload(); await ready(page); }
+        await reportFromWorkspace(); await compare(page);
+        for (const s of scenarios) {
+          const original = incoming.assessment.evidence_led_responses[s.ref], active = s.status === "rated" ? "rationale" : "statusReason", inactive = active === "rationale" ? "statusReason" : "rationale";
+          const expected = original[active] || "No explanation recorded.", target = row(page, "Comparison by indicator", s.ref), evidenceCell = target.locator("td").nth(1);
+          const visible = await evidenceCell.locator("p").nth(1).innerText();
+          check(`${format}/${phase}/${s.ref} only active explanation visible`, visible, expected);
+          check(`${format}/${phase}/${s.ref} inactive narrative not shown`, !(await evidenceCell.innerText()).includes(original[inactive]));
+          check(`${format}/${phase}/${s.ref} original snapshot note visible`, await target.locator("td").nth(0).locator("p").nth(1).innerText(), incoming.assessment.whole_framework_snapshot[s.ref].note || "No explanation recorded.");
+          await target.screenshot({ path: path.join(dir, `${format}-${phase}-${s.ref}-comparison.png`) });
+          await target.locator('[data-action="open-indicator"]').click();
+          const editor = page.locator(s.status === "rated" ? "#indicator-rationale" : "#indicator-status-reason"); await editor.waitFor();
+          const current = await editor.inputValue(); check(`${format}/${phase}/${s.ref} editor and comparison agree`, current || "No explanation recorded.", visible);
+          check(`${format}/${phase}/${s.ref} editor active value unchanged`, current, original[active]);
+          variant.observations.push({ phase, ref: s.ref, status: s.status, active_field: active, active_empty: s.empty, visible_explanation: visible, editor_value: current });
+          if (s.ref === "E.3.1") { await editor.scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(dir, `${format}-${phase}-current-editor.png`) }); }
+          await reportFromWorkspace(); await compare(page);
+        }
+        check(`${format}/${phase} active HTML-like text remains inert`, await page.evaluate(() => !globalThis.r25Injected && !document.querySelector('img[src="r25-inert-image"]')));
+        await toReport(page); const backup = await download(page, "export-json", path.join(dir, `${format}-${phase}-full-backup.json`));
+        check(`${format}/${phase} download retains all original and inactive narratives`, backup.value.assessment.evidence_led_responses, incoming.assessment.evidence_led_responses);
+        check(`${format}/${phase} download retains snapshot notes`, backup.value.assessment.whole_framework_snapshot, incoming.assessment.whole_framework_snapshot);
+        check(`${format}/${phase} download retains original versions`, backup.value.versions, incoming.versions);
+        check(`${format}/${phase} download retains original provenance`, backup.value.provenance, incoming.provenance);
+        check(`${format}/${phase} download retains original record identity`, backup.value.assessment.id, incoming.assessment.id);
+        check(`${format}/${phase} current generator stays distinct`, backup.value.generated_by.implementation_candidate, "2026-10-31.1");
+        variant.downloads.push({ phase, path: backup.path, sha256: backup.sha256, bytes: backup.bytes.length });
+      }
+    }
   }
 };
 assert.deepEqual(Object.keys(tests), CASES, "Exact reporting case inventory");
 await mkdir(artifacts, { recursive: true }); await mkdir(path.dirname(output), { recursive: true });
 const harnessPin = sha(await readFile(fileURLToPath(import.meta.url)));
 const report = { started_at: new Date().toISOString(), origin: origin.origin, source_root: sourceRoot, harness_sha256: harnessPin, source_pins: pins, fixture_sha256: sha(fixtureBytes),
+  restore_explanation_fixture_sha256: explanationFixtureBytes ? sha(explanationFixtureBytes) : null,
   selected_cases: selected, selected_engines: engines, synthetic_only: true, live_services: false, browsers: [], failures: [] };
 // A named/started case is not evidence of a completed behavioural run.
 function completedCase(record) {
@@ -331,6 +424,7 @@ try {
   if (sha(await readFile(fileURLToPath(import.meta.url))) !== harnessPin) report.failures.push({ name: "harness-mutated" });
   for (const [url, pin] of Object.entries(pins)) if (sha(await readFile(path.join(sourceRoot, "docs", url))) !== pin) report.failures.push({ name: "source-mutated", path: url });
   if (sha(await readFile(fixturePath)) !== report.fixture_sha256) report.failures.push({ name: "fixture-mutated" });
+  if (explanationFixtureBytes && sha(await readFile(explanationFixturePath)) !== report.restore_explanation_fixture_sha256) report.failures.push({ name: "restore-explanation-fixture-mutated" });
   report.counts = { expected_cases: engines.length * selected.length, executed_cases: all.length, assertions: all.reduce((n, c) => n + (c.assertions?.total || 0), 0), behaviour_assertions: all.reduce((n, c) => n + (c.behaviour_assertions || 0), 0), failed_cases: report.failures.length };
   report.finished_at = new Date().toISOString(); report.passed = report.failures.length === 0; await writeFile(output, JSON.stringify(report, null, 2) + "\n");
   console.log(JSON.stringify({ output, ...report.counts, passed: report.passed })); process.exitCode = report.passed ? 0 : 1;

@@ -239,7 +239,7 @@ test("a compatible earlier implementation retains its original provenance", () =
     assert.equal(api.draftCompatibility().compatible, true);
     const exported = plain(api.exportPayload());
     assert.equal(exported.provenance.implementation_candidate, candidate);
-    assert.equal(exported.generated_by.implementation_candidate, "2026-10-30.1");
+    assert.equal(exported.generated_by.implementation_candidate, "2026-10-31.1");
     assert.equal(exported.assessment.boundary.assessmentDate, "2024-02-01");
     assert.deepEqual(exported.versions, draft.versions);
   }
