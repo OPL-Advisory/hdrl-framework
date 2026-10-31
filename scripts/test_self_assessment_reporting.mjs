@@ -325,7 +325,7 @@ const tests = {
         // A 1280×900 reference viewport divided by2/4 represents200%/400% space.
         for (const size of [{ name: "short-desktop", width: 1280, height: 600, equivalent_zoom: null }, { name: "reflow-200", width: 640, height: 450, equivalent_zoom: "200%" }, { name: "reflow-400", width: 320, height: 225, equivalent_zoom: "400%" }]) {
           await page.setViewportSize({ width: size.width, height: size.height });
-          await page.locator("#snapshot-level-L5").focus(); await page.keyboard.press("Space"); await settled(page);
+          await page.locator("#snapshot-level-L5").focus(); await page.keyboard.press("Space"); await page.locator("#snapshot-level-L5").scrollIntoViewIfNeeded(); await settled(page);
           const dimensions = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth, focused: document.activeElement.id }));
           check(`${size.name} long canonical form has no horizontal page overflow`, dimensions.scroll <= dimensions.width + 1);
           check(`${size.name} native focus remains on selected radio`, dimensions.focused, "snapshot-level-L5");
@@ -339,7 +339,7 @@ const tests = {
       await page.setViewportSize({ width: 1280, height: 900 });
     }
   },
-  async "snapshot-keyboard-pause-and-domain-navigation"({ page, check, dir, observations }) {
+  async "snapshot-keyboard-pause-and-domain-navigation"({ page, engine, check, dir, observations }) {
     await page.setViewportSize({ width: 320, height: 900 });
     const d = draft(); d.snapshot = {}; d.view = "snapshot-dashboard"; d.activeIndicator = "A.1.1";
     await load(page, d);
@@ -349,7 +349,9 @@ const tests = {
     check("hints describe native controls and no numeric shortcuts", /Tab.*arrow|arrow.*Tab/i.test(await page.locator("#hdrl-snapshot-form").innerText()) && !/Use keys 1|Use H, M or L/.test(await page.locator("#hdrl-snapshot-form").innerText()));
     await page.keyboard.press("1"); await page.keyboard.press("h");
     check("heading number/letter key does not silently change answer", await page.locator('input[name="snapshot-level"]:checked').count(), 0);
-    await page.keyboard.press("Tab"); check("Tab from heading reaches first native level radio", await page.evaluate(() => document.activeElement.id), "snapshot-level-L1");
+    // Match the existing print/boundary harness: WebKit uses Option+Tab for all native controls.
+    observations.native_tab_key = engine === "webkit" ? "Alt+Tab" : "Tab";
+    await page.keyboard.press(observations.native_tab_key); check("Native Tab traversal from heading reaches first level radio", await page.evaluate(() => document.activeElement.id), "snapshot-level-L1");
     await page.keyboard.press("Space"); await page.keyboard.press("ArrowRight");
     check("native Space and arrow select L2", await page.locator('input[name="snapshot-level"]:checked').inputValue(), "L2");
     await page.keyboard.press("5"); await page.keyboard.press("h");

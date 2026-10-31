@@ -1210,7 +1210,7 @@
         <form id="hdrl-snapshot-form" novalidate>
           <fieldset class="hdrl-level-options hdrl-snapshot-levels" id="snapshot-levels">
             <legend>Select the closest canonical description</legend>
-            <p class="hdrl-hint">Use Tab to reach a group, arrow keys to move between radio choices and Space to select. Exact catalogue wording is reproduced below.</p>
+            <p class="hdrl-hint">Use Tab to reach a group (Option–Tab if your browser skips radio controls), arrow keys to move between choices and Space to select. Exact catalogue wording is reproduced below.</p>
             ${LEVELS.map((level) => `<div class="hdrl-level-option">
               <input id="snapshot-level-${level}" name="snapshot-level" type="radio" value="${level}" ${response.level === level ? "checked" : ""}>
               <label for="snapshot-level-${level}"><span><strong>${level} · ${esc(catalogue.maturity_level_names[level])}</strong></span><span>${esc(indicator.maturity_levels[level])}</span></label>
