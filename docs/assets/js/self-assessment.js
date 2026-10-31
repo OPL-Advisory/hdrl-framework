@@ -1145,6 +1145,28 @@
     `);
   }
 
+  function snapshotContext(indicator) {
+    const classification = indicator.applicability_class;
+    const applicability = classification === "B0" ? "Included in HDRL’s general baseline profile."
+      : classification === "O" ? "Optional or Enhancement; informs improvement planning."
+      : classification === "Y" ? "Outcome or Context; reported separately from readiness scoring and excluded from domain medians."
+      : "Capability-specific classification in the original project mapping; it does not decide applicability for this assessment.";
+    return `<div id="hdrl-snapshot-context">
+      <div class="hdrl-indicator-meta"><span>${esc(indicator.type)}</span><span>Unit: ${esc(catalogue.vocabularies.units[indicator.unit])}${indicator.unit === "B" ? " (System / Service)" : ""}</span>
+        ${indicator.foundational ? '<span class="hdrl-meta-warning">Proposed foundational indicator · L3 reference</span>' : ""}</div>
+      <p>${esc(applicability)}${indicator.foundational ? " The proposed L3 reference belongs to HDRL; it is not a pass/fail, legal-compliance or participation decision." : ""}</p>
+      <p class="hdrl-hint">Consider this indicator within your stated scope. Local, shared or inherited delivery can be explained in your note; no response is inherited automatically.</p>
+    </div>`;
+  }
+
+  function snapshotEvidenceGuidance(indicator, level) {
+    if (!LEVELS.includes(level)) return "<p>Select a level to see its published minimum evidence. Reading guidance does not review evidence or save an answer.</p>";
+    const items = indicator.minimum_evidence[level];
+    return `<p><strong>${esc(level)} · ${esc(catalogue.maturity_level_names[level])}</strong></p>
+      ${items?.length ? `<p>Minimum evidence published in the catalogue:</p><ul>${items.map(item => `<li>${esc(item)}</li>`).join("")}</ul>` : `<p>The catalogue does not publish a separate minimum-evidence list for ${esc(level)}.</p>`}
+      <p>This is guidance for later evidence review. Selecting a level or reading this list does not establish that evidence has been checked.</p>`;
+  }
+
   function snapshotIndicatorView(errors = {}, pendingResponse = null) {
     const indicator = catalogue.indicators.find((item) => item.ref === state.activeIndicator);
     if (!indicator) return snapshotDashboardView();
@@ -1161,6 +1183,7 @@
         <span class="hdrl-domain-label" style="--domain-colour:${DOMAIN_COLOURS[indicator.domain]}">${indicator.domain} · ${esc(domain.name)}</span>
         <h2 id="hdrl-view-title" tabindex="-1">${indicator.ref} · ${esc(indicator.name)}</h2>
         <p class="hdrl-assessment-lede">Choose the description that best fits your current understanding. This is a provisional snapshot, not an evidence-backed judgement.</p>
+        ${snapshotContext(indicator)}
         ${errorSummary}
         <form id="hdrl-snapshot-form" novalidate>
           <fieldset class="hdrl-level-options hdrl-snapshot-levels" id="snapshot-levels">
@@ -1177,6 +1200,10 @@
               ${radio("snapshot-status", "not_applicable", "Not applicable", "This indicator is outside the stated assessment boundary.", response.status)}
             </div>
           </fieldset>
+          <details class="hdrl-guidance" id="hdrl-snapshot-evidence-guidance">
+            <summary>What evidence would support this level?</summary>
+            <div id="hdrl-snapshot-evidence-text">${snapshotEvidenceGuidance(indicator, response.level)}</div>
+          </details>
           <div id="hdrl-snapshot-certainty-panel" ${response.status === "rated" ? "" : "hidden"}>
             <fieldset class="hdrl-inline-radios">
               <legend>How certain are you?</legend>
@@ -3101,16 +3128,22 @@
     });
 
     const snapshotForm = document.getElementById("hdrl-snapshot-form");
+    const updateSnapshotGuidance = (level) => {
+      const indicator = catalogue.indicators.find(item => item.ref === state.activeIndicator);
+      document.getElementById("hdrl-snapshot-evidence-text").innerHTML = snapshotEvidenceGuidance(indicator, level);
+    };
     snapshotForm?.querySelectorAll('input[name="snapshot-level"]').forEach((input) => {
       input.addEventListener("change", () => {
         snapshotForm.querySelectorAll('input[name="snapshot-status"]').forEach((choice) => { choice.checked = false; });
         document.getElementById("hdrl-snapshot-certainty-panel").hidden = false;
+        updateSnapshotGuidance(input.value);
       });
     });
     snapshotForm?.querySelectorAll('input[name="snapshot-status"]').forEach((input) => {
       input.addEventListener("change", () => {
         snapshotForm.querySelectorAll('input[name="snapshot-level"]').forEach((choice) => { choice.checked = false; });
         document.getElementById("hdrl-snapshot-certainty-panel").hidden = true;
+        updateSnapshotGuidance("");
       });
     });
     snapshotForm?.querySelectorAll('input[name="snapshot-certainty"]').forEach((input) => {

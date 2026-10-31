@@ -18,6 +18,7 @@ function setup() {
   assert.match(source, /  init\(\);\n\}\)\(\);\s*$/);
   vm.runInContext(source.replace(/  init\(\);\n\}\)\(\);\s*$/, `globalThis.api = {
     coreCoverage, referenceCounts, foundationalTable, comparisonView, reportView, reportOverview, evidenceExplanation,
+    snapshotContext, snapshotEvidenceGuidance, snapshotIndicatorView,
     domainSummary, snapshotDomainSummary, reportFindings, fullBackupPayload, csvPayload, audit,
     restore(backup) { state=restoredState(HDRLPortability.parseBackup(JSON.stringify(backup), catalogue)); return state; },
     setup(c,g,b) { catalogue=c; content=g; betaConfig=b; state=defaultState();
@@ -284,4 +285,39 @@ test("active explanation presentation handles empty and incomplete states withou
     }
   }
   assert.equal(api.evidenceExplanation({status:"rated", rationale:" Current original text "}), " Current original text ");
+});
+
+
+test("snapshot context faithfully renders every canonical type, unit and foundational flag without changing responses", () => {
+  const { api, state } = setup(); const before = plain(state);
+  for (const item of catalogue.indicators) {
+    const html = api.snapshotContext(item);
+    assert.ok(html.includes(item.type));
+    assert.ok(html.includes(`Unit: ${catalogue.vocabularies.units[item.unit]}`));
+    assert.equal(html.includes("Proposed foundational indicator · L3 reference"), item.foundational);
+    assert.equal(html.includes("excluded from domain medians"), item.applicability_class === "Y");
+    if (item.applicability_class.startsWith("C")) assert.match(html, /does not decide applicability/);
+    if (item.foundational) assert.match(html, /not a pass\/fail, legal-compliance or participation decision/);
+  }
+  assert.deepEqual(plain(state), before);
+});
+
+test("selected-level guidance comes directly from the catalogue and does not mutate either response layer", () => {
+  const { api, state } = setup(); const before = plain(state);
+  const escape = text => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  for (const item of catalogue.indicators) {
+    for (const level of ["L1", "L2", "L3", "L4", "L5"]) {
+      const html = api.snapshotEvidenceGuidance(item, level);
+      for (const evidence of item.minimum_evidence[level] || []) assert.ok(html.includes(escape(evidence)));
+      if (!item.minimum_evidence[level]) assert.ok(html.includes(`does not publish a separate minimum-evidence list for ${level}`));
+      assert.match(html, /does not establish that evidence has been checked/);
+    }
+    assert.match(api.snapshotEvidenceGuidance(item, ""), /Select a level/);
+  }
+  assert.deepEqual(plain(state), before);
+  state.activeIndicator = "C.1.1";
+  const html = api.snapshotIndicatorView();
+  assert.match(html, /<details class="hdrl-guidance" id="hdrl-snapshot-evidence-guidance">/);
+  assert.match(html, /provisional snapshot, not an evidence-backed judgement/);
+  for (const text of Object.values(catalogue.indicators.find(i => i.ref === "C.1.1").maturity_levels)) assert.ok(html.includes(escape(text)));
 });
