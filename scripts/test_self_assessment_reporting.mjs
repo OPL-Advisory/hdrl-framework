@@ -460,6 +460,56 @@ const tests = {
     observations.fault = { ...fault, visibility_event_during_commit: true, saved_record_unchanged_after_failure: JSON.stringify(after) === JSON.stringify(before), source: "Retained independent JRN-S1 fault sequence, using real disposable IndexedDB" };
   },
   async "orientation-and-completed-snapshot-resume"({ page, check, dir, observations }) {
+    // Exercise the optional path through real new-assessment UI before seeded
+    // completion fixtures. No storage bootstrap supplies these orientation answers.
+    await page.goto(`${origin.origin}/self-assessment/`); await ready(page); await settled(page);
+    await page.locator('[data-action="start"]').click(); await page.locator("#hdrl-boundary-form").waitFor();
+    const newBoundary = { "boundary-title": "SYNTHETIC optional-orientation journey", "boundary-service": "Invented service for browser testing only", "boundary-scope": "Synthetic service scope only; no organisation or real capability is assessed.", "boundary-period": "Synthetic current period", "boundary-date": "2026-10-31", "boundary-use": "Check that optional orientation can be skipped without creating responses." };
+    for (const [id, value] of Object.entries(newBoundary)) await page.locator(`#${id}`).fill(value);
+    await page.locator('input[name="boundary-unit"][value="service"]').check();
+    await page.locator('input[name="boundary-method"][value="individual"]').check();
+    await page.locator("#boundary-context").selectOption("synthetic");
+    await page.locator('#hdrl-boundary-form button[type="submit"]').click();
+    await page.getByRole("heading", { name: "Assessment overview", exact: true }).waitFor(); await page.waitForTimeout(700);
+    const fresh = await storage(page, "get");
+    check("new service boundary is explicitly synthetic", { title: fresh.boundary.title, service: fresh.boundary.serviceName, unit: fresh.boundary.unit, context: fresh.declaredContext }, { title: newBoundary["boundary-title"], service: newBoundary["boundary-service"], unit: "service", context: "synthetic" });
+    check("new service has no orientation answers", fresh.rapid, {});
+    await page.locator('[data-action="rapid-intro"]').click(); await settled(page);
+    await page.getByRole("button", { name: "Skip orientation and start Snapshot", exact: true }).click();
+    await page.getByRole("heading", { name: "Whole-framework snapshot", exact: true }).waitFor(); await settled(page);
+    check("direct Skip Orientation starts unaddressed snapshot", normal(await page.locator(".hdrl-progress__meta").innerText()).includes("0 of 64"));
+    await page.screenshot({ path: path.join(dir, "new-service-skipped-orientation.png") });
+    await page.locator('.md-button--primary[data-action="open-snapshot"]').click(); await settled(page);
+    check("skipped orientation can open first actual indicator", /^A\.1\.1 ·/.test(await page.locator("#hdrl-view-title").innerText()));
+    check("skipped orientation does not select a level", await page.locator('input[name="snapshot-level"]:checked').count(), 0);
+    await page.waitForTimeout(700); const skipped = await storage(page, "get");
+    check("skip keeps orientation empty", skipped.rapid, {});
+    check("skip creates no snapshot judgement", Object.values(skipped.snapshot).filter((r) => r.status !== "unstarted").length, 0);
+    check("skip creates no evidence judgement", Object.values(skipped.indicators).filter((r) => r.status !== "unstarted").length, 0);
+    await page.locator('button[data-action="snapshot-dashboard"]').last().click();
+    await page.locator('[data-action="overview"]').first().click(); await page.locator('[data-action="rapid-intro"]').click();
+    await page.locator('[data-action="rapid-start"]').click(); await page.locator("#hdrl-rapid-form").waitFor();
+    await page.locator('[data-action="rapid-summary"]').click(); await settled(page);
+    const emptyLabel = normal(await page.locator(".hdrl-progress-label").innerText());
+    check("empty orientation shows zero of eight and not started", /^Orientation · 0 of 8 domains answered · not started$/i.test(emptyLabel));
+    check("empty orientation never claims completion", !/complete|all domains addressed|stage 1/i.test(emptyLabel));
+    await page.waitForTimeout(700); check("empty summary creates no answers", (await storage(page, "get")).rapid, {});
+    await page.screenshot({ path: path.join(dir, "empty-orientation-summary.png") });
+    await page.locator('[data-action="rapid-edit-first"]').click(); await page.locator("#hdrl-rapid-form").waitFor();
+    await page.locator('input[name="rapid-impression"][value="defined"]').check();
+    await page.locator('input[name="rapid-certainty"][value="medium"]').check();
+    await page.locator("#rapid-note").fill("SYNTHETIC first-domain impression only.");
+    await page.locator('#hdrl-rapid-form button[type="submit"]').click(); await settled(page);
+    await page.locator('[data-action="rapid-summary"]').click(); await settled(page);
+    const partialLabel = normal(await page.locator(".hdrl-progress-label").innerText());
+    check("one answered domain shows one of eight and partial", /^Orientation · 1 of 8 domains answered · partial$/i.test(partialLabel));
+    check("partial orientation never claims completion", !/complete|all domains addressed|stage 1/i.test(partialLabel));
+    await page.waitForTimeout(700); const partial = await storage(page, "get");
+    check("partial journey saves only actual first-domain answer", partial.rapid, { A: { impression: "defined", certainty: "medium", note: "SYNTHETIC first-domain impression only." } });
+    check("partial orientation leaves snapshot unaddressed", Object.values(partial.snapshot).filter((r) => r.status !== "unstarted").length, 0);
+    check("optional journey preserves new record identity and provenance", { id: partial.id, boundary: partial.boundary, provenance: partial.provenance, versions: partial.versions }, { id: fresh.id, boundary: fresh.boundary, provenance: fresh.provenance, versions: fresh.versions });
+    await page.screenshot({ path: path.join(dir, "partial-orientation-summary.png") });
+    observations.new_service_optional_journey = { id: fresh.id, declared_context: fresh.declaredContext, unit: fresh.boundary.unit, empty_label: emptyLabel, partial_label: partialLabel, source_provenance: fresh.provenance, setup: "Actual boundary form, Skip Orientation, empty summary and first-domain submit; no storage-seeded answers for this part" };
     const orientation = draft(); orientation.snapshot = {}; orientation.indicators = {}; orientation.view = "rapid-summary";
     for (const domain of catalogue.domains) orientation.rapid[domain.ref] = { impression: "defined", certainty: "medium", note: "SYNTHETIC orientation only." };
     await load(page, orientation);
