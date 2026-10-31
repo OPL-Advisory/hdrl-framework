@@ -239,7 +239,7 @@ test("a compatible earlier implementation retains its original provenance", () =
     assert.equal(api.draftCompatibility().compatible, true);
     const exported = plain(api.exportPayload());
     assert.equal(exported.provenance.implementation_candidate, candidate);
-    assert.equal(exported.generated_by.implementation_candidate, "2026-10-31.1");
+    assert.equal(exported.generated_by.implementation_candidate, "2026-10-31.2");
     assert.equal(exported.assessment.boundary.assessmentDate, "2024-02-01");
     assert.deepEqual(exported.versions, draft.versions);
   }
@@ -322,7 +322,8 @@ test("chosen evidence unknowns and partial work remain visible with traceable gu
     const report = api.reportView();
     assert.match(report, /Evidence-led domain profile/);
     assert.match(report, /Evidence-led indicator results/);
-    assert.match(report, /Synthetic evidence-stage rationale/);
+    assert.ok(report.includes(status === "rated" ? "Synthetic evidence-stage rationale" : "Explicitly reviewed"));
+    assert.ok(!report.includes(status === "rated" ? "Explicitly reviewed" : "Synthetic evidence-stage rationale"));
     assert.doesNotMatch(report, /The evidence-led pass was not undertaken/);
     assert.match(report, /Suggested because .*you recorded low certainty/);
     assert.doesNotMatch(report.replace(/<details>[\s\S]*?<\/details>/g, ""), /R-LOW-CERTAINTY|R-NOT-ASSESSED|R-EVIDENCE-GAP/);
@@ -330,6 +331,8 @@ test("chosen evidence unknowns and partial work remain visible with traceable gu
     assert.equal(exported.derived.evidence_stage_status, "started");
     assert.deepEqual(exported.derived.findings, expectedFindings);
     assert.equal(exported.assessment.evidence_led_responses["A.1.1"].status, status);
+    assert.equal(exported.assessment.evidence_led_responses["A.1.1"].rationale, "Synthetic evidence-stage rationale");
+    assert.equal(exported.assessment.evidence_led_responses["A.1.1"].statusReason, "Explicitly reviewed");
   }
 });
 

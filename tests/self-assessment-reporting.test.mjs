@@ -17,7 +17,9 @@ function setup() {
   vm.runInContext(read("docs/assets/js/self-assessment-portability.js"), context);
   assert.match(source, /  init\(\);\n\}\)\(\);\s*$/);
   vm.runInContext(source.replace(/  init\(\);\n\}\)\(\);\s*$/, `globalThis.api = {
-    coreCoverage, referenceCounts, foundationalTable, comparisonView, reportView, reportOverview,
+    coreCoverage, referenceCounts, foundationalTable, comparisonView, reportView, reportOverview, evidenceExplanation,
+    snapshotContext, snapshotEvidenceGuidance, snapshotIndicatorView, nextSnapshotIndicator,
+    snapshotDashboardView, rapidSummaryView, rapidIntroView, overviewView, indicatorView,
     domainSummary, snapshotDomainSummary, reportFindings, fullBackupPayload, csvPayload, audit,
     restore(backup) { state=restoredState(HDRLPortability.parseBackup(JSON.stringify(backup), catalogue)); return state; },
     setup(c,g,b) { catalogue=c; content=g; betaConfig=b; state=defaultState();
@@ -98,7 +100,7 @@ test("rendering overview/comparison preserves responses, original provenance and
   assert.deepEqual(plain(api.reportFindings()), findings);
   const backup = plain(api.fullBackupPayload(state));
   assert.equal(backup.provenance.implementation_candidate, "2026-10-28.2");
-  assert.equal(backup.generated_by.implementation_candidate, "2026-10-31.1");
+  assert.equal(backup.generated_by.implementation_candidate, "2026-10-31.2");
   assert.equal(backup.export_schema, "hdrl-self-assessment-export-v0.5.0");
   assert.equal(state.schemaVersion, 6);
 });
@@ -236,3 +238,141 @@ for (const schema of ["0.4.0", "0.5.0"]) {
       input.assessment.evidence_led_responses);
   });
 }
+
+for (const schema of ["0.4.0", "0.5.0"]) {
+  test(`full-report Notes v${schema} follows current status and retains both imported narratives`, () => {
+    const { api, state } = setup();
+    state.provenance.implementation_candidate = "2026-10-28.2";
+    const backup = plain(api.fullBackupPayload(state));
+    backup.export_schema = `hdrl-self-assessment-export-v${schema}`;
+    if (schema === "0.4.0") delete backup.assessment.declared_context;
+    ["rated", "not_known", "not_assessed", "not_applicable"].forEach((status, index) => {
+      const ref = catalogue.indicators[index].ref;
+      Object.assign(backup.assessment.evidence_led_responses[ref], {
+        status, decision: status === "rated" ? "rated" : "not_judged",
+        level: status === "rated" ? "L3" : "", certainty: status === "rated" ? "medium" : "",
+        rationale: `SYNTHETIC rationale ${ref}`, statusReason: `SYNTHETIC status explanation ${ref}`,
+        improvementNote: `SYNTHETIC action ${ref}`
+      });
+      backup.assessment.whole_framework_snapshot[ref].note = `SYNTHETIC snapshot ${ref}`;
+    });
+    const restored = api.restore(backup), before = plain(restored);
+    const notes = api.reportView().match(/aria-label="All indicator results"[\s\S]*?<\/table>/)[0];
+    ["rated", "not_known", "not_assessed", "not_applicable"].forEach((status, index) => {
+      const ref = catalogue.indicators[index].ref;
+      const active = `SYNTHETIC ${status === "rated" ? "rationale" : "status explanation"} ${ref}`;
+      const inactive = `SYNTHETIC ${status === "rated" ? "status explanation" : "rationale"} ${ref}`;
+      assert.ok(notes.includes(active), `${ref} current explanation in report Notes`);
+      assert.ok(!notes.includes(inactive), `${ref} no inactive explanation in report Notes`);
+      assert.ok(api.comparisonView().includes(active));
+    });
+    assert.deepEqual(plain(restored), before);
+    const exported = plain(api.fullBackupPayload(restored));
+    assert.deepEqual(exported.assessment.evidence_led_responses, backup.assessment.evidence_led_responses);
+    assert.deepEqual(exported.assessment.whole_framework_snapshot, backup.assessment.whole_framework_snapshot);
+    assert.deepEqual(exported.provenance, backup.provenance);
+  });
+}
+
+test("active explanation presentation handles empty and incomplete states without mutating data", () => {
+  const { api } = setup();
+  for (const status of ["rated", "not_known", "not_assessed", "not_applicable", "unstarted"]) {
+    for (const active of [undefined, null, "", "   ", 42]) {
+      const response = { status, rationale: "INACTIVE rationale", statusReason: "INACTIVE status" };
+      response[status === "rated" ? "rationale" : "statusReason"] = active;
+      const before = { ...response };
+      assert.equal(api.evidenceExplanation(response), "No explanation recorded.");
+      assert.deepEqual(response, before);
+    }
+  }
+  assert.equal(api.evidenceExplanation({status:"rated", rationale:" Current original text "}), " Current original text ");
+});
+
+
+test("snapshot context faithfully renders every canonical type, unit and foundational flag without changing responses", () => {
+  const { api, state } = setup(); const before = plain(state);
+  for (const item of catalogue.indicators) {
+    const html = api.snapshotContext(item);
+    assert.ok(html.includes(item.type));
+    assert.ok(html.includes(`Unit: ${catalogue.vocabularies.units[item.unit]}`));
+    assert.equal(html.includes("Proposed foundational indicator · L3 reference"), item.foundational);
+    assert.equal(html.includes("excluded from domain medians"), item.applicability_class === "Y");
+    if (item.applicability_class.startsWith("C")) assert.match(html, /does not decide applicability/);
+    if (item.foundational) assert.match(html, /not a pass\/fail, legal-compliance or participation decision/);
+  }
+  assert.deepEqual(plain(state), before);
+});
+
+test("selected-level guidance comes directly from the catalogue and does not mutate either response layer", () => {
+  const { api, state } = setup(); const before = plain(state);
+  const escape = text => text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+  for (const item of catalogue.indicators) {
+    for (const level of ["L1", "L2", "L3", "L4", "L5"]) {
+      const html = api.snapshotEvidenceGuidance(item, level);
+      for (const evidence of item.minimum_evidence[level] || []) assert.ok(html.includes(escape(evidence)));
+      if (!item.minimum_evidence[level]) assert.ok(html.includes(`does not publish a separate minimum-evidence list for ${level}`));
+      assert.match(html, /does not establish that evidence has been checked/);
+    }
+    assert.match(api.snapshotEvidenceGuidance(item, ""), /Select a level/);
+  }
+  assert.deepEqual(plain(state), before);
+  state.activeIndicator = "C.1.1";
+  const html = api.snapshotIndicatorView();
+  assert.match(html, /<details class="hdrl-guidance" id="hdrl-snapshot-evidence-guidance">/);
+  assert.match(html, /provisional snapshot, not an evidence-backed judgement/);
+  for (const text of Object.values(catalogue.indicators.find(i => i.ref === "C.1.1").maturity_levels)) assert.ok(html.includes(escape(text)));
+});
+
+
+test("orientation summaries distinguish empty, partial and addressed domains without a false completion claim", () => {
+  const { api, state } = setup();
+  assert.match(api.rapidIntroView(), /Skip orientation and start Snapshot/);
+  assert.match(api.rapidSummaryView(), /0 of 8 domains answered · not started/);
+  state.rapid.A = { impression:"not_known", certainty:"", note:"Synthetic" };
+  assert.match(api.rapidSummaryView(), /1 of 8 domains answered · partial/);
+  for (const domain of catalogue.domains) state.rapid[domain.ref] = { impression:"not_assessed", certainty:"", note:"Synthetic" };
+  assert.match(api.rapidSummaryView(), /8 of 8 domains answered · all domains addressed/);
+  assert.doesNotMatch(api.rapidSummaryView() + api.rapidIntroView(), /Stage 1|Stage 2|Stage 1 complete/);
+});
+
+test("64 mixed addressed responses offer review and report without an unfinished-item fallback", () => {
+  const { api, state } = setup();
+  for (const item of catalogue.indicators) rate(state.snapshot[item.ref]);
+  for (const [index, status] of ["not_known", "not_assessed", "not_applicable"].entries()) {
+    Object.assign(state.snapshot[catalogue.indicators[index].ref], {status, level:"", certainty:""});
+  }
+  const html = api.snapshotDashboardView();
+  assert.match(html, /64 of 64 snapshot indicators addressed/);
+  assert.match(html, /data-action="snapshot-review">Review snapshot/);
+  assert.match(html, /data-action="gate">View report/);
+  assert.doesNotMatch(html, /Resume snapshot|unfinished indicator|Start indicator 1 of 64/);
+  assert.match(html, /They are not all ratings and do not establish readiness/);
+  assert.equal((html.match(/<li><button[^>]+data-action="open-snapshot"/g)||[]).length,64);
+  assert.match(api.overviewView(), /64\/64 indicators addressed · 61 rated/);
+  assert.match(api.overviewView(), /Evidence review not started/);
+  assert.equal(api.nextSnapshotIndicator("A.1.1"),undefined);
+});
+
+test("next-domain destination excludes the current pending response and remains correct when reviewing a completed snapshot", () => {
+  const { api, state } = setup(); const a = catalogue.indicators.filter(i => i.domain === "A");
+  for (const item of a.slice(0,-1)) state.snapshot[item.ref].status="not_known";
+  state.activeIndicator=a.at(-1).ref;
+  assert.equal(api.nextSnapshotIndicator(state.activeIndicator).domain,"B");
+  assert.match(api.snapshotIndicatorView(), /Save and continue in domain B/);
+  assert.match(api.snapshotIndicatorView(), /name="journey-action" value="pause">Save and pause/);
+  for (const item of catalogue.indicators) state.snapshot[item.ref].status="not_assessed";
+  assert.equal(api.nextSnapshotIndicator(state.activeIndicator),undefined);
+  assert.match(api.snapshotIndicatorView(), /Save and review snapshot/);
+});
+
+test("snapshot-only work stays visible beside an explicitly untouched evidence review without copying a judgement", () => {
+  const { api, state } = setup(); state.activeIndicator="H.3.1";
+  rate(state.snapshot["H.3.1"],"L4"); state.snapshot["H.3.1"].note="Synthetic inherited context";
+  const before=plain(state);
+  const html=api.indicatorView();
+  assert.match(html, /Evidence review not started for this indicator/);
+  assert.match(html, /Provisional snapshot:<\/strong> L4/);
+  assert.match(html, /data-action="open-snapshot" data-ref="H.3.1">Review this snapshot response/);
+  assert.deepEqual(plain(state),before);
+  assert.equal(state.indicators["H.3.1"].status,"unstarted");
+});

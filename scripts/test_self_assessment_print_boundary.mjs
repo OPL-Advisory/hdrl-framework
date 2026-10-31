@@ -136,9 +136,8 @@ async function boundaryTest({ page, engine, check, dir, observations, existing }
     check("unit-only summary lists only missing unit", await page.locator("#hdrl-boundary-errors a").evaluateAll((a) => a.map((n) => n.getAttribute("href"))), ["#boundary-unit"]);
     check("unit error summary focused", await page.evaluate(() => document.activeElement?.id), "hdrl-boundary-errors");
     await page.keyboard.press(engine === "webkit" ? "Alt+Tab" : "Tab"); await page.keyboard.press("Enter");
-    check("unit error link focuses the radio-group target", await page.evaluate(() => document.activeElement?.id), "boundary-unit");
-    await page.keyboard.press(engine === "webkit" ? "Alt+Tab" : "Tab");
-    check("keyboard reaches an actual unit radio", await page.evaluate(() => document.activeElement?.name), "boundary-unit");
+    check("unit error link focuses the first actual unit control", await page.evaluate(() => document.activeElement?.value), "system");
+    check("keyboard reaches an actual unit radio directly", await page.evaluate(() => ({ name:document.activeElement?.name, type:document.activeElement?.type })), {name:"boundary-unit", type:"radio"});
     await page.keyboard.press("Space");
     check("keyboard can choose unit after the error link", (await formValues(page)).unit, "system");
     check("unit error and correction remain unsaved before valid submission", jsonPin(await storage(page, "get")), savedPin);

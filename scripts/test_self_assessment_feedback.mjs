@@ -259,12 +259,12 @@ try {
         const beforeResponse = clone(draft.snapshot["A.1.2"]);
         const note = `SYNTHETIC FB02 ${existing ? "existing" : "new"} note must survive one correction`;
         await runCase(browser, engine, `snapshot-validation-${existing ? "saved-response" : "new-response"}`, draft, async ({ page, record, check }) => {
-          await page.locator("#snapshot-level-L1").focus(); await page.keyboard.press("3");
+          await page.locator("#snapshot-level-L3").focus(); await page.keyboard.press("Space");
           const detail = page.locator(".hdrl-snapshot-note");
           if ((await detail.getAttribute("open")) === null) await detail.locator("summary").click();
           await page.locator("#snapshot-note").fill(note);
           await page.locator('input[name="snapshot-clarity"][value="some_overlap"]').check();
-          await page.locator('#hdrl-snapshot-form button[type="submit"]').focus(); await page.keyboard.press("Enter");
+          await page.locator('#hdrl-snapshot-form [name="journey-action"][value="next"]').focus(); await page.keyboard.press("Enter");
           await page.locator("#hdrl-snapshot-errors").waitFor();
           check("validation error summary receives keyboard focus", await page.evaluate(() => document.activeElement?.id), "hdrl-snapshot-errors");
           check("chosen level survives missing certainty", await page.locator("#snapshot-level-L3").isChecked());
@@ -276,8 +276,8 @@ try {
           const reselect = !(await page.locator("#snapshot-level-L3").isChecked());
           check("correction needs only certainty, not level reselection", reselect, false);
           if (reselect) await page.locator("#snapshot-level-L3").check();
-          await page.locator("#snapshot-level-L3").focus(); await page.keyboard.press("h");
-          await page.locator('#hdrl-snapshot-form button[type="submit"]').focus(); await page.keyboard.press("Enter");
+          await page.locator('input[name="snapshot-certainty"][value="high"]').focus(); await page.keyboard.press("Space");
+          await page.locator('#hdrl-snapshot-form [name="journey-action"][value="next"]').focus(); await page.keyboard.press("Enter");
           await page.waitForTimeout(500); await page.reload();
           await page.locator('#hdrl-assessment-root[aria-busy="false"]').waitFor();
           const saved = (await storage(page, "get")).snapshot["A.1.2"];
