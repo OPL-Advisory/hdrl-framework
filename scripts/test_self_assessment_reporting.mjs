@@ -230,7 +230,7 @@ const tests = {
     check("CSV omits complete reference records", !Object.keys(rows[0]).some((key) => /review_status|reference_locator|evidence_owner|evidence_note|evidence_limitations/.test(key)));
     check("full JSON retains complete references", json.value.assessment.evidence_led_responses, d.indicators); check("full JSON retains narrative exactly", json.value.assessment.domain_capacity_notes, d.domainNotes);
     check("full JSON preserves original versions", json.value.versions, d.versions); check("full JSON preserves original provenance", json.value.provenance, d.provenance);
-    check("current generator stays distinct", json.value.generated_by.implementation_candidate, "2026-10-31.1"); check("source implementation retains2026-10-28.2", json.value.provenance.implementation_candidate, "2026-10-28.2");
+    check("current generator stays distinct", json.value.generated_by.implementation_candidate, "2026-10-31.2"); check("source implementation retains2026-10-28.2", json.value.provenance.implementation_candidate, "2026-10-28.2");
     check("recent event list bounded after real save", json.value.assessment.audit.length, 250); check("oldest invented events dropped", !json.value.assessment.audit.some((a) => a.id === "SYNTHETIC-event-0"));
     check("CSV retains source provenance", rows[0].implementation_candidate, "2026-10-28.2"); observations.downloads = [json, csv].map(({ path, sha256, bytes }) => ({ path, sha256, bytes: bytes.length }));
   },
@@ -280,7 +280,7 @@ const tests = {
     } else observations.pdf = { produced: false, reason: "Chromium-only PDF API; this engine has print-media DOM and screenshots." };
     await page.waitForTimeout(700); check("printing preserves all source answers/provenance", verdictShape(await storage(page, "get")), verdictShape(d));
   },
-  async "restored-active-explanation"({ page, check, dir, observations }) {
+  async "restored-active-explanation"({ page, engine, check, dir, observations }) {
     // All variants are invented in memory from the separate supplied test input.
     // Restore performs the actual parser/preview/confirmation/IndexedDB path.
     // No evidence form is submitted: saves would clear the inactive narrative.
@@ -312,7 +312,7 @@ const tests = {
       for (const s of scenarios) {
         const r = incoming.assessment.evidence_led_responses[s.ref], active = s.status === "rated" ? "rationale" : "statusReason", inactive = active === "rationale" ? "statusReason" : "rationale";
         Object.assign(r, { status: s.status, decision: s.status === "rated" ? "rated" : "not_judged", level: s.status === "rated" ? "L3" : "", certainty: s.status === "rated" ? "medium" : "" });
-        r[active] = s.empty ? "" : `SYNTHETIC ACTIVE ${s.ref} ${active} — source/date/scope explanation ${literal}`;
+        r[active] = s.empty ? (s.ref === "E.1.1" ? "   " : "") : `SYNTHETIC ACTIVE ${s.ref} ${active} — source/date/scope explanation ${literal}`;
         r[inactive] = `SYNTHETIC INACTIVE ${s.ref} ${inactive} — retained historical text, never a fallback.`;
       }
       const serialized = Buffer.from(JSON.stringify(incoming, null, 2) + "\n"), variant = { source_schema: incoming.export_schema, incoming_sha256: sha(serialized), observations: [], downloads: [] };
@@ -332,18 +332,40 @@ const tests = {
       check(`${format} context follows explicit schema`, restored.declaredContext, format === "v0.4.0" ? "unspecified" : "synthetic");
       for (const phase of ["before-reload", "after-reload"]) {
         if (phase === "after-reload") { await page.reload(); await ready(page); }
-        await reportFromWorkspace(); await compare(page);
+        await reportFromWorkspace();
+        const reportNotes = Object.fromEntries(await Promise.all(scenarios.map(async (s) => [s.ref, await row(page, "All indicator results", s.ref).locator("td").nth(3).innerText()])));
+        await writeFile(path.join(dir, `${format}-${phase}-report.html`), await page.content());
+        if (engine === "chromium" && phase === "before-reload") {
+          const pdf = path.join(dir, `${format}-restored-report.pdf`), textPath = path.join(dir, `${format}-restored-report.txt`);
+          await page.pdf({ path: pdf, format: "A4", printBackground: true, preferCSSPageSize: true });
+          await promisify(execFile)(process.env.HDRL_PDFTOTEXT || "pdftotext", ["-layout", pdf, textPath]);
+          const compactPdfText = (text) => normal(text).replace(/\s+/g, "");
+          const pdfText = compactPdfText(await readFile(textPath, "utf8"));
+          // Unique per-row prefixes survive tabular PDF extraction; adjacent columns
+          // interleave longer text. Full explanation equality is checked in HTML.
+          const activeTexts = scenarios.filter((s) => !s.empty).map((s) => `SYNTHETIC ACTIVE ${s.ref}`);
+          const inactiveTexts = scenarios.map((s) => `SYNTHETIC INACTIVE ${s.ref}`);
+          check(`${format} actual PDF retains all active explanation markers`, activeTexts.filter((text) => !pdfText.includes(compactPdfText(text))), []);
+          check(`${format} actual PDF excludes all inactive explanation markers`, inactiveTexts.filter((text) => pdfText.includes(compactPdfText(text))), []);
+          variant.pdf = { path: pdf, sha256: sha(await readFile(pdf)), text_path: textPath };
+        }
+        variant.reportNotes ||= [];
+        variant.reportNotes.push({ phase, notes: reportNotes, html_path: path.join(dir, `${format}-${phase}-report.html`) });
+        await compare(page);
         for (const s of scenarios) {
           const original = incoming.assessment.evidence_led_responses[s.ref], active = s.status === "rated" ? "rationale" : "statusReason", inactive = active === "rationale" ? "statusReason" : "rationale";
-          const expected = original[active] || "No explanation recorded.", target = row(page, "Comparison by indicator", s.ref), evidenceCell = target.locator("td").nth(1);
+          const expected = original[active].trim() ? original[active] : "No explanation recorded.", target = row(page, "Comparison by indicator", s.ref), evidenceCell = target.locator("td").nth(1);
           const visible = await evidenceCell.locator("p").nth(1).innerText();
           check(`${format}/${phase}/${s.ref} only active explanation visible`, visible, expected);
+          check(`${format}/${phase}/${s.ref} report Notes uses active explanation`, reportNotes[s.ref], expected);
+          check(`${format}/${phase}/${s.ref} report Notes agrees with comparison`, reportNotes[s.ref], visible);
+          check(`${format}/${phase}/${s.ref} report Notes omits inactive explanation`, !reportNotes[s.ref].includes(original[inactive]));
           check(`${format}/${phase}/${s.ref} inactive narrative not shown`, !(await evidenceCell.innerText()).includes(original[inactive]));
           check(`${format}/${phase}/${s.ref} original snapshot note visible`, await target.locator("td").nth(0).locator("p").nth(1).innerText(), incoming.assessment.whole_framework_snapshot[s.ref].note || "No explanation recorded.");
           await target.screenshot({ path: path.join(dir, `${format}-${phase}-${s.ref}-comparison.png`) });
           await target.locator('[data-action="open-indicator"]').click();
           const editor = page.locator(s.status === "rated" ? "#indicator-rationale" : "#indicator-status-reason"); await editor.waitFor();
-          const current = await editor.inputValue(); check(`${format}/${phase}/${s.ref} editor and comparison agree`, current || "No explanation recorded.", visible);
+          const current = await editor.inputValue(); check(`${format}/${phase}/${s.ref} editor and comparison agree`, current.trim() ? current : "No explanation recorded.", visible);
           check(`${format}/${phase}/${s.ref} editor active value unchanged`, current, original[active]);
           variant.observations.push({ phase, ref: s.ref, status: s.status, active_field: active, active_empty: s.empty, visible_explanation: visible, editor_value: current });
           if (s.ref === "E.3.1") { await editor.scrollIntoViewIfNeeded(); await page.screenshot({ path: path.join(dir, `${format}-${phase}-current-editor.png`) }); }
@@ -356,7 +378,7 @@ const tests = {
         check(`${format}/${phase} download retains original versions`, backup.value.versions, incoming.versions);
         check(`${format}/${phase} download retains original provenance`, backup.value.provenance, incoming.provenance);
         check(`${format}/${phase} download retains original record identity`, backup.value.assessment.id, incoming.assessment.id);
-        check(`${format}/${phase} current generator stays distinct`, backup.value.generated_by.implementation_candidate, "2026-10-31.1");
+        check(`${format}/${phase} current generator stays distinct`, backup.value.generated_by.implementation_candidate, "2026-10-31.2");
         variant.downloads.push({ phase, path: backup.path, sha256: backup.sha256, bytes: backup.bytes.length });
       }
     }

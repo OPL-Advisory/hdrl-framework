@@ -18,7 +18,7 @@
   const CATALOGUE_SHA256 = "442a10be23a0ddec889785577fb8853db2296cc5b3a50929849025e27077cd47";
   const GUIDANCE_SHA256 = "1118cb773ca4ecc2bff06d2612d14b756134bda04603c43dd18604f4df36f92f";
   // Engineering candidate identity; baseline release labels above are not advanced by this work.
-  const COMPATIBILITY_CANDIDATE = "2026-10-31.1";
+  const COMPATIBILITY_CANDIDATE = "2026-10-31.2";
   const DRAFT_SCHEMA_VERSION = 6;
   const PROVENANCE_VERSION_KEYS = ["framework", "catalogue", "tool", "guidance", "rules", "report"];
 
@@ -1937,12 +1937,16 @@
       </div>`;
   }
 
+  function evidenceExplanation(response = {}) {
+    // Presentation only: retain both stored narratives; the current status owns the explanation.
+    const text = response.status === "rated" ? response.rationale : response.statusReason;
+    return typeof text === "string" && text.trim() ? text : "No explanation recorded.";
+  }
+
   function comparisonView() {
     const cell = (stage, item) => {
       const response = recordedResponse(stage, item.ref);
-      // Restored records may retain both fields; only the current status explains this response.
-      const note = stage === "snapshot" ? response.note
-        : response.status === "rated" ? response.rationale : response.statusReason;
+      const note = stage === "snapshot" ? response.note : evidenceExplanation(response);
       return `<strong>${esc(responseSelection(response))}</strong><p>${esc(certaintyLabel(response.certainty))}</p><p>${esc(note || "No explanation recorded.")}</p><button type="button" class="hdrl-link-button" data-action="${stage === "snapshot" ? "open-snapshot" : "open-indicator"}" data-ref="${item.ref}">Review ${stage === "snapshot" ? "snapshot" : "evidence-led response"} · ${item.ref}</button>`;
     };
     return shell(`<section class="hdrl-assessment-view hdrl-assessment-view--wide" aria-labelledby="hdrl-view-title">
@@ -2077,7 +2081,7 @@
                 ${catalogue.indicators.map((indicator) => {
                   const response = indicatorResponse(indicator.ref);
                   const result = response.status === "rated" && response.level ? `${response.level} · ${catalogue.maturity_level_names[response.level]}` : STATUS_LABELS[response.status];
-                  return `<tr><th scope="row">${indicator.ref} · ${esc(indicator.name)}</th><td>${esc(result)}</td><td>${esc(certaintyLabel(response.certainty))}</td><td>${response.evidence.length}</td><td>${esc(response.rationale || response.statusReason || "No rationale recorded")}</td></tr>`;
+                  return `<tr><th scope="row">${indicator.ref} · ${esc(indicator.name)}</th><td>${esc(result)}</td><td>${esc(certaintyLabel(response.certainty))}</td><td>${response.evidence.length}</td><td>${esc(evidenceExplanation(response))}</td></tr>`;
                 }).join("")}
               </tbody>
             </table>

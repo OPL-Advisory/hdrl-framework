@@ -17,7 +17,7 @@ function setup() {
   vm.runInContext(read("docs/assets/js/self-assessment-portability.js"), context);
   assert.match(source, /  init\(\);\n\}\)\(\);\s*$/);
   vm.runInContext(source.replace(/  init\(\);\n\}\)\(\);\s*$/, `globalThis.api = {
-    coreCoverage, referenceCounts, foundationalTable, comparisonView, reportView, reportOverview,
+    coreCoverage, referenceCounts, foundationalTable, comparisonView, reportView, reportOverview, evidenceExplanation,
     domainSummary, snapshotDomainSummary, reportFindings, fullBackupPayload, csvPayload, audit,
     restore(backup) { state=restoredState(HDRLPortability.parseBackup(JSON.stringify(backup), catalogue)); return state; },
     setup(c,g,b) { catalogue=c; content=g; betaConfig=b; state=defaultState();
@@ -98,7 +98,7 @@ test("rendering overview/comparison preserves responses, original provenance and
   assert.deepEqual(plain(api.reportFindings()), findings);
   const backup = plain(api.fullBackupPayload(state));
   assert.equal(backup.provenance.implementation_candidate, "2026-10-28.2");
-  assert.equal(backup.generated_by.implementation_candidate, "2026-10-31.1");
+  assert.equal(backup.generated_by.implementation_candidate, "2026-10-31.2");
   assert.equal(backup.export_schema, "hdrl-self-assessment-export-v0.5.0");
   assert.equal(state.schemaVersion, 6);
 });
@@ -236,3 +236,52 @@ for (const schema of ["0.4.0", "0.5.0"]) {
       input.assessment.evidence_led_responses);
   });
 }
+
+for (const schema of ["0.4.0", "0.5.0"]) {
+  test(`full-report Notes v${schema} follows current status and retains both imported narratives`, () => {
+    const { api, state } = setup();
+    state.provenance.implementation_candidate = "2026-10-28.2";
+    const backup = plain(api.fullBackupPayload(state));
+    backup.export_schema = `hdrl-self-assessment-export-v${schema}`;
+    if (schema === "0.4.0") delete backup.assessment.declared_context;
+    ["rated", "not_known", "not_assessed", "not_applicable"].forEach((status, index) => {
+      const ref = catalogue.indicators[index].ref;
+      Object.assign(backup.assessment.evidence_led_responses[ref], {
+        status, decision: status === "rated" ? "rated" : "not_judged",
+        level: status === "rated" ? "L3" : "", certainty: status === "rated" ? "medium" : "",
+        rationale: `SYNTHETIC rationale ${ref}`, statusReason: `SYNTHETIC status explanation ${ref}`,
+        improvementNote: `SYNTHETIC action ${ref}`
+      });
+      backup.assessment.whole_framework_snapshot[ref].note = `SYNTHETIC snapshot ${ref}`;
+    });
+    const restored = api.restore(backup), before = plain(restored);
+    const notes = api.reportView().match(/aria-label="All indicator results"[\s\S]*?<\/table>/)[0];
+    ["rated", "not_known", "not_assessed", "not_applicable"].forEach((status, index) => {
+      const ref = catalogue.indicators[index].ref;
+      const active = `SYNTHETIC ${status === "rated" ? "rationale" : "status explanation"} ${ref}`;
+      const inactive = `SYNTHETIC ${status === "rated" ? "status explanation" : "rationale"} ${ref}`;
+      assert.ok(notes.includes(active), `${ref} current explanation in report Notes`);
+      assert.ok(!notes.includes(inactive), `${ref} no inactive explanation in report Notes`);
+      assert.ok(api.comparisonView().includes(active));
+    });
+    assert.deepEqual(plain(restored), before);
+    const exported = plain(api.fullBackupPayload(restored));
+    assert.deepEqual(exported.assessment.evidence_led_responses, backup.assessment.evidence_led_responses);
+    assert.deepEqual(exported.assessment.whole_framework_snapshot, backup.assessment.whole_framework_snapshot);
+    assert.deepEqual(exported.provenance, backup.provenance);
+  });
+}
+
+test("active explanation presentation handles empty and incomplete states without mutating data", () => {
+  const { api } = setup();
+  for (const status of ["rated", "not_known", "not_assessed", "not_applicable", "unstarted"]) {
+    for (const active of [undefined, null, "", "   ", 42]) {
+      const response = { status, rationale: "INACTIVE rationale", statusReason: "INACTIVE status" };
+      response[status === "rated" ? "rationale" : "statusReason"] = active;
+      const before = { ...response };
+      assert.equal(api.evidenceExplanation(response), "No explanation recorded.");
+      assert.deepEqual(response, before);
+    }
+  }
+  assert.equal(api.evidenceExplanation({status:"rated", rationale:" Current original text "}), " Current original text ");
+});
