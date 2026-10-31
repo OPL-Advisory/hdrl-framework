@@ -464,7 +464,7 @@ const tests = {
     for (const domain of catalogue.domains) orientation.rapid[domain.ref] = { impression: "defined", certainty: "medium", note: "SYNTHETIC orientation only." };
     await load(page, orientation);
     const intro = await page.locator("#hdrl-assessment-root").innerText();
-    check("eight orientations do not claim Stage1 complete", !/Stage 1 complete/.test(intro));
+    check("eight orientations do not claim Stage1 complete", !/Stage 1 complete/i.test(intro));
     check("summary identifies orientation distinctly", /Orientation/i.test(intro));
     await page.locator('[data-action="snapshot-dashboard"]').first().click(); await settled(page);
     check("orientation-only snapshot has zero addressed", (await page.locator(".hdrl-progress__meta").innerText()).includes("0 of 64"));
